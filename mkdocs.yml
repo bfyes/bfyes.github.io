@@ -1,62 +1,71 @@
 site_name: bfyes
 theme:
   name: material
-  plugins:
-    - search
   icons:
     logo: material/github.png
-
   language: zh
-
   palette:
-
-    # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
       toggle:
         icon: material/brightness-auto
         name: Switch to light mode
-
-    # Palette toggle for light mode
+      primary: black
     - media: "(prefers-color-scheme: light)"
       scheme: default 
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-
-    # Palette toggle for dark mode
+      primary: black
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       toggle:
         icon: material/brightness-4
         name: Switch to system preference
-    
       primary: black
-
   features:
-    - navigation.tpp # 返回顶部按钮
-    - navigation.tabs # 顶部分类标签
-    - search.suggest # 搜索建议
-    - search.highlight # 高亮搜索结果
+    - content.admonition
+    - navigation.top
+    - navigation.tabs
+    - search.suggest
+    - search.highlight
   search:
     boost: 2
-
+# 新增：明确启用 Markdown 扩展，强制解析 !!! 语法（核心解决叹号问题）
+markdown_extensions:
+  - admonition  # 启用基础 Admonition 扩展
+  - pymdownx.superfences  # 启用嵌套/代码块兼容扩展
+  - pymdownx.details  # 启用可折叠块扩展
 copyright: 'Copyright © 2026 bfyes'
-
-
+plugins:
+  - search
 extra:
   analytics: 
     provider: google
     property: G-Q2FLENJ8PT
-    feedback:
-      title: Was this page helpful?
-      ratings:
-        - icon: material/emoticon-happy-outline
-          name: This page was helpful
-          data: 1
-          note: >-
-            Thanks for your feedback!
-        - icon: material/emoticon-sad-outline
-          name: This page could be improved
-          data: 0
-          note: >- 
-            Thanks for your feedback! We'll strive to improve it.
+  feedback:
+    title: Was this page helpful?
+    ratings:
+      - icon: material/emoticon-happy-outline
+        name: This page was helpful
+        data: 1
+        note: >-
+          Thanks for your feedback!
+      - icon: material/emoticon-sad-outline
+        name: This page could be improved
+        data: 0
+        note: >- 
+          Thanks for your feedback! We'll strive to improve it.
+# 自定义：丰富顶部导航，并加载自定义 CSS 实现左侧分栏
+nav:
+  - 首页: index.md
+  - 文档:
+      - 介绍: index.md
+  - 博客: https://example.com/blog
+  - 关于: about.md
+  - 链接: https://github.com/yourname/yourrepo
+
+repo_url: https://github.com/yourname/yourrepo
+repo_name: GitHub
+
+extra_css:
+  - stylesheets/side-nav-columns.css

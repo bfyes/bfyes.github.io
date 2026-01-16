@@ -1,0 +1,27 @@
+/* 左侧导航分栏，仅在宽屏时生效 */
+@media (min-width: 1000px) {
+  /* 目标主侧栏导航列表 */
+  .md-sidebar .md-nav__list {
+    column-count: 2;
+    column-gap: 1.5rem;
+  }
+
+  /* 确保每个条目不会被列断开 */
+  .md-sidebar .md-nav__list .md-nav__item {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    padding-right: 0.25rem;
+  }
+
+  /* 保持链接块化，便于点击 */
+  .md-sidebar .md-nav__link {
+    display: inline-block;
+    width: 100%;
+  }
+}
+
+/* 可选：在更宽屏时设置 3 列（取消注释启用） */
+/* @media (min-width: 1400px) {
+  .md-sidebar .md-nav__list { column-count: 3; }
+} */
