@@ -1,3 +1,62 @@
-site_name: My Docs
+site_name: bfyes
 theme:
   name: material
+  plugins:
+    - search
+  icons:
+    logo: material/github.png
+
+  language: zh
+
+  palette:
+
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default 
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+    
+      primary: black
+
+  features:
+    - navigation.tpp # 返回顶部按钮
+    - navigation.tabs # 顶部分类标签
+    - search.suggest # 搜索建议
+    - search.highlight # 高亮搜索结果
+  search:
+    boost: 2
+
+copyright: 'Copyright © 2026 bfyes'
+
+
+extra:
+  analytics: 
+    provider: google
+    property: G-Q2FLENJ8PT
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >- 
+            Thanks for your feedback! We'll strive to improve it.
