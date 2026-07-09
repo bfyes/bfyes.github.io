@@ -328,6 +328,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   display: block;
   width: 100%;
   min-width: 620px;
+  height: auto;
   border: 1px solid var(--md-default-fg-color--lightest);
   border-radius: 8px;
   background: var(--md-default-bg-color);
@@ -346,7 +347,19 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 .page-info__item {
-  display: flex;
+  display: flex !important;
   align-items: center;
+  gap: 0.5rem;
   min-height: 1.4rem;
+}
+
+.page-info__label {
+  width: 14.5em;
+  flex-shrink: 0;
+}
+
+.page-info__value {
+  color: var(--md-default-fg-color--lighter);
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
 }

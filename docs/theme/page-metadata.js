@@ -1,6 +1,6 @@
 window.__BFYES_PAGE_META__ = {
   "/": {
-    "updated": "2026-07-09T16:37:38+08:00"
+    "updated": "2026-07-09T17:09:38+08:00"
   },
   "/diaries/midterm/": {
     "updated": "2026-07-09T15:03:14+08:00"
