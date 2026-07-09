@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  schedule:
+    # 每天 08:17 UTC（北京时间 16:17）自动部署，刷新贡献图数据
+    - cron: "17 8 * * *"
 
 permissions:
   contents: write
@@ -20,6 +23,8 @@ jobs:
       - name: Build site
         run: |
           uv sync
+          uv run python scripts/generate_page_metadata.py
+          uv run python scripts/fetch_contributions.py
           uv run zensical build
 
       - name: Deploy to gh-pages

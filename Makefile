@@ -11,7 +11,7 @@ contributions: ## 抓取 GitHub 贡献图数据烘焙成静态 JSON
 kill: ## 杀掉 8000 端口进程
 	@lsof -ti:8000 | xargs kill -9 2>/dev/null; echo "done"
 
-zensical: metadata kill ## 实时预览文档站点（端口 8000）
+zensical: metadata contributions kill ## 实时预览文档站点（端口 8000）
 	uv run zensical serve -o
 
 deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）

@@ -2,9 +2,6 @@ window.__BFYES_PAGE_META__ = {
   "/": {
     "updated": "2026-07-10T00:02:47+08:00"
   },
-  "/diaries/midterm/": {
-    "updated": "2026-07-09T15:03:14+08:00"
-  },
   "/study/asm/": {
     "updated": "2026-07-09T15:03:14+08:00"
   },
