@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.cache/
+
+# IDE
+.vscode/
+.idea/
+
+# site/ 是构建产物，不跟踪
+site/
+
+# 构建时生成的主题数据（保留本地，不提交）
+docs/theme/data/
+
+000asm.md

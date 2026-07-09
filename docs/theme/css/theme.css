@@ -1,0 +1,945 @@
+/* ============================================================================
+   theme.css —— 通用组件层（所有页面生效）
+   ----------------------------------------------------------------------------
+   覆盖 zensical/Material 主题的组件样式，保持最小改动原则：
+   只写 zensical 默认不提供或需要调整的部分，其余复用主题自带规则。
+   移除本文件后 zensical 默认样式仍可工作，但丢失站点定制观感。
+
+   目录
+   01. 标题编号与 permalink 书签
+       H2/H3/H4 自动编号(section-counter/subsection/subsubsection)、
+       headerlink 左侧定位(-40px) + SVG 链节图标(背景图)、
+       :target 隐藏(覆盖 zensical 默认显示)、
+       提示块内 headerlink 隐藏(overflow:hidden 会裁切)
+   02. Admonition / Details 提示块
+       透明背景 + 类型色渐变标题栏、12 种类型配色(note/abstract/info/tip/
+       success/question/warning/failure/danger/bug/example/quote)、
+       标题图标(::before)定位、折叠箭头(::after)旋转
+   03. 站点框架
+       Logo(.bf-logo)、页面信息(.page-updated-top/.page-info)、
+       虚线网格背景(body::before SVG + mask 视差)、
+       正文区域(.md-content z-index:1 遮盖网格)、
+       导航栏毛玻璃(.md-header/.md-tabs)、导航选中态、
+       右侧 TOC 阅读进度、页面宽度(.md-grid)、
+       滚动条样式(sidebar + 代码块共用)、
+       highlight.js 行号列(.code-gutter flex 并排)、
+       hljs 与 Material 布局兼容(.hljs padding 归零、圆角取消)
+   04. PDF 阅读器
+       .pdf-viewer-* 外壳/工具栏/原生 iframe/iOS 画布降级、
+       加载覆盖层(进度条 + 百分比 + 闪烁圆点)、
+       错误提示、暗色模式背景覆盖
+   05. 响应式（移动端通用适配）
+       ≤44.984375em：隐藏 headerlink、正文 padding 归零、
+       代码块横向滚动、行号列缩小间距
+
+   可调参数见 variables.css（加载于本文件之前）。
+   加载顺序：variables.css → main.css → theme.css → home.css。
+   ============================================================================ */
+
+/* ============================================================================
+   01. 标题编号与 permalink 书签
+   ----------------------------------------------------------------------------
+   标题自动编号使用站点专用 counter 名称，避免与主题冲突。
+   permalink 保留生成器 HTML 结构，由 CSS 移到标题左侧；SVG 背景图绘制图标。
+   交互逻辑（opacity/hover/focus）复用 zensical 自带规则，此处只覆盖定位、
+   图标和 :target 行为（zensical 默认 :target 显示，此处改为隐藏）。
+   ============================================================================ */
+
+.md-content__inner { counter-reset: section-counter; }
+.md-content__inner h2 {
+  counter-increment: section-counter;
+  counter-reset: subsection-counter;
+}
+.md-content__inner h2::before {
+  content: counter(section-counter);
+  color: var(--fgColor-default);
+  font-weight: 700;
+  margin-right: 0.6em;
+}
+.md-content__inner h3 {
+  counter-increment: subsection-counter;
+  counter-reset: subsubsection-counter;
+}
+.md-content__inner h3::before {
+  content: counter(section-counter) "." counter(subsection-counter);
+  color: var(--fgColor-default);
+  font-weight: 700;
+  margin-right: 0.6em;
+}
+.md-content__inner h4 {
+  counter-increment: subsubsection-counter;
+}
+.md-content__inner h4::before {
+  content: counter(section-counter) "." counter(subsection-counter) "." counter(subsubsection-counter);
+  color: var(--fgColor-default);
+  font-weight: 700;
+  margin-right: 0.6em;
+}
+
+.md-typeset :is(h1, h2, h3, h4, h5, h6) {
+  position: relative;
+}
+.md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
+  position: absolute;
+  left: -40px;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 1.25em;
+  margin: 0;
+  font-size: inherit;
+  line-height: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='currentColor' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+}
+[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink,
+[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:hover {
+  color: #f0f6fc;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23f0f6fc' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
+}
+
+/* :target 行为：zensical 默认显示，此处覆盖为隐藏（仅悬停/聚焦时显示）。 */
+.md-typeset :is(h1, h2, h3, h4, h5, h6):target:not(:hover) > .headerlink:not(:hover):not(:focus) {
+  opacity: 0;
+}
+
+/* 提示块有 overflow:hidden，内部标题的左侧 headerlink 会被裁掉，直接隐藏。 */
+.md-typeset .admonition :is(h1, h2, h3, h4, h5, h6) > .headerlink,
+.md-typeset details :is(h1, h2, h3, h4, h5, h6) > .headerlink {
+  display: none;
+}
+
+/* ---- 标题编号 ::before 样式 ----
+   counter 逻辑在下方，此处是编号的字体/颜色/间距。
+   编号与标题同族无衬线、同字重、同色的轻微透明。 */
+.md-typeset h1::before,
+.md-typeset h2::before,
+.md-typeset h3::before,
+.md-typeset h4::before,
+.md-typeset h5::before,
+.md-typeset h6::before {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Helvetica Neue",
+    Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  margin-right: 0.8em;
+  color: color-mix(in srgb, var(--fgColor-default) 70%, transparent);
+}
+
+/* ---- Tabbed / Admonition 边距 ----
+   zensical 默认组件，保留 margin:1em 0（不归零 top）。
+   tabbed-content 是 display:contents/block，标签行与内容之间无间距，
+   补 padding-top 修复（main.css 行高收紧后需要补偿）。 */
+.md-typeset .tabbed-set,
+.md-typeset .admonition {
+  margin: 1em 0;
+  letter-spacing: normal;
+}
+.md-typeset .tabbed-content {
+  margin-top: 0;
+  padding-top: 0.75rem;
+}
+.md-typeset .tabbed-labels {
+  margin-bottom: 0;
+}
+
+/* ============================================================================
+   02. Admonition / Details 提示块
+   ----------------------------------------------------------------------------
+   标题保留类型色，正文区域透明，贴近 Material 默认文档页的提示块风格。
+   ============================================================================ */
+.md-typeset .admonition,
+.md-typeset details {
+  --admonition-color: #2563eb;
+  --admonition-accent: #06b6d4;
+  --admonition-spectrum: #22c55e;
+  background-color: transparent !important;
+  border: 1px solid var(--borderColor-muted);
+  border: 1px solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  font-size: 13.6px;
+  overflow: hidden;
+  padding: 0 0.8rem;
+}
+.md-typeset .admonition.note,
+.md-typeset details.note {
+  --admonition-color: #2563eb;
+  --admonition-accent: #06b6d4;
+  --admonition-spectrum: #22c55e;
+}
+.md-typeset .admonition.abstract,
+.md-typeset details.abstract {
+  --admonition-color: #7c3aed;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition.info,
+.md-typeset details.info {
+  --admonition-color: #2563eb;
+  --admonition-accent: #06b6d4;
+  --admonition-spectrum: #22c55e;
+}
+.md-typeset .admonition.tip,
+.md-typeset details.tip {
+  --admonition-color: #06b6d4;
+  --admonition-accent: #22c55e;
+  --admonition-spectrum: #facc15;
+}
+.md-typeset .admonition.success,
+.md-typeset details.success {
+  --admonition-color: #16a34a;
+  --admonition-accent: #eab308;
+  --admonition-spectrum: #f97316;
+}
+.md-typeset .admonition.question,
+.md-typeset details.question {
+  --admonition-color: #7c3aed;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition.warning,
+.md-typeset details.warning {
+  --admonition-color: #eab308;
+  --admonition-accent: #f97316;
+  --admonition-spectrum: #dc2626;
+}
+.md-typeset .admonition.failure,
+.md-typeset details.failure {
+  --admonition-color: #dc2626;
+  --admonition-accent: #d946ef;
+  --admonition-spectrum: #7c3aed;
+}
+.md-typeset .admonition.danger,
+.md-typeset details.danger {
+  --admonition-color: #b91c1c;
+  --admonition-accent: #f97316;
+  --admonition-spectrum: #dc2626;
+}
+.md-typeset .admonition.bug,
+.md-typeset details.bug {
+  --admonition-color: #d946ef;
+  --admonition-accent: #7c3aed;
+  --admonition-spectrum: #2563eb;
+}
+.md-typeset .admonition.example,
+.md-typeset details.example {
+  --admonition-color: #7c3aed;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition.quote,
+.md-typeset details.quote {
+  --admonition-color: #475569;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition-title,
+.md-typeset summary {
+  margin: 0 -0.8rem 0.55rem;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+  background: rgba(127, 127, 127, 0.07);
+  background:
+    linear-gradient(
+      105deg,
+      color-mix(in srgb, var(--admonition-color) 12%, transparent),
+      color-mix(in srgb, var(--admonition-color) 11%, transparent) 50%,
+      color-mix(in srgb, var(--admonition-accent) 10%, transparent) 70%,
+      color-mix(in srgb, var(--admonition-spectrum) 7%, transparent) 86%,
+      transparent
+    );
+  border-bottom: 1px solid var(--borderColor-muted);
+  border-bottom: 1px solid color-mix(in srgb, var(--admonition-color) 28%, transparent);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  color: var(--fgColor-default);
+  line-height: 1.45;
+}
+[dir="ltr"] .md-typeset .admonition-title,
+[dir="ltr"] .md-typeset summary {
+  padding-left: 2.35rem;
+}
+[dir="rtl"] .md-typeset .admonition-title,
+[dir="rtl"] .md-typeset summary {
+  padding-right: 2.35rem;
+}
+.md-typeset .admonition > :last-child,
+.md-typeset details > :last-child {
+  margin-bottom: 0.45rem;
+}
+.md-typeset .admonition-title::before,
+.md-typeset summary::before {
+  background-color: var(--admonition-color) !important;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.md-typeset .admonition-title::after,
+.md-typeset summary::after {
+  color: var(--admonition-color) !important;
+}
+[dir="ltr"] .md-typeset .admonition-title::before,
+[dir="ltr"] .md-typeset summary::before {
+  left: 0.8rem;
+}
+[dir="rtl"] .md-typeset .admonition-title::before,
+[dir="rtl"] .md-typeset summary::before {
+  right: 0.8rem;
+}
+[dir="ltr"] .md-typeset summary::after {
+  right: 0.35rem;
+}
+[dir="rtl"] .md-typeset summary::after {
+  left: 0.35rem;
+}
+.md-typeset summary::after {
+  top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+}
+.md-typeset details[open] > summary::after {
+  transform: translateY(-50%) rotate(90deg);
+}
+[dir="rtl"] .md-typeset summary::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+[dir="rtl"] .md-typeset details[open] > summary::after {
+  transform: translateY(-50%) rotate(90deg);
+}
+.md-typeset details:not([open]) > summary {
+  margin-bottom: 0;
+  border-bottom: 0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+/* ============================================================================
+   04. 站点框架
+   ----------------------------------------------------------------------------
+   Logo、页面信息、虚线网格背景、正文区域、导航栏毛玻璃、导航选中态、
+   右侧 TOC 阅读进度、页面宽度、滚动条样式、highlight.js 行号列。
+   ============================================================================ */
+
+/* ---- Logo ---- */
+.bf-logo {
+  display: block;
+  height: 1.45rem;
+  width: auto;
+}
+.bf-logo__text {
+  font-family: "Courier New", Courier, ui-monospace, monospace;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0;
+  fill: var(--md-default-fg-color);
+}
+
+/* ---- 页面信息 ---- */
+.page-updated-top {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: -0.85rem 0 1.35rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.page-updated-top[hidden],
+.page-info__item[hidden] {
+  display: none !important;
+}
+
+.page-updated-top__label {
+  width: 12.5em;
+  flex-shrink: 0;
+}
+
+.page-updated-top__time {
+  color: var(--md-default-fg-color--lighter);
+  font-variant-numeric: tabular-nums;
+}
+
+.page-info {
+  display: grid;
+  gap: 0.25rem;
+  margin: 2rem 0 1.2rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  color: var(--md-default-fg-color--light);
+  font-size: 0.68rem;
+}
+
+.page-info__item {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 1.4rem;
+}
+
+.page-info__label {
+  width: 12.5em;
+  flex-shrink: 0;
+}
+
+.page-info__value {
+  color: var(--md-default-fg-color--lighter);
+  font-variant-numeric: tabular-nums;
+}
+
+.page-info__stars img {
+  display: block;
+}
+
+/* ---- 虚线网格背景（视差） ---- */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--page-grid);
+  background-position: 0 var(--grid-y, 0);
+  background-size: 80px 80px;
+  opacity: 1;
+  mask-image: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 1) calc(50% - var(--grid-clear-half) - var(--grid-fade)),
+    transparent calc(50% - var(--grid-clear-half)),
+    transparent calc(50% + var(--grid-clear-half)),
+    rgba(0, 0, 0, 1) calc(50% + var(--grid-clear-half) + var(--grid-fade))
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 1) calc(50% - var(--grid-clear-half) - var(--grid-fade)),
+    transparent calc(50% - var(--grid-clear-half)),
+    transparent calc(50% + var(--grid-clear-half)),
+    rgba(0, 0, 0, 1) calc(50% + var(--grid-clear-half) + var(--grid-fade))
+  );
+}
+
+body.home-active::before,
+body.rainbow-active::before {
+  content: none;
+}
+
+/* ---- 正文区域 ---- */
+.md-content {
+  background-color: var(--md-default-bg-color);
+  box-shadow: none;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- 编辑按钮：确保在标题之上（Safari 兼容） ---- */
+.md-content__button {
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+/* H1 标题不拦截编辑按钮的点击 */
+.md-typeset h1 {
+  pointer-events: none;
+}
+.md-typeset h1 > * {
+  pointer-events: auto;
+}
+
+/* 主页 .home-page wrapper 有 position:relative 创建层叠上下文，
+   把 H1 提到按钮之上。降低 wrapper 的 z-index 让按钮可见。 */
+.home-page {
+  z-index: 0;
+}
+
+.md-content__inner {
+  padding-inline: var(--content-padding-inline);
+}
+
+body.home-active .md-content__inner {
+  padding-inline: 0;
+}
+
+[data-md-color-scheme="default"] .md-content,
+[data-md-color-scheme="default"] .md-typeset {
+  background-color: var(--content-bg);
+}
+
+body.home-active .md-content,
+body.home-active .md-typeset {
+  background-color: transparent !important;
+}
+
+/* ---- 导航栏毛玻璃 ---- */
+.md-header,
+.md-tabs {
+  background-color: var(--header-bg);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+}
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: var(--header-bg) !important;
+}
+
+.md-tabs__list {
+  padding-left: 0rem;
+}
+
+/* ---- 导航选中态 ---- */
+.md-sidebar--primary .md-nav__link--active,
+.md-sidebar--primary .md-nav__item--active > .md-nav__container {
+  border-radius: var(--radius-md);
+  background-color: var(--active-nav-bg);
+  color: var(--md-default-fg-color);
+  font-weight: 600;
+}
+
+.md-sidebar--primary .md-nav__item--active > .md-nav__link--active {
+  background-color: var(--active-nav-bg);
+  color: var(--md-default-fg-color);
+  font-weight: 600;
+}
+
+.md-sidebar--primary .md-nav__item--active > .md-nav__container > .md-nav__link {
+  background-color: transparent;
+}
+
+/* ---- 右侧 TOC 阅读进度 ---- */
+.md-nav--secondary [data-md-component="toc"] .md-nav__link {
+  position: relative;
+  color: var(--md-default-fg-color);
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.md-nav--secondary [data-md-component="toc"] .md-nav__link .md-typeset {
+  color: inherit;
+  background-color: transparent;
+}
+
+.md-nav--secondary [data-md-component="toc"] .md-nav__link--passed {
+  color: var(--md-default-fg-color--light);
+  opacity: 0.86;
+}
+
+.md-nav--secondary [data-md-component="toc"] .md-nav__link--active {
+  color: var(--md-accent-fg-color);
+  opacity: 1;
+}
+
+/* ---- 页面宽度 ---- */
+.md-grid {
+  max-width: var(--page-max-width);
+}
+
+/* ---- 滚动条 ---- */
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner),
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar,
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-height);
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-track,
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-track {
+  background: transparent;
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-thumb,
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-thumb:hover,
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within) {
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within)::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+}
+.md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within)::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+/* ---- highlight.js 行号列 ---- */
+.md-typeset :is(pre.highlight, pre[class*="language-"]) {
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+}
+.md-typeset :is(pre.highlight, pre[class*="language-"]) code {
+  flex: 1 1 auto;
+  display: block;
+  line-height: 1.45;
+  overflow-x: auto;
+  padding-bottom: var(--code-scrollbar-offset);
+  margin-bottom: calc(-1 * var(--code-scrollbar-offset));
+}
+.md-typeset .code-gutter {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  user-select: none;
+  box-sizing: border-box;
+  padding-right: 0.8em;
+  border-right: 1px solid var(--md-default-fg-color--lightest);
+  margin-right: 1em;
+  color: var(--md-default-fg-color--lighter);
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+.md-typeset .code-gutter .code-ln {
+  display: block;
+  height: var(--code-line-height);
+  line-height: var(--code-line-height);
+}
+
+/* hljs 与 Material 布局兼容见 main.css（代码块 UI 归一管理） */
+
+/* ============================================================================
+   05. PDF 阅读器
+   ----------------------------------------------------------------------------
+   .pdf-viewer-* / 下载进度 + 原生 PDF 查看器 + iOS/iPadOS 画布降级。
+   ============================================================================ */
+
+.pdf-viewer {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--md-code-bg-color, #f5f5f5);
+  box-shadow: var(--shadow-sm);
+  font-family: inherit;
+  margin: 1em 0;
+}
+
+.pdf-viewer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 8px 12px;
+  background: var(--md-default-bg-color, #fff);
+  border-bottom: 1px solid var(--md-default-fg-color--lightest, #e0e0e0);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.pdf-viewer-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex: 1 1 auto;
+}
+
+.pdf-viewer-title,
+.pdf-viewer-status {
+  font-size: 0.85rem;
+  color: var(--md-typeset-color, #555);
+  user-select: none;
+}
+
+.pdf-viewer-title {
+  flex: 0 0 auto;
+  font-weight: 600;
+}
+
+.pdf-viewer-status {
+  overflow: hidden;
+  color: var(--md-default-fg-color--light);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pdf-viewer-spacer {
+  flex: 1;
+}
+
+.pdf-viewer-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-md);
+  color: var(--md-default-fg-color--light, #888);
+  transition: color 0.15s, background 0.15s;
+}
+
+.pdf-viewer-action:hover {
+  color: var(--md-accent-fg-color, #4051b5);
+  background: var(--md-default-fg-color--lightest, #e8e8e8);
+}
+
+.pdf-viewer-mobile-hint {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest, #e0e0e0);
+  background: var(--md-default-bg-color, #fff);
+  color: var(--md-default-fg-color--light);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.pdf-viewer-mobile-hint[hidden] {
+  display: none;
+}
+
+.pdf-viewer-native-wrap {
+  position: relative;
+  overflow: hidden;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: var(--md-code-bg-color, #525252);
+}
+
+.pdf-viewer-native {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--md-default-bg-color);
+}
+
+.pdf-viewer-native[hidden] {
+  display: none;
+}
+
+.pdf-viewer-canvases {
+  display: block;
+  height: 100%;
+  overflow: auto;
+  padding: 12px;
+  background: var(--md-code-bg-color, #f5f5f5);
+  -webkit-overflow-scrolling: touch;
+}
+
+.pdf-viewer-canvases[hidden] {
+  display: none;
+}
+
+.pdf-viewer-page-wrap {
+  width: min(100%, 54rem);
+  margin: 0 auto 12px;
+  background: var(--pdf-page-bg);
+  box-shadow: var(--shadow-sm);
+}
+
+.pdf-viewer-page-wrap:last-child {
+  margin-bottom: 0;
+}
+
+.pdf-viewer-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+}
+
+.pdf-viewer-external {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 1.2rem;
+  background: var(--md-default-bg-color);
+  text-align: center;
+}
+
+.pdf-viewer-external[hidden] {
+  display: none;
+}
+
+.pdf-viewer-external__title {
+  color: var(--md-typeset-color, #555);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.pdf-viewer-external__text {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.78rem;
+}
+
+.pdf-viewer-external__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--md-accent-fg-color);
+  border-radius: var(--radius-md);
+  background: var(--active-nav-bg, #f5fbff);
+  color: var(--md-accent-fg-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.pdf-viewer-external__button:hover {
+  background: color-mix(in srgb, var(--md-accent-fg-color) 9%, var(--md-default-bg-color));
+}
+
+/* ---- 加载覆盖层 ---- */
+.pdf-loader-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--md-default-bg-color, #fff);
+  z-index: 2;
+  transition: opacity 0.4s ease;
+  padding: 24px;
+}
+
+.pdf-loader-dot {
+  width: 0.42rem;
+  height: 0.42rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--md-accent-fg-color, #0969da);
+  animation: pdf-loader-blink 2s steps(1, end) infinite;
+}
+
+.pdf-loader-dot--done {
+  opacity: 0.6;
+  animation: none;
+}
+
+@keyframes pdf-loader-blink {
+  0%, 49.999% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.pdf-loader-percent {
+  color: var(--md-default-fg-color);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.pdf-loader-bar-track {
+  width: min(320px, 80%);
+  height: 6px;
+  background: var(--md-default-fg-color--lightest, #e0e0e0);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.pdf-loader-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--md-accent-fg-color, #4051b5);
+  border-radius: var(--radius-sm);
+  transition: width 0.15s linear;
+}
+
+.pdf-loader-detail {
+  font-size: 0.75rem;
+  color: var(--md-default-fg-color--light, #999);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+}
+
+.pdf-viewer-error {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: var(--error-color);
+  font-size: 0.9rem;
+  background: var(--md-default-bg-color, #fff);
+  z-index: 3;
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer {
+  background: var(--md-code-bg-color, #1e1e2e);
+}
+
+[data-md-color-scheme="slate"] .pdf-loader-overlay {
+  background: var(--md-default-bg-color, #1e1e2e);
+}
+
+[data-md-color-scheme="slate"] .pdf-loader-bar-track {
+  background: rgba(255,255,255,0.12);
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer-toolbar {
+  background: var(--md-default-bg-color, #1a1a2e);
+  border-color: rgba(255,255,255,0.08);
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer-mobile-hint {
+  background: var(--md-default-bg-color, #1a1a2e);
+  border-color: rgba(255,255,255,0.08);
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer-native-wrap {
+  background: var(--md-code-bg-color, #1e1e2e);
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer-canvases {
+  background: var(--md-code-bg-color, #1e1e2e);
+}
+
+/* ============================================================================
+   06. 响应式（移动端通用适配）
+   ============================================================================ */
+
+@media screen and (max-width: 44.984375em) {
+  .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
+    display: none;
+  }
+
+  .md-content__inner {
+    padding-inline: var(--mobile-content-padding);
+  }
+
+  .md-typeset pre.highlight,
+  .md-typeset pre[class*="language-"] {
+    margin-inline: 0;
+  }
+  .md-typeset :is(pre.highlight, pre[class*="language-"]) code {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .md-typeset .code-gutter {
+    padding-right: var(--mobile-code-gutter-padding-right);
+    margin-right: var(--mobile-code-gutter-margin-right);
+  }
+}
+
+/* 07. 淡入动画 */
+@keyframes fade-in { from { opacity: 0.05; } to { opacity: 1; } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(0.3rem); } to { opacity: 1; transform: translateY(0); } }
+.md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1.5s ease-out both; }
+.md-sidebar--secondary .md-nav__item { animation: slide-up 0.4s ease both; animation-delay: calc(var(--nav-index, 0) * 40ms); }
+.md-sidebar--secondary .md-nav__item:nth-child(1) { --nav-index: 0; } .md-sidebar--secondary .md-nav__item:nth-child(2) { --nav-index: 1; } .md-sidebar--secondary .md-nav__item:nth-child(3) { --nav-index: 2; } .md-sidebar--secondary .md-nav__item:nth-child(4) { --nav-index: 3; } .md-sidebar--secondary .md-nav__item:nth-child(5) { --nav-index: 4; }
+.md-sidebar--secondary .md-nav__item:nth-child(6) { --nav-index: 5; } .md-sidebar--secondary .md-nav__item:nth-child(7) { --nav-index: 6; } .md-sidebar--secondary .md-nav__item:nth-child(8) { --nav-index: 7; } .md-sidebar--secondary .md-nav__item:nth-child(9) { --nav-index: 8; } .md-sidebar--secondary .md-nav__item:nth-child(10) { --nav-index: 9; }
+.md-sidebar--secondary .md-nav__item:nth-child(11) { --nav-index: 10; } .md-sidebar--secondary .md-nav__item:nth-child(12) { --nav-index: 11; } .md-sidebar--secondary .md-nav__item:nth-child(13) { --nav-index: 12; } .md-sidebar--secondary .md-nav__item:nth-child(14) { --nav-index: 13; } .md-sidebar--secondary .md-nav__item:nth-child(15) { --nav-index: 14; }
+.md-sidebar--secondary .md-nav__item:nth-child(16) { --nav-index: 15; } .md-sidebar--secondary .md-nav__item:nth-child(17) { --nav-index: 16; } .md-sidebar--secondary .md-nav__item:nth-child(18) { --nav-index: 17; } .md-sidebar--secondary .md-nav__item:nth-child(19) { --nav-index: 18; } .md-sidebar--secondary .md-nav__item:nth-child(20) { --nav-index: 19; }
+.md-sidebar--secondary .md-nav__item:nth-child(21) { --nav-index: 20; } .md-sidebar--secondary .md-nav__item:nth-child(22) { --nav-index: 21; } .md-sidebar--secondary .md-nav__item:nth-child(23) { --nav-index: 22; } .md-sidebar--secondary .md-nav__item:nth-child(24) { --nav-index: 23; } .md-sidebar--secondary .md-nav__item:nth-child(25) { --nav-index: 24; }
+.md-sidebar--secondary .md-nav__item:nth-child(26) { --nav-index: 25; } .md-sidebar--secondary .md-nav__item:nth-child(27) { --nav-index: 26; } .md-sidebar--secondary .md-nav__item:nth-child(28) { --nav-index: 27; } .md-sidebar--secondary .md-nav__item:nth-child(29) { --nav-index: 28; } .md-sidebar--secondary .md-nav__item:nth-child(30) { --nav-index: 29; }
+@media (prefers-reduced-motion: reduce) { .md-content__inner, .md-sidebar--secondary .md-nav__item { animation: none; } }
