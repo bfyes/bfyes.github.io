@@ -1,0 +1,130 @@
+{% if page.meta.page_info != false %}
+<script src="{{ 'theme/page-metadata.js' | url }}"></script>
+
+<div class="page-info">
+  <span class="page-info__item page-info__updated" hidden>
+    最后更新于 <time id="page-last-updated" datetime=""></time>
+  </span>
+  <span class="page-info__item page-info__views">
+    本文访问 <span id="goatcounter-page-count">--</span> 次
+  </span>
+  <span class="page-info__item page-info__views-total">
+    全站访问 <span id="goatcounter-total-count">--</span> 次
+  </span>
+  <span class="page-info__item">
+    <a href="https://bfyes.goatcounter.com/" target="_blank" rel="noopener">访问统计</a>
+  </span>
+</div>
+
+<script>
+  (function () {
+    function pageMetaCandidates() {
+      var path = window.location.pathname || "/";
+      var decoded = path;
+      try {
+        decoded = decodeURIComponent(path);
+      } catch (e) {}
+
+      return [
+        path,
+        decoded,
+        path.endsWith("/") ? path : path + "/",
+        decoded.endsWith("/") ? decoded : decoded + "/",
+      ];
+    }
+
+    function renderLastUpdated() {
+      var meta = window.__BFYES_PAGE_META__ || {};
+      var candidates = pageMetaCandidates();
+      var data = null;
+
+      for (var i = 0; i < candidates.length; i++) {
+        if (meta[candidates[i]]) {
+          data = meta[candidates[i]];
+          break;
+        }
+      }
+
+      var wrap = document.querySelector(".page-info__updated");
+      var time = document.querySelector("#page-last-updated");
+      if (!wrap || !time || !data || !data.updated) {
+        return;
+      }
+
+      var date = new Date(data.updated);
+      time.dateTime = data.updated;
+      time.textContent = date.toLocaleDateString("zh-CN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      wrap.hidden = false;
+    }
+
+    function goatCounterPath() {
+      if (window.goatcounter && typeof window.goatcounter.get_data === "function") {
+        return window.goatcounter.get_data().p;
+      }
+
+      return window.location.pathname || "/";
+    }
+
+    function setCount(selector, value) {
+      var wrap = document.querySelector(selector);
+      var count = wrap ? wrap.querySelector("span") : null;
+      if (!wrap || !count || !value) {
+        return;
+      }
+
+      count.textContent = value;
+    }
+
+    function fetchGoatCounterCount(path, selector) {
+      var url = "https://bfyes.goatcounter.com/counter/" + encodeURIComponent(path) + ".json";
+      fetch(url)
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error("GoatCounter counter request failed");
+          }
+          return response.json();
+        })
+        .then(function (data) {
+          setCount(selector, data.count);
+        })
+        .catch(function () {});
+    }
+
+    function renderGoatCounterCounts() {
+      var attempts = 0;
+      var timer = setInterval(function () {
+        attempts += 1;
+        if ((window.goatcounter && typeof window.goatcounter.get_data === "function") || attempts >= 20) {
+          clearInterval(timer);
+          fetchGoatCounterCount(goatCounterPath(), ".page-info__views");
+          fetchGoatCounterCount("TOTAL", ".page-info__views-total");
+        }
+      }, 100);
+    }
+
+    function renderPageInfo() {
+      renderLastUpdated();
+      renderGoatCounterCounts();
+    }
+
+    if (!window.__bfyesPageInfoReady) {
+      window.__bfyesPageInfoReady = true;
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", renderPageInfo);
+      } else {
+        renderPageInfo();
+      }
+
+      if (window.document$) {
+        window.document$.subscribe(renderPageInfo);
+      }
+    } else {
+      renderPageInfo();
+    }
+  })();
+</script>
+{% endif %}

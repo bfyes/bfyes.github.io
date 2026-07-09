@@ -318,20 +318,35 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 
 /* ===== GitHub 贡献图 ===== */
 .github-calendar-wrap {
+  display: block;
   max-width: 760px;
   margin: 1rem auto 0;
   overflow-x: auto;
 }
 
-.github-calendar-wrap .calendar {
-  min-width: 640px;
+.github-contribution-chart {
+  display: block;
+  width: 100%;
+  min-width: 620px;
   border: 1px solid var(--md-default-fg-color--lightest);
   border-radius: 8px;
-  color: var(--md-default-fg-color);
   background: var(--md-default-bg-color);
+  padding: 0.75rem;
 }
 
-.github-calendar-wrap .contrib-footer,
-.github-calendar-wrap .float-left.text-gray {
-  display: none;
+/* ===== 页面信息 ===== */
+.page-info {
+  display: grid;
+  gap: 0.25rem;
+  margin: 2rem 0 1.2rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  color: var(--md-default-fg-color--light);
+  font-size: 0.68rem;
+}
+
+.page-info__item {
+  display: flex;
+  align-items: center;
+  min-height: 1.4rem;
 }

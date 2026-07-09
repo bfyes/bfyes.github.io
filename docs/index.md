@@ -20,40 +20,6 @@
 
 ## GitHub 贡献图
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-calendar@2.3.2/dist/github-calendar-responsive.css">
-
 <div class="github-calendar-wrap">
-  <div id="github-contribution-graph" class="calendar">
-    Loading GitHub contributions...
-  </div>
+  <img class="github-contribution-chart" src="https://ghchart.rshah.org/409ba5/bfyes" alt="bfyes GitHub contribution chart" loading="lazy">
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/github-calendar@2.3.2/dist/github-calendar.min.js"></script>
-<script>
-  (function () {
-    function renderGitHubCalendar() {
-      var graph = document.querySelector("#github-contribution-graph");
-      if (!graph || graph.dataset.loaded === "true" || typeof GitHubCalendar !== "function") {
-        return;
-      }
-
-      graph.dataset.loaded = "true";
-      GitHubCalendar("#github-contribution-graph", "bfyes", {
-        responsive: true,
-        global_stats: false,
-        tooltips: true,
-        cache: 86400,
-      });
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", renderGitHubCalendar);
-    } else {
-      renderGitHubCalendar();
-    }
-
-    if (window.document$) {
-      window.document$.subscribe(renderGitHubCalendar);
-    }
-  })();
-</script>
