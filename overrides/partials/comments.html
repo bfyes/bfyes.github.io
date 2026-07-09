@@ -19,19 +19,17 @@
 <script>
   // 让 giscus 跟随站点明暗主题。
   // 根因：data-theme="preferred_color_scheme" 只在 giscus 初始化时读一次系统偏好，
-  // 切换站点主题后 iframe 不会重算。这里做两件事：
-  //   1) 不依赖 theme-sync.js——直接读 <body> 的 data-md-color-scheme 判定明暗，
-  //      并用 MutationObserver 监听它的变化（zensical 切主题时即写入该属性）。
-  //   2) iframe 由 client.js 异步注入，用 MutationObserver 监听其出现，
-  //      一出现就立刻推一次当前主题，避免「首次进入主题不同步」。
+  // 切换站点主题后 iframe 不会重算。这里只在「主题真的变了」时推一次 setConfig，
+  // 避免对 <body> 子树做宽口径观察导致与 giscus 渲染互相触发、形成无限循环。
   (function () {
     var FRAME_SEL = "iframe.giscus-frame";
-    var sentForFrame = null; // 当前 iframe 是否已推送过初始主题
+    var lastMode = null;   // 上次推送过的 mode，去重
+    var frameBooted = false; // iframe 首次就绪后是否已推送初始主题
 
     function currentMode() {
       var el = document.body || document.documentElement;
-      var s = el && el.getAttribute("data-md-color-scheme");
-      return s === "slate" ? "dark" : "light";
+      return el && el.getAttribute("data-md-color-scheme") === "slate"
+        ? "dark" : "light";
     }
     function themeFor(mode) {
       // dark = GitHub dark (#0d1117 纯净黑底)，比 dark_dimmed 的灰底更干净。
@@ -40,7 +38,7 @@
     function getFrame() {
       return document.querySelector(FRAME_SEL);
     }
-    function send(mode) {
+    function post(mode) {
       var iframe = getFrame();
       if (!iframe || !iframe.contentWindow) return false;
       iframe.contentWindow.postMessage(
@@ -50,51 +48,47 @@
       return true;
     }
 
-    function sync(mode) {
-      // iframe 还没注入就先记下目标，等它一出现立即推。
-      if (!send(mode)) sentForFrame = mode;
+    /** 仅在 mode 实际变化时推送，避免循环。 */
+    function pushIfChanged() {
+      var mode = currentMode();
+      if (mode === lastMode) return;
+      if (!post(mode)) return; // iframe 还没在，先不更新 lastMode，等它就绪再推
+      lastMode = mode;
     }
 
     function bind() {
-      // 1) 主题变化：监听 <body> 的 data-md-color-scheme（切主题的瞬间变化）
+      // 1) 主题变化：只盯 <body> 上的 data-md-color-scheme 一个属性，不带 subtree。
+      //    切主题的瞬间该属性变化 → 推一次。giscus 渲染改的是子树，不会触发这里。
       function watchBody() {
         var target = document.body;
-        if (!target) { // body 未就绪，等一下
-          setTimeout(watchBody, 50);
-          return;
-        }
-        if (typeof MutationObserver === "undefined") {
-          // 兜底：轮询
-          var last = currentMode();
-          setInterval(function () {
-            var m = currentMode();
-            if (m !== last) { last = m; sync(m); }
-          }, 300);
-          return;
-        }
-        new MutationObserver(function () { sync(currentMode()); })
+        if (!target) { setTimeout(watchBody, 50); return; }
+        lastMode = currentMode(); // 记录初始态
+        if (typeof MutationObserver === "undefined") return;
+        new MutationObserver(pushIfChanged)
           .observe(target, { attributes: true, attributeFilter: ["data-md-color-scheme"] });
       }
 
-      // 2) iframe 出现：client.js 注入 iframe 后立即推一次初始主题
+      // 2) iframe 首次出现：推一次初始主题，然后立刻断开观察者（一次性）。
       function watchFrame() {
-        if (getFrame()) { onFrameReady(); return; }
+        if (getFrame()) { bootFrame(); return; }
         if (typeof MutationObserver === "undefined") return;
-        new MutationObserver(function (_, obs) {
-          if (getFrame()) { onFrameReady(); obs.disconnect(); }
-        }).observe(document.body, { childList: true, subtree: true });
+        var obs = new MutationObserver(function () {
+          if (getFrame()) { obs.disconnect(); bootFrame(); }
+        });
+        obs.observe(document.body, { childList: true, subtree: true });
+        // 防止 obs 永挂：iframe 迟迟不来就 8s 后放弃
+        setTimeout(function () { obs.disconnect(); }, 8000);
       }
 
-      function onFrameReady() {
-        // 推一次当前主题（解决首次进入不同步），并允许后续主题变化覆盖
-        send(currentMode());
-        sentForFrame = null;
+      function bootFrame() {
+        if (frameBooted) return;
+        frameBooted = true;
+        var mode = currentMode();
+        if (post(mode)) lastMode = mode;
       }
 
       watchBody();
       watchFrame();
-      // 兜底：1s 后若还没拿到 iframe，再试一次（navigation.instant 下内容区会重载）
-      setTimeout(function () { send(currentMode()); }, 1000);
     }
 
     if (document.readyState === "loading") {
@@ -105,4 +99,3 @@
   })();
 </script>
 {% endif %}
-
