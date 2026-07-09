@@ -317,22 +317,109 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* ===== GitHub 贡献图 ===== */
+/* 容器：纵向排列 SVG 与统计行 */
 .github-calendar-wrap {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
   max-width: 760px;
   margin: 1rem auto 0;
   overflow-x: auto;
 }
 
-.github-contribution-chart {
-  display: block;
-  width: 100%;
-  min-width: 620px;
-  height: auto;
+.github-calendar-wrap:not([data-ghc-state="loading"]) .ghc-loading {
+  display: none;
+}
+
+/* 加载/错误占位 */
+.ghc-loading,
+.ghc-error {
   border: 1px solid var(--md-default-fg-color--lightest);
   border-radius: 8px;
   background: var(--md-default-bg-color);
-  padding: 0.75rem;
+  padding: 1.4rem 0.75rem;
+  text-align: center;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.8rem;
+}
+.ghc-error {
+  color: var(--md-primary-fg-color, #b42318);
+}
+
+/* SVG 热力图本体 */
+.github-contribution-chart {
+  display: block;
+  width: 100%;
+  min-width: 680px;
+  height: auto;
+}
+
+/* 月份 / 星期文字 */
+.ghc-month,
+.ghc-weekday {
+  fill: var(--md-default-fg-color);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--md-text-font, inherit);
+  user-select: none;
+}
+
+/* 格子 */
+.ghc-cell {
+  transition: opacity 0.12s ease;
+  shape-rendering: geometricprecision;
+}
+.ghc-cell:hover {
+  opacity: 0.65;
+}
+
+/* ---- 配色：亮色（GitHub light，与 github.com 一致） ---- */
+[data-md-color-scheme="default"] .ghc-L0 { fill: #ebedf0; }
+[data-md-color-scheme="default"] .ghc-L1 { fill: #9be9a8; }
+[data-md-color-scheme="default"] .ghc-L2 { fill: #40c463; }
+[data-md-color-scheme="default"] .ghc-L3 { fill: #30a14e; }
+[data-md-color-scheme="default"] .ghc-L4 { fill: #216e39; }
+
+/* ---- 配色：暗色（GitHub dark，与 github.com dark 主题一致） ---- */
+[data-md-color-scheme="slate"] .ghc-L0 { fill: #161b22; }
+[data-md-color-scheme="slate"] .ghc-L1 { fill: #0e4429; }
+[data-md-color-scheme="slate"] .ghc-L2 { fill: #006d32; }
+[data-md-color-scheme="slate"] .ghc-L3 { fill: #26a641; }
+[data-md-color-scheme="slate"] .ghc-L4 { fill: #39d353; }
+
+/* 图例 + 统计行 */
+.ghc-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  justify-content: flex-end;
+  font-size: 0.68rem;
+  color: var(--md-default-fg-color--light);
+  padding-right: 0.2rem;
+}
+.ghc-legend__label { opacity: 0.85; }
+.ghc-legend__box {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+}
+.ghc-summary {
+  margin-left: 0.6rem;
+}
+
+/* ===== 左上角 BillFeng Logo ===== */
+.bf-logo {
+  display: block;
+  height: 1.45rem;   /* Material 默认 logo 约 1.2rem，放大一档 */
+  width: auto;
+}
+.bf-logo__text {
+  font-family: "Courier New", Courier, ui-monospace, monospace;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0;
+  fill: var(--md-default-fg-color);
 }
 
 /* ===== 页面信息 ===== */

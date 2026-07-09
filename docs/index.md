@@ -19,5 +19,7 @@
 ---
 
 <div class="github-calendar-wrap">
-  <img class="github-contribution-chart" src="https://ghchart.rshah.org/409ba5/bfyes" alt="bfyes GitHub 贡献图">
+  <div class="ghc-loading">正在加载 GitHub 贡献图…</div>
 </div>
+
+---

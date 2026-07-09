@@ -1,5 +1,6 @@
 <!-- Giscus 评论区 -->
 {% if page.meta.comments != false %}
+<div class="giscus"></div>
 <script src="https://giscus.app/client.js"
     data-repo="bfyes/bfyes.github.io"
     data-repo-id="R_kgDOQ6xWqA"
@@ -15,4 +16,93 @@
     crossorigin="anonymous"
     async>
 </script>
+<script>
+  // 让 giscus 跟随站点明暗主题。
+  // 根因：data-theme="preferred_color_scheme" 只在 giscus 初始化时读一次系统偏好，
+  // 切换站点主题后 iframe 不会重算。这里做两件事：
+  //   1) 不依赖 theme-sync.js——直接读 <body> 的 data-md-color-scheme 判定明暗，
+  //      并用 MutationObserver 监听它的变化（zensical 切主题时即写入该属性）。
+  //   2) iframe 由 client.js 异步注入，用 MutationObserver 监听其出现，
+  //      一出现就立刻推一次当前主题，避免「首次进入主题不同步」。
+  (function () {
+    var FRAME_SEL = "iframe.giscus-frame";
+    var sentForFrame = null; // 当前 iframe 是否已推送过初始主题
+
+    function currentMode() {
+      var el = document.body || document.documentElement;
+      var s = el && el.getAttribute("data-md-color-scheme");
+      return s === "slate" ? "dark" : "light";
+    }
+    function themeFor(mode) {
+      // dark = GitHub dark (#0d1117 纯净黑底)，比 dark_dimmed 的灰底更干净。
+      return mode === "dark" ? "dark" : "light";
+    }
+    function getFrame() {
+      return document.querySelector(FRAME_SEL);
+    }
+    function send(mode) {
+      var iframe = getFrame();
+      if (!iframe || !iframe.contentWindow) return false;
+      iframe.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: themeFor(mode) } } },
+        "https://giscus.app"
+      );
+      return true;
+    }
+
+    function sync(mode) {
+      // iframe 还没注入就先记下目标，等它一出现立即推。
+      if (!send(mode)) sentForFrame = mode;
+    }
+
+    function bind() {
+      // 1) 主题变化：监听 <body> 的 data-md-color-scheme（切主题的瞬间变化）
+      function watchBody() {
+        var target = document.body;
+        if (!target) { // body 未就绪，等一下
+          setTimeout(watchBody, 50);
+          return;
+        }
+        if (typeof MutationObserver === "undefined") {
+          // 兜底：轮询
+          var last = currentMode();
+          setInterval(function () {
+            var m = currentMode();
+            if (m !== last) { last = m; sync(m); }
+          }, 300);
+          return;
+        }
+        new MutationObserver(function () { sync(currentMode()); })
+          .observe(target, { attributes: true, attributeFilter: ["data-md-color-scheme"] });
+      }
+
+      // 2) iframe 出现：client.js 注入 iframe 后立即推一次初始主题
+      function watchFrame() {
+        if (getFrame()) { onFrameReady(); return; }
+        if (typeof MutationObserver === "undefined") return;
+        new MutationObserver(function (_, obs) {
+          if (getFrame()) { onFrameReady(); obs.disconnect(); }
+        }).observe(document.body, { childList: true, subtree: true });
+      }
+
+      function onFrameReady() {
+        // 推一次当前主题（解决首次进入不同步），并允许后续主题变化覆盖
+        send(currentMode());
+        sentForFrame = null;
+      }
+
+      watchBody();
+      watchFrame();
+      // 兜底：1s 后若还没拿到 iframe，再试一次（navigation.instant 下内容区会重载）
+      setTimeout(function () { send(currentMode()); }, 1000);
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", bind);
+    } else {
+      bind();
+    }
+  })();
+</script>
 {% endif %}
+
