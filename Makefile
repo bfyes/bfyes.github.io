@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := zensical
+
 .PHONY: zensical kill deploy
 
 kill: ## 杀掉 8000 端口进程
@@ -8,4 +10,4 @@ zensical: kill ## 实时预览文档站点（端口 8000）
 
 deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run zensical build
-	cd site && git init && git add -A && git commit -m "deploy" && git push -f https://github.com/bfyes/bfyes.github.io.git main:gh-pages
+	cd site && git init && git add -A && git commit -m "deploy" --allow-empty && git push -f https://github.com/bfyes/bfyes.github.io.git main:gh-pages

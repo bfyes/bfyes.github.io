@@ -315,3 +315,23 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   color: var(--md-default-fg-color--light);
   font-weight: 700;
 }
+
+/* ===== GitHub 贡献图 ===== */
+.github-calendar-wrap {
+  max-width: 760px;
+  margin: 1rem auto 0;
+  overflow-x: auto;
+}
+
+.github-calendar-wrap .calendar {
+  min-width: 640px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+  color: var(--md-default-fg-color);
+  background: var(--md-default-bg-color);
+}
+
+.github-calendar-wrap .contrib-footer,
+.github-calendar-wrap .float-left.text-gray {
+  display: none;
+}

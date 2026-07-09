@@ -1,8 +1,8 @@
 [project]
 site_name = "bfyes"
 site_url = ""
-repo_url = ""
-repo_name = ""
+repo_url = "https://github.com/bfyes/bfyes.github.io"
+repo_name = "bfyes/bfyes.github.io"
 edit_uri = ""
 site_description = ""
 site_author = ""

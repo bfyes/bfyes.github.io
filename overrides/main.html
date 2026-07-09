@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
+  {{ super() }}
   <script>
     (function () {
       try {
@@ -39,4 +40,10 @@
       } catch (e) {}
     })();
   </script>
+{% endblock %}
+
+{# 在每页正文底部插入 Giscus 评论区 #}
+{% block content %}
+  {{ super() }}
+  {% include "partials/comments.html" %}
 {% endblock %}
