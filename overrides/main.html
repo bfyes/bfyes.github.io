@@ -2,30 +2,6 @@
 
 {% block extrahead %}
   {{ super() }}
-  <script data-goatcounter="https://bfyes.goatcounter.com/count"
-          async src="https://gc.zgo.at/count.js"></script>
-  <script>
-    (function () {
-      var countedPath = location.pathname + location.search;
-
-      function countGoatCounterPageview() {
-        var path = location.pathname + location.search;
-        if (path === countedPath || !window.goatcounter || typeof window.goatcounter.count !== "function") {
-          return;
-        }
-
-        countedPath = path;
-        window.goatcounter.count({
-          path: path,
-          title: document.title,
-        });
-      }
-
-      if (window.document$) {
-        window.document$.subscribe(countGoatCounterPageview);
-      }
-    })();
-  </script>
   <script>
     (function () {
       try {

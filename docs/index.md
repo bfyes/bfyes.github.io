@@ -18,8 +18,6 @@
 
 ---
 
-## GitHub 贡献图
-
 <div class="github-calendar-wrap">
-  <img class="github-contribution-chart" src="https://ghchart.rshah.org/409ba5/bfyes" alt="bfyes GitHub contribution chart" loading="lazy">
+  <img class="github-contribution-chart" src="https://ghchart.rshah.org/409ba5/bfyes" alt="bfyes GitHub contribution chart">
 </div>

@@ -5,16 +5,12 @@
   <span class="page-info__item page-info__updated" hidden>
     最后更新于 <time id="page-last-updated" datetime=""></time>
   </span>
-  <span class="page-info__item page-info__views">
-    本文访问 <span id="goatcounter-page-count">--</span> 次
-  </span>
-  <span class="page-info__item page-info__views-total">
-    全站访问 <span id="goatcounter-total-count">--</span> 次
-  </span>
-  <span class="page-info__item">
-    <a href="https://bfyes.goatcounter.com/" target="_blank" rel="noopener">访问统计</a>
+  <span class="page-info__item" id="busuanzi_container_page_pv">
+    本文总阅读量 <span id="busuanzi_value_page_pv"></span> 次
   </span>
 </div>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 <script>
   (function () {
@@ -61,54 +57,8 @@
       wrap.hidden = false;
     }
 
-    function goatCounterPath() {
-      if (window.goatcounter && typeof window.goatcounter.get_data === "function") {
-        return window.goatcounter.get_data().p;
-      }
-
-      return window.location.pathname || "/";
-    }
-
-    function setCount(selector, value) {
-      var wrap = document.querySelector(selector);
-      var count = wrap ? wrap.querySelector("span") : null;
-      if (!wrap || !count || !value) {
-        return;
-      }
-
-      count.textContent = value;
-    }
-
-    function fetchGoatCounterCount(path, selector) {
-      var url = "https://bfyes.goatcounter.com/counter/" + encodeURIComponent(path) + ".json";
-      fetch(url)
-        .then(function (response) {
-          if (!response.ok) {
-            throw new Error("GoatCounter counter request failed");
-          }
-          return response.json();
-        })
-        .then(function (data) {
-          setCount(selector, data.count);
-        })
-        .catch(function () {});
-    }
-
-    function renderGoatCounterCounts() {
-      var attempts = 0;
-      var timer = setInterval(function () {
-        attempts += 1;
-        if ((window.goatcounter && typeof window.goatcounter.get_data === "function") || attempts >= 20) {
-          clearInterval(timer);
-          fetchGoatCounterCount(goatCounterPath(), ".page-info__views");
-          fetchGoatCounterCount("TOTAL", ".page-info__views-total");
-        }
-      }, 100);
-    }
-
     function renderPageInfo() {
       renderLastUpdated();
-      renderGoatCounterCounts();
     }
 
     if (!window.__bfyesPageInfoReady) {
