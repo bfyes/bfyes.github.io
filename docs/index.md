@@ -6,7 +6,7 @@
 
 !!! info "汇编课友请看"
 
-    - 学习汇编语言的同学请参考：[Windows XP on Apple Silicon](https://bfyes.github.io/Virtual-machines-on-Mac/windows-xp-apple-silicon/)
+    - 学习汇编语言的同学请参考：[Windows XP on Apple Silicon](https://bfyes.github.io/tools/windows-xp-apple-silicon/)
 
 ---
 
