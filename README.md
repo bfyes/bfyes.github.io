@@ -57,4 +57,4 @@ uv run zensical build
 
 ## 自动部署
 
-仓库使用 GitHub Actions 自动构建并发布到 GitHub Pages。定时任务会在 GitHub 服务器上重新生成站点数据并发布到 `gh-pages`，不需要依赖本地电脑运行。
+仓库使用 GitHub Actions 自动构建并发布到 GitHub Pages。定时任务会在 GitHub 服务器上重新生成站点数据并发布到 `gh-pages`分支。
