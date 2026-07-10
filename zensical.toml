@@ -1,135 +1,40 @@
 [project]
-site_name = "bfyes 的文档站"
-site_url = "https://bfyes.github.io"
+site_name = "bfyes"
+site_url = ""
 repo_url = "https://github.com/bfyes/bfyes.github.io"
-repo_name = "bfyes.github.io"
-edit_uri = "blob/main/docs/"
-site_description = "bfyes 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。"
-site_author = "BillFeng"
+repo_name = "bfyes/bfyes.github.io"
+edit_uri = "edit/main/docs/"
+site_description = ""
+site_author = ""
 copyright = ""
 
 nav = [
-    { "主页" = "/" },
+    { "主页" = "index.md" },
     { "学习" = [
-        "study/index.md",
-        { "信息安全原理与数学基础" = "study/ismath.md" },
         { "汇编语言设计与调试" = "study/asm.md" },
-        { "计算机系统Ⅰ" = [
-            "study/sys1/index.md",
-            { "lab0: 环境准备" = "study/sys1/lab0/index.md" },
-            { "lab1: MUX/七段数码管" = "study/sys1/lab1/index.md" },
-            { "lab2: 64位全加减法器" = "study/sys1/lab2/index.md" },
-            { "lab3: 时序电路/FSM" = "study/sys1/lab3/index.md" },
-            { "lab4: 卷积模块" = "study/sys1/lab4/index.md" },
-            { "lab5: RISC-V 汇编" = "study/sys1/lab5/index.md" },
-            { "project: 单周期CPU" = "study/sys1/project/index.md" },
-        ] },
-        { "数据结构基础" = [
-            "study/fds/index.md",
-            { "Project1" = "study/fds/project1/index.md" },
-            { "Project2" = "study/fds/project2/index.md" },
-            { "Project3" = "study/fds/project3/index.md" },
-        ] },
-        { "HPC 高性能计算" = [
-            "study/hpc/index.md",
-            { "课程笔记" = [
-                { "集群软硬件及运维基础" = "study/hpc/notes/0706p.md" },
-                { "HPC 中的计算机系统 1" = "study/hpc/notes/0707p.md" },
-                { "HPC 中的计算机系统 2" = "study/hpc/notes/0708p.md" },
-                { "向量化并行计算基础" = "study/hpc/notes/0710p.md" },
-                { "OpenMP/MPI 基础" = "study/hpc/notes/0712a.md" },
-                { "性能分析基础 Profiling" = "study/hpc/notes/0712p.md" },
-                { "高性能计算高级话题" = "study/hpc/notes/0713a.md" },
-                { "CUDA 编程基础" = "study/hpc/notes/0713p.md" },
-                { "机器学习基础（上）" = "study/hpc/notes/0716a.md" },
-                { "机器学习基础（下）" = "study/hpc/notes/0716p.md" },
-                { "机器学习高级话题（上）" = "study/hpc/notes/0717a.md" },
-                { "机器学习高级话题（下）" = "study/hpc/notes/0717p.md" },
-            ] },
-            { "lab0: Linux Crash Course" = "study/hpc/lab0/index.md" },
-            { "lab1: Mini Cluster" = "study/hpc/lab1/index.md" },
-            { "lab2: MoE向量化计算" = "study/hpc/lab2/index.md" },
-            { "lab3: GDN Prefill优化" = "study/hpc/lab3/index.md" },
-            { "lab4: 数值相对论优化" = "study/hpc/lab4/index.md" },
-            { "lab5: Gemma4推理优化" = "study/hpc/lab5/index.md" },
-        ] },
-        { "CTF 夺旗赛" = [
-            "study/ctf/index.md",
-            { "lab0" = "study/ctf/lab0/index.md" },
-            { "lab1" = [
-                { "Crypto" = "study/ctf/lab1_crypto/crypto.md" },
-                { "Misc" = "study/ctf/lab1_misc/misc.md" },
-                { "Pwn" = "study/ctf/lab1_pwn/pwn.md" },
-                { "Reverse" = "study/ctf/lab1_rev/rev.md" },
-                { "Web" = "study/ctf/lab1_web/web.md" },
-            ] },
-            { "lab2" = [
-                { "Crypto" = "study/ctf/lab2_crypto/crypto.md" },
-                { "Misc" = "study/ctf/lab2_misc/misc.md" },
-            ] },
-            { "lab3" = [
-                { "Crypto" = "study/ctf/lab3_crypto/crypto.md" },
-                { "Misc" = "study/ctf/lab3_misc/misc.md" },
-            ] },
-        ] },
+        { "信息安全原理与数学基础" = "study/ismath.md" },
     ] },
     { "工具" = [
-        "tools/index.md",
-        { "XP on Mac" = "tools/xp.md" },
-        { "Rosetta on Mac" = "tools/rosetta.md" },
-        { "Vivado on Mac" = "tools/vivado.md" },
-        { "Mac 记事本" = "tools/notepadnext.md" },
-        { "学在浙大 & PTA" = "tools/xzzd.md"},
-        { "校园跑" = "tools/run.md"},
+        { "Windows XP on Apple Silicon" = "tools/windows-xp-apple-silicon.md" },
+        { "Vivado on Apple Silicon" = "tools/vivado-apple-silicon.md" },
+        { "Mac 上好用的记事本" = "tools/mac上好用的第三方记事本软件.md" },
     ] },
     { "随笔" = [
-        "diaries/index.md",
         { "2025 年度十图" = "diaries/fa25_review.md" },
         { "sp26 半期总结" = "diaries/sp26_midterm.md" },
-        { "sp26 期末总结" = "diaries/sp26_final.md" },
-    ] },
-    #{ "电脑" = [
-    #    { "MacBook Pro 16 (2019)" = "computers/mbp16_2019.md" },
-    #    { "ThunderBook 14 (2022)" = "computers/t_book_14_2022.md" },
-    #    { "ThinkBook Plus (2023)" = "computers/thinkbook_plus_2023.md" },
-    #    { "MacBook Air 15 (2025)" = "computers/mba15_2025.md" },
-    #] },
-    { "游戏" = [
-        "games/index.md",
-        { "四维直觉" = "games/4D_Intuition.md" },
-        { "深圳I/O" = "games/Shenzhen_IO.md" },
-        { "编程农场" = "games/The_Farmer_Was_Replaced.md" },
-        { "图灵完备" = "games/Turing_Complete.md" },
-        { "样式测试" = "games/test.md" },
     ] },
 ]
 
 extra_css = [
-    "theme/css/variables.css",
-    "theme/css/main.css",
-    "theme/css/theme.css",
-    "theme/css/home.css",
+    "theme/main.css",
 ]
 
 extra_javascript = [
-    "theme/js/theme-sync.js",
-    "theme/js/mathjax.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-mml-chtml.js",
-    # highlight.js 运行时语法高亮（用法与 MathJax 相同：直接引 CDN + theme/js/highlight.js 控制渲染）
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
-    # 不在 common 子集里、需单独加载的语言（均为 IIFE 自注册到 hljs）：
-    #   x86asm 汇编、cmake、http
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js",
-    "theme/js/highlight.js",
-    "theme/js/site.js",
-    "theme/js/site-home.js",
-    "theme/js/site-terminal.js",
-    "theme/js/site-images.js",
-    "theme/js/site-pdf.js",
-    "theme/js/site-friends.js",
-    "theme/js/site-github.js",
+    "theme/theme-sync.js",
+    "theme/image-loading.js",
+    "theme/github-calendar.js",
+    "theme/mathjax.js",
+    "https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js",
 ]
 
 # --------------------------------------------------------------------------
@@ -138,18 +43,19 @@ extra_javascript = [
 [project.theme]
 custom_dir = "overrides"
 logo = ""
-favicon = "theme/assets/favicon.svg"
-icon = { edit = "material/file-code-outline" }
+favicon = "theme/favicon.svg"
 features = [
     "content.action.edit",
     "content.code.annotate",
     "content.code.copy",
     "content.code.select",
+    "navigation.expand",
     "navigation.footer",
-    "navigation.indexes",
-    # "navigation.instant",
-    # "navigation.instant.prefetch",
-    # "navigation.instant.progress",
+    "navigation.instant",
+    "navigation.instant.prefetch",
+    "navigation.instant.progress",
+    "navigation.path",
+    "navigation.sections",
     "navigation.tabs",
     "navigation.top",
     "navigation.tracking",
@@ -182,24 +88,19 @@ toggle.name = "根据系统模式切换主题"
 [project.markdown_extensions.admonition]
 [project.markdown_extensions.attr_list]
 [project.markdown_extensions.def_list]
-[project.markdown_extensions.footnotes]
 [project.markdown_extensions.md_in_html]
-[project.markdown_extensions.sane_lists]
 [project.markdown_extensions.tables]
 [project.markdown_extensions.pymdownx.tilde]
 smart_delete = false
 
 [project.markdown_extensions.toc]
-# 空字符串：仍生成空 <a class="headerlink"> 供 CSS 挂 SVG 图标，但无 ¶ 文本，
-# 因此 CSS 无需再用 text-indent:-9999px 隐藏符号。
-permalink = ""
+permalink = true
 slugify = { object = "pymdownx.slugs.slugify", kwds = { case = "lower" } }
 
 [project.markdown_extensions.pymdownx.arithmatex]
 generic = true
 
 [project.markdown_extensions.pymdownx.critic]
-[project.markdown_extensions.pymdownx.mark]
 [project.markdown_extensions.pymdownx.details]
 
 [project.markdown_extensions.pymdownx.emoji]
@@ -207,9 +108,10 @@ emoji_generator = "zensical.extensions.emoji.to_svg"
 emoji_index = "zensical.extensions.emoji.twemoji"
 
 [project.markdown_extensions.pymdownx.highlight]
-use_pygments = false
-# pygments_lang_class 仍用于给 <code> 加 language-xxx class，供 highlight.js 识别语言
+anchor_linenums = true
 pygments_lang_class = true
+linenums = true
+linenums_style = "pymdownx-inline"
 
 [project.markdown_extensions.pymdownx.inlinehilite]
 [project.markdown_extensions.pymdownx.keys]
