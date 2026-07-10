@@ -1,6 +1,8 @@
 # Welcome
 
-欢迎来到 bfyes,111
+Welcome to bfyes, 111.
+
+I'm from ZJU. I major in Information Security.
 
 ---
 

@@ -50,6 +50,7 @@ extra_javascript = [
     "theme/image-loading.js",
     "theme/github-calendar.js",
     "theme/mathjax.js",
+    "theme/parallax-grid.js",
     "https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js",
 ]
 
