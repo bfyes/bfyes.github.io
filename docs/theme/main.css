@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Serif+SC:wght@600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap");
 
 /* ===== 代码语法高亮颜色增强 ===== */
 /* 同时适配直接 .highlight 和 .highlighttable 内的 .highlight */
@@ -202,14 +202,16 @@
 
 /* ===== 字体 ===== */
 .md-typeset h1, .md-header__title {
-  font-family: "Noto Serif SC", "Noto Sans SC", serif;
+  font-family: "Noto Serif SC", serif;
   font-weight: 800;
   letter-spacing: -0.01em;
 }
 body, .md-typeset, .md-typeset h2, .md-typeset h3, .md-typeset h4,
-.md-typeset h5, .md-typeset h6, .md-nav,
+.md-typeset h5, .md-typeset h6, .md-nav {
+  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+}
 code, kbd, pre, .md-typeset code, .md-typeset pre {
-  font-family: "JetBrains Mono", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-family: "JetBrains Mono", "Noto Sans SC", monospace;
 }
 
 /* ===== 代码块 ===== */
@@ -317,95 +319,219 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* ===== GitHub 贡献图 ===== */
-/* 容器：纵向排列 SVG 与统计行 */
 .github-calendar-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
   max-width: 760px;
   margin: 1rem auto 0;
-  overflow-x: auto;
 }
 
 .github-calendar-wrap:not([data-ghc-state="loading"]) .ghc-loading {
   display: none;
 }
 
-/* 加载/错误占位 */
+.ghc-loading,
+.ghc-error,
+.ghc-shell {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 6px;
+  background: var(--md-default-bg-color);
+}
+
 .ghc-loading,
 .ghc-error {
-  border: 1px solid var(--md-default-fg-color--lightest);
-  border-radius: 8px;
-  background: var(--md-default-bg-color);
   padding: 1.4rem 0.75rem;
   text-align: center;
   color: var(--md-default-fg-color--light);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
+
 .ghc-error {
   color: var(--md-primary-fg-color, #b42318);
 }
 
-/* SVG 热力图本体 */
-.github-contribution-chart {
-  display: block;
-  width: 100%;
-  min-width: 680px;
-  height: auto;
+.ghc-shell {
+  overflow: hidden;
+  font-family: "Inter", "Noto Sans SC", sans-serif;
 }
 
-/* 月份 / 星期文字 */
-.ghc-month,
-.ghc-weekday {
-  fill: var(--md-default-fg-color);
+.ghc-header {
+  padding: 0.85rem 1rem 0.25rem;
+}
+
+.md-typeset .ghc-title {
+  margin: 0;
+  color: var(--md-default-fg-color);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.md-content__inner .ghc-title::before,
+.md-content__inner .ghc-overview-title::before {
+  content: none;
+}
+
+.ghc-calendar-scroller {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.45rem 1rem 0;
+}
+
+.ContributionCalendar-grid {
+  border-collapse: separate;
+  border-spacing: 3px;
+  overflow: hidden;
+  position: relative;
+  table-layout: fixed;
+}
+
+.ghc-weekday-col {
+  width: 28px;
+}
+
+.ghc-week-col {
+  width: 10px;
+}
+
+.ContributionCalendar-grid tr {
+  height: 10px;
+}
+
+.ContributionCalendar-grid thead tr {
+  height: 13px;
+}
+
+.ContributionCalendar-label {
+  width: 10px;
+  min-width: 10px;
+  padding: 0;
+  color: var(--md-default-fg-color--light);
+  font-family: inherit;
   font-size: 12px;
-  font-weight: 700;
-  font-family: var(--md-text-font, inherit);
+  font-weight: 400;
+  line-height: 1;
+  text-align: left;
+  white-space: nowrap;
   user-select: none;
 }
 
-/* 格子 */
-.ghc-cell {
+.ghc-corner,
+.ghc-day-label {
+  width: 28px;
+  min-width: 28px;
+}
+
+.ghc-day-label {
+  position: relative;
+}
+
+.ghc-day-label span:not(.sr-only) {
+  position: absolute;
+  bottom: -3px;
+}
+
+.ContributionCalendar-day,
+.ghc-empty-day {
+  width: 10px;
+  min-width: 10px;
+  height: 10px;
+  padding: 0;
+}
+
+.ContributionCalendar-day {
+  border-radius: 2px;
+  outline: none;
   transition: opacity 0.12s ease;
-  shape-rendering: geometricprecision;
-}
-.ghc-cell:hover {
-  opacity: 0.65;
 }
 
-/* ---- 配色：亮色（GitHub light，与 github.com 一致） ---- */
-[data-md-color-scheme="default"] .ghc-L0 { fill: #ebedf0; }
-[data-md-color-scheme="default"] .ghc-L1 { fill: #9be9a8; }
-[data-md-color-scheme="default"] .ghc-L2 { fill: #40c463; }
-[data-md-color-scheme="default"] .ghc-L3 { fill: #30a14e; }
-[data-md-color-scheme="default"] .ghc-L4 { fill: #216e39; }
+.ContributionCalendar-day:hover,
+.ContributionCalendar-day:focus {
+  opacity: 0.7;
+}
 
-/* ---- 配色：暗色（GitHub dark，与 github.com dark 主题一致） ---- */
-[data-md-color-scheme="slate"] .ghc-L0 { fill: #161b22; }
-[data-md-color-scheme="slate"] .ghc-L1 { fill: #0e4429; }
-[data-md-color-scheme="slate"] .ghc-L2 { fill: #006d32; }
-[data-md-color-scheme="slate"] .ghc-L3 { fill: #26a641; }
-[data-md-color-scheme="slate"] .ghc-L4 { fill: #39d353; }
+.ContributionCalendar-day:focus {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 1px;
+}
 
-/* 图例 + 统计行 */
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: rgb(240, 242, 245); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: rgb(172, 238, 187); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: rgb(75, 193, 107); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: rgb(44, 164, 79); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: rgb(16, 99, 41); }
+
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="0"] {
+  background-color: #161b22;
+}
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #0e4429; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #006d32; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #26a641; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #39d353; }
+
+.ghc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 1rem 0.8rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 12px;
+}
+
+.ghc-help {
+  color: var(--md-default-fg-color--light) !important;
+}
+
 .ghc-legend {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  justify-content: flex-end;
-  font-size: 0.68rem;
-  color: var(--md-default-fg-color--light);
-  padding-right: 0.2rem;
+  gap: 0.28rem;
+  white-space: nowrap;
 }
-.ghc-legend__label { opacity: 0.85; }
-.ghc-legend__box {
+
+.ghc-legend-day {
   display: inline-block;
-  width: 11px;
-  height: 11px;
-  border-radius: 2px;
 }
-.ghc-summary {
-  margin-left: 0.6rem;
+
+.ghc-overview {
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  padding: 0.85rem 1rem 1rem;
+}
+
+.md-typeset .ghc-overview-title {
+  margin: 0 0 0.35rem;
+  color: var(--md-default-fg-color);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.md-typeset .ghc-overview-text,
+.md-typeset .ghc-overview-meta {
+  margin: 0.15rem 0;
+  color: var(--md-default-fg-color--light);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media screen and (max-width: 44rem) {
+  .ghc-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 
 /* ===== 左上角 BillFeng Logo ===== */
@@ -415,7 +541,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   width: auto;
 }
 .bf-logo__text {
-  font-family: "Courier New", Courier, ui-monospace, monospace;
+  font-family: "JetBrains Mono", monospace;
   font-size: 40px;
   font-weight: 700;
   letter-spacing: 0;
@@ -449,4 +575,8 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   color: var(--md-default-fg-color--lighter);
   font-variant-numeric: tabular-nums;
   min-width: 0;
+}
+
+.page-info__stars img {
+  display: block;
 }

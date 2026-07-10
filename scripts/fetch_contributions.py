@@ -33,6 +33,25 @@ MONTH_FULL = {
 LEVEL_FALLBACK = {0: 0, 1: 1, 2: 3, 3: 6, 4: 9}
 
 
+def level_from_count(count: int) -> int:
+    """按贡献数计算 0..4 的色阶。
+
+    GitHub 的 data-level 是基于「过去一年窗口内相对分位数」动态算的，对低活跃
+    账号极不稳定——同一批 count=1 的天，几小时内可能在 level 1 和 level 4 之间
+    跳。这里改用绝对阈值按 count 直接分级，保留 1 与 2+ 之间的细微差别，
+    且每次烘焙都稳定可预期。
+    """
+    if count <= 0:
+        return 0
+    if count == 1:
+        return 1
+    if count <= 3:
+        return 2
+    if count <= 6:
+        return 3
+    return 4
+
+
 def fetch() -> str:
     req = urllib.request.Request(URL, headers={"User-Agent": UA})
     with urllib.request.urlopen(req, timeout=30) as r:
@@ -53,10 +72,12 @@ def parse(html: str) -> dict:
     # GitHub 当前结构里 td 不带 data-count，count 需从紧随其后的 tool-tip 取。
     cells: list[dict] = []
     # 按 td 出现顺序收集 (date, level)；同一份 HTML 里 td 顺序即日历顺序。
-    for date, level in re.findall(
+    for date, _gh_level in re.findall(
         r'data-date="([^"]+)"[^>]*data-level="([0-4])"', html
     ):
-        cells.append({"date": date, "level": int(level), "count": None})
+        # 不采用 GitHub 的 data-level（见 level_from_count 说明），最终 level
+        # 在 count 确定后由 level_from_count(count) 计算，这里先占位。
+        cells.append({"date": date, "level": 0, "count": None})
 
     # tool-tip 文本：「No contributions on September 21st.」「4 contributions on July 9th.」
     # 与 td 一一对应、且顺序一致。用 (月名, 日序数) 在 cells 里定位补 count。
@@ -81,10 +102,11 @@ def parse(html: str) -> dict:
         if queue:
             c["count"] = queue.pop(0)
 
-    # 仍缺的，按 level 兜底。
+    # count 已全部就位（缺失的用 level 兜底），最终 level 按 count 绝对阈值计算。
     for c in cells:
         if c["count"] is None:
             c["count"] = LEVEL_FALLBACK.get(c["level"], 0)
+        c["level"] = level_from_count(c["count"])
 
     cells.sort(key=lambda c: c["date"])
 

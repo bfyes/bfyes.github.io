@@ -4,13 +4,13 @@
 
 ---
 
-!!! info 汇编课友请看
+!!! info "汇编课友请看"
 
     - 学习汇编语言的同学请参考：[Windows XP on Apple Silicon](https://bfyes.github.io/Virtual-machines-on-Mac/windows-xp-apple-silicon/)
 
 ---
 
-!!! info 友情链接
+!!! info "友情链接"
 
     - Evel1na岗：[Evelina](https://evelina-is.github.io/Evelina_personal_web/)
     - 电科大佬Pastwithin：[Pastwithin](https://pastwithin.github.io/Pastwithin-Zensical/)
