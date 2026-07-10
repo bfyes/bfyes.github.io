@@ -22,4 +22,4 @@ deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run python scripts/fetch_contributions.py
 	uv run python scripts/generate_image_previews.py
 	uv run zensical build
-	cd site && git init && git add -A && git commit -m "deploy" --allow-empty && git push -f https://github.com/bfyes/bfyes.github.io.git main:gh-pages
+	cd site && git init && git add -A && git commit -m "deploy" --allow-empty && git -c http.postBuffer=524288000 push -f https://github.com/bfyes/bfyes.github.io.git main:gh-pages
