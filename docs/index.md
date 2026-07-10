@@ -34,7 +34,7 @@ We1c0me t0 bfyes, 111.
     2. Add README.md
     3. 尝试并调整页脚浏览量和更新时间的脚本
     4. 根据 sys 仓库与 hpc 仓库参考 fonts, css & js
-    5. 借助 giscus 增加评论区功能, 并调整评论区主题不随网页主体变化的问题
+    5. 借助 giscus 增加评论区功能, 并调整评论区主题不随网页主题变化的问题
 
 ---
 
@@ -46,9 +46,10 @@ We1c0me t0 bfyes, 111.
 
 !!! info "友情链接"
 
-    - Orange🍊：[gE](https://0-rangE.cn)
-    - Evel1na岗：[Evelina](https://evelina-is.github.io/Evelina_personal_web/)
-    - 电科大佬Pastwithin：[Pastwithin](https://pastwithin.github.io/Pastwithin-Zensical/)
+    - Orange🍊: [gE](https://0-rangE.cn)
+    - chenyuheee: [chenyuheee](https://hechenyu.xin)
+    - Evel1na岗: [Evelina](https://evelina-is.github.io/Evelina_personal_web/)
+    - 电科大佬Pastwithin: [Pastwithin](https://pastwithin.github.io/Pastwithin-Zensical/)
 
 ---
 
