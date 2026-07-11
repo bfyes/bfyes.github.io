@@ -602,3 +602,201 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 .md-content {
   background-color: var(--md-default-bg-color);
 }
+
+/* ================================================================
+   PDF 加载进度组件（PDF.js canvas 渲染）
+   ================================================================ */
+
+/* ---- 查看器外壳 ---- */
+.pdf-viewer {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--md-code-bg-color, #f5f5f5);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  margin: 1em 0;
+}
+
+/* ---- 工具栏 ---- */
+.pdf-viewer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: var(--md-default-bg-color, #fff);
+  border-bottom: 1px solid var(--md-default-fg-color--lightest, #e0e0e0);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.pdf-viewer-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--md-typeset-color, #555);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.pdf-viewer-btn:hover:not(:disabled) {
+  background: var(--md-default-fg-color--lightest, #e8e8e8);
+}
+
+.pdf-viewer-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.pdf-viewer-page {
+  font-size: 0.85rem;
+  font-family: "JetBrains Mono", "SF Mono", monospace;
+  color: var(--md-typeset-color, #555);
+  min-width: 64px;
+  text-align: center;
+  user-select: none;
+}
+
+.pdf-viewer-spacer {
+  flex: 1;
+}
+
+.pdf-viewer-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  color: var(--md-typeset-color--light, #888);
+  transition: color 0.15s, background 0.15s;
+}
+
+.pdf-viewer-download:hover {
+  color: var(--md-accent-fg-color, #4051b5);
+  background: var(--md-default-fg-color--lightest, #e8e8e8);
+}
+
+/* ---- 画布滚动区 ---- */
+.pdf-viewer-canvases {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: var(--md-code-bg-color, #525252);
+  /* 高度由 JS 动态设置为固定值，配合 overflow 实现折叠滚动 */
+}
+
+.pdf-viewer-page-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.pdf-viewer-canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  /* 3x 渲染 + auto 插值 = 接近 SVG 清晰度 */
+  image-rendering: auto;
+}
+
+/* ---- 加载覆盖层 ---- */
+.pdf-loader-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--md-default-bg-color, #fff);
+  z-index: 2;
+  transition: opacity 0.4s ease;
+  padding: 24px;
+  /* 受外壳 min-height 约束，不会撑满屏幕 */
+}
+
+/* ---- spinner ---- */
+.pdf-spinner {
+  width: 40px;
+  height: 40px;
+  color: var(--md-accent-fg-color, #4051b5);
+  animation: pdf-spin 0.9s linear infinite;
+}
+
+@keyframes pdf-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- 文字 ---- */
+.pdf-loader-text {
+  font-size: 0.9rem;
+  color: var(--md-typeset-color, #555);
+  font-weight: 500;
+}
+
+/* ---- 进度条 ---- */
+.pdf-loader-bar-track {
+  width: min(320px, 80%);
+  height: 6px;
+  background: var(--md-default-fg-color--lightest, #e0e0e0);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.pdf-loader-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--md-accent-fg-color, #4051b5);
+  border-radius: 3px;
+  transition: width 0.15s linear;
+}
+
+/* ---- 详情（已下载/总大小） ---- */
+.pdf-loader-detail {
+  font-size: 0.75rem;
+  color: var(--md-typeset-color--light, #999);
+  font-family: "JetBrains Mono", "SF Mono", monospace;
+}
+
+/* ---- 错误提示 ---- */
+.pdf-viewer-error {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: #e53e3e;
+  font-size: 0.9rem;
+  background: var(--md-default-bg-color, #fff);
+  z-index: 3;
+}
+
+/* ---- 暗色模式 ---- */
+[data-md-color-scheme="slate"] .pdf-viewer {
+  background: var(--md-code-bg-color, #1e1e2e);
+}
+
+[data-md-color-scheme="slate"] .pdf-loader-overlay {
+  background: var(--md-default-bg-color, #1e1e2e);
+}
+
+[data-md-color-scheme="slate"] .pdf-loader-bar-track {
+  background: rgba(255,255,255,0.12);
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer-toolbar {
+  background: var(--md-default-bg-color, #1a1a2e);
+  border-color: rgba(255,255,255,0.08);
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer-canvases {
+  background: var(--md-code-bg-color, #1e1e2e);
+}

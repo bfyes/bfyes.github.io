@@ -48,6 +48,7 @@ extra_css = [
 extra_javascript = [
     "theme/theme-sync.js",
     "theme/image-loading.js",
+    "theme/pdf-loading.js",
     "theme/github-calendar.js",
     "theme/mathjax.js",
     "theme/parallax-grid.js",

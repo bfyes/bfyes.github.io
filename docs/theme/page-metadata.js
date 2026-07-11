@@ -1,6 +1,6 @@
 window.__BFYES_PAGE_META__ = {
   "/": {
-    "updated": "2026-07-10T18:20:56+08:00"
+    "updated": "2026-07-11T15:35:45+08:00"
   },
   "/diaries/fa25_review/": {
     "updated": "2026-07-10T02:17:39+08:00"
@@ -15,13 +15,13 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-10T15:44:11+08:00"
   },
   "/study/fds-project/project1/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-11T15:35:45+08:00"
   },
   "/study/fds-project/project2/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-11T15:35:45+08:00"
   },
   "/study/fds-project/project3/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-11T15:35:45+08:00"
   },
   "/study/ismath/": {
     "updated": "2026-07-10T15:44:11+08:00"
@@ -30,25 +30,25 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-10T15:44:11+08:00"
   },
   "/study/sys1-lab/lab0/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-11T15:35:45+08:00"
   },
   "/study/sys1-lab/lab1/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-11T15:35:45+08:00"
   },
   "/study/sys1-lab/lab2/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-11T15:35:45+08:00"
   },
   "/study/sys1-lab/lab3/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-11T15:35:45+08:00"
   },
   "/study/sys1-lab/lab4/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-11T15:35:45+08:00"
   },
   "/study/sys1-lab/lab5/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-11T15:35:45+08:00"
   },
   "/study/sys1-lab/project/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-11T15:35:45+08:00"
   },
   "/study/sys1/": {
     "updated": "2026-07-10T15:44:11+08:00"
