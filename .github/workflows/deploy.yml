@@ -27,6 +27,7 @@ jobs:
           uv run python scripts/generate_page_metadata.py
           uv run python scripts/fetch_contributions.py
           uv run zensical build
+          uv run python scripts/patch_image_src.py
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
