@@ -1,16 +1,12 @@
 # Welcome
 
-We1c0me t0 bfyes, 111.
+<span style="font-size:1.5em; color:#808080;">We1c0me t0 bfyes, 111.</span>
 
-1'm fr0m ZJU. 1 maj0r 1n Information Security.
-
----
-
-虽然手机端也做了适配, 但电脑端浏览效果更佳～
-
-亮暗色主题均做了适配, 可放心食用.
+<span style="font-size:1.0em; color:#808080;">1'm fr0m ZJU. 1 maj0r 1n Information Security.</span>
 
 ---
+
+亮暗色主题均做了适配, 可放心食用. 电脑端浏览效果更佳～
 
 ??? tip "TODO"
 
@@ -23,6 +19,10 @@ We1c0me t0 bfyes, 111.
     2. 游记 & 照片
 
 <span style="font-size:1.2em; color:#808080;">**更新日志**</span>
+=== "2026.07.11"
+    1. 实现 PDF 构建时压缩到 /site
+    2. PDF 懒加载
+    
 === "2026.07.10"
     1. 实现了电脑端背景网格及其视差动画
     2. 迁移部分实验报告为内联 PDF

@@ -27,8 +27,8 @@ SITE = ROOT / "site"
 
 IMAGE_EXTS = {".jpg", ".jpeg", ".png"}
 PREVIEW_SUFFIX = ".preview.jpg"
-MAX_EDGE = 720
-JPEG_QUALITY = 55
+MAX_EDGE = 300
+JPEG_QUALITY = 25
 
 
 def is_source_image(path: Path) -> bool:
