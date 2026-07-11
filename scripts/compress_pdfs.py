@@ -96,20 +96,24 @@ def main() -> None:
         cur_hash = sha256_hex(src)
         cached_pdf = CACHE_DIR / rel
 
-        if hashes.get(str(rel)) == cur_hash and cached_pdf.is_file():
-            continue  # 缓存有效，跳过
+        if hashes.get(str(rel)) == cur_hash:
+            # 缓存有效（压缩版或之前已确认不可压缩）
+            continue
 
         print(f"压缩: {rel} ...", end=" ")
         sys.stdout.flush()
         before = src.stat().st_size
 
         if not run_gs(src, cached_pdf):
-            shutil.copy2(src, cached_pdf)
+            # Ghostscript failed — don't cache anything; save hash so we
+            # skip retrying on future deploys and copy the original directly.
+            print(f"{human_size(before)}，Ghostscript 失败，保留原文件")
             after = before
         else:
             after = cached_pdf.stat().st_size
             if after >= before:
-                shutil.copy2(src, cached_pdf)
+                # Already optimal — don't keep the larger file in cache.
+                cached_pdf.unlink(missing_ok=True)
                 after = before
                 print(f"{human_size(before)}，已是最优，保留原文件")
             else:
@@ -143,17 +147,19 @@ def main() -> None:
     if gs_runs == 0:
         print("所有 PDF 缓存有效，无需重新压缩")
 
-    # 3. 将 .cache/ 中的压缩结果复制到 site/（纯文件复制，极快）
+    # 3. 将压缩结果复制到 site/ — 有缓存的用缓存，没有的（Ghostscript 失败/
+    #    已最优）直接从 docs/ 复制原始文件。
     print("部署压缩 PDF 到 site/ ...", end=" ")
     sys.stdout.flush()
     copied = 0
     for rel in doc_pdfs:
         cached = CACHE_DIR / rel
-        if not cached.is_file():
-            continue
         dest = SITE / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(cached, dest)
+        if cached.is_file():
+            shutil.copy2(cached, dest)
+        else:
+            shutil.copy2(DOCS / rel, dest)
         copied += 1
     print(f"完成（{copied} 个文件）")
 
