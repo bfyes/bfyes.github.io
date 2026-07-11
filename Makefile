@@ -19,7 +19,7 @@ contributions: ## 抓取 GitHub 贡献图数据烘焙成静态 JSON
 
 deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run python scripts/generate_page_metadata.py
-	# uv run python scripts/fetch_contributions.py
+	uv run python scripts/fetch_contributions.py
 	uv run zensical build
 	uv run python scripts/compress_pdfs.py
 	uv run python scripts/generate_image_previews.py --site

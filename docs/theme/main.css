@@ -210,6 +210,12 @@ body, .md-typeset, .md-typeset h2, .md-typeset h3, .md-typeset h4,
 .md-typeset h5, .md-typeset h6, .md-nav {
   font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
 }
+/* 搜索面板（输入框 + 结果列表）渲染在 Shadow DOM 里，外部选择器进不去。
+   其内部样式读 --md-text-font-family 变量，而 CSS 变量能穿透 shadow 边界。
+   注意必须写在 body 上覆盖主题 body 里的同名默认声明（写在 :root 上会被 body 覆盖）。 */
+body {
+  --md-text-font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+}
 code, kbd, pre, .md-typeset code, .md-typeset pre {
   font-family: "JetBrains Mono", "Noto Sans SC", monospace;
 }
@@ -541,7 +547,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   width: auto;
 }
 .bf-logo__text {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Courier New", Courier, ui-monospace, monospace;
   font-size: 40px;
   font-weight: 700;
   letter-spacing: 0;
