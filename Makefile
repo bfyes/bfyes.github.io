@@ -27,5 +27,5 @@ deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	@if [ ! -d site/.git ]; then \
 		cd site && git init; \
 	fi
-	@cd site && git remote get-url origin >/dev/null 2>&1 || git remote add origin https://github.com/bfyes/bfyes.github.io.git
-	cd site && git add -A && git commit -m "deploy" --allow-empty && git -c http.postBuffer=524288000 push -f -u origin HEAD:gh-pages
+	@cd site && git remote get-url origin >/dev/null 2>&1 && git remote set-url origin https://github.com/bfyes/bfyes.github.io.git || git remote add origin https://github.com/bfyes/bfyes.github.io.git
+	cd site && git add -A && git commit -m "deploy" --allow-empty && git push -f -u origin HEAD:gh-pages
