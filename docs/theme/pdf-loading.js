@@ -15,7 +15,7 @@
   var SCRIPT_BASE =
     "https://unpkg.com/pdfjs-dist@4.0.379/build/";
   var ROOT_MARGIN = "300px";
-  var RENDER_SCALE = 5;
+  var RENDER_SCALE = 3;
 
   // ============================================================
   // 工具
@@ -188,8 +188,12 @@
       // 减去一点顶部内边距，让页码工具栏刚好露出
       wrap.scrollTo({ top: offset - 4, behavior: "smooth" });
     }
-    // 确保渲染
-    renderPage(viewer, pageNum);
+    // 确保当前页及前后各 4 页已渲染
+    var start = Math.max(0, pageNum - 4);
+    var end = Math.min(viewer._totalPages - 1, pageNum + 4);
+    for (var k = start; k <= end; k++) {
+      renderPage(viewer, k);
+    }
   }
 
   // ============================================================
@@ -342,8 +346,10 @@
           viewer._overlay.style.display = "none";
         }, 400);
 
-        // 全部渲染
-        for (var j = 0; j < doc.numPages; j++) {
+        // 只渲染当前页及前后各 4 页，避免手机上一次性渲全部页面 OOM
+        var start = Math.max(0, viewer._curPage - 4);
+        var end = Math.min(doc.numPages - 1, viewer._curPage + 4);
+        for (var j = start; j <= end; j++) {
           renderPage(viewer, j);
         }
 
