@@ -24,6 +24,9 @@
 │   └── partials/         # 评论区、logo、页面信息等局部模板
 ├── scripts/              # 构建期脚本
 │   ├── generate_page_metadata.py
+│   ├── generate_image_previews.py
+│   ├── compress_pdfs.py
+│   ├── patch_image_src.py
 │   └── fetch_contributions.py
 ├── site/                 # 构建产物，通常不手动编辑
 ├── .github/workflows/    # GitHub Actions 自动部署配置
@@ -36,17 +39,17 @@
 - `docs/`：写文章主要改这里。Markdown 文件会被构建成网页。
 - `docs/theme/`：放站点自定义前端资源，例如 `main.css`、GitHub 贡献图脚本和静态 JSON。
 - `overrides/`：覆盖默认主题模板，例如页面底部的最后更新时间、阅读量和 star 提示。
-- `scripts/`：构建前生成数据。`generate_page_metadata.py` 生成页面更新时间，`fetch_contributions.py` 抓取 GitHub 贡献图数据。
+- `scripts/`：构建辅助脚本。`generate_page_metadata.py` 生成页面更新时间，`generate_image_previews.py` 生成图片低分辨率预览，`compress_pdfs.py` 压缩 PDF（带缓存），`patch_image_src.py` 替换图片为预览路径，`fetch_contributions.py` 抓取 GitHub 贡献图。
 - `zensical.toml`：站点核心配置，包括导航、仓库链接、主题选项、额外 CSS/JS。
 - `uv.lock`：锁定依赖版本，保证本地和 GitHub Actions 构建环境尽量一致。
 
 ## 常用命令
 
 ```bash
+make zensical        # 本地预览站点（含 metadata + 图片预览）
+make deploy          # 构建并部署到 gh-pages（含 PDF 压缩 + 图片预览 + 路径替换）
 make metadata        # 生成页面更新时间元数据
 make contributions   # 抓取 GitHub 贡献图数据
-make zensical        # 本地预览站点
-make deploy          # 本地构建并部署到 gh-pages
 ```
 
 也可以直接使用：
