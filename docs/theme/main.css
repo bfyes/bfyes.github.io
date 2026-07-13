@@ -590,23 +590,36 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 /* ===== 底层虚线网格背景（视差） ===== */
 /*
    SVG stroke-dasharray 实现真正虚线，不是 gradient 色块。
-   60px 方格，4px 线段 + 4px 间隙。
+   40px 方格，3px 线段 + 5px 间隙。
 */
 [data-md-color-scheme="default"] body {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cline x1='0' y1='0' x2='60' y2='0' stroke='rgba(100,100,100,0.22)' stroke-width='1' stroke-dasharray='4 4'/%3E%3Cline x1='0' y1='0' x2='0' y2='60' stroke='rgba(100,100,100,0.22)' stroke-width='1' stroke-dasharray='4 4'/%3E%3C/svg%3E");
-  background-size: 60px 60px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cline x1='0' y1='0' x2='40' y2='0' stroke='rgba(100,100,100,0.22)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='40' stroke='rgba(100,100,100,0.22)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
+  background-size: 40px 40px;
   background-attachment: fixed;
 }
 
 [data-md-color-scheme="slate"] body {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cline x1='0' y1='0' x2='60' y2='0' stroke='rgba(180,180,180,0.13)' stroke-width='1' stroke-dasharray='4 4'/%3E%3Cline x1='0' y1='0' x2='0' y2='60' stroke='rgba(180,180,180,0.13)' stroke-width='1' stroke-dasharray='4 4'/%3E%3C/svg%3E");
-  background-size: 60px 60px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cline x1='0' y1='0' x2='40' y2='0' stroke='rgba(180,180,180,0.13)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='40' stroke='rgba(180,180,180,0.13)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
+  background-size: 40px 40px;
   background-attachment: fixed;
 }
 
 /* 正文区域遮盖网格，避免虚线与文字打架 */
 .md-content {
   background-color: var(--md-default-bg-color);
+  border-left: 1px solid color-mix(in srgb, var(--md-default-fg-color) 15%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--md-default-fg-color) 15%, transparent);
+}
+
+/* 顶部导航栏遮盖网格 */
+.md-header,
+.md-tabs {
+  background-color: var(--md-default-bg-color);
+}
+
+/* 页面整体加宽 */
+.md-grid {
+  max-width: 65rem;
 }
 
 /* ================================================================

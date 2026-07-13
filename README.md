@@ -16,6 +16,11 @@
 ├── docs/                 # 站点内容源文件
 │   ├── index.md          # 主页
 │   ├── study/            # 学习笔记
+│   │   ├── asm.md
+│   │   ├── fds/
+│   │   ├── hpc/
+│   │   ├── ismath.md
+│   │   └── sys1/
 │   ├── tools/            # 工具/折腾记录
 │   ├── diaries/          # 随笔
 │   └── theme/            # 自定义 CSS/JS/静态数据
@@ -23,11 +28,11 @@
 │   ├── main.html
 │   └── partials/         # 评论区、logo、页面信息等局部模板
 ├── scripts/              # 构建期脚本
-│   ├── generate_page_metadata.py
-│   ├── generate_image_previews.py
 │   ├── compress_pdfs.py
-│   ├── patch_image_src.py
-│   └── fetch_contributions.py
+│   ├── fetch_contributions.py
+│   ├── generate_image_previews.py
+│   ├── generate_page_metadata.py
+│   └── patch_image_src.py
 ├── site/                 # 构建产物，通常不手动编辑
 ├── .github/workflows/    # GitHub Actions 自动部署配置
 ├── Makefile              # 本地预览、构建、部署命令入口
@@ -42,21 +47,6 @@
 - `scripts/`：构建辅助脚本。`generate_page_metadata.py` 生成页面更新时间，`generate_image_previews.py` 生成图片低分辨率预览，`compress_pdfs.py` 压缩 PDF（带缓存），`patch_image_src.py` 替换图片为预览路径，`fetch_contributions.py` 抓取 GitHub 贡献图。
 - `zensical.toml`：站点核心配置，包括导航、仓库链接、主题选项、额外 CSS/JS。
 - `uv.lock`：锁定依赖版本，保证本地和 GitHub Actions 构建环境尽量一致。
-
-## 常用命令
-
-```bash
-make zensical        # 本地预览站点（含 metadata + 图片预览）
-make deploy          # 构建并部署到 gh-pages（含 PDF 压缩 + 图片预览 + 路径替换）
-make metadata        # 生成页面更新时间元数据
-make contributions   # 抓取 GitHub 贡献图数据
-```
-
-也可以直接使用：
-
-```bash
-uv run zensical build
-```
 
 ## 自动部署
 
