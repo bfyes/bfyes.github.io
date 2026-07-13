@@ -1,11 +1,20 @@
 (function () {
   "use strict";
 
+  function previewUrl(src) {
+    return src.replace(/\.(png|jpe?g)(\?|#|$)/i, ".preview.jpg$2");
+  }
+
   function loadNext(items, i) {
     if (i >= items.length) return;
     var img = items[i];
-    var fullSrc = img.dataset.fullsrc;
-    if (!fullSrc) { loadNext(items, i + 1); return; }
+    var fullSrc = img.dataset.fullsrc || img.src;
+    if (!/\.(png|jpe?g)/i.test(fullSrc)) { loadNext(items, i + 1); return; }
+    if (/\.preview\.jpg/i.test(fullSrc)) { loadNext(items, i + 1); return; }
+
+    // 先用预览图顶上去
+    var pv = previewUrl(fullSrc);
+    if (pv !== img.src) img.src = pv;
 
     var full = new Image();
     full.onload = function () {
@@ -19,10 +28,14 @@
   }
 
   function upgradeImages() {
-    var imgs = document.querySelectorAll(".md-content img[data-fullsrc]");
-    if (!imgs.length) return;
-    // 等页面稳定后逐张加载高清，不抢预览图带宽
-    setTimeout(function () { loadNext(imgs, 0); }, 500);
+    // 匹配所有 .md-content 下的图片（不需要 data-fullsrc）
+    var imgs = document.querySelectorAll(".md-content img");
+    var candidates = [];
+    for (var k = 0; k < imgs.length; k++) {
+      if (/\.(png|jpe?g)/i.test(imgs[k].src)) candidates.push(imgs[k]);
+    }
+    if (!candidates.length) return;
+    setTimeout(function () { loadNext(candidates, 0); }, 500);
   }
 
   if (document.readyState === "loading") {

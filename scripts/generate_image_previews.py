@@ -17,6 +17,8 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -24,6 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 SITE = ROOT / "site"
+HASH_FILE = ROOT / ".cache" / "image_preview_hashes.json"
 
 IMAGE_EXTS = {".jpg", ".jpeg", ".png"}
 PREVIEW_SUFFIX = ".preview.jpg"
@@ -39,6 +42,28 @@ def is_source_image(path: Path) -> bool:
 
 def preview_path(path: Path) -> Path:
     return path.with_name(f"{path.stem}.preview.jpg")
+
+
+def sha256_hex(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def load_hashes() -> dict[str, str]:
+    if HASH_FILE.is_file():
+        try:
+            return json.loads(HASH_FILE.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, ValueError):
+            return {}
+    return {}
+
+
+def save_hashes(hashes: dict[str, str]) -> None:
+    HASH_FILE.parent.mkdir(parents=True, exist_ok=True)
+    HASH_FILE.write_text(json.dumps(hashes, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def needs_update(src: Path, out: Path) -> bool:
@@ -94,14 +119,31 @@ def generate(base: Path, force: bool) -> tuple[int, int]:
         and is_source_image(path)
         and not path.is_relative_to(skip_dir)
     )
+
+    # In --site mode use content hashing (like compress_pdfs.py) so that
+    # zensical build's fresh file copies don't trigger unnecessary re-generation.
+    use_hash = base == SITE
+    hashes: dict[str, str] = {}
+    if use_hash:
+        hashes = load_hashes()
+
     generated = 0
     skipped = 0
 
     for src in sources:
         out = preview_path(src)
-        if not force and not needs_update(src, out):
-            skipped += 1
-            continue
+        rel_key = str(src.relative_to(ROOT)) if use_hash else ""
+        cur_hash = sha256_hex(src) if use_hash else ""
+
+        if not force:
+            if use_hash:
+                if out.exists() and hashes.get(rel_key) == cur_hash:
+                    skipped += 1
+                    continue
+            elif not needs_update(src, out):
+                skipped += 1
+                continue
+
         try:
             generate_preview(src, out)
         except subprocess.CalledProcessError as exc:
@@ -109,7 +151,17 @@ def generate(base: Path, force: bool) -> tuple[int, int]:
             if exc.stderr:
                 print(exc.stderr.strip(), file=sys.stderr)
             return generated, skipped
+
         generated += 1
+        if use_hash:
+            hashes[rel_key] = cur_hash
+
+    if use_hash:
+        # Clean up stale hash entries for deleted images
+        valid = {str(s.relative_to(ROOT)) for s in sources}
+        for k in set(hashes) - valid:
+            del hashes[k]
+        save_hashes(hashes)
 
     return generated, skipped
 

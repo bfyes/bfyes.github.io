@@ -1,8 +1,9 @@
 /**
- * PDF 加载进度 + 懒加载 + PDF.js canvas 渲染
+ * PDF 加载进度 + PDF.js canvas 一次性渲染
  *
  * 解决手机上 iframe 嵌入 PDF 只显示第一页的问题：
  *   用 PDF.js 把 PDF 逐页渲染为 canvas，彻底绕过浏览器 PDF 查看器限制。
+ *   所有 PDF 在页面加载时立即下载并渲染全部页面。
  *
  * 用法：在 Markdown 中照常写 <iframe src="xxx.pdf"> 即可，脚本会自动替换。
  */
@@ -14,7 +15,6 @@
   // ============================================================
   var SCRIPT_BASE =
     "https://unpkg.com/pdfjs-dist@4.0.379/build/";
-  var ROOT_MARGIN = "300px";
   var RENDER_SCALE = 3;
 
   // ============================================================
@@ -346,10 +346,8 @@
           viewer._overlay.style.display = "none";
         }, 400);
 
-        // 只渲染当前页及前后各 4 页，避免手机上一次性渲全部页面 OOM
-        var start = Math.max(0, viewer._curPage - 4);
-        var end = Math.min(doc.numPages - 1, viewer._curPage + 4);
-        for (var j = start; j <= end; j++) {
+        // 一次性渲染全部页面
+        for (var j = 0; j < doc.numPages; j++) {
           renderPage(viewer, j);
         }
 
@@ -387,23 +385,10 @@
   }
 
   // ============================================================
-  // 全局懒加载入口（组件级：仅 PDF 组件进入视口才开始下载）
+  // 全局入口：立即加载所有 PDF（无懒加载）
   // ============================================================
-  var entryObserver;
-  try {
-    entryObserver = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entryObserver.unobserve(entry.target);
-            loadPDF(entry.target);
-          }
-        });
-      },
-      { rootMargin: ROOT_MARGIN, threshold: 0.01 }
-    );
-  } catch (e) {
-    entryObserver = null;
+  function observeAndLoad(viewer) {
+    loadPDF(viewer);
   }
 
   // ============================================================
@@ -422,12 +407,7 @@
       if (!viewer) continue;
 
       iframe.parentNode.replaceChild(viewer, iframe);
-
-      if (entryObserver) {
-        entryObserver.observe(viewer);
-      } else {
-        loadPDF(viewer);
-      }
+      observeAndLoad(viewer);
     }
   }
 

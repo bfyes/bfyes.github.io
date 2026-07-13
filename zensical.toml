@@ -14,20 +14,24 @@ nav = [
         { "汇编语言设计与调试" = "study/asm.md" },
         { "信息安全原理与数学基础" = "study/ismath.md" },
         { "计算机系统Ⅰ" = [
-            "study/sys1-lab/index.md",
-            { "lab0: 数字电路仿真" = "study/sys1-lab/lab0/index.md" },
-            { "lab1: 八选一多路选择器" = "study/sys1-lab/lab1/index.md" },
-            { "lab2: 64位全加减法器" = "study/sys1-lab/lab2/index.md" },
-            { "lab3: 时序电路/FSM" = "study/sys1-lab/lab3/index.md" },
-            { "lab4: 卷积模块" = "study/sys1-lab/lab4/index.md" },
-            { "lab5: RISC-V 汇编" = "study/sys1-lab/lab5/index.md" },
-            { "project: 单周期CPU" = "study/sys1-lab/project/index.md" },
+            "study/sys1/index.md",
+            { "lab0: 数字电路仿真" = "study/sys1/lab0/index.md" },
+            { "lab1: 八选一多路选择器" = "study/sys1/lab1/index.md" },
+            { "lab2: 64位全加减法器" = "study/sys1/lab2/index.md" },
+            { "lab3: 时序电路/FSM" = "study/sys1/lab3/index.md" },
+            { "lab4: 卷积模块" = "study/sys1/lab4/index.md" },
+            { "lab5: RISC-V 汇编" = "study/sys1/lab5/index.md" },
+            { "project: 单周期CPU" = "study/sys1/project/index.md" },
         ] },
         { "数据结构基础" = [
-            "study/fds-project/index.md",
-            { "Project1" = "study/fds-project/project1/index.md" },
-            { "Project2" = "study/fds-project/project2/index.md" },
-            { "Project3" = "study/fds-project/project3/index.md" },
+            "study/fds/index.md",
+            { "Project1" = "study/fds/project1/index.md" },
+            { "Project2" = "study/fds/project2/index.md" },
+            { "Project3" = "study/fds/project3/index.md" },
+        ] },
+        { "HPC 高性能计算" = [
+            "study/hpc/index.md",
+            { "lab1: 简单集群搭建" = "study/hpc/lab1/index.md" },
         ] },
     ] },
     { "工具" = [
@@ -53,6 +57,8 @@ extra_javascript = [
     "theme/mathjax.js",
     "theme/parallax-grid.js",
     "https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js",
+    "https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js",
+    "theme/typed-init.js",
 ]
 
 # --------------------------------------------------------------------------

@@ -210,6 +210,12 @@ body, .md-typeset, .md-typeset h2, .md-typeset h3, .md-typeset h4,
 .md-typeset h5, .md-typeset h6, .md-nav {
   font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
 }
+/* 搜索面板（输入框 + 结果列表）渲染在 Shadow DOM 里，外部选择器进不去。
+   其内部样式读 --md-text-font-family 变量，而 CSS 变量能穿透 shadow 边界。
+   注意必须写在 body 上覆盖主题 body 里的同名默认声明（写在 :root 上会被 body 覆盖）。 */
+body {
+  --md-text-font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+}
 code, kbd, pre, .md-typeset code, .md-typeset pre {
   font-family: "JetBrains Mono", "Noto Sans SC", monospace;
 }
@@ -541,7 +547,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   width: auto;
 }
 .bf-logo__text {
-  font-family: "JetBrains Mono", monospace;
+  font-family: "Courier New", Courier, ui-monospace, monospace;
   font-size: 40px;
   font-weight: 700;
   letter-spacing: 0;
@@ -584,23 +590,43 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 /* ===== 底层虚线网格背景（视差） ===== */
 /*
    SVG stroke-dasharray 实现真正虚线，不是 gradient 色块。
-   60px 方格，4px 线段 + 4px 间隙。
+   80px 方格，3px 线段 + 5px 间隙。
 */
 [data-md-color-scheme="default"] body {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cline x1='0' y1='0' x2='60' y2='0' stroke='rgba(100,100,100,0.22)' stroke-width='1' stroke-dasharray='4 4'/%3E%3Cline x1='0' y1='0' x2='0' y2='60' stroke='rgba(100,100,100,0.22)' stroke-width='1' stroke-dasharray='4 4'/%3E%3C/svg%3E");
-  background-size: 60px 60px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(100,100,100,0.22)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(100,100,100,0.22)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
+  background-size: 80px 80px;
   background-attachment: fixed;
 }
 
 [data-md-color-scheme="slate"] body {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cline x1='0' y1='0' x2='60' y2='0' stroke='rgba(180,180,180,0.13)' stroke-width='1' stroke-dasharray='4 4'/%3E%3Cline x1='0' y1='0' x2='0' y2='60' stroke='rgba(180,180,180,0.13)' stroke-width='1' stroke-dasharray='4 4'/%3E%3C/svg%3E");
-  background-size: 60px 60px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(180,180,180,0.13)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(180,180,180,0.13)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
+  background-size: 80px 80px;
   background-attachment: fixed;
 }
 
 /* 正文区域遮盖网格，避免虚线与文字打架 */
 .md-content {
   background-color: var(--md-default-bg-color);
+  box-shadow: 0 0 15px rgba(0,0,0,0.03);
+}
+[data-md-color-scheme="slate"] .md-content {
+  box-shadow: 0 0 15px rgba(0,0,0,0.08);
+}
+
+/* 顶部导航栏遮盖网格 */
+.md-header,
+.md-tabs {
+  background-color: var(--md-default-bg-color);
+}
+
+/* 导航标签列表左侧增加内边距，与正文左侧对齐 */
+.md-tabs__list {
+  padding-left: 0rem;
+}
+
+/* 页面整体加宽 */
+.md-grid {
+  max-width: 63rem;
 }
 
 /* ================================================================
@@ -799,4 +825,32 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 
 [data-md-color-scheme="slate"] .pdf-viewer-canvases {
   background: var(--md-code-bg-color, #1e1e2e);
+}
+
+/* ===== 打字机效果 ===== */
+.typed-text {
+  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+}
+
+/* ===== 打字机光标 ===== */
+.typed-text .typed-cursor,
+.typed-cursor-standalone {
+  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+  animation: blink 0.7s step-end infinite;
+}
+
+[data-md-color-scheme="default"] .typed-text,
+[data-md-color-scheme="default"] .typed-text .typed-cursor,
+[data-md-color-scheme="default"] .typed-cursor-standalone {
+  color: #000;
+}
+
+[data-md-color-scheme="slate"] .typed-text,
+[data-md-color-scheme="slate"] .typed-text .typed-cursor,
+[data-md-color-scheme="slate"] .typed-cursor-standalone {
+  color: #fff;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
 }

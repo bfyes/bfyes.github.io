@@ -19,13 +19,13 @@ contributions: ## 抓取 GitHub 贡献图数据烘焙成静态 JSON
 
 deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run python scripts/generate_page_metadata.py
-	# uv run python scripts/fetch_contributions.py
-	uv run zensical build
+	uv run python scripts/fetch_contributions.py
 	uv run python scripts/compress_pdfs.py
+	uv run zensical build
 	uv run python scripts/generate_image_previews.py --site
 	uv run python scripts/patch_image_src.py
 	@if [ ! -d site/.git ]; then \
 		cd site && git init; \
 	fi
-	@cd site && git remote get-url origin >/dev/null 2>&1 || git remote add origin https://github.com/bfyes/bfyes.github.io.git
-	cd site && git add -A && git commit -m "deploy" --allow-empty && git -c http.postBuffer=524288000 push -f -u origin HEAD:gh-pages
+	@cd site && git remote get-url origin >/dev/null 2>&1 && git remote set-url origin https://github.com/bfyes/bfyes.github.io.git || git remote add origin https://github.com/bfyes/bfyes.github.io.git
+	cd site && git add -A && git commit -m "deploy" --allow-empty && git push -f -u origin HEAD:gh-pages

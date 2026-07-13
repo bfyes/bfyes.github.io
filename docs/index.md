@@ -1,12 +1,17 @@
 # Welcome
 
-<span style="font-size:1.5em; color:#808080;">We1c0me t0 bfyes, 111.</span>
+---
 
-<span style="font-size:1.0em; color:#808080;">1'm fr0m ZJU. 1 maj0r 1n Information Security.</span>
+<!-- 打字机效果：三行依次打出，第三行打完光标持续闪烁 -->
+<span id="typed-line-1" class="typed-text" style="font-size:1.2em;display:none;"></span>
+<br id="typed-br-1" style="display:none;">
+<span id="typed-line-2" class="typed-text" style="font-size:1.2em;display:none;"></span>
+<br id="typed-br-2" style="display:none;">
+<span id="typed-line-3" class="typed-text" style="font-size:1.2em;display:none;"></span>
 
 ---
 
-亮暗色主题均做了适配, 可放心食用. 电脑端浏览效果更佳～
+亮暗色主题均做了适配, 电脑端浏览效果更佳
 
 ??? tip "TODO"
 
@@ -19,9 +24,12 @@
     2. 游记 & 照片
 
 <span style="font-size:1.2em; color:#808080;">**更新日志**</span>
+=== "2026.07.13"
+    1. 更新了部分 css 文件
+    
 === "2026.07.11"
-    1. 实现 PDF 构建时压缩到 /site
-    2. 更换 PDF 加载容器并懒加载
+    1. 实现 PDF 构建时压缩
+    2. 更换 PDF 容器
     
 === "2026.07.10"
     1. 实现了电脑端背景网格及其视差动画
