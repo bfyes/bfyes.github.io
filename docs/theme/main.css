@@ -607,8 +607,10 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 /* 正文区域遮盖网格，避免虚线与文字打架 */
 .md-content {
   background-color: var(--md-default-bg-color);
-  border-left: 1px solid color-mix(in srgb, var(--md-default-fg-color) 15%, transparent);
-  border-right: 1px solid color-mix(in srgb, var(--md-default-fg-color) 15%, transparent);
+  box-shadow: 0 0 15px rgba(0,0,0,0.03);
+}
+[data-md-color-scheme="slate"] .md-content {
+  box-shadow: 0 0 15px rgba(0,0,0,0.08);
 }
 
 /* 顶部导航栏遮盖网格 */
@@ -617,9 +619,14 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   background-color: var(--md-default-bg-color);
 }
 
+/* 导航标签列表左侧增加内边距，与正文左侧对齐 */
+.md-tabs__list {
+  padding-left: 0rem;
+}
+
 /* 页面整体加宽 */
 .md-grid {
-  max-width: 65rem;
+  max-width: 63rem;
 }
 
 /* ================================================================
