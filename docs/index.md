@@ -2,10 +2,12 @@
 
 ---
 
-<!-- 打字机效果：第一行 → 延迟 → 第二行 → 光标持续闪烁 -->
-<span id="typed-line-1" class="typed-text" style="font-size:1.2em;"></span>
-<br>
-<span id="typed-line-2" class="typed-text" style="font-size:1.2em;"></span>
+<!-- 打字机效果：三行依次打出，第三行打完光标持续闪烁 -->
+<span id="typed-line-1" class="typed-text" style="font-size:1.2em;display:none;"></span>
+<br id="typed-br-1" style="display:none;">
+<span id="typed-line-2" class="typed-text" style="font-size:1.2em;display:none;"></span>
+<br id="typed-br-2" style="display:none;">
+<span id="typed-line-3" class="typed-text" style="font-size:1.2em;display:none;"></span>
 
 ---
 
