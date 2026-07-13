@@ -1,12 +1,15 @@
 # Welcome
 
-<span style="font-size:1.5em; color:#808080;">We1c0me t0 bfyes, 111.</span>
+---
 
-<span style="font-size:1.0em; color:#808080;">1'm fr0m ZJU. 1 maj0r 1n Information Security.</span>
+<!-- 打字机效果：第一行 → 延迟 → 第二行 → 光标持续闪烁 -->
+<span id="typed-line-1" class="typed-text" style="font-size:1.2em;"></span>
+<br>
+<span id="typed-line-2" class="typed-text" style="font-size:1.2em;"></span>
 
 ---
 
-亮暗色主题均做了适配, 可放心食用. 电脑端浏览效果更佳～
+亮暗色主题均做了适配, 电脑端浏览效果更佳
 
 ??? tip "TODO"
 

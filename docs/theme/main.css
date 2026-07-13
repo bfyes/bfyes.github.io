@@ -826,3 +826,31 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 [data-md-color-scheme="slate"] .pdf-viewer-canvases {
   background: var(--md-code-bg-color, #1e1e2e);
 }
+
+/* ===== 打字机效果 ===== */
+.typed-text {
+  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+}
+
+/* ===== 打字机光标 ===== */
+.typed-text .typed-cursor,
+.typed-cursor-standalone {
+  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+  animation: blink 0.7s step-end infinite;
+}
+
+[data-md-color-scheme="default"] .typed-text,
+[data-md-color-scheme="default"] .typed-text .typed-cursor,
+[data-md-color-scheme="default"] .typed-cursor-standalone {
+  color: #000;
+}
+
+[data-md-color-scheme="slate"] .typed-text,
+[data-md-color-scheme="slate"] .typed-text .typed-cursor,
+[data-md-color-scheme="slate"] .typed-cursor-standalone {
+  color: #fff;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
