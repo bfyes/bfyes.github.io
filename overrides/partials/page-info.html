@@ -46,6 +46,51 @@
       ];
     }
 
+    function updatedText(value) {
+      var date = new Date(value);
+      return date.toLocaleDateString("zh-CN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    }
+
+    function ensureTopUpdated() {
+      var inner = document.querySelector(".md-content__inner");
+      if (!inner) {
+        return null;
+      }
+
+      var top = inner.querySelector(".page-updated-top");
+      if (!top) {
+        top = document.createElement("div");
+        top.className = "page-updated-top";
+        top.hidden = true;
+        top.innerHTML =
+          '<span class="page-updated-top__label">最后更新于 / Last updated</span>' +
+          '<time class="page-updated-top__time" datetime=""></time>';
+
+        var title = inner.querySelector("h1");
+        if (title) {
+          title.insertAdjacentElement("afterend", top);
+        } else {
+          inner.insertBefore(top, inner.firstChild);
+        }
+      }
+
+      return top;
+    }
+
+    function renderTime(wrap, time, value, text) {
+      if (!wrap || !time) {
+        return;
+      }
+
+      time.dateTime = value;
+      time.textContent = text;
+      wrap.hidden = false;
+    }
+
     function renderLastUpdated() {
       var meta = window.__BFYES_PAGE_META__ || {};
       var candidates = pageMetaCandidates();
@@ -58,39 +103,50 @@
         }
       }
 
-      var wrap = document.querySelector(".page-info__updated");
-      var time = document.querySelector("#page-last-updated");
-      if (!wrap || !time || !data || !data.updated) {
+      if (!data || !data.updated) {
         return;
       }
 
-      var date = new Date(data.updated);
-      time.dateTime = data.updated;
-      time.textContent = date.toLocaleDateString("zh-CN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-      wrap.hidden = false;
+      var text = updatedText(data.updated);
+      renderTime(
+        document.querySelector(".page-info__updated"),
+        document.querySelector("#page-last-updated"),
+        data.updated,
+        text
+      );
+
+      var top = ensureTopUpdated();
+      renderTime(
+        top,
+        top ? top.querySelector(".page-updated-top__time") : null,
+        data.updated,
+        text
+      );
     }
 
     function renderPageInfo() {
       renderLastUpdated();
     }
 
+    function scheduleRenderPageInfo() {
+      renderPageInfo();
+      setTimeout(renderPageInfo, 50);
+      setTimeout(renderPageInfo, 200);
+    }
+
     if (!window.__bfyesPageInfoReady) {
       window.__bfyesPageInfoReady = true;
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", renderPageInfo);
+        document.addEventListener("DOMContentLoaded", scheduleRenderPageInfo);
       } else {
-        renderPageInfo();
+        scheduleRenderPageInfo();
       }
 
       if (window.document$) {
-        window.document$.subscribe(renderPageInfo);
+        window.document$.subscribe(scheduleRenderPageInfo);
       }
     } else {
-      renderPageInfo();
+      scheduleRenderPageInfo();
     }
   })();
 </script>

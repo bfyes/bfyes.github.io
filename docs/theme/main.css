@@ -159,6 +159,48 @@
   color: #fdba74;
 }
 
+/* bash 内置命令（Name.Builtin）高亮 */
+[data-md-color-scheme="default"] .md-typeset .highlight .nb,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nb {
+  color: #b42318;
+}
+[data-md-color-scheme="slate"] .md-typeset .highlight .nb,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .nb {
+  color: #ff6b6b;
+}
+
+/* bash 运算符/标点（Operator / Punctuation）高亮 */
+[data-md-color-scheme="default"] .md-typeset .highlight .o,
+[data-md-color-scheme="default"] .md-typeset .highlight .ow,
+[data-md-color-scheme="default"] .md-typeset .highlight .p,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .o,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .ow,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .p {
+  color: #b42318;
+}
+[data-md-color-scheme="slate"] .md-typeset .highlight .o,
+[data-md-color-scheme="slate"] .md-typeset .highlight .ow,
+[data-md-color-scheme="slate"] .md-typeset .highlight .p,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .o,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .ow,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .p {
+  color: #ff6b6b;
+}
+
+/* bash 字符串插值（String.Interpol）高亮 */
+[data-md-color-scheme="default"] .md-typeset .highlight .si,
+[data-md-color-scheme="default"] .md-typeset .highlight .s2,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .si,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .s2 {
+  color: #067647;
+}
+[data-md-color-scheme="slate"] .md-typeset .highlight .si,
+[data-md-color-scheme="slate"] .md-typeset .highlight .s2,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .si,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .s2 {
+  color: #86efac;
+}
+
 /* 寄存器/变量名高亮 */
 [data-md-color-scheme="default"] .md-typeset .highlight .no,
 [data-md-color-scheme="default"] .md-typeset .highlight .nv,
@@ -555,6 +597,26 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* ===== 页面信息 ===== */
+.page-updated-top {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: -0.85rem 0 1.35rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.page-updated-top[hidden],
+.page-info__item[hidden] {
+  display: none !important;
+}
+
+.page-updated-top__time {
+  color: var(--md-default-fg-color--lighter);
+  font-variant-numeric: tabular-nums;
+}
+
 .page-info {
   display: grid;
   gap: 0.25rem;

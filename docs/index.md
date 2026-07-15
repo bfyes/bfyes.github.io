@@ -24,6 +24,10 @@
     2. 游记 & 照片
 
 <span style="font-size:1.2em; color:#808080;">**更新日志**</span>
+=== "2026.07.16"
+    1. 规范文档命名
+    2. 新增/微调部分文档
+
 === "2026.07.13"
     1. 更新了部分 css 文件
     
@@ -48,7 +52,7 @@
 
 !!! info "汇编课友请看"
 
-    - 学习汇编语言的同学请参考：[Windows XP on Apple Silicon](https://bfyes.github.io/tools/windows-xp-apple-silicon/)
+    - 学习汇编语言的同学请参考：[Windows XP on Apple Silicon](https://bfyes.github.io/tools/xp/)
 
 ---
 

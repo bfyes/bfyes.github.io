@@ -1,9 +1,15 @@
 window.__BFYES_PAGE_META__ = {
   "/": {
-    "updated": "2026-07-13T15:50:16+08:00"
+    "updated": "2026-07-13T15:59:05+08:00"
+  },
+  "/computers/0/": {
+    "updated": "2026-07-15T23:25:40.891445+08:00"
   },
   "/diaries/fa25_review/": {
     "updated": "2026-07-10T02:17:39+08:00"
+  },
+  "/diaries/sp26_final/": {
+    "updated": "2026-07-15T23:11:56.542021+08:00"
   },
   "/diaries/sp26_midterm/": {
     "updated": "2026-07-10T02:17:39+08:00"
@@ -56,16 +62,19 @@ window.__BFYES_PAGE_META__ = {
   "/study/sys1/project/": {
     "updated": "2026-07-11T23:43:42+08:00"
   },
-  "/tools/mac\u4e0a\u597d\u7528\u7684\u7b2c\u4e09\u65b9\u8bb0\u4e8b\u672c\u8f6f\u4ef6/": {
-    "updated": "2026-07-09T15:03:14+08:00"
+  "/tools/notepadnext/": {
+    "updated": "2026-07-15T23:27:54.491258+08:00"
   },
-  "/tools/rosetta-x86-linux-guide/": {
-    "updated": "2026-07-09T15:03:14+08:00"
+  "/tools/rosetta/": {
+    "updated": "2026-07-15T23:37:37.342628+08:00"
   },
-  "/tools/vivado-apple-silicon/": {
-    "updated": "2026-07-09T15:03:14+08:00"
+  "/tools/vivado/": {
+    "updated": "2026-07-15T23:42:54.911371+08:00"
   },
-  "/tools/windows-xp-apple-silicon/": {
-    "updated": "2026-07-09T15:03:14+08:00"
+  "/tools/xp/": {
+    "updated": "2026-07-16T00:13:02.496279+08:00"
+  },
+  "/tools/xp_1/": {
+    "updated": "2026-07-16T00:32:35.539632+08:00"
   }
 };

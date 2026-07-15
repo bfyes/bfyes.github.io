@@ -1,24 +1,24 @@
 # Vivado（含可用的Batch模式） 2022.2 on Ubuntu with Rosetta（不完善）
 
-### 引用文章来自CSDN：[利用 Rosetta 在 M 系列 Mac 上高效运行 x86 Linux 应用的完整指南](rosetta-x86-linux-guide.md)
-
-最后更新时间：2026-07-09
+### 引用文章来自CSDN：利用 Rosetta 在 M 系列 Mac 上高效运行 x86 Linux 应用的完整指南[[点击跳转至整理归档](rosetta.md)]
 
 !!! information
-    配置过程繁琐，且不一定100%有效。这种配置方式的唯二优点：可以直接从Makefile生成bitstream(***Batch***方便且快速)；调用Mac的Rosetta转译，效率较高。
+    配置过程繁琐，且不一定100%有效。这种配置方式的唯二优点：可以直接从 Makefile 生成 bitstream (***Batch***方便且快速)；调用 Mac 的 Rosetta 转译，效率较高。
 
 !!! warning
-    由于其不稳定性，不建议用此方法。仍建议x86_64原生环境或优先采用实验文档中docker容器的方法！如果您尝试用Apple，请做好文件备份，并准备备用机（可以是 Windows 电脑，也可以是后文提及的PD虚拟机里的 Windows 11），以防万一。
+    由于其不稳定性，不建议用此方法。仍建议x86_64原生环境或优先采用实验文档中 docker 容器的方法！如果您尝试用 Apple ，请做好文件备份，并准备备用机（可以是 Windows 电脑，也可以是后文提及的PD虚拟机里的 Windows 11），以防万一。
 
-注：笔者能力十十十分有限，只能写到这个程度了。。。如果以后能力有提升会完善这篇文章的。
+注：笔者能力十分有限，只能写到这个程度。如果以后能力有提升会完善这篇文章。
 
-另注：如果您很需要，可以联系我copy一份虚拟机（）
+另注：如果您很需要，可以联系我copy一份虚拟机。
 
-> 本文的部署流程是通过AI辅助完成的，总结这篇文章也是为了记录在 linux 系统里的“摸爬滚打”。这篇文章**没有任何技术含量**，只是记录我装机折腾的种种过程。毕竟跟谁学都是学，包括AI。现在列出步骤只是为了说明该方案的可行性。笔者刚刚接触 linux，是小白，实在不熟悉这个系统的环境和操作。步骤只是大致的框架，如遇到任何问题，请做“Prompt工程师”。
+> 本文的部署流程是通过Agent辅助完成的，总结这篇文章也是为了记录在 linux 系统里的“摸爬滚打”。这篇文章**没有任何技术含量**，只是记录我装机折腾的种种过程。现在列出步骤只是为了说明该方案的可行性。笔者刚刚接触 linux，是小白，实在不熟悉这个系统的环境和操作。步骤只是大致的框架，如遇到任何问题，请把此文喂给Agent并让其操作，这对他们来说是小菜一碟。
 
 详见：github copilot 学生认证。<https://github.com/education/students>
 
 在 Ubuntu 中打开 VSCode 的 Agent ，直接让它帮你来（hhh）。
+
+> 更新：Copilot 免费额度大减，考虑安装 DeepSeek 插件。
 
 - 写作工具：Typora；环境：Ubuntu 24.04 ARM64；网页构建工具：Mkdocs。
 
@@ -54,7 +54,7 @@
 
 点击新建选项，选择`下载 Ubuntu with Rosetta`，等待自动下载完毕。该软件完成度很高，几乎不用手动操作。
 
-<img src="Vivado%28Batch%29%20on%20Apple%20Silicon%20Mac.assets/1Capture%202026-03-26%2018.15.01-1774520136604-2.png" alt="1Capture 2026-03-26 18.15.01" />
+<img src="vivado.assets/1Capture%202026-03-26%2018.15.01-1774520136604-2.png" alt="1Capture 2026-03-26 18.15.01" />
 
 ### **Vivado 2022.2 Linux 安装包**
 
@@ -209,7 +209,7 @@ chmod +x Xilinx_Unified_2022.2_1014_8888_Lin64.bin
 !!! note
     仅需把`exit1`前面加`#`注释掉即可。图片中是AI修改后的片段，不必这么麻烦。
 
-    <img src="Vivado%28Batch%29%20on%20Apple%20Silicon%20Mac.assets/image-20260326184049178.png" alt="image-20260326184049178" />
+    <img src="vivado.assets/image-20260326184049178.png" alt="image-20260326184049178" />
 
 ### 运行安装器
 
@@ -330,9 +330,8 @@ echo "$XDG_SESSION_TYPE"
 
 如不是 `x11`，优先切换 Xorg 后再测 GUI。
 
-<img src="Vivado%28Batch%29%20on%20Apple%20Silicon%20Mac.assets/image-20260326185039563.png" alt="image-20260326185039563" />
+<img src="vivado.assets/image-20260326185039563.png" alt="image-20260326185039563" />
 
 ## 复现检查
 
 分别登出和重启后重新尝试验证。
-

@@ -80,8 +80,10 @@ Mac 平台上的 VMware Fusion 并不支持跨架构虚拟化，必须用 UTM �
 关于 UTM 的下载，请访问 <https://mac.getutm.app>。
 
 ???+note "虚拟化vs模拟"
-    <img src="Windows%20XP%20on%20Apple%20Silicon%20Mac.assets/1Capture%202026-03-26%2012.17.32.png" alt="1Capture 2026-03-26 12.17.32" style="display: block; margin: 0 auto; zoom: 33%;" />
+    <img src="xp.assets/1Capture%202026-03-26%2012.17.32.png" alt="1Capture 2026-03-26 12.17.32" style="display: block; margin: 0 auto; zoom: 33%;" />
 
+    <br>
+    
     | 对比项 | 虚拟化 | 模拟 |
     | :--- | :--- | :--- |
     | **核心** | 硬件辅助，直接复用CPU指令集 | 纯软件翻译指令，完整重建硬件环境 |
@@ -129,13 +131,13 @@ UTM 不支持直接导入 VMware 格式，必须转换为 qcow2
 
 4. 加载转换完成的 qcow2 文件：右键刚下载的`.utm`文件，选择“显示包内容”，打开Images文件夹，将内部的磁盘文件用转换好的 qcow2 文件替换，**注意名称要相同**（笔者的是`disk-0.qcow2` ），如果不同或采用在硬件配置时重新定义的方式，后续有概率出现蓝屏的问题，目前没找出原因。
 
-    <img src="Windows%20XP%20on%20Apple%20Silicon%20Mac.assets/1Capture%202026-03-24%2023.09.01.png" alt="1Capture 2026-03-24 23.09.01" style="display: block; margin: 0 auto;" />
+    <img src="xp.assets/1Capture%202026-03-24%2023.09.01.png" alt="1Capture 2026-03-24 23.09.01" style="display: block; margin: 0 auto;" />
 
 5. Windows XP 硬件配置：
 
     双击`.utm`文件，该虚拟机会自动挂载到 UTM 软件上。点击右上角的“配置”图标。
 
-    <img src="Windows%20XP%20on%20Apple%20Silicon%20Mac.assets/1Capture%202026-03-26%2013.38.10.png" alt="1Capture 2026-03-26 13.38.10" style="display: block; margin: 0 auto; zoom:50%;" />
+    <img src="xp.assets/1Capture%202026-03-26%2013.38.10.png" alt="1Capture 2026-03-26 13.38.10" style="display: block; margin: 0 auto; zoom:50%;" />
 
     - 内存建议：512MB - 2GB。
 
@@ -165,22 +167,22 @@ UTM 不支持直接导入 VMware 格式，必须转换为 qcow2
     === "step 1" 
         (1/4) 当屏幕显示“ Windows XP Professional 安装程序，欢迎使用安装程序”信息时，再次按下**Enter**。（现在安装Windows XP）
     
-        <img src="Windows%20XP%20on%20Apple%20Silicon%20Mac.assets/1Capture%202026-03-25%2012.59.01.png" alt="1Capture 2026-03-25 12.59.01" style="display: block; margin: 0 auto;" />
+        <img src="xp.assets/1Capture%202026-03-25%2012.59.01.png" alt="1Capture 2026-03-25 12.59.01" style="display: block; margin: 0 auto;" />
 
     === "step 2"
         (2/4) 随后安装程序会自动扫描环境，识别到 qcow2 文件后会弹出选项，是否修复安装，此时选择修复（R）即可。
 
-        <img src="Windows%20XP%20on%20Apple%20Silicon%20Mac.assets/1Capture%202026-03-08%2010.38.57.png" alt="1Capture 2026-03-08 10.38.57" style="display: block; margin: 0 auto;" />
+        <img src="xp.assets/1Capture%202026-03-08%2010.38.57.png" alt="1Capture 2026-03-08 10.38.57" style="display: block; margin: 0 auto;" />
 
     === "step 3"
         (3/4) 等待大约10分钟后需要输入`MRX3F-47B9T-2487J-KWKMF-RPWBY` (Windows XP SP3批量密钥，仅供参考)。
 
-        <img src="Windows%20XP%20on%20Apple%20Silicon%20Mac.assets/豆包%202026-03-08%2011.17.37.png" alt="豆包 2026-03-08 11.17.37" style="display: block; margin: 0 auto;" />
+        <img src="xp.assets/豆包%202026-03-08%2011.17.37.png" alt="豆包 2026-03-08 11.17.37" style="display: block; margin: 0 auto;" />
 
     === "step 4"
         (4/4) 继续等待约10分钟后即可成功进入桌面！你可以自由调整分辨率和壁纸了。
 
-        <img src="Windows%20XP%20on%20Apple%20Silicon%20Mac.assets/1Capture%202026-03-26%2014.02.47.png" alt="1Capture 2026-03-26 14.02.47" style="display: block; margin: 0 auto; zoom: 25%;" />
+        <img src="xp.assets/1Capture%202026-03-26%2014.02.47.png" alt="1Capture 2026-03-26 14.02.47" style="display: block; margin: 0 auto; zoom: 25%;" />
 
 ??? info "SPICE Guest Tools 折腾记录（放弃）"
 
@@ -230,7 +232,7 @@ UTM 不支持直接导入 VMware 格式，必须转换为 qcow2
     ifconfig | grep inet
     ```
 
-    <img src="Windows%20XP%20on%20Apple%20Silicon%20Mac.assets/1Capture%202026-03-26%2014.09.58.png" alt="1Capture 2026-03-26 14.09.58" style="display: block; margin: 0 auto;" />
+    <img src="xp.assets/1Capture%202026-03-26%2014.09.58.png" alt="1Capture 2026-03-26 14.09.58" style="display: block; margin: 0 auto;" />
 
     得到并记住该地址。（高亮部分）
 
@@ -248,11 +250,11 @@ UTM 不支持直接导入 VMware 格式，必须转换为 qcow2
 
 3. 首次连接点击 Accept and Save 保存密钥
 
-    <img src="Windows%20XP%20on%20Apple%20Silicon%20Mac.assets/1Capture%202026-03-26%2011.06.44.png" alt="1Capture 2026-03-26 11.06.44" style="display: block; margin: 0 auto; zoom:50%;" />
+    <img src="xp.assets/1Capture%202026-03-26%2011.06.44.png" alt="1Capture 2026-03-26 11.06.44" style="display: block; margin: 0 auto; zoom:50%;" />
 
 4. 连接成功后，左右分栏直接拖拽实现双向文件传输。至此，虚拟机成功安装并完成配置！
 ???+note "效果图"
-    <img src="Windows%20XP%20on%20Apple%20Silicon%20Mac.assets/1Capture%202026-03-26%2014.13.07.png" alt="1Capture 2026-03-26 14.13.07" style="display: block; margin: 0 auto;" />
+    <img src="xp.assets/1Capture%202026-03-26%2014.13.07.png" alt="1Capture 2026-03-26 14.13.07" style="display: block; margin: 0 auto;" />
 
 !!! question "Mac 的共享文件夹乱码"
     若 Mac 的共享文件夹乱码，请点击Xftp5左上角`File` - `Properties` - `Options` - 勾选`Use UTF-8 encoding`。
