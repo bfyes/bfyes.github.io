@@ -1,6 +1,6 @@
 # Windows XP on Apple Silicon Mac
 
-> 本文为配置记录，配置方法见以下链接[[点击跳转](xp_1.md)]。
+> 本文为配置记录，部署方法见以下链接[[点击跳转](xp_1.md)]。
 
 <span style="font-size:1.2em; color:#808080;">**更新日志**</span>
 
