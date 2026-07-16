@@ -423,7 +423,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.45rem 1rem 0;
+  padding: 0.45rem 1rem 0.6rem;
 }
 
 .ContributionCalendar-grid {
@@ -488,6 +488,8 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 .ContributionCalendar-day {
+  box-sizing: border-box;
+  border: 0.5px solid;
   border-radius: 2px;
   outline: none;
   transition: opacity 0.12s ease;
@@ -503,19 +505,19 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   outline-offset: 1px;
 }
 
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: rgb(240, 242, 245); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: rgb(172, 238, 187); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: rgb(75, 193, 107); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: rgb(44, 164, 79); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: rgb(16, 99, 41); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: rgb(240, 242, 245); border-color: #E4E8EB; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: rgb(172, 238, 187); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: rgb(75, 193, 107); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: rgb(44, 164, 79); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: rgb(16, 99, 41); border-color: transparent; }
 
 [data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="0"] {
-  background-color: #161b22;
+  background-color: #161b22; border-color: #1c2330;
 }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #0e4429; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #006d32; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #26a641; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #39d353; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #0e4429; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #006d32; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #26a641; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #39d353; border-color: transparent; }
 
 .ghc-footer {
   display: flex;
@@ -688,7 +690,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 
 /* 页面整体加宽 */
 .md-grid {
-  max-width: 63rem;
+  max-width: 64rem;
 }
 
 /* ================================================================
