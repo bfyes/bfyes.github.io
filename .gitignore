@@ -16,3 +16,5 @@ __pycache__/
 
 # site/ 是构建产物，不跟踪
 site/
+
+000asm.md

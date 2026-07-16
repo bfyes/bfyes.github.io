@@ -1,18 +1,33 @@
 window.__BFYES_PAGE_META__ = {
   "/": {
-    "updated": "2026-07-13T15:50:16+08:00"
+    "updated": "2026-07-16T13:23:32+08:00"
+  },
+  "/computers/0/": {
+    "updated": "2026-07-16T00:45:17+08:00"
   },
   "/diaries/fa25_review/": {
     "updated": "2026-07-10T02:17:39+08:00"
   },
+  "/diaries/sp26_final/": {
+    "updated": "2026-07-16T00:45:17+08:00"
+  },
   "/diaries/sp26_midterm/": {
-    "updated": "2026-07-10T02:17:39+08:00"
+    "updated": "2026-07-16T00:45:17+08:00"
+  },
+  "/study/000asm/": {
+    "updated": "2026-07-16T12:52:44.443943+08:00"
   },
   "/study/asm/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-16T15:49:41.169581+08:00"
+  },
+  "/study/ctf/": {
+    "updated": "2026-07-16T13:01:30+08:00"
+  },
+  "/study/ctf/lab0/": {
+    "updated": "2026-07-16T13:01:30+08:00"
   },
   "/study/fds/": {
-    "updated": "2026-07-11T23:43:42+08:00"
+    "updated": "2026-07-16T13:01:30+08:00"
   },
   "/study/fds/project1/": {
     "updated": "2026-07-11T23:43:42+08:00"
@@ -24,16 +39,19 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-11T23:43:42+08:00"
   },
   "/study/hpc/": {
-    "updated": "2026-07-11T23:43:42+08:00"
+    "updated": "2026-07-16T13:01:30+08:00"
+  },
+  "/study/hpc/lab0/": {
+    "updated": "2026-07-16T13:01:30+08:00"
   },
   "/study/hpc/lab1/": {
     "updated": "2026-07-11T23:43:42+08:00"
   },
   "/study/ismath/": {
-    "updated": "2026-07-10T15:44:11+08:00"
+    "updated": "2026-07-16T00:45:17+08:00"
   },
   "/study/sys1/": {
-    "updated": "2026-07-11T23:43:42+08:00"
+    "updated": "2026-07-16T13:01:30+08:00"
   },
   "/study/sys1/lab0/": {
     "updated": "2026-07-11T23:43:42+08:00"
@@ -56,16 +74,19 @@ window.__BFYES_PAGE_META__ = {
   "/study/sys1/project/": {
     "updated": "2026-07-11T23:43:42+08:00"
   },
-  "/tools/mac\u4e0a\u597d\u7528\u7684\u7b2c\u4e09\u65b9\u8bb0\u4e8b\u672c\u8f6f\u4ef6/": {
-    "updated": "2026-07-09T15:03:14+08:00"
+  "/tools/notepadnext/": {
+    "updated": "2026-07-16T00:45:17+08:00"
   },
-  "/tools/rosetta-x86-linux-guide/": {
-    "updated": "2026-07-09T15:03:14+08:00"
+  "/tools/rosetta/": {
+    "updated": "2026-07-16T00:45:17+08:00"
   },
-  "/tools/vivado-apple-silicon/": {
-    "updated": "2026-07-09T15:03:14+08:00"
+  "/tools/vivado/": {
+    "updated": "2026-07-16T00:45:17+08:00"
   },
-  "/tools/windows-xp-apple-silicon/": {
-    "updated": "2026-07-09T15:03:14+08:00"
+  "/tools/xp/": {
+    "updated": "2026-07-16T12:29:33+08:00"
+  },
+  "/tools/xp_1/": {
+    "updated": "2026-07-16T12:29:33+08:00"
   }
 };

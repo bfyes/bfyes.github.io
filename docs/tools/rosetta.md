@@ -1,6 +1,6 @@
 # 利用 Rosetta 在 M 系列 Mac 上高效运行 x86 Linux 应用的完整指南
 
-> 原文链接 [https://blog.csdn.net/weixin_29305313/article/details/159103754](https://blog.csdn.net/weixin_29305313/article/details/159103754)
+> 原文链接: https://blog.csdn.net/weixin_29305313/article/details/159103754 [[点击跳转](https://blog.csdn.net/weixin_29305313/article/details/159103754)]
 
 ## 为什么需要 Rosetta 在 M 系列 Mac 上运行 x86 Linux 应用
 
@@ -10,6 +10,7 @@ Rosetta 是苹果开发的动态二进制翻译器，最初是为了让 x86 架�
 
 我实测下来，这种方式的性能损失比纯模拟要小得多。举个例子，通过 Rosetta 运行 x86 版本的 Neofetch，速度几乎和原生 ARM 版本相当。而如果使用 QEMU 等模拟器，性能可能会下降 50% 以上。
 
+---
 
 ## 环境准备与工具选择
 
@@ -40,6 +41,7 @@ Rosetta 是苹果开发的动态二进制翻译器，最初是为了让 x86 架�
 
 > 本文主要讲解 UTM + Rosetta 方案，兼顾易用性和性能。
 
+---
 
 ## 核心原理：为什么是 UTM + Rosetta？
 
@@ -57,6 +59,7 @@ Rosetta 是苹果开发的动态二进制翻译器，最初是为了让 x86 架�
 
 > 注意：确保你的 macOS 版本在 13（Ventura）或以上，这是该功能的最低系统要求。M1、M2、M3 系列芯片均支持。
 
+---
 
 ## 五分钟极速配置：从零创建 UTM 虚拟机
 
@@ -101,6 +104,7 @@ wget https://cdimage.ubuntu.com/releases/22.04/release/ubuntu-22.04.4-live-serve
 
 至此，一个基础的、支持 Rosetta 的 ARM Ubuntu 虚拟机就创建好了。整个过程熟练的话，确实可以在五分钟内完成。
 
+---
 
 ## 系统内部精调：配置 Rosetta 与增强体验
 
@@ -164,6 +168,7 @@ sudo apt install spice-vdagent -y
 
 安装后重启虚拟机生效。
 
+---
 
 ## 实战检验：编译与运行 x86 程序
 
@@ -219,6 +224,7 @@ file test_x86
 >
 > 对于一些更复杂的、动态链接的 x86 程序，你可能会遇到缺少 libc 等动态库的错误。这是因为 ARM 系统里没有 x86 的动态库。解决方法通常是从一个 x86 Linux 系统（或 Docker 镜像）里复制对应的 .so 文件到虚拟机的某个目录（例如 /lib64），并确保路径正确。不过，对于很多基础程序，Rosetta 能处理得很好。
 
+---
 
 ## 进阶技巧与避坑指南
 
@@ -260,6 +266,7 @@ limactl start template://debian --rosetta --vm-type=vz
 
 但对于大多数刚接触 Mac 虚拟化的用户，UTM 直观的图形界面和详细的设置选项，更能降低学习和排错的门槛。
 
+---
 
 ## 总结
 

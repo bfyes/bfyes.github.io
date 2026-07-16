@@ -159,6 +159,48 @@
   color: #fdba74;
 }
 
+/* bash 内置命令（Name.Builtin）高亮 */
+[data-md-color-scheme="default"] .md-typeset .highlight .nb,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nb {
+  color: #b42318;
+}
+[data-md-color-scheme="slate"] .md-typeset .highlight .nb,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .nb {
+  color: #ff6b6b;
+}
+
+/* bash 运算符/标点（Operator / Punctuation）高亮 */
+[data-md-color-scheme="default"] .md-typeset .highlight .o,
+[data-md-color-scheme="default"] .md-typeset .highlight .ow,
+[data-md-color-scheme="default"] .md-typeset .highlight .p,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .o,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .ow,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .p {
+  color: #b42318;
+}
+[data-md-color-scheme="slate"] .md-typeset .highlight .o,
+[data-md-color-scheme="slate"] .md-typeset .highlight .ow,
+[data-md-color-scheme="slate"] .md-typeset .highlight .p,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .o,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .ow,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .p {
+  color: #ff6b6b;
+}
+
+/* bash 字符串插值（String.Interpol）高亮 */
+[data-md-color-scheme="default"] .md-typeset .highlight .si,
+[data-md-color-scheme="default"] .md-typeset .highlight .s2,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .si,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .s2 {
+  color: #067647;
+}
+[data-md-color-scheme="slate"] .md-typeset .highlight .si,
+[data-md-color-scheme="slate"] .md-typeset .highlight .s2,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .si,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .s2 {
+  color: #86efac;
+}
+
 /* 寄存器/变量名高亮 */
 [data-md-color-scheme="default"] .md-typeset .highlight .no,
 [data-md-color-scheme="default"] .md-typeset .highlight .nv,
@@ -381,7 +423,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 0.45rem 1rem 0;
+  padding: 0.45rem 1rem 0.6rem;
 }
 
 .ContributionCalendar-grid {
@@ -446,6 +488,8 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 .ContributionCalendar-day {
+  box-sizing: border-box;
+  border: 0.5px solid;
   border-radius: 2px;
   outline: none;
   transition: opacity 0.12s ease;
@@ -461,19 +505,19 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   outline-offset: 1px;
 }
 
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: rgb(240, 242, 245); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: rgb(172, 238, 187); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: rgb(75, 193, 107); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: rgb(44, 164, 79); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: rgb(16, 99, 41); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: rgb(240, 242, 245); border-color: #E4E8EB; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: rgb(172, 238, 187); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: rgb(75, 193, 107); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: rgb(44, 164, 79); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: rgb(16, 99, 41); border-color: transparent; }
 
 [data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="0"] {
-  background-color: #161b22;
+  background-color: #161b22; border-color: #1c2330;
 }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #0e4429; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #006d32; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #26a641; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #39d353; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #0e4429; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #006d32; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #26a641; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #39d353; border-color: transparent; }
 
 .ghc-footer {
   display: flex;
@@ -555,6 +599,26 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* ===== 页面信息 ===== */
+.page-updated-top {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: -0.85rem 0 1.35rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.page-updated-top[hidden],
+.page-info__item[hidden] {
+  display: none !important;
+}
+
+.page-updated-top__time {
+  color: var(--md-default-fg-color--lighter);
+  font-variant-numeric: tabular-nums;
+}
+
 .page-info {
   display: grid;
   gap: 0.25rem;
@@ -626,7 +690,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 
 /* 页面整体加宽 */
 .md-grid {
-  max-width: 63rem;
+  max-width: 64rem;
 }
 
 /* ================================================================

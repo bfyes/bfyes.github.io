@@ -1,16 +1,16 @@
 [project]
 site_name = "bfyes"
-site_url = ""
+site_url = "https://bfyes.github.io"
 repo_url = "https://github.com/bfyes/bfyes.github.io"
-repo_name = "bfyes/bfyes.github.io"
+repo_name = "bfyes.github.io"
 edit_uri = "edit/main/docs/"
-site_description = ""
-site_author = ""
+site_description = "bfyes 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。"
+site_author = "BillFeng"
 copyright = ""
 
 nav = [
-    { "主页" = "index.md" },
-    { "学习" = [
+    { "我的主页" = "index.md" },
+    { "学习资料" = [
         { "汇编语言设计与调试" = "study/asm.md" },
         { "信息安全原理与数学基础" = "study/ismath.md" },
         { "计算机系统Ⅰ" = [
@@ -31,17 +31,26 @@ nav = [
         ] },
         { "HPC 高性能计算" = [
             "study/hpc/index.md",
+            { "lab0: Linux快速入门" = "study/hpc/lab0/index.md" },
             { "lab1: 简单集群搭建" = "study/hpc/lab1/index.md" },
         ] },
+        { "CTF 夺旗赛" = [
+            "study/ctf/index.md",
+            { "lab0: 基础知识及技能" = "study/ctf/lab0/index.md" },
+        ] },
     ] },
-    { "工具" = [
-        { "Windows XP on Apple Silicon" = "tools/windows-xp-apple-silicon.md" },
-        { "Vivado on Apple Silicon" = "tools/vivado-apple-silicon.md" },
-        { "Mac 上好用的记事本" = "tools/mac上好用的第三方记事本软件.md" },
+    { "实用工具" = [
+        { "XP on Mac" = "tools/xp.md" },
+        { "Vivado on Mac" = "tools/vivado.md" },
+        { "Mac 记事本" = "tools/notepadnext.md" },
     ] },
-    { "随笔" = [
+    { "总结随笔" = [
         { "2025 年度十图" = "diaries/fa25_review.md" },
         { "sp26 半期总结" = "diaries/sp26_midterm.md" },
+        { "sp26 期末总结" = "diaries/sp26_final.md" },
+    ] },
+    { "玩玩电脑" = [
+        { "TODO" = "computers/0.md" },
     ] },
 ]
 

@@ -1,7 +1,3 @@
----
-rainbow: true
----
-
 # XP on Apple Silicon Mac
 
 > 本文为部署方法，配置记录详见原文[[点击跳转](xp.md)]。

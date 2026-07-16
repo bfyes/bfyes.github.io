@@ -2,8 +2,6 @@
 
 > 本文为配置记录，部署方法见以下链接[[点击跳转](xp_1.md)]。
 
----
-
 <span style="font-size:1.2em; color:#808080;">**更新日志**</span>
 
 === "2026-07-16"
@@ -26,6 +24,7 @@
 
 === "2026-03-26"
     完善文章框架和步骤
+
 
 ---
 
@@ -280,8 +279,8 @@ UTM 不支持直接导入 VMware 格式，必须转换为 qcow2
     brew install p7zip
     ```
     
-    !!! warning
-        压缩前请关闭虚拟机，防止磁盘映像损坏。
+!!!warning
+    压缩前请关闭虚拟机，防止磁盘映像损坏。
 
 2. 指令示例:
 
@@ -292,19 +291,19 @@ UTM 不支持直接导入 VMware 格式，必须转换为 qcow2
     # 详见“指令参考”
     ```
 
-    ??? info "点击查看：7za指令参考"
-        `Usage: 7za <command> [<switches>...] <archive_name> [<file_names>...]`  
-        a : Add files to archive  
-        b : Benchmark  
-        d : Delete files from archive  
-        e : Extract files from archive (without using directory names)  
-        h : Calculate hash values for files  
-        i : Show information about supported formats  
-        l : List contents of archive  
-        rn : Rename files in archive  
-        t : Test integrity of archive  
-        u : Update files to archive  
-        x : eXtract files with full paths  
+??? info "点击查看：7za指令参考"
+    `Usage: 7za <command> [<switches>...] <archive_name> [<file_names>...]`  
+    a : Add files to archive  
+    b : Benchmark  
+    d : Delete files from archive  
+    e : Extract files from archive (without using directory names)  
+    h : Calculate hash values for files  
+    i : Show information about supported formats  
+    l : List contents of archive  
+    rn : Rename files in archive  
+    t : Test integrity of archive  
+    u : Update files to archive  
+    x : eXtract files with full paths  
 
 3. 其他方案:
     如果你的压缩软件（如BandiZip）支持`XZ`算法，也可以选用该算法进行压缩，效果与7-Zip一致。

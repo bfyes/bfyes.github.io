@@ -1,53 +1,130 @@
 # bfyes.github.io
 
-这是 bfyes 的个人文档站仓库，内容以学习笔记、工具记录和随笔为主，使用 Zensical/MkDocs 风格的文档结构构建。
+bfyes 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用
+Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。
 
-站点里包含一些构建期生成的动态信息，例如：
+站点目前包含：
 
-- 页面最后更新时间
-- GitHub 贡献图
-- 页面阅读量
-- GitHub stars badge
+- 学习笔记、课程实验报告、工具记录、电脑体验和随笔
+- 对不同电脑、系统与设备的使用体验和个人感想
+- 明暗色主题适配与 Giscus 评论区主题同步
+- 页面最后更新时间、站点浏览量和 GitHub stars 展示
+- GitHub 贡献图静态数据烘焙
+- PDF 内联阅读器，移动端通过 PDF.js 渲染
+- 图片低清预览图与构建后 HTML 图片路径处理
+- 桌面端背景网格与主页打字机效果
 
-## 仓库结构
+## 项目结构
 
 ```text
 .
-├── docs/                 # 站点内容源文件
-│   ├── index.md          # 主页
-│   ├── study/            # 学习笔记
-│   │   ├── asm.md
-│   │   ├── fds/
-│   │   ├── hpc/
-│   │   ├── ismath.md
-│   │   └── sys1/
-│   ├── tools/            # 工具/折腾记录
-│   ├── diaries/          # 随笔
-│   └── theme/            # 自定义 CSS/JS/静态数据
-├── overrides/            # 主题模板覆盖
-│   ├── main.html
-│   └── partials/         # 评论区、logo、页面信息等局部模板
-├── scripts/              # 构建期脚本
-│   ├── compress_pdfs.py
-│   ├── fetch_contributions.py
-│   ├── generate_image_previews.py
-│   ├── generate_page_metadata.py
-│   └── patch_image_src.py
-├── site/                 # 构建产物，通常不手动编辑
-├── .github/workflows/    # GitHub Actions 自动部署配置
-├── Makefile              # 本地预览、构建、部署命令入口
-├── zensical.toml         # 站点配置、导航、主题与插件配置
-├── pyproject.toml        # Python 项目与依赖声明
-└── uv.lock               # uv 锁文件，固定依赖版本
+├── docs/                     # 站点内容源文件
+│   ├── index.md              # 主页
+│   ├── study/                # 学习笔记与课程实验
+│   ├── tools/                # 工具、环境配置、折腾记录
+│   ├── computers/            # 不同电脑的体验感想
+│   ├── diaries/              # 随笔与阶段总结
+│   └── theme/                # 自定义 CSS、JS 和构建期生成数据
+├── overrides/                # 主题模板覆盖
+│   ├── main.html             # 全局模板入口
+│   └── partials/             # 评论区、logo、页面信息等局部模板
+├── scripts/                  # 构建期辅助脚本
+├── .github/workflows/        # GitHub Actions 自动部署
+├── Makefile                  # 本地常用命令入口
+├── zensical.toml             # 站点配置、导航、主题与插件配置
+├── pyproject.toml            # Python 项目与开发依赖声明
+└── uv.lock                   # uv 锁文件
 ```
 
-- `docs/`：写文章主要改这里。Markdown 文件会被构建成网页。
-- `docs/theme/`：放站点自定义前端资源，例如 `main.css`、GitHub 贡献图脚本和静态 JSON。
-- `overrides/`：覆盖默认主题模板，例如页面底部的最后更新时间、阅读量和 star 提示。
-- `scripts/`：构建辅助脚本。`generate_page_metadata.py` 生成页面更新时间，`generate_image_previews.py` 生成图片低分辨率预览，`compress_pdfs.py` 压缩 PDF（带缓存），`patch_image_src.py` 替换图片为预览路径，`fetch_contributions.py` 抓取 GitHub 贡献图。
-- `zensical.toml`：站点核心配置，包括导航、仓库链接、主题选项、额外 CSS/JS。
-- `uv.lock`：锁定依赖版本，保证本地和 GitHub Actions 构建环境尽量一致。
+`site/` 是本地构建产物，已在 `.gitignore` 中忽略，不要手动维护。`.cache/` 用于脚本缓存，也不需要提交。
+
+## 本地开发
+
+本项目使用 `uv` 管理 Python 环境与依赖。
+
+```bash
+uv sync
+make zensical
+```
+
+`make zensical` 会按顺序执行：
+
+1. 生成页面更新时间元数据
+2. 生成文章图片低清预览图
+3. 释放本地 `8000` 端口
+4. 启动 Zensical 预览服务
+
+常用命令：
+
+```bash
+make metadata       # 生成 docs/theme/page-metadata.js
+make previews       # 生成 docs/ 下图片的 .preview.jpg
+make contributions  # 抓取 GitHub 贡献数据到 docs/theme/contributions.json
+make deploy         # 本地完整构建并强推 site/ 到 gh-pages
+```
+
+## 构建链路
+
+主要脚本职责如下：
+
+- `scripts/generate_page_metadata.py`：读取 Git 历史，生成每个页面的最后更新时间。
+- `scripts/fetch_contributions.py`：抓取 GitHub 贡献图 HTML，解析后写入静态 JSON。
+- `scripts/generate_image_previews.py`：为文章图片生成低清 JPEG 预览图。
+- `scripts/compress_pdfs.py`：使用 Ghostscript 压缩 `docs/` 下的 PDF。
+- `scripts/patch_image_src.py`：构建后把 HTML 中的图片 `src` 替换为预览图，并把原图写入 `data-fullsrc`。
+
+本地完整部署流程见 `Makefile` 的 `deploy` 目标：
+
+```text
+metadata -> contributions -> compress_pdfs -> zensical build -> previews --site -> patch_image_src -> push gh-pages
+```
+
+## 外部依赖
+
+除了 Python 依赖外，部分脚本或页面能力还依赖外部工具/服务：
+
+- `sips`：macOS 自带，用于生成图片预览图。
+- `gs` / Ghostscript：用于 PDF 压缩。
+- GitHub contributions 页面：用于构建期抓取贡献图。
+- Giscus、Busuanzi、shields.io：用于评论区、访问量和 stars badge。
+- unpkg CDN：加载 MathJax、Typed.js 和 PDF.js。
+- Google Fonts：加载站点字体。
+
+如果在非 macOS 环境构建，`generate_image_previews.py` 可能不可用，因为它依赖 `sips`。
 
 ## 自动部署
 
-仓库使用 GitHub Actions 自动构建并发布到 GitHub Pages。定时任务会在 GitHub 服务器上重新生成站点数据并发布到 `gh-pages`分支。
+GitHub Actions 工作流位于 `.github/workflows/deploy.yml`，触发方式包括：
+
+- 推送到 `main`
+- 手动触发 `workflow_dispatch`
+- 每天 `08:17 UTC`，即北京时间 `16:17`，用于刷新贡献图数据
+
+CI 当前执行：
+
+```text
+uv sync -> metadata -> contributions -> zensical build -> patch_image_src -> deploy gh-pages
+```
+
+注意：CI 目前没有执行 PDF 压缩，也没有在 Ubuntu 上生成图片预览图。因此新增图片后，如果希望线上图片走预览图链路，需要先在本地运行 `make previews` 并提交生成的 `.preview.jpg`，或者后续把预览图脚本改成跨平台实现。
+
+## 写作约定
+
+- 文章主要放在 `docs/study/`、`docs/tools/`、`docs/computers/`、`docs/diaries/`。
+- `docs/computers/` 用来记录不同电脑、系统、硬件设备的体验感想，适合放带有主观偏好、长期使用感受和折腾记录的文章。
+- 新页面加入导航时，需要同步修改 `zensical.toml` 的 `nav`。
+- 文章图片建议放在同名 `.assets/` 目录中，并运行 `make previews`。
+- PDF 可以在 Markdown 中用 `<iframe src="xxx.pdf">` 嵌入，前端会自动替换为自定义 PDF 阅读器。
+- 页面如不需要评论区，可在 Markdown front matter 中设置 `comments: false`。
+- 页面如不需要底部信息，可设置 `page_info: false`。
+<!--
+以下内容已注释, 目前不符合实际情况.
+## 维护建议
+
+- 统一本地和 CI 构建流程，避免 `make deploy` 与 GitHub Actions 行为不一致。
+- 将图片预览图生成脚本改为跨平台方案，例如 Pillow 或 ImageMagick，方便 CI 自动生成。
+- 为 `zensical.toml` 补充 `site_url`、`site_description`、`site_author` 等元信息，提升站点分享和 SEO 质量。
+- 逐步拆分 `docs/theme/main.css` 和较大的 JS 文件，按功能维护会更轻松。
+- PDF 阅读器现在会下载并渲染页面内全部 PDF，后续可以改成懒加载或按页渲染，减轻移动端压力。
+- 考虑在 CI 中加入构建检查、链接检查和资源缺失检查，减少发布后才发现 broken link 或缺预览图的情况。
+-->

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from datetime import datetime
 from pathlib import Path
 
 
@@ -24,7 +25,7 @@ def page_url(path: Path) -> str:
 
 def last_commit_date(path: Path) -> str | None:
     result = subprocess.run(
-        ["git", "log", "-1", "--format=%cI", "--", str(path.relative_to(ROOT))],
+        ["git", "log", "-1", "--follow", "--format=%cI", "--", str(path.relative_to(ROOT))],
         cwd=ROOT,
         check=False,
         capture_output=True,
@@ -34,12 +35,15 @@ def last_commit_date(path: Path) -> str | None:
     return value or None
 
 
+def file_modified_date(path: Path) -> str:
+    return datetime.fromtimestamp(path.stat().st_mtime).astimezone().isoformat()
+
+
 def main() -> None:
     pages = {}
     for path in sorted(DOCS.rglob("*.md")):
-        updated = last_commit_date(path)
-        if updated:
-            pages[page_url(path)] = {"updated": updated}
+        updated = last_commit_date(path) or file_modified_date(path)
+        pages[page_url(path)] = {"updated": updated}
 
     OUTPUT.write_text(
         "window.__BFYES_PAGE_META__ = "
