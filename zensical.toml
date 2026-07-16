@@ -11,7 +11,7 @@ copyright = ""
 nav = [
     { "我的主页" = "index.md" },
     { "学习资料" = [
-        # { "汇编语言设计与调试" = "study/asm.md" },
+        { "汇编语言设计与调试" = "study/asm.md" },
         { "信息安全原理与数学基础" = "study/ismath.md" },
         { "计算机系统Ⅰ" = [
             "study/sys1/index.md",
