@@ -31,7 +31,12 @@ nav = [
         ] },
         { "HPC 高性能计算" = [
             "study/hpc/index.md",
+            { "lab0: Linux快速入门" = "study/hpc/lab0/index.md" },
             { "lab1: 简单集群搭建" = "study/hpc/lab1/index.md" },
+        ] },
+        { "CTF 夺旗赛" = [
+            "study/ctf/index.md",
+            { "lab0: 基础知识及技能" = "study/ctf/lab0/index.md" },
         ] },
     ] },
     { "实用工具" = [
