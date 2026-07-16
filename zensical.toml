@@ -41,6 +41,7 @@ nav = [
     ] },
     { "实用工具" = [
         { "XP on Mac" = "tools/xp.md" },
+        { "XP 部署步骤" = "tools/xp_1.md" },
         { "Vivado on Mac" = "tools/vivado.md" },
         { "Mac 记事本" = "tools/notepadnext.md" },
     ] },
