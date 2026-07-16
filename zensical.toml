@@ -11,8 +11,8 @@ copyright = ""
 nav = [
     { "我的主页" = "index.md" },
     { "学习资料" = [
-        { "汇编语言设计与调试" = "study/asm.md" },
         { "信息安全原理与数学基础" = "study/ismath.md" },
+        { "汇编语言设计与调试" = "study/asm.md" },
         { "计算机系统Ⅰ" = [
             "study/sys1/index.md",
             { "lab0: 数字电路仿真" = "study/sys1/lab0/index.md" },
@@ -43,6 +43,8 @@ nav = [
         { "XP on Mac" = "tools/xp.md" },
         { "Vivado on Mac" = "tools/vivado.md" },
         { "Mac 记事本" = "tools/notepadnext.md" },
+        { "学在浙大 & PTA" = "tools/xzzd.md"},
+        { "校园跑" = "tools/run.md"},
     ] },
     { "总结随笔" = [
         { "2025 年度十图" = "diaries/fa25_review.md" },

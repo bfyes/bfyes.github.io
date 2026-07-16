@@ -1,6 +1,6 @@
 window.__BFYES_PAGE_META__ = {
   "/": {
-    "updated": "2026-07-16T13:23:32+08:00"
+    "updated": "2026-07-16T16:23:46+08:00"
   },
   "/computers/0/": {
     "updated": "2026-07-16T00:45:17+08:00"
@@ -80,6 +80,9 @@ window.__BFYES_PAGE_META__ = {
   "/tools/rosetta/": {
     "updated": "2026-07-16T00:45:17+08:00"
   },
+  "/tools/run/": {
+    "updated": "2026-07-16T17:09:20.487569+08:00"
+  },
   "/tools/vivado/": {
     "updated": "2026-07-16T00:45:17+08:00"
   },
@@ -88,5 +91,8 @@ window.__BFYES_PAGE_META__ = {
   },
   "/tools/xp_1/": {
     "updated": "2026-07-16T12:29:33+08:00"
+  },
+  "/tools/xzzd/": {
+    "updated": "2026-07-16T17:08:55.872272+08:00"
   }
 };
