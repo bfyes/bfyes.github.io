@@ -53,9 +53,9 @@
 !!! info "友情链接"
 
     - Orange🍊: [gE](https://0-rangE.cn)
-    - chenyuheee: [chenyuheee](https://hechenyu.xin)
     - Evel1na岗: [Evelina](https://evelina-is.github.io/Evelina_personal_web/)
     - 电科大佬Pastwithin: [Pastwithin](https://pastwithin.github.io/Pastwithin-Zensical/)
+    - chenyuheee: [chenyuheee](https://hechenyu.xin)
 
 ---
 
