@@ -24,4 +24,4 @@ deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run zensical build
 	uv run python scripts/generate_image_previews.py --site
 	uv run python scripts/patch_image_src.py
-	cd site && git add -A && git commit -m "deploy" --allow-empty && git push origin HEAD:gh-pages
+	cd site && git add -A && git commit -m "deploy" --allow-empty && git push --force origin HEAD:gh-pages
