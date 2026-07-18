@@ -2,8 +2,17 @@ window.__BFYES_PAGE_META__ = {
   "/": {
     "updated": "2026-07-17T15:21:08+08:00"
   },
-  "/computers/0/": {
-    "updated": "2026-07-16T00:45:17+08:00"
+  "/computers/mba15_2025/": {
+    "updated": "2026-07-18T21:02:18.041305+08:00"
+  },
+  "/computers/mbp16_2019/": {
+    "updated": "2026-07-18T21:02:16.876290+08:00"
+  },
+  "/computers/t_book_14_2022/": {
+    "updated": "2026-07-18T21:02:15.696597+08:00"
+  },
+  "/computers/thinkbook_plus_2023/": {
+    "updated": "2026-07-18T21:02:14.559378+08:00"
   },
   "/diaries/fa25_review/": {
     "updated": "2026-07-10T02:17:39+08:00"
@@ -13,6 +22,18 @@ window.__BFYES_PAGE_META__ = {
   },
   "/diaries/sp26_midterm/": {
     "updated": "2026-07-16T00:45:17+08:00"
+  },
+  "/games/4D_Intuition/": {
+    "updated": "2026-07-18T21:04:18.663643+08:00"
+  },
+  "/games/Shenzhen_IO/": {
+    "updated": "2026-07-18T21:04:18.663674+08:00"
+  },
+  "/games/The_Farmer_Was_Replaced/": {
+    "updated": "2026-07-18T21:04:18.663673+08:00"
+  },
+  "/games/Turing_Complete/": {
+    "updated": "2026-07-18T21:04:18.663698+08:00"
   },
   "/study/000asm/": {
     "updated": "2026-07-16T12:52:44.443943+08:00"

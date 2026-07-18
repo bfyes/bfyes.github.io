@@ -9,8 +9,8 @@ site_author = "BillFeng"
 copyright = ""
 
 nav = [
-    { "我的主页" = "index.md" },
-    { "学习资料" = [
+    { "主页" = "index.md" },
+    { "学习" = [
         { "信息安全原理与数学基础" = "study/ismath.md" },
         { "汇编语言设计与调试" = "study/asm.md" },
         { "计算机系统Ⅰ" = [
@@ -29,30 +29,39 @@ nav = [
             { "Project2" = "study/fds/project2/index.md" },
             { "Project3" = "study/fds/project3/index.md" },
         ] },
-        { "HPC 高性能计算" = [
+        { "HPC 高性能计算 (施工中)" = [
             "study/hpc/index.md",
             { "lab0: Linux快速入门" = "study/hpc/lab0/index.md" },
             { "lab1: 简单集群搭建" = "study/hpc/lab1/index.md" },
         ] },
-        { "CTF 夺旗赛" = [
+        { "CTF 夺旗赛 (施工中)" = [
             "study/ctf/index.md",
             { "lab0: 基础知识及技能" = "study/ctf/lab0/index.md" },
         ] },
     ] },
-    { "实用工具" = [
+    { "工具" = [
         { "XP on Mac" = "tools/xp.md" },
         { "Vivado on Mac" = "tools/vivado.md" },
         { "Mac 记事本" = "tools/notepadnext.md" },
         { "学在浙大 & PTA" = "tools/xzzd.md"},
         { "校园跑" = "tools/run.md"},
     ] },
-    { "总结随笔" = [
+    { "随笔" = [
         { "2025 年度十图" = "diaries/fa25_review.md" },
         { "sp26 半期总结" = "diaries/sp26_midterm.md" },
         { "sp26 期末总结" = "diaries/sp26_final.md" },
     ] },
-    { "玩玩电脑" = [
-        { "TODO" = "computers/0.md" },
+    { "电脑" = [
+        { "MacBook Pro 16 (2019)" = "computers/mbp16_2019.md" },
+        { "ThunderBook 14 (2022)" = "computers/t_book_14_2022.md" },
+        { "ThinkBook Plus (2023)" = "computers/thinkbook_plus_2023.md" },
+        { "MacBook Air 15 (2025)" = "computers/mba15_2025.md" },
+    ] },
+    { "游戏" = [
+        { "四维直觉" = "games/4D_Intuition.md" },
+        { "深圳I/O" = "games/Shenzhen_IO.md" },
+        { "编程农场" = "games/The_Farmer_Was_Replaced.md" },
+        { "图灵完备" = "games/Turing_Complete.md" },
     ] },
 ]
 
