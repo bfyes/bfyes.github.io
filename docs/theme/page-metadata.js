@@ -1,6 +1,6 @@
 window.__BFYES_PAGE_META__ = {
   "/": {
-    "updated": "2026-07-28T13:22:55+08:00"
+    "updated": "2026-07-28T14:04:54+08:00"
   },
   "/computers/mba15_2025/": {
     "updated": "2026-07-18T21:17:10+08:00"
@@ -14,6 +14,9 @@ window.__BFYES_PAGE_META__ = {
   "/computers/thinkbook_plus_2023/": {
     "updated": "2026-07-18T21:17:10+08:00"
   },
+  "/diaries/": {
+    "updated": "2026-07-28T14:22:23.807361+08:00"
+  },
   "/diaries/fa25_review/": {
     "updated": "2026-07-10T02:17:39+08:00"
   },
@@ -22,6 +25,9 @@ window.__BFYES_PAGE_META__ = {
   },
   "/diaries/sp26_midterm/": {
     "updated": "2026-07-16T00:45:17+08:00"
+  },
+  "/games/": {
+    "updated": "2026-07-28T14:22:23.807590+08:00"
   },
   "/games/4D_Intuition/": {
     "updated": "2026-07-18T21:17:10+08:00"
@@ -34,6 +40,9 @@ window.__BFYES_PAGE_META__ = {
   },
   "/games/Turing_Complete/": {
     "updated": "2026-07-18T21:17:10+08:00"
+  },
+  "/study/": {
+    "updated": "2026-07-28T14:22:23.806839+08:00"
   },
   "/study/000asm/": {
     "updated": "2026-07-16T12:52:44.443943+08:00"
@@ -121,6 +130,9 @@ window.__BFYES_PAGE_META__ = {
   },
   "/study/sys1/project/": {
     "updated": "2026-07-11T23:43:42+08:00"
+  },
+  "/tools/": {
+    "updated": "2026-07-28T14:22:23.807096+08:00"
   },
   "/tools/notepadnext/": {
     "updated": "2026-07-16T00:45:17+08:00"

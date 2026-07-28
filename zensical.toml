@@ -11,6 +11,7 @@ copyright = ""
 nav = [
     { "主页" = "index.md" },
     { "学习" = [
+        "study/index.md",
         { "信息安全原理与数学基础" = "study/ismath.md" },
         { "汇编语言设计与调试" = "study/asm.md" },
         { "计算机系统Ⅰ" = [
@@ -49,13 +50,16 @@ nav = [
         ] },
     ] },
     { "工具" = [
+        "tools/index.md",
         { "XP on Mac" = "tools/xp.md" },
+        { "Rosetta on Mac" = "tools/rosetta.md" },
         { "Vivado on Mac" = "tools/vivado.md" },
         { "Mac 记事本" = "tools/notepadnext.md" },
         { "学在浙大 & PTA" = "tools/xzzd.md"},
         { "校园跑" = "tools/run.md"},
     ] },
     { "随笔" = [
+        "diaries/index.md",
         { "2025 年度十图" = "diaries/fa25_review.md" },
         { "sp26 半期总结" = "diaries/sp26_midterm.md" },
         { "sp26 期末总结" = "diaries/sp26_final.md" },
@@ -67,6 +71,7 @@ nav = [
         { "MacBook Air 15 (2025)" = "computers/mba15_2025.md" },
     ] },
     { "游戏" = [
+        "games/index.md",
         { "四维直觉" = "games/4D_Intuition.md" },
         { "深圳I/O" = "games/Shenzhen_IO.md" },
         { "编程农场" = "games/The_Farmer_Was_Replaced.md" },
