@@ -26,7 +26,10 @@ GS_ARGS = [
     "-dBATCH",
     "-dCompressFonts=true",
     "-dDetectDuplicateImages=true",
+    "-dMaxBitmap=10000000",  # 限制内存位图，避免大文件卡死
 ]
+
+MAX_COMPRESS_SECONDS = 60  # 单个文件最多压 60 秒
 
 
 def human_size(nbytes: int) -> str:
@@ -53,10 +56,16 @@ def is_already_compressed(path: Path) -> bool:
 def compress_inplace(src: Path) -> bool:
     """原地压缩单个 PDF，成功返回 True。"""
     tmp = src.with_suffix(".tmp.pdf")
-    result = subprocess.run(
-        [*GS_ARGS, f"-sOutputFile={tmp}", str(src)],
-        capture_output=True, text=True,
-    )
+    try:
+        result = subprocess.run(
+            [*GS_ARGS, f"-sOutputFile={tmp}", str(src)],
+            capture_output=True, text=True,
+            timeout=MAX_COMPRESS_SECONDS,
+        )
+    except subprocess.TimeoutExpired:
+        print(f"\n  [跳过] Ghostscript 超时（>{MAX_COMPRESS_SECONDS}s）", file=sys.stderr)
+        tmp.unlink(missing_ok=True)
+        return False
     if result.returncode != 0:
         print(f"  [警告] Ghostscript 失败: {result.stderr.strip()}", file=sys.stderr)
         tmp.unlink(missing_ok=True)
@@ -77,6 +86,17 @@ def main() -> None:
 
     for src in doc_pdfs:
         rel = src.relative_to(DOCS)
+
+        # 跳过残留的临时文件
+        if src.suffix == ".tmp.pdf" or ".tmp." in src.name:
+            print(f"跳过: {rel}（临时文件）")
+            src.unlink(missing_ok=True)
+            continue
+
+        if not src.exists():
+            print(f"跳过: {rel}（文件不存在）")
+            continue
+
         before = src.stat().st_size
 
         if is_already_compressed(src):
