@@ -1,9 +1,6 @@
 ---
 page_class: home-page
 rainbow: true
-hide:
-  - navigation
-  - toc
 ---
 
 <style>
