@@ -891,28 +891,135 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   background: var(--md-code-bg-color, #1e1e2e);
 }
 
-/* ===== 打字机效果 ===== */
+/* ===== 首页终端打字机 ===== */
+.home-terminal {
+  max-width: 42rem;
+  margin: 1.5rem 0;
+  overflow: hidden;
+  border: 1px solid rgba(127, 127, 127, 0.28);
+  border-radius: 8px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
+}
+
+.home-terminal__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.1rem;
+  padding: 0 0.75rem;
+  border-bottom: 1px solid rgba(127, 127, 127, 0.18);
+}
+
+.home-terminal__dot {
+  width: 0.68rem;
+  height: 0.68rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.home-terminal__dot--red { background: #ff5f57; }
+.home-terminal__dot--yellow { background: #ffbd2e; }
+.home-terminal__dot--green { background: #28c840; }
+
+.home-terminal__title {
+  margin-left: 0.35rem;
+  color: var(--md-default-fg-color--light);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.82rem;
+}
+
+.home-terminal__screen {
+  padding: 1rem 1.05rem 1.1rem;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.94rem;
+  line-height: 1.75;
+}
+
+.home-terminal__line {
+  min-height: 1.75em;
+  overflow-wrap: anywhere;
+}
+
 .typed-text {
-  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+  font-family: "Courier New", Courier, monospace;
 }
 
 /* ===== 打字机光标 ===== */
+.typed-cursor,
 .typed-text .typed-cursor,
 .typed-cursor-standalone {
-  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+  font-family: "Courier New", Courier, monospace;
   animation: blink 0.7s step-end infinite;
 }
 
 [data-md-color-scheme="default"] .typed-text,
+[data-md-color-scheme="default"] .typed-cursor,
 [data-md-color-scheme="default"] .typed-text .typed-cursor,
 [data-md-color-scheme="default"] .typed-cursor-standalone {
-  color: #000;
+  color: inherit;
 }
 
 [data-md-color-scheme="slate"] .typed-text,
+[data-md-color-scheme="slate"] .typed-cursor,
 [data-md-color-scheme="slate"] .typed-text .typed-cursor,
 [data-md-color-scheme="slate"] .typed-cursor-standalone {
-  color: #fff;
+  color: inherit;
+}
+
+[data-md-color-scheme="default"] .home-terminal {
+  background: #fbfbf8;
+}
+
+[data-md-color-scheme="default"] .home-terminal__bar {
+  background: #eeeeea;
+}
+
+[data-md-color-scheme="default"] .home-terminal__screen {
+  background: #f8f8f2;
+}
+
+[data-md-color-scheme="slate"] .home-terminal {
+  background: #121417;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+}
+
+[data-md-color-scheme="slate"] .home-terminal__bar {
+  background: #1c2026;
+}
+
+[data-md-color-scheme="slate"] .home-terminal__screen {
+  background: #101317;
+}
+
+.home-terminal__line--cmd {
+  color: #2da44e;
+}
+
+.home-terminal__line--user {
+  color: #0969da;
+}
+
+.home-terminal__line--flag {
+  color: #b78105;
+}
+
+[data-md-color-scheme="slate"] .home-terminal__line--cmd {
+  color: #7ee787;
+}
+
+[data-md-color-scheme="slate"] .home-terminal__line--user {
+  color: #79c0ff;
+}
+
+[data-md-color-scheme="slate"] .home-terminal__line--flag {
+  color: #f2cc60;
+}
+
+@media screen and (max-width: 44.984375em) {
+  .home-terminal__screen {
+    padding: 0.85rem 0.9rem 0.95rem;
+    font-size: 0.84rem;
+  }
 }
 
 @keyframes blink {

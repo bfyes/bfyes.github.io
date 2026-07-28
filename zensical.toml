@@ -80,14 +80,8 @@ extra_css = [
 
 extra_javascript = [
     "theme/theme-sync.js",
-    "theme/image-loading.js",
-    "theme/pdf-loading.js",
-    "theme/github-calendar.js",
     "theme/mathjax.js",
-    "theme/parallax-grid.js",
-    "https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js",
-    "https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js",
-    "theme/typed-init.js",
+    "theme/site.js",
 ]
 
 # --------------------------------------------------------------------------
