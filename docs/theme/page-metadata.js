@@ -47,6 +47,21 @@ window.__BFYES_PAGE_META__ = {
   "/study/ctf/lab0/": {
     "updated": "2026-07-16T13:01:30+08:00"
   },
+  "/study/ctf/lab1_crypto/": {
+    "updated": "2026-07-28T12:12:55.837494+08:00"
+  },
+  "/study/ctf/lab1_misc/": {
+    "updated": "2026-07-28T12:12:55.837512+08:00"
+  },
+  "/study/ctf/lab1_pwn/": {
+    "updated": "2026-07-28T12:12:55.837571+08:00"
+  },
+  "/study/ctf/lab1_rev/": {
+    "updated": "2026-07-28T12:12:55.837527+08:00"
+  },
+  "/study/ctf/lab1_web/": {
+    "updated": "2026-07-28T12:12:55.837558+08:00"
+  },
   "/study/fds/": {
     "updated": "2026-07-16T13:01:30+08:00"
   },
@@ -67,6 +82,18 @@ window.__BFYES_PAGE_META__ = {
   },
   "/study/hpc/lab1/": {
     "updated": "2026-07-11T23:43:42+08:00"
+  },
+  "/study/hpc/lab2/": {
+    "updated": "2026-07-28T12:28:12.755231+08:00"
+  },
+  "/study/hpc/lab3/": {
+    "updated": "2026-07-28T12:28:12.755254+08:00"
+  },
+  "/study/hpc/lab4/": {
+    "updated": "2026-07-28T12:28:12.755242+08:00"
+  },
+  "/study/hpc/lab5/": {
+    "updated": "2026-07-28T12:28:12.755256+08:00"
   },
   "/study/ismath/": {
     "updated": "2026-07-16T00:45:17+08:00"
