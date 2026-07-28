@@ -534,12 +534,20 @@
       var avatar = htmlEl("span", { class: "home-friend__avatar" }, friendInitials(friend.name, friend.github));
       var avatarSrc = friend.avatar || (friend.github ? "https://github.com/" + encodeURIComponent(friend.github) + ".png?size=96" : "");
       if (avatarSrc) {
+        var previewSrc = friend.avatar && !/^https?:\/\//i.test(avatarSrc) ? previewUrl(avatarSrc) : avatarSrc;
         var img = htmlEl("img", {
-          src: avatarSrc,
+          src: previewSrc,
           alt: "",
           loading: "lazy"
         });
+        if (previewSrc !== avatarSrc) img.dataset.fullsrc = avatarSrc;
         img.onerror = function () {
+          var fullSrc = this.dataset.fullsrc;
+          if (fullSrc && this.getAttribute("src") !== fullSrc) {
+            this.removeAttribute("data-fullsrc");
+            this.src = fullSrc;
+            return;
+          }
           this.remove();
         };
         avatar.appendChild(img);
@@ -555,6 +563,7 @@
 
     container.innerHTML = "";
     container.appendChild(frag);
+    upgradeImages(container);
   }
 
   function initFriends(root) {
