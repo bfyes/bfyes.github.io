@@ -420,6 +420,8 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 .ghc-calendar-scroller {
+  display: flex;
+  justify-content: center;
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;

@@ -1,7 +1,16 @@
 ---
 page_class: home-page
 rainbow: true
+hide:
+  - navigation
+  - toc
 ---
+
+<style>
+body.bfyes-home-page .md-grid {
+  max-width: 65rem;
+}
+</style>
 
 # _Welcome
 
