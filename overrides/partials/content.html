@@ -3,6 +3,16 @@
   because main.html already places page-info + comments at the bottom.
 -#}
 {% include "partials/actions.html" %}
+{% set page_class = page.meta.page_class | d("", true) %}
+{% if page.meta.rainbow %}
+  {% set page_class = (page_class ~ " rainbow-page") | trim %}
+{% endif %}
+{% if page_class %}
+  <div class="{{ page_class }}">
+    {% if page.meta.rainbow %}
+      <div class="rainbow-backdrop" aria-hidden="true"></div>
+    {% endif %}
+{% endif %}
 {% if "\u003ch1" not in page.content %}
   <h1 id="__skip">{{ page.title | d(config.site_name, true)}}</h1>
 {% endif %}
@@ -10,3 +20,6 @@
 {% include "partials/tags.html" %}
 {% include "partials/source-file.html" %}
 {% include "partials/feedback.html" %}
+{% if page_class %}
+  </div>
+{% endif %}

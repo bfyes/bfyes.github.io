@@ -105,7 +105,7 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-28T12:37:20+08:00"
   },
   "/study/ismath/": {
-    "updated": "2026-07-16T00:45:17+08:00"
+    "updated": "2026-07-28T15:44:18+08:00"
   },
   "/study/sys1/": {
     "updated": "2026-07-16T13:01:30+08:00"

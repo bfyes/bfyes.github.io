@@ -175,6 +175,9 @@
       lines[l].style.display = "none";
     }
 
+    var promptLines = document.querySelectorAll(".home-terminal__line--prompt");
+    for (var p = 0; p < promptLines.length; p++) promptLines[p].style.display = "none";
+
     var brs = document.querySelectorAll("[id^='typed-br-']");
     for (var b = 0; b < brs.length; b++) brs[b].style.display = "none";
   }
@@ -183,21 +186,33 @@
     clearTypewriter();
 
     var scope = root || document;
-    var el1 = scope.querySelector("#typed-line-1");
+    var line1Host = scope.querySelector("#typed-line-1-host");
+    var line1Separator = scope.querySelector("#typed-line-1-separator");
+    var line1Prompt = scope.querySelector("#typed-line-1-prompt");
+    var line1Command = scope.querySelector("#typed-line-1-command");
     var el2 = scope.querySelector("#typed-line-2");
     var el3 = scope.querySelector("#typed-line-3");
-    var br1 = scope.querySelector("#typed-br-1");
-    var br2 = scope.querySelector("#typed-br-2");
-    if (!el1 || !el2 || !el3) return;
+    var finalPrompt = scope.querySelector(".home-terminal__line--prompt");
+    var finalCommand = scope.querySelector("#typed-line-4-command");
+    if (!line1Host || !line1Separator || !line1Prompt || !line1Command || !el2 || !el3 || !finalPrompt || !finalCommand) return;
 
     var run = typewriterRun;
 
-    function typeLine(el, text, speed, done) {
+    function delay(ms, done) {
+      var timer = rememberTimer(setTimeout(function () {
+        forgetTimer(timer);
+        if (run !== typewriterRun) return;
+        done();
+      }, ms));
+    }
+
+    function typeText(el, text, speed, done) {
       var i = 0;
       var cursor = document.createElement("span");
       cursor.className = "typed-cursor";
-      cursor.textContent = "\u258c";
+      cursor.textContent = "\u2588";
       el.insertAdjacentElement("afterend", cursor);
+      el.style.display = "";
 
       function step() {
         if (run !== typewriterRun || !document.body.contains(el)) return;
@@ -216,37 +231,49 @@
       step();
     }
 
+    function showOutputLine(el, text, hold, done) {
+      if (run !== typewriterRun || !document.body.contains(el)) return;
+      el.textContent = text;
+      el.style.display = "";
+      var cursor = document.createElement("span");
+      cursor.className = "typed-cursor";
+      cursor.textContent = "\u2588";
+      el.insertAdjacentElement("afterend", cursor);
+      if (done) {
+        delay(hold, function () {
+          cursor.remove();
+          done();
+        });
+      }
+    }
+
+    function showFinalPrompt() {
+      if (run !== typewriterRun || !document.body.contains(finalPrompt)) return;
+      finalPrompt.style.display = "";
+      typeText(finalCommand, "welcome to bfyes", 74);
+    }
+
     function start() {
-      if (run !== typewriterRun || !document.body.contains(el1)) return;
+      if (run !== typewriterRun || !document.body.contains(line1Host)) return;
 
-      el1.style.display = "";
-      if (br1) br1.style.display = "";
-      typeLine(el1, "bfyes@ZJU:~$ whoami", 44, function (cursor1) {
-        var t1 = rememberTimer(setTimeout(function () {
-          forgetTimer(t1);
-          if (run !== typewriterRun || !document.body.contains(el1)) return;
-          cursor1.remove();
-          el2.style.display = "";
-          if (br2) br2.style.display = "";
+      line1Host.textContent = "bfyes@ZJU";
+      line1Separator.textContent = ":";
+      line1Prompt.textContent = "~/site$ ";
+      line1Host.style.display = "";
+      line1Separator.style.display = "";
+      line1Prompt.style.display = "";
 
-          typeLine(el2, "bfyes@ZJU", 34, function (cursor2) {
-            var t2 = rememberTimer(setTimeout(function () {
-              forgetTimer(t2);
-              if (run !== typewriterRun || !document.body.contains(el1)) return;
-              cursor2.remove();
-              el3.style.display = "";
-
-              typeLine(el3, "flag{bfyes_1nf0rm4t10n_s3cur1ty_0x01_l0gg3d_1n}", 34, function (cursor3) {
-                cursor3.remove();
-                if (run !== typewriterRun || !document.body.contains(el3)) return;
-                var c = document.createElement("span");
-                c.className = "typed-cursor-standalone";
-                c.textContent = "\u258c";
-                el3.parentNode.insertBefore(c, el3.nextSibling);
+      delay(260, function () {
+        typeText(line1Command, "whoami", 92, function (cursor1) {
+          delay(460, function () {
+            cursor1.remove();
+            showOutputLine(el2, "bfyes@ZJU", 640, function () {
+              showOutputLine(el3, "flag{bfyes_1nf0rm4t10n_s3cur1ty_0x01_l0gg3d_1n}", 780, function () {
+                delay(120, showFinalPrompt);
               });
-            }, 700));
+            });
           });
-        }, 1100));
+        });
       });
     }
 
@@ -903,8 +930,11 @@
   }
 
   function syncHomePageState(root) {
-    var isHome = !!((root || document).querySelector(".home-page"));
+    var scope = root || document;
+    var isHome = !!scope.querySelector(".home-page");
+    var hasRainbow = !!scope.querySelector(".rainbow-page");
     document.body.classList.toggle("bfyes-home-page", isHome);
+    document.body.classList.toggle("bfyes-rainbow-page", hasRainbow);
   }
 
   // Background grid
