@@ -1032,6 +1032,7 @@ body.bfyes-rainbow-page::before {
   --home-muted: var(--md-default-fg-color--light);
   --home-softer: var(--md-default-fg-color--lighter);
   --home-panel: color-mix(in srgb, var(--md-default-bg-color) 84%, #ffffff 16%);
+  --home-card-bg: rgba(255, 255, 255, 0.58);
   margin-top: 0.4rem;
 }
 
@@ -1088,11 +1089,10 @@ body.bfyes-rainbow-page::before {
   padding: 0.85rem;
   border: 1px solid var(--home-border);
   border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0)),
-    var(--home-panel);
+  background: var(--home-card-bg);
   color: var(--md-default-fg-color) !important;
-  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(14px) saturate(1.25);
+  backdrop-filter: blur(14px) saturate(1.25);
   transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
 }
 
@@ -1375,6 +1375,12 @@ body.bfyes-rainbow-page::before {
 
 [data-md-color-scheme="slate"] .home-page {
   --home-panel: color-mix(in srgb, var(--md-default-bg-color) 76%, #111827 24%);
+  --home-border: rgba(255, 255, 255, 0.14);
+  --home-card-bg: rgba(18, 24, 34, 0.54);
+}
+
+[data-md-color-scheme="slate"] .home-card:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
 }
 
 [data-md-color-scheme="slate"] .rainbow-page {

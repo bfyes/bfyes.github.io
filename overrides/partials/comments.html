@@ -1,100 +1,102 @@
 <!-- Giscus 评论区 -->
 {% if page.meta.comments != false %}
 <div class="giscus"></div>
-<script src="https://giscus.app/client.js"
-    data-repo="bfyes/bfyes.github.io"
-    data-repo-id="R_kgDOQ6xWqA"
-    data-category="Announcements"
-    data-category-id="DIC_kwDOQ6xWqM4DA0Jv"
-    data-mapping="pathname"
-    data-strict="1"
-    data-reactions-enabled="1"
-    data-emit-metadata="0"
-    data-input-position="bottom"
-    data-theme="preferred_color_scheme"
-    data-lang="zh-CN"
-    crossorigin="anonymous"
-    async>
-</script>
 <script>
-  // 让 giscus 跟随站点明暗主题。
-  // 根因：data-theme="preferred_color_scheme" 只在 giscus 初始化时读一次系统偏好，
-  // 切换站点主题后 iframe 不会重算。这里只在「主题真的变了」时推一次 setConfig，
-  // 避免对 <body> 子树做宽口径观察导致与 giscus 渲染互相触发、形成无限循环。
+  // 让 giscus 首次加载和后续切换都跟随站点主题。
   (function () {
+    var SCRIPT_ID = "bfyes-giscus-client";
     var FRAME_SEL = "iframe.giscus-frame";
-    var lastMode = null;   // 上次推送过的 mode，去重
-    var frameBooted = false; // iframe 首次就绪后是否已推送初始主题
+    var lastTheme = null;
 
     function currentMode() {
-      var el = document.body || document.documentElement;
-      return el && el.getAttribute("data-md-color-scheme") === "slate"
-        ? "dark" : "light";
+      if (window.bfyes && window.bfyes.theme) return window.bfyes.theme.mode;
+      var htmlScheme = document.documentElement.getAttribute("data-md-color-scheme");
+      var bodyScheme = document.body && document.body.getAttribute("data-md-color-scheme");
+      return (htmlScheme || bodyScheme) === "slate" ? "dark" : "light";
     }
+
     function themeFor(mode) {
       // dark = GitHub dark (#0d1117 纯净黑底)，比 dark_dimmed 的灰底更干净。
       return mode === "dark" ? "dark" : "light";
     }
+
     function getFrame() {
       return document.querySelector(FRAME_SEL);
     }
-    function post(mode) {
+
+    function postTheme(theme) {
       var iframe = getFrame();
       if (!iframe || !iframe.contentWindow) return false;
       iframe.contentWindow.postMessage(
-        { giscus: { setConfig: { theme: themeFor(mode) } } },
+        { giscus: { setConfig: { theme: theme } } },
         "https://giscus.app"
       );
       return true;
     }
 
-    /** 仅在 mode 实际变化时推送，避免循环。 */
-    function pushIfChanged() {
-      var mode = currentMode();
-      if (mode === lastMode) return;
-      if (!post(mode)) return; // iframe 还没在，先不更新 lastMode，等它就绪再推
-      lastMode = mode;
+    function sync(mode) {
+      var theme = themeFor(mode || currentMode());
+      if (theme === lastTheme) return;
+      if (!postTheme(theme)) return;
+      lastTheme = theme;
     }
 
-    function bind() {
-      // 1) 主题变化：只盯 <body> 上的 data-md-color-scheme 一个属性，不带 subtree。
-      //    切主题的瞬间该属性变化 → 推一次。giscus 渲染改的是子树，不会触发这里。
-      function watchBody() {
-        var target = document.body;
-        if (!target) { setTimeout(watchBody, 50); return; }
-        lastMode = currentMode(); // 记录初始态
-        if (typeof MutationObserver === "undefined") return;
-        new MutationObserver(pushIfChanged)
-          .observe(target, { attributes: true, attributeFilter: ["data-md-color-scheme"] });
-      }
-
-      // 2) iframe 首次出现：推一次初始主题，然后立刻断开观察者（一次性）。
-      function watchFrame() {
-        if (getFrame()) { bootFrame(); return; }
-        if (typeof MutationObserver === "undefined") return;
-        var obs = new MutationObserver(function () {
-          if (getFrame()) { obs.disconnect(); bootFrame(); }
-        });
-        obs.observe(document.body, { childList: true, subtree: true });
-        // 防止 obs 永挂：iframe 迟迟不来就 8s 后放弃
-        setTimeout(function () { obs.disconnect(); }, 8000);
-      }
-
-      function bootFrame() {
-        if (frameBooted) return;
-        frameBooted = true;
-        var mode = currentMode();
-        if (post(mode)) lastMode = mode;
-      }
-
-      watchBody();
-      watchFrame();
+    function loadGiscus() {
+      if (document.getElementById(SCRIPT_ID)) return;
+      var script = document.createElement("script");
+      script.id = SCRIPT_ID;
+      script.src = "https://giscus.app/client.js";
+      script.async = true;
+      script.crossOrigin = "anonymous";
+      script.setAttribute("data-repo", "bfyes/bfyes.github.io");
+      script.setAttribute("data-repo-id", "R_kgDOQ6xWqA");
+      script.setAttribute("data-category", "Announcements");
+      script.setAttribute("data-category-id", "DIC_kwDOQ6xWqM4DA0Jv");
+      script.setAttribute("data-mapping", "pathname");
+      script.setAttribute("data-strict", "1");
+      script.setAttribute("data-reactions-enabled", "1");
+      script.setAttribute("data-emit-metadata", "0");
+      script.setAttribute("data-input-position", "bottom");
+      script.setAttribute("data-theme", themeFor(currentMode()));
+      script.setAttribute("data-lang", "zh-CN");
+      document.currentScript.parentNode.appendChild(script);
     }
+
+    function bindThemeChanges() {
+      if (window.bfyes && window.bfyes.theme) {
+        window.bfyes.theme.subscribe(sync);
+        return;
+      }
+      if (typeof MutationObserver === "undefined") return;
+      new MutationObserver(function () { sync(); }).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-md-color-scheme"],
+      });
+    }
+
+    function syncWhenFrameReady() {
+      if (getFrame()) {
+        sync();
+        return;
+      }
+      if (typeof MutationObserver === "undefined" || !document.body) return;
+      var obs = new MutationObserver(function () {
+        if (!getFrame()) return;
+        obs.disconnect();
+        sync();
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+      setTimeout(function () { obs.disconnect(); }, 8000);
+    }
+
+    loadGiscus();
+    bindThemeChanges();
+    syncWhenFrameReady();
 
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", bind);
+      document.addEventListener("DOMContentLoaded", sync);
     } else {
-      bind();
+      sync();
     }
   })();
 </script>
