@@ -38,39 +38,15 @@ body.bfyes-home-page .md-grid {
     </div>
 </section>
 
-<section class="home-section" aria-labelledby="home-entry-title">
-    <div class="home-section__head">
-      <h2 id="home-entry-title" class="home-section__title">Start Here</h2>
-    </div>
-    <div class="home-card-grid">
-      <a class="home-card home-card--study" href="study/">
-        <span class="home-card__eyebrow">study</span>
-        <strong>课程与实验</strong>
-        <span>系统、汇编、数据结构、HPC</span>
-      </a>
-      <a class="home-card home-card--tools" href="tools/">
-        <span class="home-card__eyebrow">toolbox</span>
-        <strong>折腾记录</strong>
-        <span>Mac、Rosetta、Vivado、虚拟机</span>
-      </a>
-      <a class="home-card home-card--diary" href="diaries/">
-        <span class="home-card__eyebrow">diary</span>
-        <strong>阶段总结</strong>
-        <span>学习、照片、音乐和一点流水账</span>
-      </a>
-      <a class="home-card home-card--games" href="games/">
-        <span class="home-card__eyebrow">games</span>
-        <strong>游戏记录</strong>
-        <span>一些和计算机、逻辑、自动化有关的游戏</span>
-      </a>
-    </div>
-</section>
-
 <section class="home-section" aria-labelledby="home-log-title">
     <div class="home-section__head">
       <h2 id="home-log-title" class="home-section__title">Changelog</h2>
     </div>
     <div class="home-log-list">
+      <div class="home-log">
+        <span class="home-log__date">2026.08.01</span>
+        <span>新增部分 CTF 文档。修改主页。(对，和之前一样)</span>
+      </div>
       <div class="home-log">
         <span class="home-log__date">2026.07.28</span>
         <span>新增部分 CTF 文档。修改主页。</span>

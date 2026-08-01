@@ -67,12 +67,12 @@ nav = [
         { "sp26 半期总结" = "diaries/sp26_midterm.md" },
         { "sp26 期末总结" = "diaries/sp26_final.md" },
     ] },
-    { "电脑" = [
-        { "MacBook Pro 16 (2019)" = "computers/mbp16_2019.md" },
-        { "ThunderBook 14 (2022)" = "computers/t_book_14_2022.md" },
-        { "ThinkBook Plus (2023)" = "computers/thinkbook_plus_2023.md" },
-        { "MacBook Air 15 (2025)" = "computers/mba15_2025.md" },
-    ] },
+    #{ "电脑" = [
+    #    { "MacBook Pro 16 (2019)" = "computers/mbp16_2019.md" },
+    #    { "ThunderBook 14 (2022)" = "computers/t_book_14_2022.md" },
+    #    { "ThinkBook Plus (2023)" = "computers/thinkbook_plus_2023.md" },
+    #    { "MacBook Air 15 (2025)" = "computers/mba15_2025.md" },
+    #] },
     { "游戏" = [
         "games/index.md",
         { "四维直觉" = "games/4D_Intuition.md" },
