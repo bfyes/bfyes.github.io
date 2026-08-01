@@ -223,6 +223,18 @@
       return cmd;
     }
 
+    function gotoSection(sec) {
+      if (currentCmd && document.body.contains(currentCmd)) {
+        currentCmd.textContent = "cd ~/site/" + sec.name;
+      }
+      removeCurrentCursor();
+      spawnPrompt(sec.name);
+      delay(900, function () {
+        if (run !== typewriterRun) return;
+        window.location.href = sec.path;
+      });
+    }
+
     function executeCommand(raw) {
       var text = raw.trim();
       if (text === "") {
@@ -235,16 +247,39 @@
       }
       var num = parseInt(text, 10);
       if (num >= 1 && num <= HOME_SECTIONS.length) {
-        var sec = HOME_SECTIONS[num - 1];
-        if (currentCmd && document.body.contains(currentCmd)) {
-          currentCmd.textContent = "cd ~/site/" + sec.name;
+        gotoSection(HOME_SECTIONS[num - 1]);
+        return;
+      }
+      var cdMatch = text.match(/^cd(?:\s+(.+))?$/);
+      if (cdMatch) {
+        var target = cdMatch[1] ? cdMatch[1].trim() : "";
+        if (!target) {
+          addOutput("当前目录 ~/site");
+          removeCurrentCursor();
+          spawnPrompt();
+          return;
         }
-        removeCurrentCursor();
-        spawnPrompt(sec.name);
-        delay(900, function () {
-          if (run !== typewriterRun) return;
-          window.location.href = sec.path;
-        });
+        // 归一化：支持 /study、~/site/study、study/ 等写法
+        var norm = target
+          .replace(/^~\/site\/?/, "")
+          .replace(/^~\/?/, "")
+          .replace(/^\//, "")
+          .replace(/\/+$/, "");
+        var matched = null;
+        for (var i = 0; i < HOME_SECTIONS.length; i++) {
+          var s = HOME_SECTIONS[i];
+          if (s.name === norm || String(s.id) === norm) {
+            matched = s;
+            break;
+          }
+        }
+        if (matched) {
+          gotoSection(matched);
+        } else {
+          addOutput("cd: no such directory: " + target);
+          addOutput(HOME_SECTIONS.map(function (s) { return s.id + ":" + s.name; }).join("  "));
+          spawnPrompt();
+        }
         return;
       }
       addOutput("command not found: " + text);
