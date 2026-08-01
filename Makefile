@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := zensical
 
-.PHONY: zensical kill deploy metadata contributions previews
+.PHONY: zensical kill deploy metadata contributions previews clean
 
 metadata: ## 生成页面更新时间元数据
 	uv run python scripts/generate_page_metadata.py
@@ -24,8 +24,9 @@ deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run zensical build
 	uv run python scripts/generate_image_previews.py --site
 	uv run python scripts/patch_image_src.py
-	@if [ ! -d site/.git ]; then \
-		cd site && git init; \
-	fi
-	@cd site && git remote get-url origin >/dev/null 2>&1 && git remote set-url origin https://github.com/bfyes/bfyes.github.io.git || git remote add origin https://github.com/bfyes/bfyes.github.io.git
-	cd site && git add -A && git commit -m "deploy" --allow-empty && git push -f -u origin HEAD:gh-pages
+	cd site && git add -A && git commit -m "deploy" --allow-empty && git push --force origin HEAD:gh-pages
+
+clean: ## 清理 site 目录并重新初始化 git 仓库（不影响主仓库）
+	rm -rf site
+	git init site
+	cd site && git remote add origin https://github.com/bfyes/bfyes.github.io.git

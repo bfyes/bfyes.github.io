@@ -5,5 +5,10 @@ window.MathJax = {
   },
   options: {
     processHtmlClass: "arithmatex"
+  },
+  startup: {
+    ready: function () {
+      MathJax.startup.defaultReady();
+    }
   }
 };

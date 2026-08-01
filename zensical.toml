@@ -9,10 +9,11 @@ site_author = "BillFeng"
 copyright = ""
 
 nav = [
-    { "我的主页" = "index.md" },
-    { "学习资料" = [
-        { "汇编语言设计与调试" = "study/asm.md" },
+    { "主页" = "/" },
+    { "学习" = [
+        "study/index.md",
         { "信息安全原理与数学基础" = "study/ismath.md" },
+        { "汇编语言设计与调试" = "study/asm.md" },
         { "计算机系统Ⅰ" = [
             "study/sys1/index.md",
             { "lab0: 数字电路仿真" = "study/sys1/lab0/index.md" },
@@ -29,28 +30,55 @@ nav = [
             { "Project2" = "study/fds/project2/index.md" },
             { "Project3" = "study/fds/project3/index.md" },
         ] },
-        { "HPC 高性能计算" = [
+        { "HPC 高性能计算 (施工中)" = [
             "study/hpc/index.md",
-            { "lab0: Linux快速入门" = "study/hpc/lab0/index.md" },
-            { "lab1: 简单集群搭建" = "study/hpc/lab1/index.md" },
+            { "lab0: Linux Crash Course" = "study/hpc/lab0/index.md" },
+            { "lab1: Mini Cluster" = "study/hpc/lab1/index.md" },
+            { "lab2: MoE向量化计算" = "study/hpc/lab2/index.md" },
+            { "lab3: GDN Prefill优化" = "study/hpc/lab3/index.md" },
+            { "lab4: 数值相对论优化" = "study/hpc/lab4/index.md" },
+            { "lab5: Gemma4推理优化" = "study/hpc/lab5/index.md" },
         ] },
-        { "CTF 夺旗赛" = [
+        { "CTF 夺旗赛 (施工中)" = [
             "study/ctf/index.md",
-            { "lab0: 基础知识及技能" = "study/ctf/lab0/index.md" },
+            { "lab0" = "study/ctf/lab0/index.md" },
+            { "lab1 Crypto" = "study/ctf/lab1_crypto/index.md" },
+            { "lab1 Misc" = "study/ctf/lab1_misc/index.md" },
+            { "lab1 Pwn" = "study/ctf/lab1_pwn/index.md" },
+            { "lab1 Reverse" = "study/ctf/lab1_rev/index.md" },
+            { "lab1 Web" = "study/ctf/lab1_web/index.md" },
+            { "lab2 Crypto" = "study/ctf/lab2_crypto/index.md" },
+            { "lab3 Crypto" = "study/ctf/lab3_crypto/index.md" },
+            { "lab3 Misc" = "study/ctf/lab3_misc/index.md" },
         ] },
     ] },
-    { "实用工具" = [
+    { "工具" = [
+        "tools/index.md",
         { "XP on Mac" = "tools/xp.md" },
+        { "Rosetta on Mac" = "tools/rosetta.md" },
         { "Vivado on Mac" = "tools/vivado.md" },
         { "Mac 记事本" = "tools/notepadnext.md" },
+        { "学在浙大 & PTA" = "tools/xzzd.md"},
+        { "校园跑" = "tools/run.md"},
     ] },
-    { "总结随笔" = [
+    { "随笔" = [
+        "diaries/index.md",
         { "2025 年度十图" = "diaries/fa25_review.md" },
         { "sp26 半期总结" = "diaries/sp26_midterm.md" },
         { "sp26 期末总结" = "diaries/sp26_final.md" },
     ] },
-    { "玩玩电脑" = [
-        { "TODO" = "computers/0.md" },
+    #{ "电脑" = [
+    #    { "MacBook Pro 16 (2019)" = "computers/mbp16_2019.md" },
+    #    { "ThunderBook 14 (2022)" = "computers/t_book_14_2022.md" },
+    #    { "ThinkBook Plus (2023)" = "computers/thinkbook_plus_2023.md" },
+    #    { "MacBook Air 15 (2025)" = "computers/mba15_2025.md" },
+    #] },
+    { "游戏" = [
+        "games/index.md",
+        { "四维直觉" = "games/4D_Intuition.md" },
+        { "深圳I/O" = "games/Shenzhen_IO.md" },
+        { "编程农场" = "games/The_Farmer_Was_Replaced.md" },
+        { "图灵完备" = "games/Turing_Complete.md" },
     ] },
 ]
 
@@ -60,14 +88,8 @@ extra_css = [
 
 extra_javascript = [
     "theme/theme-sync.js",
-    "theme/image-loading.js",
-    "theme/pdf-loading.js",
-    "theme/github-calendar.js",
     "theme/mathjax.js",
-    "theme/parallax-grid.js",
-    "https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js",
-    "https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js",
-    "theme/typed-init.js",
+    "theme/site.js",
 ]
 
 # --------------------------------------------------------------------------

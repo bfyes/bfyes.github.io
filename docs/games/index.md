@@ -6,4 +6,3 @@
 - [深圳 I/O / Shenzhen I/O](Shenzhen_IO.md)
 - [编程农场 / The Farmer Was Replaced](The_Farmer_Was_Replaced.md)
 - [图灵完备 / Turing Complete](Turing_Complete.md)
-- [样式测试](test.md)
