@@ -187,20 +187,6 @@
   color: #ff6b6b;
 }
 
-/* bash 字符串插值（String.Interpol）高亮 */
-[data-md-color-scheme="default"] .md-typeset .highlight .si,
-[data-md-color-scheme="default"] .md-typeset .highlight .s2,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .si,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .s2 {
-  color: #067647;
-}
-[data-md-color-scheme="slate"] .md-typeset .highlight .si,
-[data-md-color-scheme="slate"] .md-typeset .highlight .s2,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .si,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .s2 {
-  color: #86efac;
-}
-
 /* 寄存器/变量名高亮 */
 [data-md-color-scheme="default"] .md-typeset .highlight .no,
 [data-md-color-scheme="default"] .md-typeset .highlight .nv,
@@ -325,8 +311,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   border-color: #2a2f3e;
   color: #e06c75;
 }
-
-/* ===== 段落缩进（已禁用） ===== */
 
 /* ===== 列表 ===== */
 .md-typeset ol {
@@ -1077,52 +1061,6 @@ body.bfyes-rainbow-page::before {
   content: none;
 }
 
-.home-card-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.75rem;
-}
-
-.home-card {
-  display: grid;
-  grid-template-rows: auto auto 1fr;
-  gap: 0.45rem;
-  min-height: 10rem;
-  padding: 0.85rem;
-  border: 1px solid var(--home-border);
-  border-radius: 8px;
-  background: var(--home-card-bg);
-  color: var(--md-default-fg-color) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-  backdrop-filter: blur(14px) saturate(1.25);
-  transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
-}
-
-.home-card:hover {
-  border-color: var(--home-accent, var(--md-accent-fg-color));
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
-}
-
-.home-card__eyebrow {
-  color: var(--home-accent, var(--md-accent-fg-color));
-  font-size: 0.64rem;
-  font-weight: 800;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.home-card strong {
-  font-size: 0.92rem;
-  line-height: 1.35;
-}
-
-.home-card span:last-child {
-  color: var(--home-muted);
-  font-size: 0.7rem;
-  line-height: 1.55;
-}
-
 .home-card--study { --home-accent: #0969da; }
 .home-card--tools { --home-accent: #bc4c00; }
 .home-card--diary { --home-accent: #8250df; }
@@ -1465,10 +1403,6 @@ body.bfyes-rainbow-page::before {
   --home-card-bg: rgba(18, 24, 34, 0.54);
 }
 
-[data-md-color-scheme="slate"] .home-card:hover {
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
-}
-
 [data-md-color-scheme="slate"] .rainbow-page {
   --rainbow-red: rgba(255, 123, 146, 0.2);
   --rainbow-orange: rgba(255, 201, 107, 0.2);
@@ -1479,7 +1413,6 @@ body.bfyes-rainbow-page::before {
 }
 
 @media screen and (max-width: 44.984375em) {
-  .home-card-grid,
   .home-link-grid {
     grid-template-columns: 1fr;
   }
@@ -1495,10 +1428,6 @@ body.bfyes-rainbow-page::before {
     gap: 0.25rem;
   }
 
-  .home-card {
-    min-height: 0;
-  }
-
   .home-terminal__screen {
     padding: 0.85rem 0.9rem 0.95rem;
     font-size: 0.78rem;
@@ -1512,10 +1441,6 @@ body.bfyes-rainbow-page::before {
   .rainbow-backdrop::after {
     animation: none;
   }
-}
-
-@keyframes blink {
-  50% { opacity: 0; }
 }
 
 @keyframes rainbow-local-aurora {

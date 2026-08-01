@@ -90,6 +90,13 @@ extra_javascript = [
     "theme/theme-sync.js",
     "theme/mathjax.js",
     "theme/site.js",
+    "theme/site-home.js",
+    "theme/site-terminal.js",
+    "theme/site-mathjax.js",
+    "theme/site-images.js",
+    "theme/site-pdf.js",
+    "theme/site-friends.js",
+    "theme/site-github.js",
 ]
 
 # --------------------------------------------------------------------------
