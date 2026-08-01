@@ -1130,12 +1130,22 @@ body.bfyes-rainbow-page::before {
   }
 
   .home-terminal-key {
-    padding: 0.32rem 0.7rem;
+    flex: 0 1 21%;
+    min-width: 0;
+    padding: 0.32rem 0.45rem;
     font-size: 0.74rem;
+    white-space: nowrap;
   }
 
   .home-terminal-key em {
     display: none;
+  }
+}
+
+/* 极窄屏退化为每行 2 个（2+2 对称） */
+@media screen and (max-width: 21.875em) {
+  .home-terminal-key {
+    flex-basis: 46%;
   }
 }
 

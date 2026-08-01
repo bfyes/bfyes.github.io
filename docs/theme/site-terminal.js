@@ -288,7 +288,10 @@
     }
 
     function focusTerminal() {
-      if (hiddenInput && document.body.contains(hiddenInput)) hiddenInput.focus();
+      if (!hiddenInput || !document.body.contains(hiddenInput)) return;
+      // 触屏设备（手机/平板）不聚焦，避免弹出系统键盘
+      if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) return;
+      hiddenInput.focus();
     }
 
     function setupTerminalInput() {
