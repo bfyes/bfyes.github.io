@@ -268,7 +268,7 @@
           delay(460, function () {
             cursor1.remove();
             showOutputLine(el2, "bfyes@ZJU", 640, function () {
-              showOutputLine(el3, "flag{bfyes_1nf0rm4t10n_s3cur1ty_0x01_l0gg3d_1n}", 780, function () {
+              showOutputLine(el3, "flag{1nf0rM4t10n_$3cUr1ty_0x86_l0gg3d_1n}", 780, function () {
                 delay(120, showFinalPrompt);
               });
             });

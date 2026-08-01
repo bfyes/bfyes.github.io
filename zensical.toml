@@ -30,7 +30,7 @@ nav = [
             { "Project2" = "study/fds/project2/index.md" },
             { "Project3" = "study/fds/project3/index.md" },
         ] },
-        { "HPC 高性能计算" = [
+        { "HPC 高性能计算 (施工中)" = [
             "study/hpc/index.md",
             { "lab0: Linux Crash Course" = "study/hpc/lab0/index.md" },
             { "lab1: Mini Cluster" = "study/hpc/lab1/index.md" },
@@ -39,7 +39,7 @@ nav = [
             { "lab4: 数值相对论优化" = "study/hpc/lab4/index.md" },
             { "lab5: Gemma4推理优化" = "study/hpc/lab5/index.md" },
         ] },
-        { "CTF 夺旗赛" = [
+        { "CTF 夺旗赛 (施工中)" = [
             "study/ctf/index.md",
             { "lab0" = "study/ctf/lab0/index.md" },
             { "lab1 Crypto" = "study/ctf/lab1_crypto/index.md" },
@@ -47,6 +47,9 @@ nav = [
             { "lab1 Pwn" = "study/ctf/lab1_pwn/index.md" },
             { "lab1 Reverse" = "study/ctf/lab1_rev/index.md" },
             { "lab1 Web" = "study/ctf/lab1_web/index.md" },
+            { "lab2 Crypto" = "study/ctf/lab2_crypto/index.md" },
+            { "lab3 Crypto" = "study/ctf/lab3_crypto/index.md" },
+            { "lab3 Misc" = "study/ctf/lab3_misc/index.md" },
         ] },
     ] },
     { "工具" = [

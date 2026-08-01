@@ -1,6 +1,6 @@
 window.__BFYES_PAGE_META__ = {
   "/": {
-    "updated": "2026-07-28T23:35:30+08:00"
+    "updated": "2026-07-28T23:37:18+08:00"
   },
   "/computers/mba15_2025/": {
     "updated": "2026-07-18T21:17:10+08:00"
@@ -70,6 +70,15 @@ window.__BFYES_PAGE_META__ = {
   },
   "/study/ctf/lab1_web/": {
     "updated": "2026-07-28T12:37:20+08:00"
+  },
+  "/study/ctf/lab2_crypto/": {
+    "updated": "2026-08-01T17:15:46.141228+08:00"
+  },
+  "/study/ctf/lab3_crypto/": {
+    "updated": "2026-08-01T17:15:46.141518+08:00"
+  },
+  "/study/ctf/lab3_misc/": {
+    "updated": "2026-08-01T17:15:46.141724+08:00"
   },
   "/study/fds/": {
     "updated": "2026-07-16T13:01:30+08:00"
