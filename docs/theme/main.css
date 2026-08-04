@@ -739,43 +739,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   margin-bottom: 0;
 }
 
-/* ===== 强调框 & 折叠块（Admonition / Details） ===== */
-.md-typeset :is(.admonition, details) {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0.3rem;
-}
-.md-typeset :is(.admonition, details) > :is(.admonition-title, summary) {
-  border-bottom: none !important;
-}
-
-/* --- 各类型 ———— */
-.md-typeset :is(.admonition, details).note           { border: 0.075rem solid #448aff !important; }
-.md-typeset :is(.admonition, details).note     > :is(.admonition-title, summary) { background: linear-gradient(90deg, #448aff28, #448aff0c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).abstract       { border: 0.075rem solid #00b0ff !important; }
-.md-typeset :is(.admonition, details).abstract > :is(.admonition-title, summary) { background: linear-gradient(90deg, #00b0ff28, #00b0ff0c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).info           { border: 0.075rem solid #00b8d4 !important; }
-.md-typeset :is(.admonition, details).info     > :is(.admonition-title, summary) { background: linear-gradient(90deg, #00b8d428, #00b8d40c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).tip            { border: 0.075rem solid #00bfa5 !important; }
-.md-typeset :is(.admonition, details).tip      > :is(.admonition-title, summary) { background: linear-gradient(90deg, #00bfa528, #00bfa50c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).success        { border: 0.075rem solid #00c853 !important; }
-.md-typeset :is(.admonition, details).success  > :is(.admonition-title, summary) { background: linear-gradient(90deg, #00c85328, #00c8530c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).question       { border: 0.075rem solid #64dd17 !important; }
-.md-typeset :is(.admonition, details).question > :is(.admonition-title, summary) { background: linear-gradient(90deg, #64dd1728, #64dd170c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).warning        { border: 0.075rem solid #ff9100 !important; }
-.md-typeset :is(.admonition, details).warning  > :is(.admonition-title, summary) { background: linear-gradient(90deg, #ff910028, #ff91000c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).failure        { border: 0.075rem solid #ff5252 !important; }
-.md-typeset :is(.admonition, details).failure  > :is(.admonition-title, summary) { background: linear-gradient(90deg, #ff525228, #ff52520c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).danger         { border: 0.075rem solid #ff1744 !important; }
-.md-typeset :is(.admonition, details).danger   > :is(.admonition-title, summary) { background: linear-gradient(90deg, #ff174428, #ff17440c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).bug            { border: 0.075rem solid #f50057 !important; }
-.md-typeset :is(.admonition, details).bug      > :is(.admonition-title, summary) { background: linear-gradient(90deg, #f5005728, #f500570c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).example        { border: 0.075rem solid #7c4dff !important; }
-.md-typeset :is(.admonition, details).example  > :is(.admonition-title, summary) { background: linear-gradient(90deg, #7c4dff28, #7c4dff0c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).quote          { border: 0.075rem solid #9e9e9e !important; }
-.md-typeset :is(.admonition, details).quote    > :is(.admonition-title, summary) { background: linear-gradient(90deg, #9e9e9e28, #9e9e9e0c) !important; border-radius: 0.3rem 0.3rem 0 0; }
-.md-typeset :is(.admonition, details).quote    { border: 0.075rem solid #9e9e9e !important; }
-
 /* ===== 脚注（GitHub 观感补足） ===== */
 .md-typeset .footnotes {
   font-size: 12px;
