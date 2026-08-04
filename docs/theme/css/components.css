@@ -488,6 +488,11 @@
   display: none !important;
 }
 
+.page-updated-top__label {
+  width: 12.5em;
+  flex-shrink: 0;
+}
+
 .page-updated-top__time {
   color: var(--md-default-fg-color--lighter);
   font-variant-numeric: tabular-nums;
