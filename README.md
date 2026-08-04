@@ -91,14 +91,15 @@ metadata -> contributions -> compress_pdfs -> zensical build -> previews --site 
 - GitHub contributions 页面：用于构建期抓取贡献图。
 - Giscus、Busuanzi、shields.io：用于评论区、访问量和 stars badge。
 - unpkg CDN：加载 MathJax、Typed.js 和 PDF.js。
-- Google Fonts：加载站点字体。
+- Google Fonts：加载 Noto Sans SC、Noto Serif SC、Inter、JetBrains Mono 等站点字体。
+- jsDelivr CDN：从 [github/mona-sans](https://github.com/github/mona-sans) 仓库加载 Mona Sans 正文可变字体（与 github.com 同款，SIL OFL 1.1 开源）。
 - [github-markdown-css](https://github.com/sindresorhus/github-markdown-css)：为正文提供 GitHub 风格排版观感。
 
 ## 样式拆分说明
 
 `docs/theme/` 下的样式按职责拆分，避免单一文件臃肿、职责混杂：
 
-- `main.css`：正文观感层。承载字体栈、GitHub 明暗主题变量（`--fgColor-*` 等）与 GitHub 式正文排版（作用域 `.md-typeset`），以及代码语法高亮增强（Pygments 体系）。
+- `main.css`：正文观感层。承载字体栈（含 Mona Sans）、GitHub 明暗主题变量与 GitHub 式正文排版（作用域 `.md-typeset`），以及代码高亮增强。
 - `components.css`：站点自定义 UI 组件层。承载标题自动编号、GitHub 贡献图、左上角 Logo、页面信息、虚线网格背景、PDF 阅读器、彩虹背景、首页与终端打字机等效。
 
 `zensical.toml` 的 `extra_css` 按 `main.css → components.css` 顺序加载，组件层覆盖正文观感层。原 `main.css` 在样式拆分前已备份为 `main.css.bak`。
