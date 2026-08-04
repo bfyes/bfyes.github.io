@@ -20,7 +20,7 @@
    由原 main.css 拆分重构，并结合 sindresorhus/github-markdown-css 观感：
    https://github.com/sindresorhus/github-markdown-css
    站点自定义 UI 组件已拆至 components.css（加载于其后）。
-   原文件备份于 main.css.bak。
+   原文件备份于 css/old_main.css.bak。
    ============================================================================ */
 
 /* ============================================================================

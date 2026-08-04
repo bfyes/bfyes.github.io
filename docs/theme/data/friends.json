@@ -2,7 +2,7 @@
   {
     "name": "gE",
     "github": "gE0650",
-    "avatar": "theme/avatars/ge.png",
+    "avatar": "theme/assets/avatars/ge.png",
     "url": "https://0-rangE.cn",
     "description": "Orange",
     "location": ""
@@ -10,7 +10,7 @@
   {
     "name": "Evelina",
     "github": "evelina-is",
-    "avatar": "theme/avatars/evelina.png",
+    "avatar": "theme/assets/avatars/evelina.png",
     "url": "https://evelina-is.github.io/Evelina_personal_web/",
     "description": "",
     "location": ""
@@ -18,7 +18,7 @@
   {
     "name": "Pastwithin",
     "github": "Pastwithin",
-    "avatar": "theme/avatars/pastwithin.png",
+    "avatar": "theme/assets/avatars/pastwithin.png",
     "url": "https://pastwithin.github.io/Pastwithin-Zensical/",
     "description": "",
     "location": ""
@@ -26,7 +26,7 @@
   {
     "name": "chenyuheee",
     "github": "ChenyuHeee",
-    "avatar": "theme/avatars/chenyuheee.png",
+    "avatar": "theme/assets/avatars/chenyuheee.png",
     "url": "https://hechenyu.xin",
     "description": "",
     "location": ""
@@ -34,7 +34,7 @@
   {
     "name": "dreamem0ra1n",
     "github": "dreamem0ra1n",
-    "avatar": "theme/avatars/dreamem0ra1n.png",
+    "avatar": "theme/assets/avatars/dreamem0ra1n.png",
     "url": "https://dreamem0ra1n.github.io/ISYS/",
     "description": "ISYS",
     "location": ""

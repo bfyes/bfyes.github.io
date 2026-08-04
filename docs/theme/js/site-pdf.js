@@ -4,12 +4,7 @@
   window.bfyes = window.bfyes || {};
   var htmlEl = window.bfyes.htmlEl;
   var activePdfViewers = [];
-
-  var SVG_SPINNER =
-    '<svg class="pdf-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-    '<circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>' +
-    '<path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>' +
-    "</svg>";
+  var PDF_LOADING_NOTE = "网络访问可能较慢，请耐心等待，必要时可开启代理";
 
   var SVG_EXTERNAL =
     '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
@@ -25,6 +20,10 @@
     if (bytes < 1024) return bytes + " B";
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  }
+
+  function loadingText(progress) {
+    return "加载中" + (progress ? " " + progress : "") + "（" + PDF_LOADING_NOTE + "）";
   }
 
   function buildIconLink(className, title, href, svg) {
@@ -85,8 +84,10 @@
 
     var overlay = htmlEl("div", { class: "pdf-loader-overlay" });
     overlay.innerHTML =
-      SVG_SPINNER +
-      '<div class="pdf-loader-text">准备加载 PDF...</div>' +
+      '<div class="pdf-loader-status">' +
+      '<span class="pdf-loader-dot" aria-hidden="true"></span>' +
+      '<div class="pdf-loader-text">' + loadingText("") + "</div>" +
+      "</div>" +
       '<div class="pdf-loader-bar-track"><div class="pdf-loader-bar-fill"></div></div>' +
       '<div class="pdf-loader-detail"></div>';
     root.appendChild(overlay);
@@ -140,7 +141,7 @@
   function loadPdf(viewer) {
     if (viewer._loaded) return;
     viewer._loaded = true;
-    viewer._text.textContent = "正在下载 PDF...";
+    viewer._text.textContent = loadingText("");
     viewer._status.textContent = "下载中";
 
     if (!window.fetch || !window.ReadableStream) {
@@ -170,7 +171,7 @@
           return reader.read().then(function (r) {
             if (r.done) {
               var blob = new Blob(chunks, { type: resp.headers.get("Content-Type") || "application/pdf" });
-              viewer._text.textContent = "正在交给浏览器 PDF 查看器...";
+              viewer._text.textContent = "正在打开 PDF...";
               viewer._barFill.style.width = "100%";
               viewer._detail.textContent = total > 0 ? formatSize(total) : formatSize(received);
               showNativePdf(viewer, blob);
@@ -183,7 +184,7 @@
               var pct = Math.min(100, Math.round((received / total) * 100));
               viewer._barFill.style.width = pct + "%";
               viewer._detail.textContent = formatSize(received) + " / " + formatSize(total);
-              viewer._text.textContent = "正在下载 PDF... " + pct + "%";
+              viewer._text.textContent = loadingText(pct + "%");
             } else {
               viewer._detail.textContent = formatSize(received);
             }

@@ -4,7 +4,7 @@
   window.bfyes = window.bfyes || {};
   var htmlEl = window.bfyes.htmlEl;
 
-  var CONTRIBUTIONS_URL = "theme/contributions.json";
+  var CONTRIBUTIONS_URL = "theme/data/contributions.json";
   var WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   var WEEKDAY_SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   var MONTHS = [

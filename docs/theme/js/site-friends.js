@@ -6,7 +6,7 @@
   var previewUrl = window.bfyes.previewUrl;
   var upgradeImages = window.bfyes.upgradeImages;
 
-  var FRIENDS_URL = "theme/friends.json";
+  var FRIENDS_URL = "theme/data/friends.json";
 
   function friendInitials(name, github) {
     var source = (name || github || "?").trim();

@@ -84,21 +84,21 @@ nav = [
 ]
 
 extra_css = [
-    "theme/main.css",
-    "theme/components.css",
+    "theme/css/main.css",
+    "theme/css/components.css",
 ]
 
 extra_javascript = [
-    "theme/theme-sync.js",
-    "theme/mathjax.js",
-    "theme/site.js",
-    "theme/site-home.js",
-    "theme/site-terminal.js",
-    "theme/site-mathjax.js",
-    "theme/site-images.js",
-    "theme/site-pdf.js",
-    "theme/site-friends.js",
-    "theme/site-github.js",
+    "theme/js/theme-sync.js",
+    "theme/js/mathjax.js",
+    "theme/js/site.js",
+    "theme/js/site-home.js",
+    "theme/js/site-terminal.js",
+    "theme/js/site-mathjax.js",
+    "theme/js/site-images.js",
+    "theme/js/site-pdf.js",
+    "theme/js/site-friends.js",
+    "theme/js/site-github.js",
 ]
 
 # --------------------------------------------------------------------------
@@ -107,7 +107,7 @@ extra_javascript = [
 [project.theme]
 custom_dir = "overrides"
 logo = ""
-favicon = "theme/favicon.svg"
+favicon = "theme/assets/favicon.svg"
 features = [
     "content.action.edit",
     "content.code.annotate",
