@@ -1,5 +1,32 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap");
 
+/* ============================================================================
+   main.css —— 正文观感层（GitHub markdown 风格）
+   ----------------------------------------------------------------------------
+   目录
+   01. 字体资源
+       Google Fonts、Mona Sans font-face
+   02. 代码语法高亮
+       Pygments token 色彩增强，适配亮色/暗色
+   03. 字体栈与站点基础
+       正文字体、导航字体、暗色全局背景、等宽字体
+   04. GitHub 主题变量
+       github-markdown-css 兼容变量，按主题切换明暗
+   05. GitHub 式正文排版
+       .md-typeset 内标题、列表、表格、引用、链接、脚注等
+   06. 代码块与代码相关 UI
+       代码块、行号、复制提示、行内代码
+
+   由原 main.css 拆分重构，并结合 sindresorhus/github-markdown-css 观感：
+   https://github.com/sindresorhus/github-markdown-css
+   站点自定义 UI 组件已拆至 components.css（加载于其后）。
+   原文件备份于 main.css.bak。
+   ============================================================================ */
+
+/* ============================================================================
+   01. 字体资源
+   ============================================================================ */
+
 /* Mona Sans —— 从 jsDelivr CDN 引用 GitHub mona-sans 仓库的原始字体文件，
    与 github.com 使用的字体完全一致。SIL OFL 1.1 开源协议。 */
 @font-face {
@@ -12,16 +39,9 @@
 }
 
 /* ============================================================================
-   main.css —— 正文观感层（GitHub markdown 风格）
-   ----------------------------------------------------------------------------
-   由原 main.css 拆分重构，并结合 sindresorhus/github-markdown-css 观感：
-   https://github.com/sindresorhus/github-markdown-css
-   承载：字体栈、GitHub 明暗主题变量、GitHub 式正文排版（作用域 .md-typeset）、
-   代码高亮增强。站点自定义 UI 组件已拆至 components.css（加载于其后）。
-   原文件备份于 main.css.bak。
+   02. 代码语法高亮
    ============================================================================ */
 
-/* ===== 代码语法高亮颜色增强 ===== */
 /* 同时适配直接 .highlight 和 .highlighttable 内的 .highlight */
 /*
    高亮说明（供斟酌）：
@@ -258,9 +278,10 @@
   color: #ff6b6b;
 }
 
-/* ---- 以下为 GitHub 观感核心层 ---- */
+/* ============================================================================
+   03. 字体栈与站点基础
+   ============================================================================ */
 
-/* ===== 字体 ===== */
 /* 顶部导航标题：衬线字体 */
 .md-header__title {
   font-family: "Noto Serif SC", serif;
@@ -312,9 +333,21 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* ============================================================================
-   GitHub 主题变量（作用域到 .md-typeset）
+   04. GitHub 主题变量
+   ----------------------------------------------------------------------------
+   Material 主题色变量作用域到当前色彩方案；GitHub markdown 兼容变量作用域到 .md-typeset。
    变量含义与 github-markdown-css 一致；通过 [data-md-color-scheme] 切换明暗。
    ============================================================================ */
+[data-md-color-scheme="default"] {
+  --md-accent-fg-color: #0969da;
+  --md-typeset-a-color: #0969da;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-accent-fg-color: #4493f8;
+  --md-typeset-a-color: #4493f8;
+}
+
 [data-md-color-scheme="default"] .md-typeset,
 [data-markdown-body] .markdown-body,
 .markdown-body[data-theme="light"] {
@@ -382,7 +415,9 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* ============================================================================
-   GitHub 式正文排版（作用域到 .md-typeset，覆盖 Material 默认）
+   05. GitHub 式正文排版
+   ----------------------------------------------------------------------------
+   作用域到 .md-typeset，覆盖 Material 默认。
    正文字号对齐 GitHub 基准 16px，行高 1.5，间距变量 --base-size-* 同为 16px 系，
    使观感与 github-markdown-css 完全一致（不受站点 root 20px 放大影响）。
    ============================================================================ */
@@ -596,7 +631,11 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   text-underline-offset: 0.2rem;
 }
 
-/* ===== 代码块（GitHub 风格 + 站点行号特性） ===== */
+/* ============================================================================
+   06. 代码块与代码相关 UI
+   ============================================================================ */
+
+/* ---- 代码块（GitHub 风格 + 站点行号特性） ---- */
 .md-typeset pre {
   margin-top: 0;
   margin-bottom: var(--base-size-16, 1rem);
@@ -630,6 +669,18 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   color: var(--fgColor-muted) !important;
   user-select: none;
   opacity: 0.65;
+}
+/* Material 的行号文字实际绘制在 ::before 上，需一并去掉默认灰底。 */
+.md-typeset .highlight [data-linenos]::before {
+  background-color: transparent !important;
+  background-image: none !important;
+  border-right: 1px solid rgba(127, 127, 127, 0.28);
+  border-right: 1px solid color-mix(in srgb, var(--borderColor-default) 42%, transparent);
+  box-shadow: none !important;
+  color: var(--fgColor-muted) !important;
+  margin-right: 0.95em;
+  opacity: 0.7;
+  padding-right: 0.75em;
 }
 /* 行号所在的锚链接也统一颜色，去除下划线 */
 .md-typeset .highlight code a:has(.linenos),
@@ -685,7 +736,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   border: 0;
 }
 
-/* ===== 行内代码（GitHub 风格） ===== */
+/* ---- 行内代码（GitHub 风格） ---- */
 .md-typeset code:not(pre code) {
   padding: 0.2em 0.4em;
   margin: 0;
@@ -701,6 +752,19 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   background-color: var(--bgColor-neutral-muted);
   color: var(--fgColor-default);
 }
+
+/* 复制成功提示：只保留文字，不要 Material 默认的彩色/灰色胶囊背景。 */
+.md-dialog {
+  min-width: 0;
+  padding: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.md-dialog__inner {
+  color: var(--fgColor-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
 /* 标题内的行内代码：随标题字号 */
 .md-typeset h1 code,
 .md-typeset h2 code,
@@ -712,7 +776,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   font-size: inherit;
 }
 
-/* ===== 行间距：GitHub 式统一块级元素底边距 =====
+/* ---- 行间距：GitHub 式统一块级元素底边距 ----
    放在各具体规则之后，覆盖上层块（p/列表/表格/引用/代码块等）底部为 1rem；
    嵌套列表（ul ul 等）因 specificity 更高仍保持 0，符合 GitHub 行为。
    同时统一 Material 扩展组件（tabbed 折叠、admonition 提示框）的边距，
@@ -739,7 +803,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   margin-bottom: 0;
 }
 
-/* ===== 脚注（GitHub 观感补足） ===== */
+/* ---- 脚注（GitHub 观感补足） ---- */
 .md-typeset .footnotes {
   font-size: 12px;
   color: var(--fgColor-muted);

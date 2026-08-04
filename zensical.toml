@@ -79,6 +79,7 @@ nav = [
         { "深圳I/O" = "games/Shenzhen_IO.md" },
         { "编程农场" = "games/The_Farmer_Was_Replaced.md" },
         { "图灵完备" = "games/Turing_Complete.md" },
+        { "样式测试" = "games/test.md" },
     ] },
 ]
 

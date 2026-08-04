@@ -1,6 +1,6 @@
 window.__BFYES_PAGE_META__ = {
   "/": {
-    "updated": "2026-08-01T18:16:51+08:00"
+    "updated": "2026-08-04T14:17:11+08:00"
   },
   "/computers/mba15_2025/": {
     "updated": "2026-07-18T21:17:10+08:00"
@@ -40,6 +40,9 @@ window.__BFYES_PAGE_META__ = {
   },
   "/games/Turing_Complete/": {
     "updated": "2026-07-18T21:17:10+08:00"
+  },
+  "/games/test/": {
+    "updated": "2026-08-04T15:37:47.213181+08:00"
   },
   "/study/": {
     "updated": "2026-07-28T15:09:33+08:00"

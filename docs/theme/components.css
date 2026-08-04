@@ -1,22 +1,34 @@
 /* ============================================================================
    components.css —— 站点自定义 UI 组件层
    ----------------------------------------------------------------------------
-   本文件承载 bfyes 站点所有自定义前端组件（非正文排版类），由原 main.css 拆分而来：
-     - 标题自动编号
-     - GitHub 贡献图（.ghc-* / .ContributionCalendar-*）
-     - 左上角 Logo（.bf-logo）
-     - 页面信息 / 更新时间（.page-info / .page-updated-top）
-     - 底层虚线网格背景（--bfyes-page-grid）
-     - PDF 内联阅读器（.pdf-viewer-*）
-     - 彩虹背景（.rainbow-page）
-     - 首页（.home-*）
-     - 终端打字机（.typed-*）
+   目录
+   01. Markdown 扩展组件
+       标题自动编号、Tabbed 间距、admonition/details 提示块
+   02. GitHub 贡献图
+       .ghc-* / .ContributionCalendar-* 静态贡献日历
+   03. 站点框架组件
+       左上角 Logo、页面信息、底层虚线网格、全局内容宽度
+   04. PDF 阅读器
+       .pdf-viewer-* / 下载进度 + 浏览器原生 PDF 查看器外壳
+   05. 彩虹背景
+       .rainbow-page / .rainbow-backdrop 氛围背景
+   06. 首页
+       .home-* 首页分区、卡片、日志、友链、活动区
+   07. 首页终端
+       .home-terminal-* / .typed-* 打字机组件
+   08. 响应式与动画收尾
+       首页移动端布局、彩虹背景降级、keyframes
+
    这些组件依赖 Material for MkDocs 的 --md-* 变量以及正文观感层 main.css。
    加载顺序：main.css（正文观感层）→ components.css（组件覆盖层）。
    原文件已备份为 main.css.bak，与 github-markdown-css（sindresorhus）观感结合。
    ============================================================================ */
 
-/* ===== 标题编号 ===== */
+/* ============================================================================
+   01. Markdown 扩展组件
+   ============================================================================ */
+
+/* ---- 标题编号 ---- */
 .md-content__inner { counter-reset: section; }
 .md-content__inner h2 {
   counter-increment: section;
@@ -48,7 +60,7 @@
   margin-right: 0.6em;
 }
 
-/* ===== Tabbed 折叠组件（=== "日期" 等）间距 =====
+/* ---- Tabbed 折叠组件（=== "日期" 等）间距 ----
    修复标签行与下方内容面板紧贴、间距过小的问题 */
 .md-typeset .tabbed-content {
   margin-top: 0;
@@ -58,13 +70,171 @@
   margin-bottom: 0;
 }
 
-/* ===== 强调块（admonition）字号 =====
-   标题与内容字号统一对齐标准代码块字号（85% × 16px 正文 = 13.6px） */
-.md-typeset .admonition {
+/* ---- 强调块（admonition/details） ----
+   标题保留类型色，正文区域透明，贴近 Material 默认文档页的提示块风格。 */
+.md-typeset .admonition,
+.md-typeset details {
+  --bfyes-admonition-color: #2563eb;
+  --bfyes-admonition-accent: #06b6d4;
+  --bfyes-admonition-spectrum: #22c55e;
+  background-color: transparent !important;
+  border: 1px solid var(--borderColor-muted);
+  border: 1px solid color-mix(in srgb, var(--bfyes-admonition-color) 36%, var(--borderColor-muted));
+  border-radius: 6px;
+  box-shadow: none;
   font-size: 13.6px;
+  padding: 0 0.8rem;
+}
+.md-typeset .admonition.note,
+.md-typeset details.note {
+  --bfyes-admonition-color: #2563eb;
+  --bfyes-admonition-accent: #06b6d4;
+  --bfyes-admonition-spectrum: #22c55e;
+}
+.md-typeset .admonition.abstract,
+.md-typeset details.abstract {
+  --bfyes-admonition-color: #7c3aed;
+  --bfyes-admonition-accent: #2563eb;
+  --bfyes-admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition.info,
+.md-typeset details.info {
+  --bfyes-admonition-color: #2563eb;
+  --bfyes-admonition-accent: #06b6d4;
+  --bfyes-admonition-spectrum: #22c55e;
+}
+.md-typeset .admonition.tip,
+.md-typeset details.tip {
+  --bfyes-admonition-color: #06b6d4;
+  --bfyes-admonition-accent: #22c55e;
+  --bfyes-admonition-spectrum: #facc15;
+}
+.md-typeset .admonition.success,
+.md-typeset details.success {
+  --bfyes-admonition-color: #16a34a;
+  --bfyes-admonition-accent: #eab308;
+  --bfyes-admonition-spectrum: #f97316;
+}
+.md-typeset .admonition.question,
+.md-typeset details.question {
+  --bfyes-admonition-color: #7c3aed;
+  --bfyes-admonition-accent: #2563eb;
+  --bfyes-admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition.warning,
+.md-typeset details.warning {
+  --bfyes-admonition-color: #eab308;
+  --bfyes-admonition-accent: #f97316;
+  --bfyes-admonition-spectrum: #dc2626;
+}
+.md-typeset .admonition.failure,
+.md-typeset details.failure {
+  --bfyes-admonition-color: #dc2626;
+  --bfyes-admonition-accent: #d946ef;
+  --bfyes-admonition-spectrum: #7c3aed;
+}
+.md-typeset .admonition.danger,
+.md-typeset details.danger {
+  --bfyes-admonition-color: #b91c1c;
+  --bfyes-admonition-accent: #f97316;
+  --bfyes-admonition-spectrum: #dc2626;
+}
+.md-typeset .admonition.bug,
+.md-typeset details.bug {
+  --bfyes-admonition-color: #d946ef;
+  --bfyes-admonition-accent: #7c3aed;
+  --bfyes-admonition-spectrum: #2563eb;
+}
+.md-typeset .admonition.example,
+.md-typeset details.example {
+  --bfyes-admonition-color: #7c3aed;
+  --bfyes-admonition-accent: #2563eb;
+  --bfyes-admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition.quote,
+.md-typeset details.quote {
+  --bfyes-admonition-color: #475569;
+  --bfyes-admonition-accent: #2563eb;
+  --bfyes-admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition-title,
+.md-typeset summary {
+  margin: 0 -0.8rem 0.55rem;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+  background: rgba(127, 127, 127, 0.07);
+  background:
+    linear-gradient(
+      105deg,
+      color-mix(in srgb, var(--bfyes-admonition-color) 12%, transparent),
+      color-mix(in srgb, var(--bfyes-admonition-color) 11%, transparent) 50%,
+      color-mix(in srgb, var(--bfyes-admonition-accent) 10%, transparent) 70%,
+      color-mix(in srgb, var(--bfyes-admonition-spectrum) 7%, transparent) 86%,
+      transparent
+    );
+  border-bottom: 1px solid var(--borderColor-muted);
+  border-bottom: 1px solid color-mix(in srgb, var(--bfyes-admonition-color) 28%, transparent);
+  color: var(--fgColor-default);
+  line-height: 1.45;
+}
+[dir="ltr"] .md-typeset .admonition-title,
+[dir="ltr"] .md-typeset summary {
+  padding-left: 2.35rem;
+}
+[dir="rtl"] .md-typeset .admonition-title,
+[dir="rtl"] .md-typeset summary {
+  padding-right: 2.35rem;
+}
+.md-typeset .admonition > :last-child,
+.md-typeset details > :last-child {
+  margin-bottom: 0.45rem;
+}
+.md-typeset .admonition-title::before,
+.md-typeset summary::before {
+  background-color: var(--bfyes-admonition-color) !important;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.md-typeset .admonition-title::after,
+.md-typeset summary::after {
+  color: var(--bfyes-admonition-color) !important;
+}
+[dir="ltr"] .md-typeset .admonition-title::before,
+[dir="ltr"] .md-typeset summary::before {
+  left: 0.8rem;
+}
+[dir="rtl"] .md-typeset .admonition-title::before,
+[dir="rtl"] .md-typeset summary::before {
+  right: 0.8rem;
+}
+[dir="ltr"] .md-typeset summary::after {
+  right: 0.35rem;
+}
+[dir="rtl"] .md-typeset summary::after {
+  left: 0.35rem;
+}
+.md-typeset summary::after {
+  top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+}
+.md-typeset details[open] > summary::after {
+  transform: translateY(-50%) rotate(90deg);
+}
+[dir="rtl"] .md-typeset summary::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+[dir="rtl"] .md-typeset details[open] > summary::after {
+  transform: translateY(-50%) rotate(90deg);
+}
+.md-typeset details:not([open]) > summary {
+  margin-bottom: 0;
+  border-bottom: 0;
 }
 
-/* ===== GitHub 贡献图 ===== */
+/* ============================================================================
+   02. GitHub 贡献图
+   ============================================================================ */
+
 .github-calendar-wrap {
   max-width: 760px;
   margin: 1rem auto 0;
@@ -284,7 +454,11 @@
   }
 }
 
-/* ===== 左上角 BillFeng Logo ===== */
+/* ============================================================================
+   03. 站点框架组件
+   ============================================================================ */
+
+/* ---- 左上角 BillFeng Logo ---- */
 .bf-logo {
   display: block;
   height: 1.45rem;   /* Material 默认 logo 约 1.2rem，放大一档 */
@@ -298,7 +472,7 @@
   fill: var(--md-default-fg-color);
 }
 
-/* ===== 页面信息 ===== */
+/* ---- 页面信息 ---- */
 .page-updated-top {
   display: flex;
   align-items: center;
@@ -351,7 +525,7 @@
   display: block;
 }
 
-/* ===== 底层虚线网格背景（视差） ===== */
+/* ---- 底层虚线网格背景（视差） ---- */
 /*
    SVG stroke-dasharray 实现真正虚线，不是 gradient 色块。
    正文页只保留很轻的边缘纹理，避免干扰阅读。
@@ -427,14 +601,60 @@ body.bfyes-rainbow-page::before {
   padding-left: 0rem;
 }
 
+/* ---- 导航选中态 ---- */
+[data-md-color-scheme="default"] {
+  --bfyes-active-nav-bg: #eff8ff;
+  --bfyes-active-nav-border: #0969da;
+}
+
+[data-md-color-scheme="slate"] {
+  --bfyes-active-nav-bg: rgba(68, 147, 248, 0.08);
+  --bfyes-active-nav-border: #4493f8;
+}
+
+.md-sidebar--primary .md-nav__link--active,
+.md-sidebar--primary .md-nav__item--active > .md-nav__container {
+  border-radius: 6px;
+  background: var(--bfyes-active-nav-bg);
+  background: color-mix(in srgb, var(--md-accent-fg-color) 5%, transparent);
+  box-shadow: inset 0 0 0 1px var(--bfyes-active-nav-border);
+  color: var(--md-accent-fg-color);
+}
+
+.md-sidebar--primary .md-nav__item--active > .md-nav__container > .md-nav__link {
+  color: inherit;
+}
+
+/* ---- 右侧目录阅读进度 ---- */
+.md-nav--secondary [data-md-component="toc"] .md-nav__link {
+  position: relative;
+  color: var(--md-default-fg-color);
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.md-nav--secondary [data-md-component="toc"] .md-nav__link .md-typeset {
+  color: inherit;
+  background-color: transparent;
+}
+
+.md-nav--secondary [data-md-component="toc"] .md-nav__link--passed {
+  color: var(--md-default-fg-color--light);
+  opacity: 0.86;
+}
+
+.md-nav--secondary [data-md-component="toc"] .md-nav__link--active {
+  color: var(--md-accent-fg-color);
+  opacity: 1;
+}
+
 /* 页面整体加宽 */
 .md-grid {
   max-width: 64rem;
 }
 
-/* ================================================================
-   PDF 加载进度组件（PDF.js canvas 渲染）
-   ================================================================ */
+/* ============================================================================
+   04. PDF 阅读器
+   ============================================================================ */
 
 /* ---- 查看器外壳 ---- */
 .pdf-viewer {
@@ -443,6 +663,7 @@ body.bfyes-rainbow-page::before {
   overflow: hidden;
   background: var(--md-code-bg-color, #f5f5f5);
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  font-family: inherit;
   margin: 1em 0;
 }
 
@@ -450,7 +671,7 @@ body.bfyes-rainbow-page::before {
 .pdf-viewer-toolbar {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 0.45rem;
   padding: 8px 12px;
   background: var(--md-default-bg-color, #fff);
   border-bottom: 1px solid var(--md-default-fg-color--lightest, #e0e0e0);
@@ -459,80 +680,56 @@ body.bfyes-rainbow-page::before {
   z-index: 3;
 }
 
-.pdf-viewer-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--md-typeset-color, #555);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.pdf-viewer-btn:hover:not(:disabled) {
-  background: var(--md-default-fg-color--lightest, #e8e8e8);
-}
-
-.pdf-viewer-btn:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.pdf-viewer-page {
+.pdf-viewer-title,
+.pdf-viewer-status {
   font-size: 0.85rem;
-  font-family: "JetBrains Mono", "SF Mono", monospace;
   color: var(--md-typeset-color, #555);
-  min-width: 64px;
-  text-align: center;
   user-select: none;
+}
+
+.pdf-viewer-title {
+  font-weight: 600;
+}
+
+.pdf-viewer-status {
+  color: var(--md-default-fg-color--light);
 }
 
 .pdf-viewer-spacer {
   flex: 1;
 }
 
-.pdf-viewer-download {
+.pdf-viewer-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  color: var(--md-typeset-color--light, #888);
+  color: var(--md-default-fg-color--light, #888);
   transition: color 0.15s, background 0.15s;
 }
 
-.pdf-viewer-download:hover {
+.pdf-viewer-action:hover {
   color: var(--md-accent-fg-color, #4051b5);
   background: var(--md-default-fg-color--lightest, #e8e8e8);
 }
 
-/* ---- 画布滚动区 ---- */
-.pdf-viewer-canvases {
-  overflow-y: auto;
+/* ---- 原生 PDF 查看器 ---- */
+.pdf-viewer-native-wrap {
+  position: relative;
+  overflow: hidden;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   background: var(--md-code-bg-color, #525252);
-  /* 高度由 JS 动态设置为固定值，配合 overflow 实现折叠滚动 */
 }
 
-.pdf-viewer-page-wrap {
-  display: flex;
-  justify-content: center;
-  padding: 4px 0;
-}
-
-.pdf-viewer-canvas {
+.pdf-viewer-native {
   display: block;
-  max-width: 100%;
-  height: auto;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  /* 3x 渲染 + auto 插值 = 接近 SVG 清晰度 */
-  image-rendering: auto;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: var(--md-default-bg-color);
 }
 
 /* ---- 加载覆盖层 ---- */
@@ -590,8 +787,9 @@ body.bfyes-rainbow-page::before {
 /* ---- 详情（已下载/总大小） ---- */
 .pdf-loader-detail {
   font-size: 0.75rem;
-  color: var(--md-typeset-color--light, #999);
-  font-family: "JetBrains Mono", "SF Mono", monospace;
+  color: var(--md-default-fg-color--light, #999);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
 }
 
 /* ---- 错误提示 ---- */
@@ -626,11 +824,14 @@ body.bfyes-rainbow-page::before {
   border-color: rgba(255,255,255,0.08);
 }
 
-[data-md-color-scheme="slate"] .pdf-viewer-canvases {
+[data-md-color-scheme="slate"] .pdf-viewer-native-wrap {
   background: var(--md-code-bg-color, #1e1e2e);
 }
 
-/* ===== 彩虹背景 ===== */
+/* ============================================================================
+   05. 彩虹背景
+   ============================================================================ */
+
 .rainbow-page {
   --rainbow-red: rgba(255, 92, 122, 0.2);
   --rainbow-orange: rgba(255, 190, 86, 0.2);
@@ -731,11 +932,15 @@ body.bfyes-rainbow-page::before {
   animation: rainbow-beam-b 23s ease-in-out infinite alternate;
 }
 
-/* ===== 首页 ===== */
+/* ============================================================================
+   06. 首页
+   ============================================================================ */
+
 .home-page {
   --home-border: rgba(127, 127, 127, 0.24);
   --home-muted: var(--md-default-fg-color--light);
   --home-softer: var(--md-default-fg-color--lighter);
+  --home-panel: rgba(255, 255, 255, 0.84);
   --home-panel: color-mix(in srgb, var(--md-default-bg-color) 84%, #ffffff 16%);
   --home-card-bg: rgba(255, 255, 255, 0.58);
   margin-top: 0.4rem;
@@ -893,6 +1098,7 @@ body.bfyes-rainbow-page::before {
 .home-log {
   display: grid;
   grid-template-columns: 6.5rem minmax(0, 1fr);
+  align-items: center;
   gap: 0.8rem;
   padding: 0.64rem 0.8rem;
   background: var(--home-panel);
@@ -955,6 +1161,7 @@ body.bfyes-rainbow-page::before {
   border: 1px solid var(--home-border);
   border-radius: 50%;
   color: #1a7f37;
+  background: rgba(45, 164, 78, 0.1);
   background: color-mix(in srgb, #2da44e 10%, transparent);
   font-size: 0.66rem;
   font-weight: 900;
@@ -970,6 +1177,7 @@ body.bfyes-rainbow-page::before {
 
 [data-md-color-scheme="slate"] .home-friend__avatar {
   color: #7ee787;
+  background: rgba(126, 231, 135, 0.12);
   background: color-mix(in srgb, #7ee787 12%, transparent);
 }
 
@@ -995,7 +1203,10 @@ body.bfyes-rainbow-page::before {
   margin: 0;
 }
 
-/* ===== 首页终端打字机 ===== */
+/* ============================================================================
+   07. 首页终端
+   ============================================================================ */
+
 .home-terminal {
   margin: 0;
   overflow: hidden;
@@ -1072,7 +1283,7 @@ body.bfyes-rainbow-page::before {
   color: #0969da;
 }
 
-/* ===== 打字机光标 ===== */
+/* ---- 打字机光标 ---- */
 .typed-cursor,
 .typed-text .typed-cursor,
 .typed-cursor-standalone {
@@ -1142,6 +1353,7 @@ body.bfyes-rainbow-page::before {
 }
 
 [data-md-color-scheme="slate"] .home-page {
+  --home-panel: rgba(17, 24, 39, 0.24);
   --home-panel: color-mix(in srgb, var(--md-default-bg-color) 76%, #111827 24%);
   --home-border: rgba(255, 255, 255, 0.14);
   --home-card-bg: rgba(18, 24, 34, 0.54);
@@ -1155,6 +1367,10 @@ body.bfyes-rainbow-page::before {
   --rainbow-blue: rgba(147, 197, 253, 0.2);
   --rainbow-violet: rgba(216, 180, 254, 0.18);
 }
+
+/* ============================================================================
+   08. 响应式与动画收尾
+   ============================================================================ */
 
 @media screen and (max-width: 44.984375em) {
   .home-link-grid {

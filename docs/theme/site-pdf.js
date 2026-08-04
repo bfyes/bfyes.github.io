@@ -3,12 +3,6 @@
 
   window.bfyes = window.bfyes || {};
   var htmlEl = window.bfyes.htmlEl;
-
-  var PDF_SCRIPT_BASE = "https://unpkg.com/pdfjs-dist@4.0.379/build/";
-  var PDF_RENDER_SCALE = 3;
-  var pdfjsLib = null;
-  var pdfjsLoading = false;
-  var pdfjsQueue = [];
   var activePdfViewers = [];
 
   var SVG_SPINNER =
@@ -16,10 +10,16 @@
     '<circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>' +
     '<path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>' +
     "</svg>";
-  var SVG_CHEVRON_LEFT =
-    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>';
-  var SVG_CHEVRON_RIGHT =
-    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>';
+
+  var SVG_EXTERNAL =
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+    '<path d="M15 3h6v6"/><path d="M10 14 21 3"/>' +
+    '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>';
+
+  var SVG_DOWNLOAD =
+    '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+    '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
+    '<polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
 
   function formatSize(bytes) {
     if (bytes < 1024) return bytes + " B";
@@ -27,28 +27,23 @@
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
   }
 
-  function getPDFJS(cb) {
-    if (pdfjsLib) {
-      cb(pdfjsLib);
-      return;
-    }
-    pdfjsQueue.push(cb);
-    if (pdfjsLoading) return;
-    pdfjsLoading = true;
-
-    import(PDF_SCRIPT_BASE + "pdf.min.mjs").then(function (mod) {
-      pdfjsLib = mod;
-      mod.GlobalWorkerOptions.workerSrc = PDF_SCRIPT_BASE + "pdf.worker.min.mjs";
-      var q = pdfjsQueue;
-      pdfjsQueue = [];
-      for (var i = 0; i < q.length; i++) q[i](pdfjsLib);
-    }).catch(function (err) {
-      console.error("[site] PDF.js load failed:", err);
-      pdfjsLoading = false;
-      var q = pdfjsQueue;
-      pdfjsQueue = [];
-      for (var i = 0; i < q.length; i++) q[i](null);
+  function buildIconLink(className, title, href, svg) {
+    var link = htmlEl("a", {
+      class: className,
+      title: title,
+      href: href
     });
+    link.innerHTML = svg;
+    return link;
+  }
+
+  function splitHash(src) {
+    var hashIndex = src.indexOf("#");
+    if (hashIndex < 0) return { fetchSrc: src, hash: "" };
+    return {
+      fetchSrc: src.slice(0, hashIndex),
+      hash: src.slice(hashIndex)
+    };
   }
 
   function buildPdfViewer(iframe) {
@@ -62,23 +57,31 @@
     root.style.maxWidth = "100%";
 
     var toolbar = htmlEl("div", { class: "pdf-viewer-toolbar" });
-    toolbar.innerHTML =
-      '<button class="pdf-viewer-btn pdf-prev" title="上一页" disabled>' + SVG_CHEVRON_LEFT + "</button>" +
-      '<span class="pdf-viewer-page">- / -</span>' +
-      '<button class="pdf-viewer-btn pdf-next" title="下一页" disabled>' + SVG_CHEVRON_RIGHT + "</button>" +
-      '<span class="pdf-viewer-spacer"></span>' +
-      '<a class="pdf-viewer-download" title="下载" href="' + src + '" download>' +
-      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-      '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/>' +
-      '<line x1="12" y1="15" x2="12" y2="3"/></svg></a>';
+    var title = htmlEl("span", { class: "pdf-viewer-title" }, "PDF");
+    var status = htmlEl("span", { class: "pdf-viewer-status" }, "准备加载");
+    var spacer = htmlEl("span", { class: "pdf-viewer-spacer" });
+    var open = buildIconLink("pdf-viewer-action", "在新标签页打开", src, SVG_EXTERNAL);
+    open.setAttribute("target", "_blank");
+    open.setAttribute("rel", "noopener");
+    var download = buildIconLink("pdf-viewer-action pdf-viewer-download", "下载", src, SVG_DOWNLOAD);
+    download.setAttribute("download", "");
+    toolbar.append(title, status, spacer, open, download);
     root.appendChild(toolbar);
 
-    var canvasWrap = htmlEl("div", { class: "pdf-viewer-canvases" });
+    var frameWrap = htmlEl("div", { class: "pdf-viewer-native-wrap" });
     var h = parseInt(height, 10);
-    if (isNaN(h) || h <= 0) h = 500;
-    h = Math.min(h, Math.round(window.innerHeight * 0.8));
-    canvasWrap.style.height = h + "px";
-    root.appendChild(canvasWrap);
+    if (isNaN(h) || h <= 0) h = 600;
+    h = Math.min(h, Math.round(window.innerHeight * 0.82));
+    frameWrap.style.height = h + "px";
+
+    var nativeFrame = htmlEl("iframe", {
+      class: "pdf-viewer-native",
+      title: iframe.getAttribute("title") || "PDF preview",
+      loading: "lazy"
+    });
+    nativeFrame.setAttribute("allowfullscreen", "");
+    frameWrap.appendChild(nativeFrame);
+    root.appendChild(frameWrap);
 
     var overlay = htmlEl("div", { class: "pdf-loader-overlay" });
     overlay.innerHTML =
@@ -93,103 +96,68 @@
     root.appendChild(errorBox);
 
     root._src = src;
+    root._fetchSrc = splitHash(src).fetchSrc;
+    root._hash = splitHash(src).hash;
+    root._status = status;
+    root._nativeFrame = nativeFrame;
     root._overlay = overlay;
     root._barFill = overlay.querySelector(".pdf-loader-bar-fill");
     root._detail = overlay.querySelector(".pdf-loader-detail");
     root._text = overlay.querySelector(".pdf-loader-text");
-    root._canvasWrap = canvasWrap;
-    root._pageLabel = toolbar.querySelector(".pdf-viewer-page");
-    root._prevBtn = toolbar.querySelector(".pdf-prev");
-    root._nextBtn = toolbar.querySelector(".pdf-next");
     root._errorBox = errorBox;
     root._loaded = false;
-    root._pdfDoc = null;
-    root._pages = [];
-    root._curPage = 0;
-    root._totalPages = 0;
+    root._objectUrl = "";
     return root;
   }
 
-  function renderPdfPage(viewer, pageNum) {
-    if (!viewer._pdfDoc) return;
-    var entry = viewer._pages[pageNum];
-    if (!entry || entry.rendered) return;
-    entry.rendered = true;
-
-    viewer._pdfDoc.getPage(pageNum + 1).then(function (page) {
-      var viewport = page.getViewport({ scale: PDF_RENDER_SCALE });
-      var canvas = entry.canvas;
-      var ctx = canvas.getContext("2d");
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-      canvas.style.width = "100%";
-      canvas.style.height = "auto";
-      page.render({ canvasContext: ctx, viewport: viewport });
-    }).catch(function (err) {
-      console.error("[site] PDF page render failed:", err);
-    });
+  function hideOverlay(viewer) {
+    viewer._overlay.style.opacity = "0";
+    setTimeout(function () {
+      viewer._overlay.style.display = "none";
+    }, 400);
   }
 
-  function scrollPdfToPage(viewer, pageNum) {
-    if (pageNum < 0 || pageNum >= viewer._totalPages) return;
-    viewer._curPage = pageNum;
-    viewer._pageLabel.textContent = (pageNum + 1) + " / " + viewer._totalPages;
-    viewer._prevBtn.disabled = pageNum === 0;
-    viewer._nextBtn.disabled = pageNum === viewer._totalPages - 1;
-
-    var entry = viewer._pages[pageNum];
-    if (entry && entry.container) {
-      viewer._canvasWrap.scrollTo({
-        top: entry.container.offsetTop - viewer._canvasWrap.offsetTop - 4,
-        behavior: "smooth"
-      });
-    }
-
-    var start = Math.max(0, pageNum - 4);
-    var end = Math.min(viewer._totalPages - 1, pageNum + 4);
-    for (var i = start; i <= end; i++) renderPdfPage(viewer, i);
+  function showNativePdf(viewer, blob) {
+    if (viewer._objectUrl) URL.revokeObjectURL(viewer._objectUrl);
+    viewer._objectUrl = URL.createObjectURL(blob);
+    viewer._nativeFrame.src = viewer._objectUrl + viewer._hash;
+    viewer._status.textContent = "已加载";
+    hideOverlay(viewer);
+    activePdfViewers.push(viewer);
   }
 
-  function setupPdfScrollTracking(viewer) {
-    var wrap = viewer._canvasWrap;
-    var ticking = false;
-    wrap.addEventListener("scroll", function () {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function () {
-        ticking = false;
-        var containers = wrap.querySelectorAll(".pdf-viewer-page-wrap");
-        var wrapRect = wrap.getBoundingClientRect();
-        var best = 0;
-        var bestDist = Infinity;
-
-        for (var i = 0; i < containers.length; i++) {
-          var rect = containers[i].getBoundingClientRect();
-          var mid = rect.top + rect.height / 2;
-          var dist = Math.abs(mid - (wrapRect.top + wrapRect.height / 2));
-          if (dist < bestDist) {
-            bestDist = dist;
-            best = i;
-          }
-        }
-        if (best !== viewer._curPage) {
-          viewer._curPage = best;
-          viewer._pageLabel.textContent = (best + 1) + " / " + viewer._totalPages;
-          viewer._prevBtn.disabled = best === 0;
-          viewer._nextBtn.disabled = best === viewer._totalPages - 1;
-        }
-      });
-    }, { passive: true });
+  function fallbackToBrowser(viewer, message) {
+    viewer._nativeFrame.src = viewer._src;
+    viewer._status.textContent = "浏览器加载";
+    viewer._text.textContent = message;
+    viewer._detail.textContent = "";
+    viewer._barFill.style.width = "100%";
+    setTimeout(function () {
+      hideOverlay(viewer);
+    }, 700);
   }
 
   function loadPdf(viewer) {
     if (viewer._loaded) return;
     viewer._loaded = true;
     viewer._text.textContent = "正在下载 PDF...";
+    viewer._status.textContent = "下载中";
 
-    fetch(viewer._src)
+    if (!window.fetch || !window.ReadableStream) {
+      fallbackToBrowser(viewer, "当前浏览器不支持读取进度，改用内置 PDF 查看器");
+      return;
+    }
+
+    fetch(viewer._fetchSrc)
       .then(function (resp) {
         if (!resp.ok) throw new Error("HTTP " + resp.status);
+        if (!resp.body || !resp.body.getReader) {
+          return resp.blob().then(function (blob) {
+            viewer._barFill.style.width = "100%";
+            viewer._detail.textContent = formatSize(blob.size);
+            showNativePdf(viewer, blob);
+          });
+        }
 
         var total = resp.headers.get("Content-Length");
         total = total ? parseInt(total, 10) : 0;
@@ -201,16 +169,11 @@
         function pump() {
           return reader.read().then(function (r) {
             if (r.done) {
-              var buffer = new Uint8Array(received);
-              var pos = 0;
-              for (var i = 0; i < chunks.length; i++) {
-                buffer.set(chunks[i], pos);
-                pos += chunks[i].length;
-              }
-              viewer._text.textContent = "正在解析 PDF...";
+              var blob = new Blob(chunks, { type: resp.headers.get("Content-Type") || "application/pdf" });
+              viewer._text.textContent = "正在交给浏览器 PDF 查看器...";
               viewer._barFill.style.width = "100%";
               viewer._detail.textContent = total > 0 ? formatSize(total) : formatSize(received);
-              renderPdfWithPDFJS(viewer, buffer.buffer);
+              showNativePdf(viewer, blob);
               return;
             }
 
@@ -230,79 +193,16 @@
         return pump();
       })
       .catch(function (err) {
-        viewer._overlay.style.display = "none";
-        viewer._errorBox.style.display = "flex";
-        viewer._errorBox.textContent = "PDF 加载失败: " + err.message;
-        console.error("[site]", viewer._src, err);
+        console.warn("[site] PDF progress loader failed, falling back:", viewer._src, err);
+        fallbackToBrowser(viewer, "无法读取下载进度，改用内置 PDF 查看器");
       });
-  }
-
-  function renderPdfWithPDFJS(viewer, arrayBuffer) {
-    getPDFJS(function (lib) {
-      if (!lib) {
-        viewer._overlay.style.display = "none";
-        viewer._errorBox.style.display = "flex";
-        viewer._errorBox.textContent = "PDF 渲染引擎加载失败";
-        return;
-      }
-
-      viewer._text.textContent = "正在渲染页面...";
-      lib.getDocument({ data: arrayBuffer }).promise.then(function (doc) {
-        viewer._pdfDoc = doc;
-        viewer._totalPages = doc.numPages;
-        viewer._pageLabel.textContent = "1 / " + doc.numPages;
-        viewer._prevBtn.disabled = true;
-        viewer._nextBtn.disabled = doc.numPages <= 1;
-
-        var frag = document.createDocumentFragment();
-        for (var i = 0; i < doc.numPages; i++) {
-          var pageWrap = htmlEl("div", { class: "pdf-viewer-page-wrap" });
-          var canvas = htmlEl("canvas", { class: "pdf-viewer-canvas" });
-          pageWrap.appendChild(canvas);
-          frag.appendChild(pageWrap);
-          viewer._pages.push({ canvas: canvas, container: pageWrap, rendered: false });
-        }
-        viewer._canvasWrap.appendChild(frag);
-
-        viewer._overlay.style.opacity = "0";
-        setTimeout(function () {
-          viewer._overlay.style.display = "none";
-        }, 400);
-
-        for (var j = 0; j < doc.numPages; j++) renderPdfPage(viewer, j);
-        setupPdfScrollTracking(viewer);
-
-        viewer._prevBtn.onclick = function () {
-          scrollPdfToPage(viewer, viewer._curPage - 1);
-        };
-        viewer._nextBtn.onclick = function () {
-          scrollPdfToPage(viewer, viewer._curPage + 1);
-        };
-        viewer._keyHandler = function (e) {
-          if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
-          if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-            e.preventDefault();
-            scrollPdfToPage(viewer, viewer._curPage - 1);
-          } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-            e.preventDefault();
-            scrollPdfToPage(viewer, viewer._curPage + 1);
-          }
-        };
-        document.addEventListener("keydown", viewer._keyHandler);
-        activePdfViewers.push(viewer);
-      }).catch(function (err) {
-        viewer._overlay.style.display = "none";
-        viewer._errorBox.style.display = "flex";
-        viewer._errorBox.textContent = "PDF 解析失败: " + err.message;
-        console.error("[site]", err);
-      });
-    });
   }
 
   function cleanupPdfViewers() {
     for (var i = 0; i < activePdfViewers.length; i++) {
       var viewer = activePdfViewers[i];
-      if (viewer._keyHandler) document.removeEventListener("keydown", viewer._keyHandler);
+      if (viewer._objectUrl) URL.revokeObjectURL(viewer._objectUrl);
+      viewer._objectUrl = "";
     }
     activePdfViewers = [];
   }
