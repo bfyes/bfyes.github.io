@@ -680,12 +680,21 @@ body.bfyes-rainbow-page::before {
   display: flex;
   align-items: center;
   gap: 0.45rem;
+  min-width: 0;
   padding: 8px 12px;
   background: var(--md-default-bg-color, #fff);
   border-bottom: 1px solid var(--md-default-fg-color--lightest, #e0e0e0);
   position: sticky;
   top: 0;
   z-index: 3;
+}
+
+.pdf-viewer-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .pdf-viewer-title,
@@ -696,11 +705,16 @@ body.bfyes-rainbow-page::before {
 }
 
 .pdf-viewer-title {
+  flex: 0 0 auto;
   font-weight: 600;
 }
 
 .pdf-viewer-status {
+  min-width: 0;
+  overflow: hidden;
   color: var(--md-default-fg-color--light);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pdf-viewer-spacer {
@@ -713,6 +727,7 @@ body.bfyes-rainbow-page::before {
   justify-content: center;
   width: 32px;
   height: 32px;
+  flex: 0 0 auto;
   border-radius: 6px;
   color: var(--md-default-fg-color--light, #888);
   transition: color 0.15s, background 0.15s;
@@ -756,17 +771,6 @@ body.bfyes-rainbow-page::before {
   /* 受外壳 min-height 约束，不会撑满屏幕 */
 }
 
-/* ---- 加载状态 ---- */
-.pdf-loader-status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  max-width: min(32rem, 88%);
-  min-width: 0;
-  text-align: center;
-}
-
 .pdf-loader-dot {
   width: 0.48rem;
   height: 0.48rem;
@@ -776,6 +780,12 @@ body.bfyes-rainbow-page::before {
   box-shadow: 0 0 0 0 rgba(9, 105, 218, 0.18);
   box-shadow: 0 0 0 0 color-mix(in srgb, var(--md-accent-fg-color, #0969da) 30%, transparent);
   animation: pdf-loader-breathe 1.45s ease-in-out infinite;
+}
+
+.pdf-loader-dot--done {
+  opacity: 0.6;
+  animation: none;
+  box-shadow: none;
 }
 
 @keyframes pdf-loader-breathe {
@@ -791,17 +801,6 @@ body.bfyes-rainbow-page::before {
     box-shadow: 0 0 0 0.3rem rgba(9, 105, 218, 0.08);
     box-shadow: 0 0 0 0.3rem color-mix(in srgb, var(--md-accent-fg-color, #0969da) 10%, transparent);
   }
-}
-
-.pdf-loader-text {
-  min-width: 0;
-  overflow: hidden;
-  font-size: 0.9rem;
-  color: var(--md-typeset-color, #555);
-  font-weight: 500;
-  line-height: 1.5;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* ---- 进度条 ---- */

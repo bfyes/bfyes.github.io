@@ -22,8 +22,8 @@
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
   }
 
-  function loadingText(progress) {
-    return "加载中" + (progress ? " " + progress : "") + "（" + PDF_LOADING_NOTE + "）";
+  function loadingText() {
+    return "下载中（" + PDF_LOADING_NOTE + "）";
   }
 
   function buildIconLink(className, title, href, svg) {
@@ -56,15 +56,17 @@
     root.style.maxWidth = "100%";
 
     var toolbar = htmlEl("div", { class: "pdf-viewer-toolbar" });
+    var heading = htmlEl("span", { class: "pdf-viewer-heading" });
+    var dot = htmlEl("span", { class: "pdf-loader-dot", "aria-hidden": "true" });
     var title = htmlEl("span", { class: "pdf-viewer-title" }, "PDF");
     var status = htmlEl("span", { class: "pdf-viewer-status" }, "准备加载");
-    var spacer = htmlEl("span", { class: "pdf-viewer-spacer" });
     var open = buildIconLink("pdf-viewer-action", "在新标签页打开", src, SVG_EXTERNAL);
     open.setAttribute("target", "_blank");
     open.setAttribute("rel", "noopener");
     var download = buildIconLink("pdf-viewer-action pdf-viewer-download", "下载", src, SVG_DOWNLOAD);
     download.setAttribute("download", "");
-    toolbar.append(title, status, spacer, open, download);
+    heading.append(dot, title, status);
+    toolbar.append(heading, open, download);
     root.appendChild(toolbar);
 
     var frameWrap = htmlEl("div", { class: "pdf-viewer-native-wrap" });
@@ -84,10 +86,6 @@
 
     var overlay = htmlEl("div", { class: "pdf-loader-overlay" });
     overlay.innerHTML =
-      '<div class="pdf-loader-status">' +
-      '<span class="pdf-loader-dot" aria-hidden="true"></span>' +
-      '<div class="pdf-loader-text">' + loadingText("") + "</div>" +
-      "</div>" +
       '<div class="pdf-loader-bar-track"><div class="pdf-loader-bar-fill"></div></div>' +
       '<div class="pdf-loader-detail"></div>';
     root.appendChild(overlay);
@@ -100,11 +98,12 @@
     root._fetchSrc = splitHash(src).fetchSrc;
     root._hash = splitHash(src).hash;
     root._status = status;
+    root._dot = dot;
     root._nativeFrame = nativeFrame;
     root._overlay = overlay;
     root._barFill = overlay.querySelector(".pdf-loader-bar-fill");
     root._detail = overlay.querySelector(".pdf-loader-detail");
-    root._text = overlay.querySelector(".pdf-loader-text");
+    root._text = status;
     root._errorBox = errorBox;
     root._loaded = false;
     root._objectUrl = "";
@@ -123,6 +122,7 @@
     viewer._objectUrl = URL.createObjectURL(blob);
     viewer._nativeFrame.src = viewer._objectUrl + viewer._hash;
     viewer._status.textContent = "已加载";
+    viewer._dot.classList.add("pdf-loader-dot--done");
     hideOverlay(viewer);
     activePdfViewers.push(viewer);
   }
@@ -131,6 +131,7 @@
     viewer._nativeFrame.src = viewer._src;
     viewer._status.textContent = "浏览器加载";
     viewer._text.textContent = message;
+    viewer._dot.classList.add("pdf-loader-dot--done");
     viewer._detail.textContent = "";
     viewer._barFill.style.width = "100%";
     setTimeout(function () {
@@ -141,8 +142,7 @@
   function loadPdf(viewer) {
     if (viewer._loaded) return;
     viewer._loaded = true;
-    viewer._text.textContent = loadingText("");
-    viewer._status.textContent = "下载中";
+    viewer._text.textContent = loadingText();
 
     if (!window.fetch || !window.ReadableStream) {
       fallbackToBrowser(viewer, "当前浏览器不支持读取进度，改用内置 PDF 查看器");
@@ -184,7 +184,7 @@
               var pct = Math.min(100, Math.round((received / total) * 100));
               viewer._barFill.style.width = pct + "%";
               viewer._detail.textContent = formatSize(received) + " / " + formatSize(total);
-              viewer._text.textContent = loadingText(pct + "%");
+              viewer._text.textContent = loadingText();
             } else {
               viewer._detail.textContent = formatSize(received);
             }
