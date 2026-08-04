@@ -46,10 +46,9 @@ Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自�
 
    同时替换以下个人信息：
 
-   - `docs/theme/data/friends.json`：友链数据
    - `docs/theme/data/contributions.json`：运行 `make contributions` 重新抓取你的 GitHub 贡献图
    - `overrides/partials/` 下的模板：Logo、评论区等局部模板
-   - `docs/index.md`：首页内容与终端命令
+   - `docs/index.md`：首页内容、终端命令与友链卡片
 
    接着在 `docs/` 下编写你的内容，文章图片放在同名 `.assets/` 目录中，新页面需同步加入 `zensical.toml` 的 `nav`。
 
@@ -85,7 +84,7 @@ Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自�
 - **图片与 PDF 优化**：构建链路会为文章图片生成低清 JPEG 预览图，构建后 HTML 先加载预览图，再通过 `data-fullsrc` 升级到原图；PDF 文件可通过 Ghostscript 压缩，降低文档站首屏和附件访问的体积压力。
 - **PDF 阅读器**：PDF iframe 会被前端替换为自定义阅读器。下载阶段显示进度条、百分比和状态提示；桌面端下载完成后交给浏览器原生 PDF 查看器，iOS/iPadOS 则降级为 PDF.js canvas 渲染，避免 Safari 内嵌 PDF 只能显示第一页的问题。
 - **首页终端**：主页终端不仅有打字机动画，也支持简单交互命令。`ls`、`help`、`?` 会列出分类，输入数字可跳转；`cd` 命令会通过路径归一化支持 `/study`、`~/site/study`、`study/` 等多种写法。
-- **友情链接头像**：友链数据来自 `docs/theme/data/friends.json`。头像优先使用本地资源；如果没有本地头像但提供了 GitHub 用户名，会自动请求 `https://github.com/<user>.png?size=96`；图片失败时回退到姓名或 GitHub 用户名首字母。
+- **友情链接头像**：友链卡片写在 `docs/index.md` 的 `.home-link-grid` 里，只需提供链接(`href`)、外显名字(`<strong>`)、GitHub 用户标识符(`data-id`)和可选描述(`data-description`)。`@名字`、头像、占位首字母等均由 `site-friends.js` 自动补齐；头像实时抓取 `https://avatars.githubusercontent.com/<user>?size=160`，无需本地图片。
 - **GitHub 贡献图**：贡献图在构建期抓取并烘焙为静态 JSON，前端按 GitHub 的月份、星期、level 0-4、legend、tooltip 与 aria label 结构重新渲染，亮色和暗色配色都尽量高度还原。
 
 ## 项目结构
@@ -103,7 +102,7 @@ Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自�
 │       ├── css/              # 正文观感层与组件样式
 │       ├── js/               # 站点前端增强脚本
 │       ├── data/             # 构建期生成/维护的 JSON 与 metadata
-│       └── assets/           # favicon、头像等静态资产
+│       └── assets/           # favicon 等静态资产
 ├── overrides/                # 主题模板覆盖
 │   ├── main.html             # 全局模板入口
 │   └── partials/             # 评论区、logo、页面信息等局部模板
@@ -151,8 +150,8 @@ metadata -> contributions -> compress_pdfs -> zensical build -> previews --site 
 - `css/main.css`：正文观感层。承载系统字体栈、GitHub 明暗主题变量与 GitHub 式正文排版（作用域 `.md-typeset`），以及代码高亮增强。
 - `css/components.css`：站点自定义 UI 组件层。承载标题自动编号、GitHub 贡献图、左上角 Logo、页面信息、虚线网格背景、PDF 阅读器、彩虹背景、首页与终端打字机等效。
 - `js/`：站点前端增强脚本，包括主题同步、首页动效、图片预览、PDF 阅读器、友链和贡献图等。
-- `data/`：构建期生成或维护的数据，例如页面更新时间、GitHub 贡献图数据和友链数据。
-- `assets/`：favicon、头像等可直接被页面引用的静态资产。
+- `data/`：构建期生成或维护的数据，例如页面更新时间、GitHub 贡献图数据。
+- `assets/`：favicon 等可直接被页面引用的静态资产。
 
 `zensical.toml` 的 `extra_css` 按 `css/main.css → css/components.css` 顺序加载，组件层覆盖正文观感层。原 `main.css` 在样式拆分前已备份为 `css/old_main.css.bak`。
 
