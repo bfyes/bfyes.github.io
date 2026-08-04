@@ -4,7 +4,7 @@
   window.bfyes = window.bfyes || {};
   var htmlEl = window.bfyes.htmlEl;
   var activePdfViewers = [];
-  var PDF_LOADING_NOTE = "网络访问可能较慢，请耐心等待，必要时可开启代理";
+  var PDF_LOADING_NOTE = "可能较慢，必要时可开启代理";
 
   var SVG_EXTERNAL =
     '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
@@ -23,7 +23,7 @@
   }
 
   function loadingText() {
-    return "下载中（" + PDF_LOADING_NOTE + "）";
+    return "下载中 (" + PDF_LOADING_NOTE + ")";
   }
 
   function buildIconLink(className, title, href, svg) {
