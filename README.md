@@ -10,7 +10,7 @@ Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自�
 - 正文观感结合 [github-markdown-css](https://github.com/sindresorhus/github-markdown-css)（GitHub 风格排版，作用域 `.md-typeset`，随主题自动切换明暗）
 - 页面最后更新时间、站点浏览量和 GitHub stars 展示
 - GitHub 贡献图静态数据烘焙
-- PDF 内联阅读器，下载时显示进度条，加载后交给浏览器原生 PDF 查看器渲染
+- PDF 内联阅读器，下载时显示进度条；桌面交给浏览器原生 PDF 查看器渲染，iOS/iPadOS 降级为 PDF.js 画布渲染
 - 图片低清预览图与构建后 HTML 图片路径处理
 - 桌面端背景网格与主页打字机效果
 
@@ -91,16 +91,15 @@ metadata -> contributions -> compress_pdfs -> zensical build -> previews --site 
 - `gs` / Ghostscript：用于 PDF 压缩。
 - GitHub contributions 页面：用于构建期抓取贡献图。
 - Giscus、Busuanzi、shields.io：用于评论区、访问量和 stars badge。
-- unpkg CDN：加载 MathJax 和 Typed.js。
+- unpkg CDN：加载 MathJax、Typed.js，以及 iOS/iPadOS PDF 降级渲染所需的 PDF.js。
 - Google Fonts：加载 Noto Sans SC、Noto Serif SC、Inter、JetBrains Mono 等站点字体。
-- jsDelivr CDN：从 [github/mona-sans](https://github.com/github/mona-sans) 仓库加载 Mona Sans 正文可变字体（与 github.com 同款，SIL OFL 1.1 开源）。
 - [github-markdown-css](https://github.com/sindresorhus/github-markdown-css)：为正文提供 GitHub 风格排版观感。
 
 ## 主题资源结构
 
 `docs/theme/` 下的前端资源按类型拆分，避免 CSS、JS、数据和图片混在同一层：
 
-- `css/main.css`：正文观感层。承载字体栈（含 Mona Sans）、GitHub 明暗主题变量与 GitHub 式正文排版（作用域 `.md-typeset`），以及代码高亮增强。
+- `css/main.css`：正文观感层。承载系统字体栈、GitHub 明暗主题变量与 GitHub 式正文排版（作用域 `.md-typeset`），以及代码高亮增强。
 - `css/components.css`：站点自定义 UI 组件层。承载标题自动编号、GitHub 贡献图、左上角 Logo、页面信息、虚线网格背景、PDF 阅读器、彩虹背景、首页与终端打字机等效。
 - `js/`：站点前端增强脚本，包括主题同步、首页动效、图片预览、PDF 阅读器、友链和贡献图等。
 - `data/`：构建期生成或维护的数据，例如页面更新时间、GitHub 贡献图数据和友链数据。

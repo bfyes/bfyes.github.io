@@ -5,7 +5,7 @@
    ----------------------------------------------------------------------------
    目录
    01. 字体资源
-       Google Fonts、Mona Sans font-face
+       Google Fonts
    02. 代码语法高亮
        Pygments token 色彩增强，适配亮色/暗色
    03. 字体栈与站点基础
@@ -26,17 +26,6 @@
 /* ============================================================================
    01. 字体资源
    ============================================================================ */
-
-/* Mona Sans —— 从 jsDelivr CDN 引用 GitHub mona-sans 仓库的原始字体文件，
-   与 github.com 使用的字体完全一致。SIL OFL 1.1 开源协议。 */
-@font-face {
-  font-family: "Mona Sans";
-  src: url("https://cdn.jsdelivr.net/gh/github/mona-sans@main/fonts/otf/Mona-Sans.otf") format("opentype");
-  font-weight: 200 900;
-  font-style: normal;
-  font-stretch: 75% 125%;
-  font-display: swap;
-}
 
 /* ============================================================================
    02. 代码语法高亮
@@ -287,12 +276,11 @@
   font-family: "Noto Serif SC", serif;
   font-weight: 700;
 }
-/* 正文：采用 GitHub 官方字体栈（Mona Sans 为首选，与 github.com 一致），
-   中文回退到系统字体。Mona Sans 是 GitHub 开源的 SIL OFL 1.1 字体。 */
+/* 正文：采用 github-markdown-css 风格的系统无衬线栈；H1 保留自定义衬线标题。 */
 body, .md-typeset, .md-typeset h2, .md-typeset h3, .md-typeset h4,
 .md-typeset h5, .md-typeset h6, .md-nav {
-  font-family: "Mona Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Noto Sans SC", "Noto Sans", "PingFang SC", "Microsoft YaHei",
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
     "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 /* 搜索面板（输入框 + 结果列表）渲染在 Shadow DOM 里，外部选择器进不去。
@@ -301,11 +289,11 @@ body, .md-typeset, .md-typeset h2, .md-typeset h3, .md-typeset h4,
    使用 !important 确保覆盖 Material 主题的 body font-family 声明。
    同时将 font-smoothing / letter-spacing / font-feature-settings 对齐 GitHub 默认值。 */
 body {
-  --md-text-font-family: "Mona Sans", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", "Noto Sans SC", "Noto Sans", "PingFang SC", "Microsoft YaHei",
+  --md-text-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
     "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-  font-family: "Mona Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Noto Sans SC", "Noto Sans", "PingFang SC", "Microsoft YaHei",
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
     "Helvetica Neue", Helvetica, Arial, sans-serif !important;
   -webkit-font-smoothing: auto !important;
   -moz-osx-font-smoothing: auto !important;

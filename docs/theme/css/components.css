@@ -9,7 +9,7 @@
    03. 站点框架组件
        左上角 Logo、页面信息、底层虚线网格、全局内容宽度
    04. PDF 阅读器
-       .pdf-viewer-* / 下载进度 + 浏览器原生 PDF 查看器外壳
+       .pdf-viewer-* / 下载进度 + 原生 PDF 查看器 + iOS/iPadOS 画布降级
    05. 彩虹背景
        .rainbow-page / .rainbow-backdrop 氛围背景
    06. 首页
@@ -575,6 +575,8 @@ body.bfyes-rainbow-page::before {
 .md-content {
   background-color: var(--md-default-bg-color);
   box-shadow: none;
+  position: relative;
+  z-index: 1;
 }
 /* 亮色条件下显式保证正文白色背景覆盖（防止半透明/网格透出） */
 [data-md-color-scheme="default"] .md-content,
@@ -738,7 +740,20 @@ body.bfyes-rainbow-page::before {
   background: var(--md-default-fg-color--lightest, #e8e8e8);
 }
 
-/* ---- 原生 PDF 查看器 ---- */
+.pdf-viewer-mobile-hint {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest, #e0e0e0);
+  background: var(--md-default-bg-color, #fff);
+  color: var(--md-default-fg-color--light);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.pdf-viewer-mobile-hint[hidden] {
+  display: none;
+}
+
+/* ---- PDF 查看器：原生 iframe / iOS 画布降级 ---- */
 .pdf-viewer-native-wrap {
   position: relative;
   overflow: hidden;
@@ -753,6 +768,88 @@ body.bfyes-rainbow-page::before {
   height: 100%;
   border: 0;
   background: var(--md-default-bg-color);
+}
+
+.pdf-viewer-native[hidden] {
+  display: none;
+}
+
+.pdf-viewer-canvases {
+  display: block;
+  height: 100%;
+  overflow: auto;
+  padding: 12px;
+  background: var(--md-code-bg-color, #f5f5f5);
+  -webkit-overflow-scrolling: touch;
+}
+
+.pdf-viewer-canvases[hidden] {
+  display: none;
+}
+
+.pdf-viewer-page-wrap {
+  width: min(100%, 54rem);
+  margin: 0 auto 12px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.16);
+}
+
+.pdf-viewer-page-wrap:last-child {
+  margin-bottom: 0;
+}
+
+.pdf-viewer-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+}
+
+.pdf-viewer-external {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 1.2rem;
+  background: var(--md-default-bg-color);
+  text-align: center;
+}
+
+.pdf-viewer-external[hidden] {
+  display: none;
+}
+
+.pdf-viewer-external__title {
+  color: var(--md-typeset-color, #555);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.pdf-viewer-external__text {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.78rem;
+}
+
+.pdf-viewer-external__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--md-accent-fg-color);
+  border-radius: 6px;
+  background: var(--bfyes-active-nav-bg, #f5fbff);
+  color: var(--md-accent-fg-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.pdf-viewer-external__button:hover {
+  background: color-mix(in srgb, var(--md-accent-fg-color) 9%, var(--md-default-bg-color));
 }
 
 /* ---- 加载覆盖层 ---- */
@@ -777,7 +874,7 @@ body.bfyes-rainbow-page::before {
   flex: 0 0 auto;
   border-radius: 999px;
   background: var(--md-accent-fg-color, #0969da);
-  animation: pdf-loader-blink 1.15s ease-in-out infinite;
+  animation: pdf-loader-blink 2s steps(1, end) infinite;
 }
 
 .pdf-loader-dot--done {
@@ -786,15 +883,24 @@ body.bfyes-rainbow-page::before {
 }
 
 @keyframes pdf-loader-blink {
-  0%, 100% {
-    opacity: 0.35;
-  }
-  50% {
+  0%, 49.999% {
     opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
   }
 }
 
 /* ---- 进度条 ---- */
+.pdf-loader-percent {
+  color: var(--md-default-fg-color);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
 .pdf-loader-bar-track {
   width: min(320px, 80%);
   height: 6px;
@@ -851,7 +957,16 @@ body.bfyes-rainbow-page::before {
   border-color: rgba(255,255,255,0.08);
 }
 
+[data-md-color-scheme="slate"] .pdf-viewer-mobile-hint {
+  background: var(--md-default-bg-color, #1a1a2e);
+  border-color: rgba(255,255,255,0.08);
+}
+
 [data-md-color-scheme="slate"] .pdf-viewer-native-wrap {
+  background: var(--md-code-bg-color, #1e1e2e);
+}
+
+[data-md-color-scheme="slate"] .pdf-viewer-canvases {
   background: var(--md-code-bg-color, #1e1e2e);
 }
 

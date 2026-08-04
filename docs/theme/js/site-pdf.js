@@ -5,6 +5,11 @@
   var htmlEl = window.bfyes.htmlEl;
   var activePdfViewers = [];
   var PDF_LOADING_NOTE = "可能较慢，必要时可开启代理";
+  var PDF_SCRIPT_BASE = "https://unpkg.com/pdfjs-dist@4.0.379/build/";
+  var PDF_RENDER_SCALE = 3;
+  var pdfjsLib = null;
+  var pdfjsLoading = false;
+  var pdfjsQueue = [];
 
   var SVG_EXTERNAL =
     '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
@@ -22,8 +27,48 @@
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
   }
 
+  function formatPercent(received, total) {
+    if (!total) return "";
+    return Math.min(100, (received / total) * 100).toFixed(1) + "%";
+  }
+
   function loadingText() {
     return "下载中 (" + PDF_LOADING_NOTE + ")";
+  }
+
+  function prefersCanvasPdfViewer() {
+    var ua = navigator.userAgent || "";
+    var iOSDevice = /iPad|iPhone|iPod/.test(ua);
+    var iPadDesktopMode = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+    return iOSDevice || iPadDesktopMode;
+  }
+
+  function getPDFJS(done) {
+    if (pdfjsLib) {
+      done(null, pdfjsLib);
+      return;
+    }
+
+    pdfjsQueue.push(done);
+    if (pdfjsLoading) return;
+    pdfjsLoading = true;
+
+    import(PDF_SCRIPT_BASE + "pdf.min.mjs")
+      .then(function (mod) {
+        pdfjsLib = mod;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_SCRIPT_BASE + "pdf.worker.min.mjs";
+        flushPDFJSQueue(null, pdfjsLib);
+      })
+      .catch(function (err) {
+        flushPDFJSQueue(err);
+      });
+  }
+
+  function flushPDFJSQueue(err, lib) {
+    var queue = pdfjsQueue.slice();
+    pdfjsQueue = [];
+    pdfjsLoading = false;
+    for (var i = 0; i < queue.length; i++) queue[i](err, lib);
   }
 
   function buildIconLink(className, title, href, svg) {
@@ -69,6 +114,14 @@
     toolbar.append(heading, open, download);
     root.appendChild(toolbar);
 
+    var mobileHint = htmlEl(
+      "div",
+      { class: "pdf-viewer-mobile-hint", hidden: "" },
+      "iPadOS/iOS 可以在新标签页打开以获得更好阅读体验"
+    );
+    if (prefersCanvasPdfViewer()) mobileHint.hidden = false;
+    root.appendChild(mobileHint);
+
     var frameWrap = htmlEl("div", { class: "pdf-viewer-native-wrap" });
     var h = parseInt(height, 10);
     if (isNaN(h) || h <= 0) h = 600;
@@ -82,10 +135,23 @@
     });
     nativeFrame.setAttribute("allowfullscreen", "");
     frameWrap.appendChild(nativeFrame);
+
+    var canvasWrap = htmlEl("div", { class: "pdf-viewer-canvases", hidden: "" });
+    frameWrap.appendChild(canvasWrap);
+
+    var externalPrompt = htmlEl("div", { class: "pdf-viewer-external", hidden: "" });
+    externalPrompt.innerHTML =
+      '<div class="pdf-viewer-external__title">Safari 内嵌预览受限</div>' +
+      '<div class="pdf-viewer-external__text">请在新标签页打开完整 PDF。</div>' +
+      '<a class="pdf-viewer-external__button" target="_blank" rel="noopener" href="' + src + '">' +
+      SVG_EXTERNAL +
+      "<span>新标签页打开</span></a>";
+    frameWrap.appendChild(externalPrompt);
     root.appendChild(frameWrap);
 
     var overlay = htmlEl("div", { class: "pdf-loader-overlay" });
     overlay.innerHTML =
+      '<div class="pdf-loader-percent">0.0%</div>' +
       '<div class="pdf-loader-bar-track"><div class="pdf-loader-bar-fill"></div></div>' +
       '<div class="pdf-loader-detail"></div>';
     root.appendChild(overlay);
@@ -100,7 +166,11 @@
     root._status = status;
     root._dot = dot;
     root._nativeFrame = nativeFrame;
+    root._canvasWrap = canvasWrap;
+    root._mobileHint = mobileHint;
+    root._externalPrompt = externalPrompt;
     root._overlay = overlay;
+    root._percent = overlay.querySelector(".pdf-loader-percent");
     root._barFill = overlay.querySelector(".pdf-loader-bar-fill");
     root._detail = overlay.querySelector(".pdf-loader-detail");
     root._text = status;
@@ -120,6 +190,8 @@
   function showNativePdf(viewer, blob) {
     if (viewer._objectUrl) URL.revokeObjectURL(viewer._objectUrl);
     viewer._objectUrl = URL.createObjectURL(blob);
+    viewer._nativeFrame.hidden = false;
+    viewer._canvasWrap.hidden = true;
     viewer._nativeFrame.src = viewer._objectUrl + viewer._hash;
     viewer._status.textContent = "已加载";
     viewer._dot.classList.add("pdf-loader-dot--done");
@@ -127,11 +199,105 @@
     activePdfViewers.push(viewer);
   }
 
+  function showCanvasPdf(viewer, blob) {
+    viewer._nativeFrame.removeAttribute("src");
+    viewer._nativeFrame.hidden = true;
+    viewer._canvasWrap.hidden = false;
+    viewer._mobileHint.hidden = false;
+    while (viewer._canvasWrap.firstChild) viewer._canvasWrap.removeChild(viewer._canvasWrap.firstChild);
+    viewer._text.textContent = "正在渲染 PDF...";
+
+    blob.arrayBuffer()
+      .then(function (buffer) {
+        getPDFJS(function (err, lib) {
+          if (err) {
+            console.warn("[site] PDF.js failed to load:", viewer._src, err);
+            showExternalPdfPrompt(viewer);
+            return;
+          }
+
+          renderPdfPages(viewer, lib, buffer).catch(function (renderErr) {
+            console.warn("[site] PDF.js render failed:", viewer._src, renderErr);
+            showExternalPdfPrompt(viewer);
+          });
+        });
+      })
+      .catch(function (err) {
+        console.warn("[site] PDF blob read failed:", viewer._src, err);
+        showExternalPdfPrompt(viewer);
+      });
+  }
+
+  function renderPdfPages(viewer, lib, buffer) {
+    return lib.getDocument({ data: new Uint8Array(buffer) }).promise.then(function (pdf) {
+      var pageNumber = 1;
+
+      function renderNextPage() {
+        if (pageNumber > pdf.numPages) {
+          viewer._status.textContent = "已加载";
+          viewer._dot.classList.add("pdf-loader-dot--done");
+          hideOverlay(viewer);
+          return Promise.resolve();
+        }
+
+        return pdf.getPage(pageNumber).then(function (page) {
+          var viewport = page.getViewport({ scale: PDF_RENDER_SCALE });
+          var pageWrap = htmlEl("div", { class: "pdf-viewer-page-wrap" });
+          var canvas = htmlEl("canvas", { class: "pdf-viewer-canvas" });
+          var context = canvas.getContext("2d");
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          canvas.style.aspectRatio = viewport.width + " / " + viewport.height;
+          pageWrap.appendChild(canvas);
+          viewer._canvasWrap.appendChild(pageWrap);
+          viewer._status.textContent = "渲染第 " + pageNumber + " / " + pdf.numPages + " 页";
+
+          return page.render({
+            canvasContext: context,
+            viewport: viewport
+          }).promise.then(function () {
+            pageNumber += 1;
+            return renderNextPage();
+          });
+        });
+      }
+
+      return renderNextPage();
+    });
+  }
+
+  function showDownloadedPdf(viewer, blob) {
+    if (prefersCanvasPdfViewer()) {
+      showCanvasPdf(viewer, blob);
+      return;
+    }
+
+    showNativePdf(viewer, blob);
+  }
+
+  function showExternalPdfPrompt(viewer) {
+    viewer._nativeFrame.removeAttribute("src");
+    viewer._nativeFrame.hidden = true;
+    viewer._canvasWrap.hidden = true;
+    viewer._mobileHint.hidden = prefersCanvasPdfViewer() ? false : true;
+    viewer._externalPrompt.hidden = false;
+    viewer._status.textContent = "请在新标签页打开";
+    viewer._dot.classList.add("pdf-loader-dot--done");
+    hideOverlay(viewer);
+  }
+
   function fallbackToBrowser(viewer, message) {
+    if (prefersCanvasPdfViewer()) {
+      viewer._text.textContent = message;
+      showExternalPdfPrompt(viewer);
+      return;
+    }
+
     viewer._nativeFrame.src = viewer._src;
     viewer._status.textContent = "浏览器加载";
     viewer._text.textContent = message;
     viewer._dot.classList.add("pdf-loader-dot--done");
+    viewer._percent.textContent = "100.0%";
     viewer._detail.textContent = "";
     viewer._barFill.style.width = "100%";
     setTimeout(function () {
@@ -144,7 +310,7 @@
     viewer._loaded = true;
     viewer._text.textContent = loadingText();
 
-    if (!window.fetch || !window.ReadableStream) {
+    if (!window.fetch) {
       fallbackToBrowser(viewer, "当前浏览器不支持读取进度，改用内置 PDF 查看器");
       return;
     }
@@ -155,8 +321,9 @@
         if (!resp.body || !resp.body.getReader) {
           return resp.blob().then(function (blob) {
             viewer._barFill.style.width = "100%";
+            viewer._percent.textContent = "100.0%";
             viewer._detail.textContent = formatSize(blob.size);
-            showNativePdf(viewer, blob);
+            showDownloadedPdf(viewer, blob);
           });
         }
 
@@ -165,7 +332,12 @@
         var reader = resp.body.getReader();
         var chunks = [];
         var received = 0;
-        if (total > 0) viewer._detail.textContent = "0 / " + formatSize(total);
+        if (total > 0) {
+          viewer._percent.textContent = "0.0%";
+          viewer._detail.textContent = "0 / " + formatSize(total);
+        } else {
+          viewer._percent.textContent = "";
+        }
 
         function pump() {
           return reader.read().then(function (r) {
@@ -173,16 +345,18 @@
               var blob = new Blob(chunks, { type: resp.headers.get("Content-Type") || "application/pdf" });
               viewer._text.textContent = "正在打开 PDF...";
               viewer._barFill.style.width = "100%";
+              viewer._percent.textContent = total > 0 ? "100.0%" : "";
               viewer._detail.textContent = total > 0 ? formatSize(total) : formatSize(received);
-              showNativePdf(viewer, blob);
+              showDownloadedPdf(viewer, blob);
               return;
             }
 
             chunks.push(r.value);
             received += r.value.length;
             if (total > 0) {
-              var pct = Math.min(100, Math.round((received / total) * 100));
-              viewer._barFill.style.width = pct + "%";
+              var pct = formatPercent(received, total);
+              viewer._barFill.style.width = pct;
+              viewer._percent.textContent = pct;
               viewer._detail.textContent = formatSize(received) + " / " + formatSize(total);
               viewer._text.textContent = loadingText();
             } else {
