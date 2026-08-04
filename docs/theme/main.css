@@ -1,7 +1,37 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap");
 
+/* Mona Sans —— 从 jsDelivr CDN 引用 GitHub mona-sans 仓库的原始字体文件，
+   与 github.com 使用的字体完全一致。SIL OFL 1.1 开源协议。 */
+@font-face {
+  font-family: "Mona Sans";
+  src: url("https://cdn.jsdelivr.net/gh/github/mona-sans@main/fonts/otf/Mona-Sans.otf") format("opentype");
+  font-weight: 200 900;
+  font-style: normal;
+  font-stretch: 75% 125%;
+  font-display: swap;
+}
+
+/* ============================================================================
+   main.css —— 正文观感层（GitHub markdown 风格）
+   ----------------------------------------------------------------------------
+   由原 main.css 拆分重构，并结合 sindresorhus/github-markdown-css 观感：
+   https://github.com/sindresorhus/github-markdown-css
+   承载：字体栈、GitHub 明暗主题变量、GitHub 式正文排版（作用域 .md-typeset）、
+   代码高亮增强。站点自定义 UI 组件已拆至 components.css（加载于其后）。
+   原文件备份于 main.css.bak。
+   ============================================================================ */
+
 /* ===== 代码语法高亮颜色增强 ===== */
 /* 同时适配直接 .highlight 和 .highlighttable 内的 .highlight */
+/*
+   高亮说明（供斟酌）：
+   - 本区保留站点原有的 Pygments 体系（.highlight .k/.nf/.s/...）高亮增强，
+     与 github-markdown-css 的 prettylights 体系（.pl-*，如 .pl-c/.pl-k/...）
+     类名不同、互不干扰，因此不会冲突。
+   - 若日后想切换到 GitHub 原生的 prettylights 配色，可在本区之后追加
+     .pl-* 规则（main.css 内自带的 --color-prettylights-syntax-* 变量未定义，
+     需同时在主题变量区补全），届时再对照观感取舍。
+*/
 [data-md-color-scheme="default"] .md-typeset .highlight .k,
 [data-md-color-scheme="default"] .md-typeset .highlight .kc,
 [data-md-color-scheme="default"] .md-typeset .highlight .kd,
@@ -228,39 +258,387 @@
   color: #ff6b6b;
 }
 
+/* ---- 以下为 GitHub 观感核心层 ---- */
+
 /* ===== 字体 ===== */
-.md-typeset h1, .md-header__title {
+/* 顶部导航标题：衬线字体 */
+.md-header__title {
   font-family: "Noto Serif SC", serif;
-  font-weight: 800;
-  letter-spacing: -0.01em;
+  font-weight: 700;
 }
+/* 正文：采用 GitHub 官方字体栈（Mona Sans 为首选，与 github.com 一致），
+   中文回退到系统字体。Mona Sans 是 GitHub 开源的 SIL OFL 1.1 字体。 */
 body, .md-typeset, .md-typeset h2, .md-typeset h3, .md-typeset h4,
 .md-typeset h5, .md-typeset h6, .md-nav {
-  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+  font-family: "Mona Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans SC", "Noto Sans", "PingFang SC", "Microsoft YaHei",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 /* 搜索面板（输入框 + 结果列表）渲染在 Shadow DOM 里，外部选择器进不去。
    其内部样式读 --md-text-font-family 变量，而 CSS 变量能穿透 shadow 边界。
-   注意必须写在 body 上覆盖主题 body 里的同名默认声明（写在 :root 上会被 body 覆盖）。 */
+   注意必须写在 body 上覆盖主题 body 里的同名默认声明（写在 :root 上会被 body 覆盖）。
+   使用 !important 确保覆盖 Material 主题的 body font-family 声明。
+   同时将 font-smoothing / letter-spacing / font-feature-settings 对齐 GitHub 默认值。 */
 body {
-  --md-text-font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
-}
-code, kbd, pre, .md-typeset code, .md-typeset pre {
-  font-family: "JetBrains Mono", "Noto Sans SC", monospace;
+  --md-text-font-family: "Mona Sans", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Noto Sans SC", "Noto Sans", "PingFang SC", "Microsoft YaHei",
+    "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-family: "Mona Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans SC", "Noto Sans", "PingFang SC", "Microsoft YaHei",
+    "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  -webkit-font-smoothing: auto !important;
+  -moz-osx-font-smoothing: auto !important;
+  letter-spacing: normal !important;
+  font-feature-settings: normal !important;
 }
 
-/* ===== 代码块 ===== */
+/* 暗色模式：全局背景统一为 #0d1117（GitHub 暗色基准），消除 0b0c0f 色差 */
+[data-md-color-scheme="slate"] body {
+  background-color: #0d1117 !important;
+}
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs,
+[data-md-color-scheme="slate"] .md-sidebar__inner,
+[data-md-color-scheme="slate"] .md-content,
+[data-md-color-scheme="slate"] .md-footer,
+[data-md-color-scheme="slate"] .md-nav__title {
+  background-color: #0d1117 !important;
+}
+
+/* 等宽字体：代码 / 键盘 / 终端数字统一 */
+code, kbd, pre, .md-typeset code, .md-typeset pre {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+}
+
+/* ============================================================================
+   GitHub 主题变量（作用域到 .md-typeset）
+   变量含义与 github-markdown-css 一致；通过 [data-md-color-scheme] 切换明暗。
+   ============================================================================ */
+[data-md-color-scheme="default"] .md-typeset,
+[data-markdown-body] .markdown-body,
+.markdown-body[data-theme="light"] {
+  color-scheme: light;
+  --fgColor-default: #1f2328;
+  --fgColor-muted: #59636e;
+  --fgColor-accent: #0969da;
+  --fgColor-success: #1a7f37;
+  --fgColor-attention: #9a6700;
+  --fgColor-danger: #cf222e;
+  --fgColor-done: #8250df;
+  --bgColor-default: #ffffff;
+  --bgColor-muted: #f6f8fa;
+  --bgColor-neutral-muted: #818b981f;
+  --bgColor-attention-muted: #fff8c5;
+  --borderColor-default: #d1d9e0;
+  --borderColor-muted: #d1d9e0b3;
+  --borderColor-neutral-muted: #afb8c133;
+  --borderColor-accent-emphasis: #0969da;
+  --borderColor-success-emphasis: #1a7f37;
+  --borderColor-attention-emphasis: #9a6700;
+  --borderColor-danger-emphasis: #cf222e;
+  --borderColor-done-emphasis: #8250df;
+  --base-size-4: 4px;
+  --base-size-8: 8px;
+  --base-size-16: 16px;
+  --base-size-24: 24px;
+  --base-size-40: 40px;
+  --base-text-weight-normal: 400;
+  --base-text-weight-medium: 500;
+  --base-text-weight-semibold: 600;
+}
+
+[data-md-color-scheme="slate"] .md-typeset,
+[data-markdown-body] .markdown-body,
+.markdown-body[data-theme="dark"] {
+  color-scheme: dark;
+  --fgColor-default: #f0f6fc;
+  --fgColor-muted: #9198a1;
+  --fgColor-accent: #4493f8;
+  --fgColor-success: #3fb950;
+  --fgColor-attention: #d29922;
+  --fgColor-danger: #f85149;
+  --fgColor-done: #ab7df8;
+  --bgColor-default: #0d1117;
+  --bgColor-muted: #151b23;
+  --bgColor-neutral-muted: #656c7633;
+  --bgColor-attention-muted: #bb800926;
+  --borderColor-default: #3d444d;
+  --borderColor-muted: #3d444db3;
+  --borderColor-neutral-muted: #656c7633;
+  --borderColor-accent-emphasis: #1f6feb;
+  --borderColor-success-emphasis: #238636;
+  --borderColor-attention-emphasis: #9e6a03;
+  --borderColor-danger-emphasis: #da3633;
+  --borderColor-done-emphasis: #8957e5;
+  --base-size-4: 4px;
+  --base-size-8: 8px;
+  --base-size-16: 16px;
+  --base-size-24: 24px;
+  --base-size-40: 40px;
+  --base-text-weight-normal: 400;
+  --base-text-weight-medium: 500;
+  --base-text-weight-semibold: 600;
+}
+
+/* ============================================================================
+   GitHub 式正文排版（作用域到 .md-typeset，覆盖 Material 默认）
+   正文字号对齐 GitHub 基准 16px，行高 1.5，间距变量 --base-size-* 同为 16px 系，
+   使观感与 github-markdown-css 完全一致（不受站点 root 20px 放大影响）。
+   ============================================================================ */
+.md-typeset {
+  font-size: 16px;
+  /* 覆盖 Material 正文文字颜色变量为 GitHub 前景色（亮色 #1f2328 深黑、
+     暗色 #f0f6fc 近白），使正文比 Material 默认的 rgba(0,0,0,0.87) 更黑、更贴近 GitHub */
+  --md-typeset-color: var(--fgColor-default);
+  color: var(--fgColor-default);
+  background-color: var(--bgColor-default);
+  font-weight: var(--base-text-weight-normal, 400);
+  line-height: 1.5;
+  word-wrap: break-word;
+  /* 对齐 GitHub：取消 Material 的负字间距和连字特性 */
+  letter-spacing: normal;
+  font-feature-settings: normal;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+}
+
+/* 标题（H1 衬线 700 字重，H2–H6 用 GitHub 默认 600 字重）
+   取消 Material 的负 letter-spacing，对齐 GitHub 的 normal 字间距。 */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+  margin-top: var(--base-size-24, 1.5rem);
+  margin-bottom: var(--base-size-16, 1rem);
+  line-height: 1.25;
+  letter-spacing: normal;
+}
+.md-typeset h1 {
+  font-family: "Noto Serif SC", serif;
+  font-weight: 700;
+  padding-bottom: 0.55em;
+  margin-top: 0;
+  margin-bottom: 1.6rem;
+  border-bottom: 1px solid var(--borderColor-muted);
+}
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+  font-weight: var(--base-text-weight-semibold, 600);
+}
+.md-typeset h2 {
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--borderColor-muted);
+  font-size: 1.5em;
+}
+.md-typeset h3 { font-size: 1.25em; }
+.md-typeset h4 { font-size: 1em; }
+.md-typeset h5 { font-size: 0.875em; }
+.md-typeset h6 {
+  font-size: 0.85em;
+  color: var(--fgColor-muted);
+}
+
+/* 标题自动编号：等宽字体 + 轻盈字重，与标题文字形成对比 */
+.md-typeset h1::before,
+.md-typeset h2::before,
+.md-typeset h3::before,
+.md-typeset h4::before,
+.md-typeset h5::before,
+.md-typeset h6::before {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace !important;
+  font-weight: 400 !important;
+  margin-right: 0.8em !important;
+  color: var(--fgColor-muted) !important;
+}
+
+/* 列表：对齐 GitHub（padding-left: 2em，只取消 Material 的多余左缩进） */
+.md-typeset ul,
+.md-typeset ol {
+  margin-left: 0 !important;
+  padding-left: 2em;
+}
+.md-typeset ul li,
+.md-typeset ol li {
+  margin-left: 0 !important;
+}
+.md-typeset ol > li {
+  padding-left: 0.15em;
+  list-style-position: outside;
+}
+.md-typeset li + li {
+  margin-top: 0.25em;
+}
+.md-typeset li > p {
+  margin-top: var(--base-size-16, 1rem);
+}
+.md-typeset ul ul,
+.md-typeset ul ol,
+.md-typeset ol ol,
+.md-typeset ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.md-typeset ol ol,
+.md-typeset ul ol {
+  list-style-type: lower-roman;
+}
+.md-typeset ol ol ol,
+.md-typeset ul ol ol,
+.md-typeset ol ul ol,
+.md-typeset ul ul ol {
+  list-style-type: lower-alpha;
+}
+
+/* 表格（排除 GitHub 贡献图表格 .ContributionCalendar-grid，保持组件原样）
+   宽表自动收紧：容器被限制在内容区宽度内，超宽表格在其内部横向滚动，
+   不溢出页面；窄表仍按内容贴合。单元格长内容可断行，避免撑破。 */
+.md-typeset .md-typeset__table {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.md-typeset table:not(.ContributionCalendar-grid) {
+  border-spacing: 0;
+  border-collapse: collapse;
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  font-variant: tabular-nums;
+}
+.md-typeset table:not(.ContributionCalendar-grid) th {
+  font-weight: var(--base-text-weight-semibold, 600);
+}
+.md-typeset table:not(.ContributionCalendar-grid) th,
+.md-typeset table:not(.ContributionCalendar-grid) td {
+  padding: 6px 13px;
+  border: 1px solid var(--borderColor-default);
+  overflow-wrap: anywhere;   /* 长内容断行，避免撑破 max-width */
+}
+.md-typeset table:not(.ContributionCalendar-grid) tr {
+  background-color: var(--bgColor-default);
+  border-top: 1px solid var(--borderColor-muted);
+}
+.md-typeset table:not(.ContributionCalendar-grid) tr:nth-child(2n) {
+  background-color: var(--bgColor-muted);
+}
+
+/* 引用 */
+.md-typeset blockquote {
+  margin: 0;
+  padding: 0 1em;
+  color: var(--fgColor-muted);
+  border-left: 0.25em solid var(--borderColor-default);
+}
+.md-typeset blockquote > :first-child {
+  margin-top: 0;
+}
+.md-typeset blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+/* 分隔线（比 GitHub 默认更细：1px，避免章节末尾显得过粗） */
+.md-typeset hr {
+  box-sizing: content-box;
+  overflow: hidden;
+  height: 1px;
+  padding: 0;
+  margin: var(--base-size-24, 1.5rem) 0;
+  background-color: var(--borderColor-muted);
+  border: 0;
+}
+
+/* 强调 / 删除线 / 上下标 */
+.md-typeset strong {
+  font-weight: var(--base-text-weight-semibold, 600);
+}
+.md-typeset del {
+  color: var(--fgColor-muted);
+}
+.md-typeset sub,
+.md-typeset sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+.md-typeset sub { bottom: -0.25em; }
+.md-typeset sup { top: -0.5em; }
+
+/* 键盘按键 */
+.md-typeset kbd {
+  display: inline-block;
+  padding: var(--base-size-4, 0.25rem);
+  font-size: 11px;
+  line-height: 10px;
+  color: var(--fgColor-default);
+  vertical-align: middle;
+  background-color: var(--bgColor-muted);
+  border: solid 1px var(--borderColor-neutral-muted);
+  border-bottom-color: var(--borderColor-neutral-muted);
+  border-radius: 6px;
+  box-shadow: inset 0 -1px 0 var(--borderColor-neutral-muted);
+}
+
+/* 链接（GitHub 悬停下划线） */
+.md-typeset a {
+  color: var(--fgColor-accent);
+  text-decoration: none;
+}
+.md-typeset a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+/* ===== 代码块（GitHub 风格 + 站点行号特性） ===== */
+.md-typeset pre {
+  margin-top: 0;
+  margin-bottom: var(--base-size-16, 1rem);
+  padding: var(--base-size-16, 1rem);
+  overflow: auto;
+  /* 对齐 github-markdown-css：pre 实际字号 = 85% × 16px 正文 = 13.6px。
+     用固定值而非 85%，避免 pre 嵌套在 Material 的 details/admonition
+     （字号被缩小）时相对再缩而失真。 */
+  font-size: 13.6px;
+  line-height: 1.45;
+  color: var(--fgColor-default);
+  background-color: var(--bgColor-muted);
+  border-radius: 6px;
+}
 .md-typeset pre > code {
   font-size: inherit;
   line-height: 1.6;
+  /* 覆盖 Material 给 code 的浅色（#36464e），让代码块默认文字用 GitHub 深黑 */
+  color: var(--fgColor-default);
 }
+/* GitHub 风格：代码块不描边，只保留背景色与圆角 */
 .md-typeset .highlight pre, .md-typeset .highlighttable {
-  border: 1px solid var(--md-default-fg-color--lightest);
-  border-radius: 0.5rem;
+  border: 0;
+  border-radius: 6px;
+}
+/* 行号：融入代码块背景，不产生独立背景色块。
+   行号颜色统一为 muted 灰色，避免被链接蓝色影响观感。
+   同时覆盖 Material 主题可能注入的 ::before 伪元素颜色。 */
+.md-typeset .highlight .linenos {
+  background: transparent;
+  color: var(--fgColor-muted) !important;
+  user-select: none;
+  opacity: 0.65;
+}
+/* 行号所在的锚链接也统一颜色，去除下划线 */
+.md-typeset .highlight code a:has(.linenos),
+.md-typeset .highlight code a:has(.linenos):hover {
+  color: var(--fgColor-muted) !important;
+  text-decoration: none;
 }
 .md-typeset .highlight pre {
-  padding: 0.8rem 1rem;
-}
-.md-typeset .highlight pre, .md-typeset .highlighttable .code pre {
+  padding: var(--base-size-16, 16px);
   white-space: pre;
   overflow-x: auto;
   overflow-y: hidden;
@@ -277,7 +655,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   min-width: 2.5rem;
   max-width: 2.5rem;
   padding: 0.8rem 0.3rem;
-  border-right: 1px solid var(--md-default-fg-color--lightest);
+  border-right: 1px solid var(--borderColor-muted);
   user-select: none;
   opacity: 0.75;
   font-size: inherit;
@@ -295,1192 +673,115 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   width: auto;
   padding-left: 0.5rem;
 }
+.md-typeset pre code,
+.md-typeset pre tt {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+}
 
-/* ===== 行内代码 ===== */
+/* ===== 行内代码（GitHub 风格） ===== */
 .md-typeset code:not(pre code) {
-  background-color: #eef2f6;
-  border: 1px solid #e0e4ea;
-  border-radius: 4px;
-  padding: 0.15em 0.4em;
-  font-size: 0.82em;
-  color: #c7254e;
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  white-space: break-spaces;
+  background-color: var(--bgColor-neutral-muted);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--fgColor-default);
   font-weight: 500;
 }
 [data-md-color-scheme="slate"] .md-typeset code:not(pre code) {
-  background-color: #1a1f2e;
-  border-color: #2a2f3e;
-  color: #e06c75;
+  background-color: var(--bgColor-neutral-muted);
+  color: var(--fgColor-default);
+}
+/* 标题内的行内代码：随标题字号 */
+.md-typeset h1 code,
+.md-typeset h2 code,
+.md-typeset h3 code,
+.md-typeset h4 code,
+.md-typeset h5 code,
+.md-typeset h6 code {
+  padding: 0 0.2em;
+  font-size: inherit;
 }
 
-/* ===== 列表 ===== */
-.md-typeset ol {
-  list-style-position: outside;
-  padding-left: 2.2em;
+/* ===== 行间距：GitHub 式统一块级元素底边距 =====
+   放在各具体规则之后，覆盖上层块（p/列表/表格/引用/代码块等）底部为 1rem；
+   嵌套列表（ul ul 等）因 specificity 更高仍保持 0，符合 GitHub 行为。
+   同时统一 Material 扩展组件（tabbed 折叠、admonition 提示框）的边距，
+   避免更新日志等区域的间距忽大忽小。 */
+.md-typeset p,
+.md-typeset blockquote,
+.md-typeset ul,
+.md-typeset ol,
+.md-typeset dl,
+.md-typeset table:not(.ContributionCalendar-grid),
+.md-typeset pre,
+.md-typeset details,
+.md-typeset .tabbed-set,
+.md-typeset .admonition {
+  margin-top: 0;
+  margin-bottom: var(--base-size-16, 1rem);
+  letter-spacing: normal;
 }
-.md-typeset ol > li {
-  padding-left: 0.15em;
+/* 引用内首尾元素去掉多余外边距 */
+.md-typeset blockquote > :first-child {
+  margin-top: 0;
 }
-
-/* ===== 标题编号 ===== */
-.md-content__inner { counter-reset: section; }
-.md-content__inner h2 {
-  counter-increment: section;
-  counter-reset: subsection;
-}
-.md-content__inner h2::before {
-  content: counter(section) ". ";
-  color: var(--md-default-fg-color--light);
-  font-weight: 700;
-}
-.md-content__inner h3 {
-  counter-increment: subsection;
-  counter-reset: subsubsection;
-}
-.md-content__inner h3::before {
-  content: counter(section) "." counter(subsection) " ";
-  color: var(--md-default-fg-color--light);
-  font-weight: 700;
-}
-.md-content__inner h4 {
-  counter-increment: subsubsection;
-}
-.md-content__inner h4::before {
-  content: counter(section) "." counter(subsection) "." counter(subsubsection) " ";
-  color: var(--md-default-fg-color--light);
-  font-weight: 700;
+.md-typeset blockquote > :last-child {
+  margin-bottom: 0;
 }
 
-/* ===== GitHub 贡献图 ===== */
-.github-calendar-wrap {
-  max-width: 760px;
-  margin: 1rem auto 0;
+/* ===== 强调框 & 折叠块（Admonition / Details） ===== */
+.md-typeset :is(.admonition, details) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0.3rem;
+}
+.md-typeset :is(.admonition, details) > :is(.admonition-title, summary) {
+  border-bottom: none !important;
 }
 
-.github-calendar-wrap:not([data-ghc-state="loading"]) .ghc-loading {
-  display: none;
-}
+/* --- 各类型 ———— */
+.md-typeset :is(.admonition, details).note           { border: 0.075rem solid #448aff !important; }
+.md-typeset :is(.admonition, details).note     > :is(.admonition-title, summary) { background: linear-gradient(90deg, #448aff28, #448aff0c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).abstract       { border: 0.075rem solid #00b0ff !important; }
+.md-typeset :is(.admonition, details).abstract > :is(.admonition-title, summary) { background: linear-gradient(90deg, #00b0ff28, #00b0ff0c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).info           { border: 0.075rem solid #00b8d4 !important; }
+.md-typeset :is(.admonition, details).info     > :is(.admonition-title, summary) { background: linear-gradient(90deg, #00b8d428, #00b8d40c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).tip            { border: 0.075rem solid #00bfa5 !important; }
+.md-typeset :is(.admonition, details).tip      > :is(.admonition-title, summary) { background: linear-gradient(90deg, #00bfa528, #00bfa50c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).success        { border: 0.075rem solid #00c853 !important; }
+.md-typeset :is(.admonition, details).success  > :is(.admonition-title, summary) { background: linear-gradient(90deg, #00c85328, #00c8530c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).question       { border: 0.075rem solid #64dd17 !important; }
+.md-typeset :is(.admonition, details).question > :is(.admonition-title, summary) { background: linear-gradient(90deg, #64dd1728, #64dd170c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).warning        { border: 0.075rem solid #ff9100 !important; }
+.md-typeset :is(.admonition, details).warning  > :is(.admonition-title, summary) { background: linear-gradient(90deg, #ff910028, #ff91000c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).failure        { border: 0.075rem solid #ff5252 !important; }
+.md-typeset :is(.admonition, details).failure  > :is(.admonition-title, summary) { background: linear-gradient(90deg, #ff525228, #ff52520c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).danger         { border: 0.075rem solid #ff1744 !important; }
+.md-typeset :is(.admonition, details).danger   > :is(.admonition-title, summary) { background: linear-gradient(90deg, #ff174428, #ff17440c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).bug            { border: 0.075rem solid #f50057 !important; }
+.md-typeset :is(.admonition, details).bug      > :is(.admonition-title, summary) { background: linear-gradient(90deg, #f5005728, #f500570c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).example        { border: 0.075rem solid #7c4dff !important; }
+.md-typeset :is(.admonition, details).example  > :is(.admonition-title, summary) { background: linear-gradient(90deg, #7c4dff28, #7c4dff0c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).quote          { border: 0.075rem solid #9e9e9e !important; }
+.md-typeset :is(.admonition, details).quote    > :is(.admonition-title, summary) { background: linear-gradient(90deg, #9e9e9e28, #9e9e9e0c) !important; border-radius: 0.3rem 0.3rem 0 0; }
+.md-typeset :is(.admonition, details).quote    { border: 0.075rem solid #9e9e9e !important; }
 
-.ghc-loading,
-.ghc-error,
-.ghc-shell {
-  border: 1px solid var(--md-default-fg-color--lightest);
-  border-radius: 6px;
-  background: var(--md-default-bg-color);
-}
-
-.ghc-loading,
-.ghc-error {
-  padding: 1.4rem 0.75rem;
-  text-align: center;
-  color: var(--md-default-fg-color--light);
-  font-size: 0.75rem;
-}
-
-.ghc-error {
-  color: var(--md-primary-fg-color, #b42318);
-}
-
-.ghc-shell {
-  overflow: hidden;
-  font-family: "Inter", "Noto Sans SC", sans-serif;
-}
-
-.ghc-header {
-  padding: 0.85rem 1rem 0.25rem;
-}
-
-.md-typeset .ghc-title {
-  margin: 0;
-  color: var(--md-default-fg-color);
-  font-family: inherit;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
-}
-
-.md-content__inner .ghc-title::before,
-.md-content__inner .ghc-overview-title::before {
-  content: none;
-}
-
-.ghc-calendar-scroller {
-  display: flex;
-  justify-content: center;
-  max-width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 0.45rem 1rem 0.6rem;
-}
-
-.ContributionCalendar-grid {
-  border-collapse: separate;
-  border-spacing: 3px;
-  overflow: hidden;
-  position: relative;
-  table-layout: fixed;
-}
-
-.ghc-weekday-col {
-  width: 28px;
-}
-
-.ghc-week-col {
-  width: 10px;
-}
-
-.ContributionCalendar-grid tr {
-  height: 10px;
-}
-
-.ContributionCalendar-grid thead tr {
-  height: 13px;
-}
-
-.ContributionCalendar-label {
-  width: 10px;
-  min-width: 10px;
-  padding: 0;
-  color: var(--md-default-fg-color--light);
-  font-family: inherit;
+/* ===== 脚注（GitHub 观感补足） ===== */
+.md-typeset .footnotes {
   font-size: 12px;
-  font-weight: 400;
-  line-height: 1;
-  text-align: left;
-  white-space: nowrap;
-  user-select: none;
-}
-
-.ghc-corner,
-.ghc-day-label {
-  width: 28px;
-  min-width: 28px;
-}
-
-.ghc-day-label {
-  position: relative;
-}
-
-.ghc-day-label span:not(.sr-only) {
-  position: absolute;
-  bottom: -3px;
-}
-
-.ContributionCalendar-day,
-.ghc-empty-day {
-  width: 10px;
-  min-width: 10px;
-  height: 10px;
-  padding: 0;
-}
-
-.ContributionCalendar-day {
-  box-sizing: border-box;
-  border: 0.5px solid;
-  border-radius: 2px;
-  outline: none;
-  transition: opacity 0.12s ease;
-}
-
-.ContributionCalendar-day:hover,
-.ContributionCalendar-day:focus {
-  opacity: 0.7;
-}
-
-.ContributionCalendar-day:focus {
-  outline: 2px solid var(--md-accent-fg-color);
-  outline-offset: 1px;
-}
-
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: rgb(240, 242, 245); border-color: #E4E8EB; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: rgb(172, 238, 187); border-color: transparent; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: rgb(75, 193, 107); border-color: transparent; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: rgb(44, 164, 79); border-color: transparent; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: rgb(16, 99, 41); border-color: transparent; }
-
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="0"] {
-  background-color: #161b22; border-color: #1c2330;
-}
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #0e4429; border-color: transparent; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #006d32; border-color: transparent; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #26a641; border-color: transparent; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #39d353; border-color: transparent; }
-
-.ghc-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.35rem 1rem 0.8rem;
-  color: var(--md-default-fg-color--light);
-  font-size: 12px;
-}
-
-.ghc-help {
-  color: var(--md-default-fg-color--light) !important;
-}
-
-.ghc-legend {
-  display: flex;
-  align-items: center;
-  gap: 0.28rem;
-  white-space: nowrap;
-}
-
-.ghc-legend-day {
-  display: inline-block;
-}
-
-.ghc-overview {
-  border-top: 1px solid var(--md-default-fg-color--lightest);
-  padding: 0.85rem 1rem 1rem;
-}
-
-.md-typeset .ghc-overview-title {
-  margin: 0 0 0.35rem;
-  color: var(--md-default-fg-color);
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 400;
-}
-
-.md-typeset .ghc-overview-text,
-.md-typeset .ghc-overview-meta {
-  margin: 0.15rem 0;
-  color: var(--md-default-fg-color--light);
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-@media screen and (max-width: 44rem) {
-  .ghc-footer {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
-
-/* ===== 左上角 BillFeng Logo ===== */
-.bf-logo {
-  display: block;
-  height: 1.45rem;   /* Material 默认 logo 约 1.2rem，放大一档 */
-  width: auto;
-}
-.bf-logo__text {
-  font-family: "Courier New", Courier, ui-monospace, monospace;
-  font-size: 40px;
-  font-weight: 700;
-  letter-spacing: 0;
-  fill: var(--md-default-fg-color);
-}
-
-/* ===== 页面信息 ===== */
-.page-updated-top {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin: -0.85rem 0 1.35rem;
-  color: var(--md-default-fg-color--light);
-  font-size: 0.68rem;
-  line-height: 1.5;
-}
-
-.page-updated-top[hidden],
-.page-info__item[hidden] {
-  display: none !important;
-}
-
-.page-updated-top__time {
-  color: var(--md-default-fg-color--lighter);
-  font-variant-numeric: tabular-nums;
-}
-
-.page-info {
-  display: grid;
-  gap: 0.25rem;
-  margin: 2rem 0 1.2rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid var(--md-default-fg-color--lightest);
-  color: var(--md-default-fg-color--light);
-  font-size: 0.68rem;
-}
-
-.page-info__item {
-  display: flex !important;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 1.4rem;
-}
-
-.page-info__label {
-  width: 14.5em;
-  flex-shrink: 0;
-}
-
-.page-info__value {
-  color: var(--md-default-fg-color--lighter);
-  font-variant-numeric: tabular-nums;
-  min-width: 0;
-}
-
-.page-info__stars img {
-  display: block;
-}
-
-/* ===== 底层虚线网格背景（视差） ===== */
-/*
-   SVG stroke-dasharray 实现真正虚线，不是 gradient 色块。
-   正文页只保留很轻的边缘纹理，避免干扰阅读。
-*/
-[data-md-color-scheme="default"] body {
-  --bfyes-page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
-}
-
-[data-md-color-scheme="slate"] body {
-  --bfyes-page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
-}
-
-body::before {
-  --bfyes-grid-clear-half: 22rem;
-  --bfyes-grid-fade: 20rem;
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: var(--bfyes-page-grid);
-  background-position: 0 var(--bfyes-grid-y, 0);
-  background-size: 80px 80px;
-  opacity: 1;
-  mask-image: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 1) calc(50% - var(--bfyes-grid-clear-half) - var(--bfyes-grid-fade)),
-    transparent calc(50% - var(--bfyes-grid-clear-half)),
-    transparent calc(50% + var(--bfyes-grid-clear-half)),
-    rgba(0, 0, 0, 1) calc(50% + var(--bfyes-grid-clear-half) + var(--bfyes-grid-fade))
-  );
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 1) calc(50% - var(--bfyes-grid-clear-half) - var(--bfyes-grid-fade)),
-    transparent calc(50% - var(--bfyes-grid-clear-half)),
-    transparent calc(50% + var(--bfyes-grid-clear-half)),
-    rgba(0, 0, 0, 1) calc(50% + var(--bfyes-grid-clear-half) + var(--bfyes-grid-fade))
-  );
-}
-
-body.bfyes-home-page::before,
-body.bfyes-rainbow-page::before {
-  content: none;
-}
-
-/* 正文区域遮盖网格，避免虚线与文字打架 */
-.md-content {
-  background-color: var(--md-default-bg-color);
-  box-shadow: none;
-}
-
-/* 顶部导航栏遮盖网格 */
-.md-header,
-.md-tabs {
-  background-color: var(--md-default-bg-color);
-}
-
-.md-header {
-  z-index: 100;
-}
-
-.md-tabs {
-  z-index: 90;
-}
-
-/* 导航标签列表左侧增加内边距，与正文左侧对齐 */
-.md-tabs__list {
-  padding-left: 0rem;
-}
-
-/* 页面整体加宽 */
-.md-grid {
-  max-width: 64rem;
-}
-
-/* ================================================================
-   PDF 加载进度组件（PDF.js canvas 渲染）
-   ================================================================ */
-
-/* ---- 查看器外壳 ---- */
-.pdf-viewer {
-  position: relative;
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--md-code-bg-color, #f5f5f5);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  margin: 1em 0;
-}
-
-/* ---- 工具栏 ---- */
-.pdf-viewer-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 12px;
-  background: var(--md-default-bg-color, #fff);
-  border-bottom: 1px solid var(--md-default-fg-color--lightest, #e0e0e0);
-  position: sticky;
-  top: 0;
-  z-index: 3;
-}
-
-.pdf-viewer-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--md-typeset-color, #555);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.pdf-viewer-btn:hover:not(:disabled) {
-  background: var(--md-default-fg-color--lightest, #e8e8e8);
-}
-
-.pdf-viewer-btn:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.pdf-viewer-page {
-  font-size: 0.85rem;
-  font-family: "JetBrains Mono", "SF Mono", monospace;
-  color: var(--md-typeset-color, #555);
-  min-width: 64px;
-  text-align: center;
-  user-select: none;
-}
-
-.pdf-viewer-spacer {
-  flex: 1;
-}
-
-.pdf-viewer-download {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  color: var(--md-typeset-color--light, #888);
-  transition: color 0.15s, background 0.15s;
-}
-
-.pdf-viewer-download:hover {
-  color: var(--md-accent-fg-color, #4051b5);
-  background: var(--md-default-fg-color--lightest, #e8e8e8);
-}
-
-/* ---- 画布滚动区 ---- */
-.pdf-viewer-canvases {
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  background: var(--md-code-bg-color, #525252);
-  /* 高度由 JS 动态设置为固定值，配合 overflow 实现折叠滚动 */
-}
-
-.pdf-viewer-page-wrap {
-  display: flex;
-  justify-content: center;
-  padding: 4px 0;
-}
-
-.pdf-viewer-canvas {
-  display: block;
-  max-width: 100%;
-  height: auto;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-  /* 3x 渲染 + auto 插值 = 接近 SVG 清晰度 */
-  image-rendering: auto;
-}
-
-/* ---- 加载覆盖层 ---- */
-.pdf-loader-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: var(--md-default-bg-color, #fff);
-  z-index: 2;
-  transition: opacity 0.4s ease;
-  padding: 24px;
-  /* 受外壳 min-height 约束，不会撑满屏幕 */
-}
-
-/* ---- spinner ---- */
-.pdf-spinner {
-  width: 40px;
-  height: 40px;
-  color: var(--md-accent-fg-color, #4051b5);
-  animation: pdf-spin 0.9s linear infinite;
-}
-
-@keyframes pdf-spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ---- 文字 ---- */
-.pdf-loader-text {
-  font-size: 0.9rem;
-  color: var(--md-typeset-color, #555);
-  font-weight: 500;
-}
-
-/* ---- 进度条 ---- */
-.pdf-loader-bar-track {
-  width: min(320px, 80%);
-  height: 6px;
-  background: var(--md-default-fg-color--lightest, #e0e0e0);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.pdf-loader-bar-fill {
-  height: 100%;
-  width: 0%;
-  background: var(--md-accent-fg-color, #4051b5);
-  border-radius: 3px;
-  transition: width 0.15s linear;
-}
-
-/* ---- 详情（已下载/总大小） ---- */
-.pdf-loader-detail {
-  font-size: 0.75rem;
-  color: var(--md-typeset-color--light, #999);
-  font-family: "JetBrains Mono", "SF Mono", monospace;
-}
-
-/* ---- 错误提示 ---- */
-.pdf-viewer-error {
-  position: absolute;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  color: #e53e3e;
-  font-size: 0.9rem;
-  background: var(--md-default-bg-color, #fff);
-  z-index: 3;
-}
-
-/* ---- 暗色模式 ---- */
-[data-md-color-scheme="slate"] .pdf-viewer {
-  background: var(--md-code-bg-color, #1e1e2e);
-}
-
-[data-md-color-scheme="slate"] .pdf-loader-overlay {
-  background: var(--md-default-bg-color, #1e1e2e);
-}
-
-[data-md-color-scheme="slate"] .pdf-loader-bar-track {
-  background: rgba(255,255,255,0.12);
-}
-
-[data-md-color-scheme="slate"] .pdf-viewer-toolbar {
-  background: var(--md-default-bg-color, #1a1a2e);
-  border-color: rgba(255,255,255,0.08);
-}
-
-[data-md-color-scheme="slate"] .pdf-viewer-canvases {
-  background: var(--md-code-bg-color, #1e1e2e);
-}
-
-/* ===== 彩虹背景 ===== */
-.rainbow-page {
-  --rainbow-red: rgba(255, 92, 122, 0.2);
-  --rainbow-orange: rgba(255, 190, 86, 0.2);
-  --rainbow-green: rgba(77, 220, 138, 0.18);
-  --rainbow-cyan: rgba(58, 213, 230, 0.18);
-  --rainbow-blue: rgba(91, 156, 255, 0.18);
-  --rainbow-violet: rgba(174, 111, 255, 0.18);
-  position: relative;
-  min-height: 100vh;
-  isolation: isolate;
-}
-
-.rainbow-page::before,
-.rainbow-page::after,
-.rainbow-backdrop::before,
-.rainbow-backdrop::after {
-  content: "";
-  position: fixed;
-  z-index: -1;
-  pointer-events: none;
-  transform: translate3d(0, 0, 0);
-}
-
-.rainbow-page::before {
-  top: -7rem;
-  right: auto;
-  bottom: auto;
-  left: -10rem;
-  width: min(58vw, 38rem);
-  height: 24rem;
-  background:
-    radial-gradient(circle at 24% 46%, var(--rainbow-red), transparent 8rem),
-    radial-gradient(circle at 48% 32%, var(--rainbow-orange), transparent 9rem),
-    radial-gradient(circle at 68% 56%, var(--rainbow-green), transparent 10rem);
-  filter: blur(24px) saturate(1.25);
-  opacity: 0.34;
-  animation: rainbow-local-aurora 18s ease-in-out infinite alternate;
-}
-
-.rainbow-page::after {
-  top: 35rem;
-  right: auto;
-  bottom: auto;
-  left: 18vw;
-  width: min(30vw, 20rem);
-  height: 12rem;
-  background:
-    radial-gradient(circle at 40% 36%, var(--rainbow-violet), transparent 7rem),
-    radial-gradient(circle at 68% 62%, var(--rainbow-red), transparent 8rem);
-  filter: blur(28px) saturate(1.25);
-  opacity: 0.16;
-  animation: rainbow-beam-c 27s ease-in-out infinite alternate;
-}
-
-.rainbow-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.rainbow-backdrop::before,
-.rainbow-backdrop::after {
-  z-index: 0;
-}
-
-.rainbow-backdrop::before {
-  top: 3.6rem;
-  right: 4vw;
-  bottom: auto;
-  left: auto;
-  width: min(38vw, 26rem);
-  height: 18rem;
-  background:
-    radial-gradient(circle at 35% 38%, var(--rainbow-cyan), transparent 8rem),
-    radial-gradient(circle at 64% 54%, var(--rainbow-blue), transparent 10rem),
-    radial-gradient(circle at 50% 72%, var(--rainbow-violet), transparent 8rem);
-  filter: blur(26px) saturate(1.2);
-  opacity: 0.28;
-  animation: rainbow-band-pass 16s ease-in-out infinite alternate;
-}
-
-.rainbow-backdrop::after {
-  top: 20rem;
-  right: 7vw;
-  bottom: auto;
-  left: auto;
-  width: min(30vw, 20rem);
-  height: 12rem;
-  background:
-    radial-gradient(circle at 35% 35%, var(--rainbow-orange), transparent 7rem),
-    radial-gradient(circle at 42% 40%, var(--rainbow-green), transparent 7rem),
-    radial-gradient(circle at 68% 62%, var(--rainbow-cyan), transparent 8rem),
-    radial-gradient(circle at 72% 58%, var(--rainbow-blue), transparent 8rem);
-  filter: blur(28px) saturate(1.25);
-  opacity: 0.2;
-  animation: rainbow-beam-b 23s ease-in-out infinite alternate;
-}
-
-/* ===== 首页 ===== */
-.home-page {
-  --home-border: rgba(127, 127, 127, 0.24);
-  --home-muted: var(--md-default-fg-color--light);
-  --home-softer: var(--md-default-fg-color--lighter);
-  --home-panel: color-mix(in srgb, var(--md-default-bg-color) 84%, #ffffff 16%);
-  --home-card-bg: rgba(255, 255, 255, 0.58);
-  margin-top: 0.4rem;
-}
-
-.home-page a {
-  text-decoration: none;
-}
-
-.home-hero {
-  margin: 1rem 0 1.6rem;
-}
-
-.home-hero__main {
-  max-width: 42rem;
-  min-width: 0;
-}
-
-.home-section {
-  margin: 1.8rem 0;
-}
-
-.home-section__head {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.75rem;
-  border-bottom: 1px solid var(--home-border);
-  padding-bottom: 0.45rem;
-}
-
-.md-typeset .home-section__title {
-  margin: 0;
-  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
-  font-size: 0.92rem;
-  font-weight: 800;
-  line-height: 1.25;
-}
-
-.md-content__inner .home-section__title::before {
-  content: none;
-}
-
-.home-card--study { --home-accent: #0969da; }
-.home-card--tools { --home-accent: #bc4c00; }
-.home-card--diary { --home-accent: #8250df; }
-.home-card--games { --home-accent: #1a7f37; }
-
-[data-md-color-scheme="slate"] .home-card--study { --home-accent: #79c0ff; }
-[data-md-color-scheme="slate"] .home-card--tools { --home-accent: #ffa657; }
-[data-md-color-scheme="slate"] .home-card--diary { --home-accent: #d2a8ff; }
-[data-md-color-scheme="slate"] .home-card--games { --home-accent: #7ee787; }
-
-/* 终端数字快键（手机无键盘时的弥补） */
-.home-terminal-keys {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0.15rem 0rem 0.16rem;
-}
-
-.home-terminal-key {
-  display: inline-flex;
-  flex: 1 1 0;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.8rem;
-  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
-  font-size: 0.78rem;
-  line-height: 1.35;
-  border: 1px solid var(--home-border);
-  border-radius: 7px;
-  background: var(--home-card-bg);
-  color: var(--md-default-fg-color) !important;
-  cursor: pointer;
-  -webkit-backdrop-filter: blur(14px) saturate(1.25);
-  backdrop-filter: blur(14px) saturate(1.25);
-  transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
-}
-
-.home-terminal-key:hover,
-.home-terminal-key:focus-visible {
-  border-color: var(--home-accent, var(--md-accent-fg-color));
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-  transform: translateY(-1px);
-}
-
-.home-terminal-key strong {
-  color: var(--home-accent, var(--md-accent-fg-color));
-  font-size: 0.85rem;
-}
-
-.home-terminal-key span {
-  font-weight: 800;
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-.home-terminal-key em {
-  font-style: normal;
-  color: var(--home-muted);
-  font-size: 0.7rem;
-}
-
-@media screen and (max-width: 44.984375em) {
-  .home-terminal-keys {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.35rem;
-    margin: 0.15rem 0 0.16rem;
-  }
-
-  .home-terminal-key {
-    min-width: 0;
-    padding: 0.28rem 0.2rem;
-    font-size: 0.62rem;
-    gap: 0.2rem;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-
-  .home-terminal-key strong {
-    font-size: 1.25em;
-  }
-
-  .home-terminal-key span {
-    font-size: 1em;
-  }
-
-  .home-terminal-key em {
-    display: none;
-  }
-}
-
-/* 极窄屏（<350px）退化为每行 2 个（2+2 对称） */
-@media screen and (max-width: 350px) {
-  .home-terminal-keys {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.home-log-list {
-  display: grid;
-  border: 1px solid var(--home-border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.home-log {
-  display: grid;
-  grid-template-columns: 6.5rem minmax(0, 1fr);
-  gap: 0.8rem;
-  padding: 0.64rem 0.8rem;
-  background: var(--home-panel);
-  backdrop-filter: blur(6px);
-}
-
-.home-log + .home-log {
-  border-top: 1px solid var(--home-border);
-}
-
-.home-log__date {
-  color: var(--home-softer);
-  font-size: 0.66rem;
-  font-weight: 800;
-}
-
-.home-log span:last-child {
-  color: var(--home-muted);
-  font-size: 0.7rem;
-  line-height: 1.5;
-}
-
-.home-link-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-  gap: 0.65rem;
-}
-
-.home-friend {
-  display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr);
-  gap: 0.2rem 0.55rem;
-  align-items: center;
-  min-height: 5.2rem;
-  padding: 0.65rem;
-  border: 1px solid var(--home-border);
-  border-radius: 8px;
-  background: var(--home-panel);
-  color: var(--md-default-fg-color) !important;
-  font-size: 0.72rem;
-  backdrop-filter: blur(6px);
-  transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
-}
-
-.home-friend:hover {
-  border-color: var(--md-accent-fg-color);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
-  transform: translateY(-1px);
-}
-
-.home-friend__avatar {
-  grid-row: span 3;
-  position: relative;
-  overflow: hidden;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border: 1px solid var(--home-border);
-  border-radius: 50%;
-  color: #1a7f37;
-  background: color-mix(in srgb, #2da44e 10%, transparent);
-  font-size: 0.66rem;
-  font-weight: 900;
-}
-
-.home-friend__avatar img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-[data-md-color-scheme="slate"] .home-friend__avatar {
-  color: #7ee787;
-  background: color-mix(in srgb, #7ee787 12%, transparent);
-}
-
-.home-friend strong {
-  min-width: 0;
-  font-size: 0.74rem;
-  line-height: 1.2;
-}
-
-.home-friend__handle,
-.home-friend__meta {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--home-muted);
-  font-size: 0.62rem;
-  line-height: 1.2;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.home-section--activity .github-calendar-wrap {
-  max-width: none;
-  margin: 0;
-}
-
-/* ===== 首页终端打字机 ===== */
-.home-terminal {
-  margin: 0;
-  overflow: hidden;
-  border: 1px solid rgba(127, 127, 127, 0.28);
-  border-radius: 8px;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
-  backdrop-filter: blur(8px);
-}
-
-.home-terminal__bar {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  min-height: 2.1rem;
-  padding: 0 0.75rem;
-  border-bottom: 1px solid rgba(127, 127, 127, 0.18);
-}
-
-.home-terminal__dot {
-  width: 0.68rem;
-  height: 0.68rem;
-  flex: 0 0 auto;
-  border-radius: 50%;
-}
-
-.home-terminal__dot--red { background: #ff5f57; }
-.home-terminal__dot--yellow { background: #ffbd2e; }
-.home-terminal__dot--green { background: #28c840; }
-
-.home-terminal__title {
-  margin-left: 0.35rem;
-  color: var(--md-default-fg-color--light);
-  font-family: "Courier New", Courier, monospace;
-  font-size: 0.82rem;
-}
-
-.home-terminal__screen {
-  position: relative;
-  padding: 1rem 1.05rem 1.1rem;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 0.88rem;
-  line-height: 1.75;
-}
-
-.home-terminal__line {
-  min-height: 1.75em;
-  overflow-wrap: anywhere;
-}
-
-.home-terminal__line--output .typed-text {
-  color: var(--md-default-fg-color--light);
-}
-
-.terminal-hidden-input {
-  position: absolute;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
-  border: 0;
-  padding: 0;
-  margin: 0;
-  pointer-events: none;
-}
-
-.typed-text {
-  font-family: "Courier New", Courier, monospace;
-}
-
-.typed-text--host {
-  color: #2da44e;
-}
-
-.typed-text--prompt {
-  color: #0969da;
-}
-
-/* ===== 打字机光标 ===== */
-.typed-cursor,
-.typed-text .typed-cursor,
-.typed-cursor-standalone {
-  font-family: "Courier New", Courier, monospace;
-  font-size: 0.78rem;
-  color: var(--md-typeset-color);
-  /* animation: blink 0.9s step-end infinite; */
-}
-
-[data-md-color-scheme="default"] .typed-text--command,
-[data-md-color-scheme="default"] .typed-text--separator,
-[data-md-color-scheme="default"] .home-terminal__line--user .typed-text,
-[data-md-color-scheme="default"] .home-terminal__line--flag .typed-text {
-  color: #111111;
-}
-
-[data-md-color-scheme="default"] .typed-cursor,
-[data-md-color-scheme="default"] .typed-text .typed-cursor,
-[data-md-color-scheme="default"] .typed-cursor-standalone {
-  color: #111111;
-}
-
-[data-md-color-scheme="slate"] .typed-text--host {
-  color: #7ee787;
-}
-
-[data-md-color-scheme="slate"] .typed-text--prompt {
-  color: #79c0ff;
-}
-
-[data-md-color-scheme="slate"] .typed-text--command,
-[data-md-color-scheme="slate"] .typed-text--separator,
-[data-md-color-scheme="slate"] .home-terminal__line--user .typed-text,
-[data-md-color-scheme="slate"] .home-terminal__line--flag .typed-text {
-  color: #ffffff;
-}
-
-[data-md-color-scheme="slate"] .typed-cursor,
-[data-md-color-scheme="slate"] .typed-text .typed-cursor,
-[data-md-color-scheme="slate"] .typed-cursor-standalone {
-  color: #fff;
-}
-
-[data-md-color-scheme="default"] .home-terminal {
-  background: rgba(251, 251, 248, 0.94);
-}
-
-[data-md-color-scheme="default"] .home-terminal__bar {
-  background: rgba(238, 238, 234, 0.94);
-}
-
-[data-md-color-scheme="default"] .home-terminal__screen {
-  background: rgba(248, 248, 242, 0.94);
-}
-
-[data-md-color-scheme="slate"] .home-terminal {
-  background: rgba(18, 20, 23, 0.94);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
-}
-
-[data-md-color-scheme="slate"] .home-terminal__bar {
-  background: rgba(28, 32, 38, 0.94);
-}
-
-[data-md-color-scheme="slate"] .home-terminal__screen {
-  background: rgba(16, 19, 23, 0.94);
-}
-
-[data-md-color-scheme="slate"] .home-page {
-  --home-panel: color-mix(in srgb, var(--md-default-bg-color) 76%, #111827 24%);
-  --home-border: rgba(255, 255, 255, 0.14);
-  --home-card-bg: rgba(18, 24, 34, 0.54);
-}
-
-[data-md-color-scheme="slate"] .rainbow-page {
-  --rainbow-red: rgba(255, 123, 146, 0.2);
-  --rainbow-orange: rgba(255, 201, 107, 0.2);
-  --rainbow-green: rgba(126, 231, 161, 0.18);
-  --rainbow-cyan: rgba(94, 234, 255, 0.18);
-  --rainbow-blue: rgba(147, 197, 253, 0.2);
-  --rainbow-violet: rgba(216, 180, 254, 0.18);
-}
-
-@media screen and (max-width: 44.984375em) {
-  .home-link-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .home-section__head {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .home-log {
-    grid-template-columns: 1fr;
-    gap: 0.25rem;
-  }
-
-  .home-terminal__screen {
-    padding: 0.85rem 0.9rem 0.95rem;
-    font-size: 0.78rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rainbow-page::before,
-  .rainbow-page::after,
-  .rainbow-backdrop::before,
-  .rainbow-backdrop::after {
-    animation: none;
-  }
-}
-
-@keyframes rainbow-local-aurora {
-  0% { transform: translate3d(-0.8rem, -0.4rem, 0) scale(0.98); opacity: 0.28; }
-  100% { transform: translate3d(2rem, 1rem, 0) scale(1.06); opacity: 0.42; }
-}
-
-@keyframes rainbow-band-pass {
-  0% { transform: translate3d(-1.2rem, -0.7rem, 0) scale(0.96); opacity: 0.2; }
-  100% { transform: translate3d(1.6rem, 0.9rem, 0) scale(1.05); opacity: 0.34; }
-}
-
-@keyframes rainbow-beam-b {
-  0% { transform: translate3d(1rem, -0.8rem, 0) scale(1); opacity: 0.14; }
-  100% { transform: translate3d(-1.6rem, 1rem, 0) scale(1.1); opacity: 0.26; }
-}
-
-@keyframes rainbow-beam-c {
-  0% { transform: translate3d(-0.8rem, -0.2rem, 0) scale(0.96); opacity: 0.12; }
-  100% { transform: translate3d(1.2rem, 1.2rem, 0) scale(1.08); opacity: 0.24; }
+  color: var(--fgColor-muted);
+  border-top: 1px solid var(--borderColor-default);
+}
+.md-typeset .footnotes ol {
+  padding-left: var(--base-size-16, 1rem);
 }

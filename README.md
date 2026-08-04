@@ -8,6 +8,7 @@ Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自�
 - 学习笔记、课程实验报告、工具记录、电脑体验和随笔
 - 对不同电脑、系统与设备的使用体验和个人感想
 - 明暗色主题适配与 Giscus 评论区主题同步
+- 正文观感结合 [github-markdown-css](https://github.com/sindresorhus/github-markdown-css)（GitHub 风格排版，作用域 `.md-typeset`，随主题自动切换明暗）
 - 页面最后更新时间、站点浏览量和 GitHub stars 展示
 - GitHub 贡献图静态数据烘焙
 - PDF 内联阅读器，移动端通过 PDF.js 渲染
@@ -25,6 +26,8 @@ Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自�
 │   ├── computers/            # 不同电脑的体验感想
 │   ├── diaries/              # 随笔与阶段总结
 │   └── theme/                # 自定义 CSS、JS 和构建期生成数据
+│       ├── main.css          # 正文观感层（GitHub 风格排版 + 代码高亮）
+│       └── components.css    # 站点自定义 UI 组件（贡献图/首页/PDF/彩虹等）
 ├── overrides/                # 主题模板覆盖
 │   ├── main.html             # 全局模板入口
 │   └── partials/             # 评论区、logo、页面信息等局部模板
@@ -89,6 +92,16 @@ metadata -> contributions -> compress_pdfs -> zensical build -> previews --site 
 - Giscus、Busuanzi、shields.io：用于评论区、访问量和 stars badge。
 - unpkg CDN：加载 MathJax、Typed.js 和 PDF.js。
 - Google Fonts：加载站点字体。
+- [github-markdown-css](https://github.com/sindresorhus/github-markdown-css)：为正文提供 GitHub 风格排版观感。
+
+## 样式拆分说明
+
+`docs/theme/` 下的样式按职责拆分，避免单一文件臃肿、职责混杂：
+
+- `main.css`：正文观感层。承载字体栈、GitHub 明暗主题变量（`--fgColor-*` 等）与 GitHub 式正文排版（作用域 `.md-typeset`），以及代码语法高亮增强（Pygments 体系）。
+- `components.css`：站点自定义 UI 组件层。承载标题自动编号、GitHub 贡献图、左上角 Logo、页面信息、虚线网格背景、PDF 阅读器、彩虹背景、首页与终端打字机等效。
+
+`zensical.toml` 的 `extra_css` 按 `main.css → components.css` 顺序加载，组件层覆盖正文观感层。原 `main.css` 在样式拆分前已备份为 `main.css.bak`。
 
 如果在非 macOS 环境构建，`generate_image_previews.py` 可能不可用，因为它依赖 `sips`。
 
