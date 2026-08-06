@@ -1,14 +1,14 @@
 (function () {
   "use strict";
 
-  window.site = window.site || {};
+  window.bfyes = window.bfyes || {};
 
-  function syncPageState(root) {
+  function syncHomePageState(root) {
     var scope = root || document;
     var isHome = !!scope.querySelector(".home-page");
     var hasRainbow = !!scope.querySelector(".rainbow-page");
-    document.body.classList.toggle("home-active", isHome);
-    document.body.classList.toggle("rainbow-active", hasRainbow);
+    document.body.classList.toggle("bfyes-home-page", isHome);
+    document.body.classList.toggle("bfyes-rainbow-page", hasRainbow);
   }
 
   // Background grid
@@ -17,7 +17,7 @@
     var ticking = false;
 
     function update() {
-      document.body.style.setProperty("--grid-y", -(window.scrollY * ratio) + "px");
+      document.body.style.setProperty("--bfyes-grid-y", -(window.scrollY * ratio) + "px");
       ticking = false;
     }
 
@@ -30,6 +30,6 @@
     update();
   }
 
-  window.site.onPageReady(syncPageState);
+  window.bfyes.onPageReady(syncHomePageState);
   initParallaxGrid();
 })();

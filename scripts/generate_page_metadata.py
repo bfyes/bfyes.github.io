@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
-OUTPUT = DOCS / "theme" / "page-metadata.js"
+OUTPUT = DOCS / "theme" / "data" / "page-metadata.js"
 
 
 def page_url(path: Path) -> str:
@@ -45,6 +45,7 @@ def main() -> None:
         updated = last_commit_date(path) or file_modified_date(path)
         pages[page_url(path)] = {"updated": updated}
 
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(
         "window.__BFYES_PAGE_META__ = "
         + json.dumps(pages, ensure_ascii=True, indent=2, sort_keys=True)

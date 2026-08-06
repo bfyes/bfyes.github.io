@@ -3,7 +3,7 @@
 
 GitHub 的贡献页 (https://github.com/users/<user>/contributions) 不开放 CORS，
 浏览器无法跨域抓取，因此在构建期用服务端请求把每个格子的 {date, level, count}
-解析出来，写成 docs/theme/contributions.json，前端运行时直接读本地文件。
+解析出来，写成 docs/theme/data/contributions.json，前端运行时直接读本地文件。
 
 数据来源与 GitHub 页面完全一致（同一份 HTML），故与 GitHub 页面显示的
 "N contributions in the last year" 完全对齐。
@@ -19,7 +19,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "docs" / "theme" / "contributions.json"
+OUT = ROOT / "docs" / "theme" / "data" / "contributions.json"
 USER = "bfyes"
 URL = f"https://github.com/users/{USER}/contributions"
 UA = "Mozilla/5.0 (compatible; bfyes-site-builder)"

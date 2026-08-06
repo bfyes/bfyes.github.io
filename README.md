@@ -1,18 +1,91 @@
 # bfyes.github.io
 
-bfyes 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用
+bfyes 的个人文档站仓库，内容以学习笔记、工具折腾记录、游戏记录和随笔为主。站点使用
 Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。
 
 站点目前包含：
 
-- 学习笔记、课程实验报告、工具记录、电脑体验和随笔
-- 对不同电脑、系统与设备的使用体验和个人感想
+- 学习笔记、课程实验报告、工具记录、游戏记录和随笔
 - 明暗色主题适配与 Giscus 评论区主题同步
+- 正文观感结合 [github-markdown-css](https://github.com/sindresorhus/github-markdown-css)（GitHub 风格排版，作用域 `.md-typeset`，随主题自动切换明暗）
 - 页面最后更新时间、站点浏览量和 GitHub stars 展示
 - GitHub 贡献图静态数据烘焙
-- PDF 内联阅读器，移动端通过 PDF.js 渲染
+- PDF 内联阅读器，下载时显示进度条；桌面交给浏览器原生 PDF 查看器渲染，iOS/iPadOS 降级为 PDF.js 画布渲染
 - 图片低清预览图与构建后 HTML 图片路径处理
 - 桌面端背景网格与主页打字机效果
+
+## Fork 使用指南
+
+如果你想基于这个仓库搭建自己的文档站，可以按以下步骤操作：
+
+1. **Fork 并克隆仓库**
+
+   在 GitHub 上 Fork 本仓库，然后克隆到本地：
+
+   ```bash
+   git clone https://github.com/<你的用户名>/bfyes.git
+   cd bfyes
+   ```
+
+2. **安装依赖**
+
+   本项目使用 [uv](https://docs.astral.sh/uv/) 管理 Python 环境与依赖：
+
+   ```bash
+   uv sync
+   ```
+
+3. **修改站点配置与替换个人信息**
+
+   编辑 `zensical.toml`，至少修改以下内容：
+
+   - `site_name`：站点名称
+   - `site_url`：你的站点 URL（通常是 `https://<用户名>.github.io/`）
+   - `repo_url`、`repo_name`：指向你 Fork 后的仓库
+   - `nav`：导航结构，替换为你自己的页面
+
+   同时替换以下个人信息：
+
+   - `docs/theme/data/contributions.json`：运行 `make contributions` 重新抓取你的 GitHub 贡献图
+   - `overrides/partials/` 下的模板：Logo、评论区等局部模板
+   - `docs/index.md`：首页内容、终端命令与友链卡片
+
+   接着在 `docs/` 下编写你的内容，文章图片放在同名 `.assets/` 目录中，新页面需同步加入 `zensical.toml` 的 `nav`。
+
+4. **本地预览与部署**
+
+   本地预览：
+
+   ```bash
+   make
+   ```
+
+   访问 `http://127.0.0.1:8000` 查看效果。
+
+   部署到 GitHub Pages：
+
+   ```bash
+   make deploy
+   ```
+
+   这会执行完整构建并强推 `site/` 到 `gh-pages` 分支。确保仓库 Settings → Pages 中 Source 设置为 `gh-pages` 分支。
+
+> **注意**：部分功能依赖 macOS 环境（`sips` 生成图片预览、`gs` 压缩 PDF）。在非 macOS 环境下，`make previews` 和 `make compress_pdfs` 可能不可用，需要寻找替代方案。
+
+## 设计与特色
+
+这个站点的主题层在 GitHub 风格的可读性基础上叠加了充足定制化细节。
+
+- **正文排版**：在 MkDocs Material 既有 DOM、主题变量和代码高亮体系之上做兼容式 patch，引入接近 GitHub 的系统无衬线字体栈与 `github-markdown-css` 观感 (反复调整)。代码、表格、引用、行内代码和代码块都尽量贴近 GitHub 的阅读密度；H1 标题保留 `Noto Serif SC` 与 700 字重，让标题和正文有区分度。
+- **背景与正文底板**：普通正文页使用很轻的虚线网格背景，且有细节上的透明度渐变，正文区域用主题色底板遮住背景，避免纹理穿透影响阅读；首页和彩虹页会关闭普通网格，改用独立的彩虹氛围背景层。
+- **彩虹背景**：多个低透明度 `radial-gradient` 固定背景层叠加，通过 blur、saturate 和慢速动画形成轻微流动感。
+- **提示块与代码块**：admonition/details 提示块做了透明正文 (通过 css 复刻 material)、轻渐变标题和图标对齐；代码块清理了复制提示、行号背景和分割线，让它更接近正文整体风格。
+- **代码高亮**：保留 MkDocs/Pygments 体系，并在其 token 分类上细调关键字、函数、字符串、注释、数字、内建名、寄存器/变量、label/attribute 等颜色，尤其照顾 C、Python、x86 asm、RISC-V 等常见代码块的差异化观感。
+- **图片与 PDF 优化**：构建链路会为文章图片生成低清 JPEG 预览图，构建后 HTML 先加载预览图，再通过 `data-fullsrc` 升级到原图；PDF 文件可通过 Ghostscript 压缩，降低文档站首屏和附件访问的体积压力。
+- **PDF 阅读器**：PDF iframe 会被前端替换为自定义阅读器。下载阶段显示进度条、百分比和状态提示；桌面端下载完成后交给浏览器原生 PDF 查看器，iOS/iPadOS 则降级为 PDF.js canvas 渲染，避免 Safari 内嵌 PDF 只能显示第一页的问题。
+- **首页终端**：主页终端不仅有打字机动画，也支持简单交互命令。`ls`、`help`、`?` 会列出分类，输入数字可跳转；`cd` 命令会通过路径归一化支持 `/study`、`~/site/study`、`study/` 等多种写法。
+- **友情链接头像**：友链卡片写在 `docs/index.md` 的 `.home-link-grid` 里，只需提供链接(`href`)、外显名字(`<strong>`)、GitHub 用户标识符(`data-id`)和可选描述(`data-description`)。`@名字`、头像、占位首字母等均由 `site-friends.js` 自动补齐；头像实时抓取 `https://avatars.githubusercontent.com/<user>?size=160`，无需本地图片。
+- **GitHub 贡献图**：贡献图在构建期抓取并烘焙为静态 JSON，前端按 GitHub 的月份、星期、level 0-4、legend、tooltip 与 aria label 结构重新渲染，亮色和暗色配色都尽量高度还原。
 
 ## 项目结构
 
@@ -24,12 +97,16 @@ Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自�
 │   ├── tools/                # 工具、环境配置、折腾记录
 │   ├── computers/            # 不同电脑的体验感想
 │   ├── diaries/              # 随笔与阶段总结
+│   ├── games/                # 游戏记录与样式测试页
 │   └── theme/                # 自定义 CSS、JS 和构建期生成数据
+│       ├── css/              # 正文观感层与组件样式
+│       ├── js/               # 站点前端增强脚本
+│       ├── data/             # 构建期生成/维护的 JSON 与 metadata
+│       └── assets/           # favicon 等静态资产
 ├── overrides/                # 主题模板覆盖
 │   ├── main.html             # 全局模板入口
 │   └── partials/             # 评论区、logo、页面信息等局部模板
 ├── scripts/                  # 构建期辅助脚本
-├── .github/workflows/        # GitHub Actions 自动部署
 ├── Makefile                  # 本地常用命令入口
 ├── zensical.toml             # 站点配置、导航、主题与插件配置
 ├── pyproject.toml            # Python 项目与开发依赖声明
@@ -37,31 +114,6 @@ Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自�
 ```
 
 `site/` 是本地构建产物，已在 `.gitignore` 中忽略，不要手动维护。`.cache/` 用于脚本缓存，也不需要提交。
-
-## 本地开发
-
-本项目使用 `uv` 管理 Python 环境与依赖。
-
-```bash
-uv sync
-make zensical
-```
-
-`make zensical` 会按顺序执行：
-
-1. 生成页面更新时间元数据
-2. 生成文章图片低清预览图
-3. 释放本地 `8000` 端口
-4. 启动 Zensical 预览服务
-
-常用命令：
-
-```bash
-make metadata       # 生成 docs/theme/page-metadata.js
-make previews       # 生成 docs/ 下图片的 .preview.jpg
-make contributions  # 抓取 GitHub 贡献数据到 docs/theme/contributions.json
-make deploy         # 本地完整构建并强推 site/ 到 gh-pages
-```
 
 ## 构建链路
 
@@ -87,44 +139,30 @@ metadata -> contributions -> compress_pdfs -> zensical build -> previews --site 
 - `gs` / Ghostscript：用于 PDF 压缩。
 - GitHub contributions 页面：用于构建期抓取贡献图。
 - Giscus、Busuanzi、shields.io：用于评论区、访问量和 stars badge。
-- unpkg CDN：加载 MathJax、Typed.js 和 PDF.js。
-- Google Fonts：加载站点字体。
+- unpkg CDN：加载 MathJax、Typed.js，以及 iOS/iPadOS PDF 降级渲染所需的 PDF.js。
+- Google Fonts：加载 Noto Sans SC、Noto Serif SC、Inter、JetBrains Mono 等站点字体。
+- [github-markdown-css](https://github.com/sindresorhus/github-markdown-css)：为正文提供 GitHub 风格排版观感。
+
+## 主题资源结构
+
+`docs/theme/` 下的前端资源按类型拆分，避免 CSS、JS、数据和图片混在同一层：
+
+- `css/main.css`：正文观感层。承载系统字体栈、GitHub 明暗主题变量与 GitHub 式正文排版（作用域 `.md-typeset`），以及代码高亮增强。
+- `css/components.css`：站点自定义 UI 组件层。承载标题自动编号、GitHub 贡献图、左上角 Logo、页面信息、虚线网格背景、PDF 阅读器、彩虹背景、首页与终端打字机等效。
+- `js/`：站点前端增强脚本，包括主题同步、首页动效、图片预览、PDF 阅读器、友链和贡献图等。
+- `data/`：构建期生成或维护的数据，例如页面更新时间、GitHub 贡献图数据。
+- `assets/`：favicon 等可直接被页面引用的静态资产。
+
+`zensical.toml` 的 `extra_css` 按 `css/main.css → css/components.css` 顺序加载，组件层覆盖正文观感层。原 `main.css` 在样式拆分前已备份为 `css/old_main.css.bak`。
 
 如果在非 macOS 环境构建，`generate_image_previews.py` 可能不可用，因为它依赖 `sips`。
 
-## 自动部署
-
-GitHub Actions 工作流位于 `.github/workflows/deploy.yml`，触发方式包括：
-
-- 推送到 `main`
-- 手动触发 `workflow_dispatch`
-- 每天 `08:17 UTC`，即北京时间 `16:17`，用于刷新贡献图数据
-
-CI 当前执行：
-
-```text
-uv sync -> metadata -> contributions -> zensical build -> patch_image_src -> deploy gh-pages
-```
-
-注意：CI 目前没有执行 PDF 压缩，也没有在 Ubuntu 上生成图片预览图。因此新增图片后，如果希望线上图片走预览图链路，需要先在本地运行 `make previews` 并提交生成的 `.preview.jpg`，或者后续把预览图脚本改成跨平台实现。
-
 ## 写作约定
 
-- 文章主要放在 `docs/study/`、`docs/tools/`、`docs/computers/`、`docs/diaries/`。
+- 文章主要放在 `docs/study/`、`docs/tools/`、`docs/computers/`、`docs/diaries/`、`docs/games/`。
 - `docs/computers/` 用来记录不同电脑、系统、硬件设备的体验感想，适合放带有主观偏好、长期使用感受和折腾记录的文章。
 - 新页面加入导航时，需要同步修改 `zensical.toml` 的 `nav`。
 - 文章图片建议放在同名 `.assets/` 目录中，并运行 `make previews`。
 - PDF 可以在 Markdown 中用 `<iframe src="xxx.pdf">` 嵌入，前端会自动替换为自定义 PDF 阅读器。
 - 页面如不需要评论区，可在 Markdown front matter 中设置 `comments: false`。
 - 页面如不需要底部信息，可设置 `page_info: false`。
-<!--
-以下内容已注释, 目前不符合实际情况.
-## 维护建议
-
-- 统一本地和 CI 构建流程，避免 `make deploy` 与 GitHub Actions 行为不一致。
-- 将图片预览图生成脚本改为跨平台方案，例如 Pillow 或 ImageMagick，方便 CI 自动生成。
-- 为 `zensical.toml` 补充 `site_url`、`site_description`、`site_author` 等元信息，提升站点分享和 SEO 质量。
-- 逐步拆分 `docs/theme/main.css` 和较大的 JS 文件，按功能维护会更轻松。
-- PDF 阅读器现在会下载并渲染页面内全部 PDF，后续可以改成懒加载或按页渲染，减轻移动端压力。
-- 考虑在 CI 中加入构建检查、链接检查和资源缺失检查，减少发布后才发现 broken link 或缺预览图的情况。
--->

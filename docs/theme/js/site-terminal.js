@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  window.site = window.site || {};
+  window.bfyes = window.bfyes || {};
 
   // Home typewriter
   var typewriterTimers = [];
@@ -132,13 +132,11 @@
     }
 
     // ---- 交互：ls 列出分类，输入编号跳转 ----
-    // path 使用相对站点根的绝对路径（以 / 开头），避免在 /study/ 等
-    // 深层页面解析成叠加路径（如 /study/study/）导致 404。
     var HOME_SECTIONS = [
-      { id: 1, name: "study", label: "学习", path: "/study/" },
-      { id: 2, name: "tools", label: "工具", path: "/tools/" },
-      { id: 3, name: "diaries", label: "随笔", path: "/diaries/" },
-      { id: 4, name: "games", label: "游戏", path: "/games/" }
+      { id: 1, name: "study", label: "学习", path: "study/" },
+      { id: 2, name: "tools", label: "工具", path: "tools/" },
+      { id: 3, name: "diaries", label: "随笔", path: "diaries/" },
+      { id: 4, name: "games", label: "游戏", path: "games/" }
     ];
 
     var terminalScreen = scope.querySelector(".home-terminal__screen");
@@ -164,30 +162,37 @@
     }
 
     function printHelp() {
-      addOutput("输入编号进入对应页面 (移动端可点击)");
-      addSectionLinks();
+      addOutput("输入编号进入对应页面");
+      addOutput(HOME_SECTIONS.map(function (s) { return s.id + ":" + s.label; }).join("  "));
+      addOutput("移动端可点击数字按钮快速跳转");
+      addTerminalKeys();
       spawnPrompt();
     }
 
-    function addSectionLinks() {
-      if (!terminalScreen) return;
-      var line = document.createElement("div");
-      line.className = "home-terminal__line home-terminal__line--output";
-      var keys = document.createElement("span");
+    function addTerminalKeys() {
+      if (!terminalScreen || terminalScreen.querySelector(".home-terminal-keys")) return;
+      var keys = document.createElement("div");
       keys.className = "home-terminal-keys";
       keys.setAttribute("role", "group");
-      keys.setAttribute("aria-label", "快速跳转数字链接");
+      keys.setAttribute("aria-label", "快速跳转数字键");
       for (var i = 0; i < HOME_SECTIONS.length; i++) {
         var s = HOME_SECTIONS[i];
-        var link = document.createElement("a");
-        link.href = s.path;
-        link.className = "home-terminal-link";
-        link.setAttribute("data-goto", String(s.id));
-        link.textContent = s.id + ":" + s.label;
-        keys.appendChild(link);
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "home-terminal-key home-card--" + s.name;
+        btn.setAttribute("data-goto", String(s.id));
+        var strong = document.createElement("strong");
+        strong.textContent = String(s.id);
+        var span = document.createElement("span");
+        span.textContent = s.name;
+        var em = document.createElement("em");
+        em.textContent = s.label;
+        btn.appendChild(strong);
+        btn.appendChild(span);
+        btn.appendChild(em);
+        keys.appendChild(btn);
       }
-      line.appendChild(keys);
-      terminalScreen.appendChild(line);
+      terminalScreen.appendChild(keys);
     }
 
     function spawnPrompt(dir) {
@@ -236,12 +241,7 @@
         spawnPrompt();
         return;
       }
-      if (text === "ls") {
-        addSectionLinks();
-        spawnPrompt();
-        return;
-      }
-      if (text === "help" || text === "?") {
+      if (text === "ls" || text === "help" || text === "?") {
         printHelp();
         return;
       }
@@ -329,13 +329,12 @@
     }
 
     function bindTerminalKeys() {
-      if (document.__keysBound) return;
-      document.__keysBound = true;
+      if (document.__bfyesKeysBound) return;
+      document.__bfyesKeysBound = true;
       document.addEventListener("click", function (e) {
-        var link = e.target && e.target.closest ? e.target.closest(".home-terminal-link") : null;
-        if (!link) return;
-        e.preventDefault();
-        var num = parseInt(link.getAttribute("data-goto"), 10);
+        var btn = e.target && e.target.closest ? e.target.closest(".home-terminal-key") : null;
+        if (!btn) return;
+        var num = parseInt(btn.getAttribute("data-goto"), 10);
         if (currentCmd && document.body.contains(currentCmd)) {
           currentCmd.textContent = String(num);
         }
@@ -376,5 +375,5 @@
     start();
   }
 
-  window.site.onPageReady(startHomeTypewriter);
+  window.bfyes.onPageReady(startHomeTypewriter);
 })();

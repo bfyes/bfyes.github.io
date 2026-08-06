@@ -1,11 +1,11 @@
 (function () {
   "use strict";
 
-  window.site = window.site || {};
-  var htmlEl = window.site.htmlEl;
+  window.bfyes = window.bfyes || {};
+  var htmlEl = window.bfyes.htmlEl;
   var activePdfViewers = [];
   var PDF_LOADING_NOTE = "可能较慢，必要时可开启代理";
-  var PDF_SCRIPT_BASE = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/";
+  var PDF_SCRIPT_BASE = "https://unpkg.com/pdfjs-dist@4.0.379/build/";
   var PDF_RENDER_SCALE = 3;
   var pdfjsLib = null;
   var pdfjsLoading = false;
@@ -396,5 +396,5 @@
     }
   }
 
-  window.site.onPageReady(scanAndLoadPdfs);
+  window.bfyes.onPageReady(scanAndLoadPdfs);
 })();

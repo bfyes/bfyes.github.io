@@ -9,7 +9,7 @@ body.bfyes-home-page .md-grid {
 }
 </style>
 
-# _Welcome
+# bfyes
 
 <section class="home-hero" aria-label="homepage intro">
     <div class="home-hero__main">
@@ -43,6 +43,14 @@ body.bfyes-home-page .md-grid {
       <h2 id="home-log-title" class="home-section__title">Changelog</h2>
     </div>
     <div class="home-log-list">
+    <div class="home-log">
+        <span class="home-log__date">2026.08.06</span>
+        <span>CTF 报告部分暂时完结。</span>
+      </div>
+      <div class="home-log">
+        <span class="home-log__date">2026.08.04</span>
+        <span>没忍住又在折腾没用的东西，复刻 Github 的主题。大幅修改/拆分 css 文件，调教 AI 已红温，浪费了大量金钱最终没得到理想效果。最终由万能的 gpt 5.5 完成。</span>
+      </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.01</span>
         <span>新增部分 CTF 文档。修改主页。(对，和之前一样)</span>
@@ -79,7 +87,21 @@ body.bfyes-home-page .md-grid {
       <h2 id="home-friends-title" class="home-section__title">Links</h2>
     </div>
     <div class="home-link-grid">
-      <div class="home-friend-loading">Loading links...</div>
+      <a class="home-friend" href="https://0-rangE.cn" data-id="gE0650" data-description="Orange">
+        <strong>gE</strong>
+      </a>
+      <a class="home-friend" href="https://evelina-is.github.io/Evelina_personal_web/" data-id="evelina-is">
+        <strong>Evelina</strong>
+      </a>
+      <a class="home-friend" href="https://pastwithin.github.io/Pastwithin-Zensical/" data-id="Pastwithin">
+        <strong>Pastwithin</strong>
+      </a>
+      <a class="home-friend" href="https://hechenyu.xin" data-id="ChenyuHeee">
+        <strong>chenyuheee</strong>
+      </a>
+      <a class="home-friend" href="https://dreamem0ra1n.github.io/ISYS/" data-id="dreamem0ra1n" data-description="ISYS">
+        <strong>dreamem0ra1n</strong>
+      </a>
     </div>
 </section>
 

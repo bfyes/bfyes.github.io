@@ -30,7 +30,7 @@ nav = [
             { "Project2" = "study/fds/project2/index.md" },
             { "Project3" = "study/fds/project3/index.md" },
         ] },
-        { "HPC 高性能计算 (施工中)" = [
+        { "HPC 高性能计算 (加紧施工中)" = [
             "study/hpc/index.md",
             { "lab0: Linux Crash Course" = "study/hpc/lab0/index.md" },
             { "lab1: Mini Cluster" = "study/hpc/lab1/index.md" },
@@ -39,7 +39,7 @@ nav = [
             { "lab4: 数值相对论优化" = "study/hpc/lab4/index.md" },
             { "lab5: Gemma4推理优化" = "study/hpc/lab5/index.md" },
         ] },
-        { "CTF 夺旗赛 (施工中)" = [
+        { "CTF 夺旗赛" = [
             "study/ctf/index.md",
             { "lab0" = "study/ctf/lab0/index.md" },
             { "lab1 Crypto" = "study/ctf/lab1_crypto/index.md" },
@@ -48,6 +48,7 @@ nav = [
             { "lab1 Reverse" = "study/ctf/lab1_rev/index.md" },
             { "lab1 Web" = "study/ctf/lab1_web/index.md" },
             { "lab2 Crypto" = "study/ctf/lab2_crypto/index.md" },
+            { "lab2 Misc" = "study/ctf/lab2_misc/index.md" },
             { "lab3 Crypto" = "study/ctf/lab3_crypto/index.md" },
             { "lab3 Misc" = "study/ctf/lab3_misc/index.md" },
         ] },
@@ -79,17 +80,26 @@ nav = [
         { "深圳I/O" = "games/Shenzhen_IO.md" },
         { "编程农场" = "games/The_Farmer_Was_Replaced.md" },
         { "图灵完备" = "games/Turing_Complete.md" },
+        { "样式测试" = "games/test.md" },
     ] },
 ]
 
 extra_css = [
-    "theme/main.css",
+    "theme/css/main.css",
+    "theme/css/components.css",
 ]
 
 extra_javascript = [
-    "theme/theme-sync.js",
-    "theme/mathjax.js",
-    "theme/site.js",
+    "theme/js/theme-sync.js",
+    "theme/js/mathjax.js",
+    "theme/js/site.js",
+    "theme/js/site-home.js",
+    "theme/js/site-terminal.js",
+    "theme/js/site-mathjax.js",
+    "theme/js/site-images.js",
+    "theme/js/site-pdf.js",
+    "theme/js/site-friends.js",
+    "theme/js/site-github.js",
 ]
 
 # --------------------------------------------------------------------------
@@ -98,7 +108,7 @@ extra_javascript = [
 [project.theme]
 custom_dir = "overrides"
 logo = ""
-favicon = "theme/favicon.svg"
+favicon = "theme/assets/favicon.svg"
 features = [
     "content.action.edit",
     "content.code.annotate",

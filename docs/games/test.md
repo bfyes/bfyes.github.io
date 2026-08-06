@@ -66,12 +66,14 @@
 >
 > > 这是嵌套引用。
 
+---
+
 ## 列表
 
 - 无序列表项目
 - 第二项包含一些较长文字，用来检查换行和列表缩进是否自然。
-    - 嵌套项目
-    - 另一个嵌套项目
+  - 嵌套项目
+  - 另一个嵌套项目
 
 1. 有序列表第一项
 2. 有序列表第二项
@@ -87,17 +89,6 @@
 另一个术语
 : 定义列表第二项。
 
-## 公式
-
-1. 行内公式 $E = mc^2$ 和 $\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$。$\sum_{i=1}^n \frac1i$ 
-2. 行内公式 $\displaystyle E = mc^2$ 和 $\displaystyle\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$。$\displaystyle\sum_{i=1}^n \frac1i$
-
-独立公式块：
-
-$$
-\frac{\partial f}{\partial x} = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}
-$$
-
 ## 表格
 
 | 名称 | 类型 | 状态 |
@@ -111,145 +102,36 @@ $$
 
 ```c
 #include <stdio.h>
-#define MAX_LEN 256
-// 行注释
-/* 块注释 */
-int main(int argc, char *argv[]) {
-    char buf[MAX_LEN];
-    snprintf(buf, sizeof(buf), "%s is %d", "Alice", 30);
-    if (strlen(buf) > 0) printf("%s\n", buf);
+
+int main(void) {
+    int value = 42;
+    printf("value = %d\n", value);
     return 0;
 }
 ```
 
 ```python
-# 注释
-import os
-data = [1, 2, 3]
-squares = [x ** 2 for x in data]
-print(f"sum = {sum(squares)}")
-```
+def greet(name: str) -> str:
+    return f"hello, {name}"
 
-```java
-import java.util.List;
-// 行注释
-public class Main {
-    public static void main(String[] args) {
-        int x = 0x1F;
-        double pi = 3.14;
-        boolean flag = (x > 10) && (pi < 4);
-    }
-}
+print(greet("bfyes"))
 ```
 
 ```asm
-section .data
-    msg db "hello", 0xA
+global _start
+
 section .text
 _start:
-    mov eax, 4          ; sys_write
-    mov ebx, 1          ; stdout
+    mov eax, 1
+    mov ebx, 0
     int 0x80
 ```
 
 ```asm
+.text
+.globl _start
 _start:
     li a0, 42
-    add a0, a0, a1      # a0 = 49
-    lw t1, 0(t0)
+    addi a0, a0, 1
     ret
 ```
-
-## 命令行
-
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-name="bfyes"
-printf 'Hello, %s!\n' "$name"
-if [[ -d "$root/docs" ]]; then echo "exists"; fi
-git status --short
-curl -fsSL "https://example.com/api?name=${name}" -o response.json
-```
-
-## Tabbed 折叠组件
-
-=== "Tab 1"
-
-    这是第一个标签页的内容。用来检查标签行与内容面板之间的间距。
-
-    ```c
-    int x = 42;
-    ```
-
-=== "Tab 2"
-
-    第二个标签页。确认切换时内容区不残留上一个标签的样式。
-
-=== "Tab 3"
-
-    第三个标签页，内容较短。
-
-## 提示块内嵌内容
-
-!!! note "含标题的提示块"
-    提示块内部的标题不应该显示左侧书签图标（会被 overflow:hidden 裁掉）。
-
-    ### 提示块内 H3
-
-    #### 提示块内 H4
-
-    提示块内的代码块：
-
-    ```python
-    print("hello from admonition")
-    ```
-
-??? warning "含代码块的折叠提示"
-    折叠块内也可以放代码块，展开后检查间距。
-
-    ```bash
-    echo "expanded"
-    ```
-
-## 脚注
-
-这是一段带脚注的文字[^1]，还有另一个脚注[^long-note]。
-
-[^1]: 这是第一个脚注的内容。
-
-[^long-note]:
-    这是一个较长的脚注，跨多行书写。
-
-    用来检查脚注区域的排版和缩进。
-
-## 行内代码在标题中
-
-### 标题包含 `inline code` 的测试
-
-## 长行代码横向滚动
-
-```c
-// 这一行非常长，用来测试代码块的横向滚动条是否正常工作，超出容器宽度时应该出现横向滚动而不是换行或溢出页面
-static const char *very_long_variable_name_that_exceeds_the_normal_line_width = "This is a very long string value that should trigger horizontal scrolling in the code block container.";
-```
-
-## pymdownx.critic 编辑标记
-
-+{++这是新增的文本++}，-{--这是删除的文本--}，{~~旧文本~>新文本~~}。
-
-{==这段被高亮了==}{>>这是批注<<}。
-
-## HTML 元素
-
-<details>
-<summary>原生 HTML details（非 Material 扩展）</summary>
-<p>这是原生 HTML 的 details 元素，检查与 Material details 样式是否一致。</p>
-</details>
-
-<mark>标记文本</mark>，<abbr title="HyperText Markup Language">HTML</abbr> 缩写。
-
-| `左对齐` | `居中对齐` | `右对齐` |
-| :--- | :---: | ---: |
-| left | center | right |
-| 左 | 中 | 右 |

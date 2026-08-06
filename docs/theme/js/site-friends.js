@@ -3,8 +3,8 @@
 
   // 友链卡片写在 index.md 的 .home-link-grid 里，只需提供：链接(href)、外显名字(<strong>)、
   // @ 名字(data-id)，以及可选的描述(data-description)。头像、占位首字母等细节都由这里补齐。
-  window.site = window.site || {};
-  var htmlEl = window.site.htmlEl;
+  window.bfyes = window.bfyes || {};
+  var htmlEl = window.bfyes.htmlEl;
 
   // 通过 GitHub 用户名 (@xxx) 定位头像，走到 avatars.githubusercontent.com 头像 CDN。
   // （注意不能直接用 github.com/<user>.png，该域名在部分网络环境不可达。）
@@ -75,5 +75,5 @@
     grid.dataset.friendsReady = "true";
   }
 
-  window.site.onPageReady(initFriends);
+  window.bfyes.onPageReady(initFriends);
 })();
