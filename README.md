@@ -81,7 +81,7 @@ Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自�
 - **彩虹背景**：多个低透明度 `radial-gradient` 固定背景层叠加，通过 blur、saturate 和慢速动画形成轻微流动感。
 - **提示块与代码块**：admonition/details 提示块做了透明正文 (通过 css 复刻 material)、轻渐变标题和图标对齐；代码块清理了复制提示、行号背景和分割线，让它更接近正文整体风格。
 - **代码高亮**：保留 MkDocs/Pygments 体系，并在其 token 分类上细调关键字、函数、字符串、注释、数字、内建名、寄存器/变量、label/attribute 等颜色，尤其照顾 C、Python、x86 asm、RISC-V 等常见代码块的差异化观感。
-- **图片与 PDF 优化**：构建链路会为文章图片生成低清 JPEG 预览图，构建后 HTML 先加载预览图，再通过 `data-fullsrc` 升级到原图；PDF 文件可通过 Ghostscript 压缩，降低文档站首屏和附件访问的体积压力。
+- **图片与 PDF 优化**：构建链路会压缩过大的源图片，并为文章图片生成低清 JPEG 预览图，构建后 HTML 先加载预览图，再通过 `data-fullsrc` 升级到原图；PDF 文件可通过 Ghostscript 压缩，降低文档站首屏和附件访问的体积压力。
 - **PDF 阅读器**：PDF iframe 会被前端替换为自定义阅读器。下载阶段显示进度条、百分比和状态提示；桌面端下载完成后交给浏览器原生 PDF 查看器，iOS/iPadOS 则降级为 PDF.js canvas 渲染，避免 Safari 内嵌 PDF 只能显示第一页的问题。
 - **首页终端**：主页终端不仅有打字机动画，也支持简单交互命令。`ls`、`help`、`?` 会列出分类，输入数字可跳转；`cd` 命令会通过路径归一化支持 `/study`、`~/site/study`、`study/` 等多种写法。
 - **友情链接头像**：友链卡片写在 `docs/index.md` 的 `.home-link-grid` 里，只需提供链接(`href`)、外显名字(`<strong>`)、GitHub 用户标识符(`data-id`)和可选描述(`data-description`)。`@名字`、头像、占位首字母等均由 `site-friends.js` 自动补齐；头像实时抓取 `https://avatars.githubusercontent.com/<user>?size=160`，无需本地图片。
@@ -113,7 +113,7 @@ Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自�
 └── uv.lock                   # uv 锁文件
 ```
 
-`site/` 是本地构建产物，已在 `.gitignore` 中忽略，不要手动维护。`.cache/` 用于脚本缓存，也不需要提交。
+`site/` 是本地构建产物，已在 `.gitignore` 中忽略，不要手动维护。`.cache/` 是构建工具缓存，也不需要提交。
 
 ## 构建链路
 
@@ -122,20 +122,21 @@ Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自�
 - `scripts/generate_page_metadata.py`：读取 Git 历史，生成每个页面的最后更新时间。
 - `scripts/fetch_contributions.py`：抓取 GitHub 贡献图 HTML，解析后写入静态 JSON。
 - `scripts/generate_image_previews.py`：为文章图片生成低清 JPEG 预览图。
+- `scripts/compress_images.py`：压缩 `docs/` 下的源图片，排除低清预览图。
 - `scripts/compress_pdfs.py`：使用 Ghostscript 压缩 `docs/` 下的 PDF。
 - `scripts/patch_image_src.py`：构建后把 HTML 中的图片 `src` 替换为预览图，并把原图写入 `data-fullsrc`。
 
 本地完整部署流程见 `Makefile` 的 `deploy` 目标：
 
 ```text
-metadata -> contributions -> compress_pdfs -> zensical build -> previews --site -> patch_image_src -> push gh-pages
+metadata -> contributions -> compress_pdfs -> compress_images -> zensical build -> previews --site -> patch_image_src -> push gh-pages
 ```
 
 ## 外部依赖
 
 除了 Python 依赖外，部分脚本或页面能力还依赖外部工具/服务：
 
-- `sips`：macOS 自带，用于生成图片预览图。
+- `sips`：macOS 自带，用于压缩源图片并生成图片预览图。
 - `gs` / Ghostscript：用于 PDF 压缩。
 - GitHub contributions 页面：用于构建期抓取贡献图。
 - Giscus、Busuanzi、shields.io：用于评论区、访问量和 stars badge。
