@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import json
 import subprocess
 import sys
 from pathlib import Path
@@ -26,12 +25,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 SITE = ROOT / "site"
-HASH_FILE = ROOT / ".cache" / "image_preview_hashes.json"
 
 IMAGE_EXTS = {".jpg", ".jpeg", ".png"}
 PREVIEW_SUFFIX = ".preview.jpg"
 MAX_EDGE = 300
 JPEG_QUALITY = 25
+MARKER_KEY = "bfyes-image-preview"
+MARKER_PREFIX = f"{MARKER_KEY}:".encode("ascii")
 
 
 def is_source_image(path: Path) -> bool:
@@ -52,22 +52,74 @@ def sha256_hex(path: Path) -> str:
     return h.hexdigest()
 
 
-def load_hashes() -> dict[str, str]:
-    if HASH_FILE.is_file():
-        try:
-            return json.loads(HASH_FILE.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, ValueError):
-            return {}
-    return {}
+def marker_text(src_hash: str) -> bytes:
+    return (
+        f"{MARKER_KEY}:v=1;edge={MAX_EDGE};quality={JPEG_QUALITY};source={src_hash}"
+    ).encode("ascii")
 
 
-def save_hashes(hashes: dict[str, str]) -> None:
-    HASH_FILE.parent.mkdir(parents=True, exist_ok=True)
-    HASH_FILE.write_text(json.dumps(hashes, ensure_ascii=False, indent=2), encoding="utf-8")
+def jpeg_segments(data: bytes):
+    if not data.startswith(b"\xff\xd8"):
+        return
+    i = 2
+    while i < len(data):
+        start = i
+        if data[i] != 0xFF:
+            return
+        while i < len(data) and data[i] == 0xFF:
+            i += 1
+        if i >= len(data):
+            return
+        marker = data[i]
+        i += 1
+        if marker == 0xDA:
+            return
+        if marker == 0xD9 or marker == 0x01 or 0xD0 <= marker <= 0xD7:
+            yield start, i, marker, b""
+            continue
+        if i + 2 > len(data):
+            return
+        length = int.from_bytes(data[i : i + 2], "big")
+        end = i + length
+        if length < 2 or end > len(data):
+            return
+        yield start, end, marker, data[i + 2 : end]
+        i = end
+
+
+def strip_marker(data: bytes) -> bytes:
+    if not data.startswith(b"\xff\xd8"):
+        return data
+
+    out = bytearray(data[:2])
+    last = 2
+    for start, end, marker, payload in jpeg_segments(data) or ():
+        out.extend(data[last:start])
+        if not (marker == 0xFE and payload.startswith(MARKER_PREFIX)):
+            out.extend(data[start:end])
+        last = end
+    out.extend(data[last:])
+    return bytes(out)
+
+
+def read_marker(out: Path) -> bytes:
+    if not out.exists():
+        return b""
+    for _, _, marker, payload in jpeg_segments(out.read_bytes()) or ():
+        if marker == 0xFE and payload.startswith(MARKER_PREFIX):
+            return payload
+    return b""
+
+
+def write_marker(out: Path, src_hash: str) -> None:
+    data = strip_marker(out.read_bytes())
+    marker = marker_text(src_hash)
+    segment = b"\xff\xfe" + (len(marker) + 2).to_bytes(2, "big") + marker
+    out.write_bytes(data[:2] + segment + data[2:])
 
 
 def needs_update(src: Path, out: Path) -> bool:
-    return not out.exists() or src.stat().st_mtime > out.stat().st_mtime
+    return not out.exists() or read_marker(out) != marker_text(sha256_hex(src))
 
 
 def generate_preview(src: Path, out: Path) -> None:
@@ -87,6 +139,7 @@ def generate_preview(src: Path, out: Path) -> None:
         str(out),
     ]
     subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+    write_marker(out, sha256_hex(src))
 
 
 def clean_stale_previews(base: Path) -> int:
@@ -120,29 +173,15 @@ def generate(base: Path, force: bool) -> tuple[int, int]:
         and not path.is_relative_to(skip_dir)
     )
 
-    # In --site mode use content hashing (like compress_pdfs.py) so that
-    # zensical build's fresh file copies don't trigger unnecessary re-generation.
-    use_hash = base == SITE
-    hashes: dict[str, str] = {}
-    if use_hash:
-        hashes = load_hashes()
-
     generated = 0
     skipped = 0
 
     for src in sources:
         out = preview_path(src)
-        rel_key = str(src.relative_to(ROOT)) if use_hash else ""
-        cur_hash = sha256_hex(src) if use_hash else ""
 
-        if not force:
-            if use_hash:
-                if out.exists() and hashes.get(rel_key) == cur_hash:
-                    skipped += 1
-                    continue
-            elif not needs_update(src, out):
-                skipped += 1
-                continue
+        if not force and not needs_update(src, out):
+            skipped += 1
+            continue
 
         try:
             generate_preview(src, out)
@@ -153,15 +192,6 @@ def generate(base: Path, force: bool) -> tuple[int, int]:
             return generated, skipped
 
         generated += 1
-        if use_hash:
-            hashes[rel_key] = cur_hash
-
-    if use_hash:
-        # Clean up stale hash entries for deleted images
-        valid = {str(s.relative_to(ROOT)) for s in sources}
-        for k in set(hashes) - valid:
-            del hashes[k]
-        save_hashes(hashes)
 
     return generated, skipped
 
