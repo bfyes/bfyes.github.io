@@ -43,6 +43,10 @@ body.bfyes-home-page .md-grid {
       <h2 id="home-log-title" class="home-section__title">Changelog</h2>
     </div>
     <div class="home-log-list">
+    <div class="home-log">
+        <span class="home-log__date">2026.08.06</span>
+        <span>CTF 报告部分暂时完结。</span>
+      </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.04</span>
         <span>没忍住又在折腾没用的东西，复刻 Github 的主题。大幅修改/拆分 css 文件，调教 AI 已红温，浪费了大量金钱最终没得到理想效果。最终由万能的 gpt 5.5 完成。</span>

@@ -54,7 +54,7 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-28T12:37:20+08:00"
   },
   "/study/ctf/": {
-    "updated": "2026-08-01T17:26:01+08:00"
+    "updated": "2026-08-06T13:02:16+08:00"
   },
   "/study/ctf/lab0/": {
     "updated": "2026-07-16T13:01:30+08:00"
@@ -78,7 +78,7 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-08-01T17:26:01+08:00"
   },
   "/study/ctf/lab2_misc/": {
-    "updated": "2026-08-06T13:01:32.304997+08:00"
+    "updated": "2026-08-06T13:02:16+08:00"
   },
   "/study/ctf/lab3_crypto/": {
     "updated": "2026-08-01T17:26:01+08:00"

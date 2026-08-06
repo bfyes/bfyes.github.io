@@ -30,7 +30,7 @@ nav = [
             { "Project2" = "study/fds/project2/index.md" },
             { "Project3" = "study/fds/project3/index.md" },
         ] },
-        { "HPC 高性能计算 (施工中)" = [
+        { "HPC 高性能计算 (加紧施工中)" = [
             "study/hpc/index.md",
             { "lab0: Linux Crash Course" = "study/hpc/lab0/index.md" },
             { "lab1: Mini Cluster" = "study/hpc/lab1/index.md" },
@@ -39,7 +39,7 @@ nav = [
             { "lab4: 数值相对论优化" = "study/hpc/lab4/index.md" },
             { "lab5: Gemma4推理优化" = "study/hpc/lab5/index.md" },
         ] },
-        { "CTF 夺旗赛 (施工中)" = [
+        { "CTF 夺旗赛" = [
             "study/ctf/index.md",
             { "lab0" = "study/ctf/lab0/index.md" },
             { "lab1 Crypto" = "study/ctf/lab1_crypto/index.md" },
