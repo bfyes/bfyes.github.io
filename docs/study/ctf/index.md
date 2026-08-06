@@ -14,5 +14,6 @@ CTF课程文档 [[点击跳转](https://courses.zjusec.com)]
 - [Lab1: Reverse](lab1_rev/index.md)
 - [Lab1: Web](lab1_web/index.md)
 - [Lab2: Crypto](lab2_crypto/index.md)
+- [Lab2: Misc](lab2_misc/index.md)
 - [Lab3: Crypto](lab3_crypto/index.md)
 - [Lab3: Misc](lab3_misc/index.md)

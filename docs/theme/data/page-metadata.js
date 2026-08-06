@@ -77,6 +77,9 @@ window.__BFYES_PAGE_META__ = {
   "/study/ctf/lab2_crypto/": {
     "updated": "2026-08-01T17:26:01+08:00"
   },
+  "/study/ctf/lab2_misc/": {
+    "updated": "2026-08-06T13:01:32.304997+08:00"
+  },
   "/study/ctf/lab3_crypto/": {
     "updated": "2026-08-01T17:26:01+08:00"
   },

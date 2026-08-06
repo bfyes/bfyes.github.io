@@ -48,6 +48,7 @@ nav = [
             { "lab1 Reverse" = "study/ctf/lab1_rev/index.md" },
             { "lab1 Web" = "study/ctf/lab1_web/index.md" },
             { "lab2 Crypto" = "study/ctf/lab2_crypto/index.md" },
+            { "lab2 Misc" = "study/ctf/lab2_misc/index.md" },
             { "lab3 Crypto" = "study/ctf/lab3_crypto/index.md" },
             { "lab3 Misc" = "study/ctf/lab3_misc/index.md" },
         ] },
