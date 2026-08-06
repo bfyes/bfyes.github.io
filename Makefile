@@ -1,12 +1,15 @@
 .DEFAULT_GOAL := zensical
 
-.PHONY: zensical kill deploy metadata contributions previews clean
+.PHONY: zensical kill deploy metadata contributions previews images clean
 
 metadata: ## 生成页面更新时间元数据
 	uv run python scripts/generate_page_metadata.py
 
 previews: ## 生成文章图片的低分辨率预览图（本地构建用）
 	uv run python scripts/generate_image_previews.py
+
+images: ## 压缩 docs/ 中的源图片（排除 preview）
+	uv run python scripts/compress_images.py
 
 kill: ## 杀掉 8000 端口进程
 	@lsof -ti:8000 | xargs kill -9 2>/dev/null; echo "done"
@@ -21,6 +24,7 @@ deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run python scripts/generate_page_metadata.py
 	uv run python scripts/fetch_contributions.py
 	uv run python scripts/compress_pdfs.py
+	uv run python scripts/compress_images.py
 	uv run zensical build
 	uv run python scripts/generate_image_previews.py --site
 	uv run python scripts/patch_image_src.py
