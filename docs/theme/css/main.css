@@ -552,6 +552,26 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   background-color: var(--bgColor-muted);
 }
 
+@media screen and (max-width: 600px) {
+  .md-typeset table:not(.ContributionCalendar-grid):has(> thead > tr > :nth-child(2):last-child),
+  .md-typeset table:not(.ContributionCalendar-grid):has(> thead > tr > :nth-child(3):last-child),
+  .md-typeset table:not(.ContributionCalendar-grid):has(> thead > tr > :nth-child(4):last-child) {
+    display: table;
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+  }
+
+  .md-typeset table:not(.ContributionCalendar-grid):has(> thead > tr > :nth-child(2):last-child) th,
+  .md-typeset table:not(.ContributionCalendar-grid):has(> thead > tr > :nth-child(2):last-child) td,
+  .md-typeset table:not(.ContributionCalendar-grid):has(> thead > tr > :nth-child(3):last-child) th,
+  .md-typeset table:not(.ContributionCalendar-grid):has(> thead > tr > :nth-child(3):last-child) td,
+  .md-typeset table:not(.ContributionCalendar-grid):has(> thead > tr > :nth-child(4):last-child) th,
+  .md-typeset table:not(.ContributionCalendar-grid):has(> thead > tr > :nth-child(4):last-child) td {
+    padding: 6px 8px;
+  }
+}
+
 /* 引用 */
 .md-typeset blockquote {
   margin: 0;
