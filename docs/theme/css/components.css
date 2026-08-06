@@ -83,6 +83,7 @@
   border-radius: 6px;
   box-shadow: none;
   font-size: 13.6px;
+  overflow: hidden;
   padding: 0 0.8rem;
 }
 .md-typeset .admonition.note,
@@ -174,6 +175,8 @@
     );
   border-bottom: 1px solid var(--borderColor-muted);
   border-bottom: 1px solid color-mix(in srgb, var(--bfyes-admonition-color) 28%, transparent);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
   color: var(--fgColor-default);
   line-height: 1.45;
 }
@@ -229,6 +232,8 @@
 .md-typeset details:not([open]) > summary {
   margin-bottom: 0;
   border-bottom: 0;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
 /* ============================================================================

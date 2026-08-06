@@ -1,6 +1,6 @@
 window.__BFYES_PAGE_META__ = {
   "/": {
-    "updated": "2026-08-05T00:13:20+08:00"
+    "updated": "2026-08-06T13:08:11+08:00"
   },
   "/computers/mba15_2025/": {
     "updated": "2026-07-18T21:17:10+08:00"
@@ -54,7 +54,7 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-28T12:37:20+08:00"
   },
   "/study/ctf/": {
-    "updated": "2026-08-06T13:02:16+08:00"
+    "updated": "2026-08-06T13:08:11+08:00"
   },
   "/study/ctf/lab0/": {
     "updated": "2026-07-16T13:01:30+08:00"
@@ -99,7 +99,7 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-11T23:43:42+08:00"
   },
   "/study/hpc/": {
-    "updated": "2026-07-28T12:37:20+08:00"
+    "updated": "2026-08-06T13:08:11+08:00"
   },
   "/study/hpc/lab0/": {
     "updated": "2026-07-16T13:01:30+08:00"
