@@ -99,7 +99,7 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-11T23:43:42+08:00"
   },
   "/study/hpc/": {
-    "updated": "2026-08-07T12:58:17+08:00"
+    "updated": "2026-08-07T13:04:13+08:00"
   },
   "/study/hpc/lab0/": {
     "updated": "2026-07-16T13:01:30+08:00"
@@ -120,13 +120,13 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-28T12:37:20+08:00"
   },
   "/study/hpc/notes/0706p/": {
-    "updated": "2026-08-07T12:57:55+08:00"
+    "updated": "2026-08-07T13:21:14+08:00"
   },
   "/study/hpc/notes/0707p/": {
-    "updated": "2026-08-07T12:57:55+08:00"
+    "updated": "2026-08-07T13:21:14+08:00"
   },
   "/study/hpc/notes/0708p/": {
-    "updated": "2026-08-07T12:57:55+08:00"
+    "updated": "2026-08-07T13:19:41+08:00"
   },
   "/study/hpc/notes/0710p/": {
     "updated": "2026-08-07T12:57:55+08:00"
@@ -144,7 +144,7 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-08-07T12:57:55+08:00"
   },
   "/study/hpc/notes/0716a/": {
-    "updated": "2026-08-07T12:57:55+08:00"
+    "updated": "2026-08-07T13:21:14+08:00"
   },
   "/study/hpc/notes/0716p/": {
     "updated": "2026-08-07T12:57:55+08:00"
