@@ -1,5 +1,5 @@
 [project]
-site_name = "bfyes"
+site_name = "bfyes 的文档站"
 site_url = "https://bfyes.github.io"
 repo_url = "https://github.com/bfyes/bfyes.github.io"
 repo_name = "bfyes.github.io"
@@ -32,6 +32,20 @@ nav = [
         ] },
         { "HPC 高性能计算 (加紧施工中)" = [
             "study/hpc/index.md",
+            { "课程笔记" = [
+                { "集群软硬件及运维基础" = "study/hpc/notes/0706p.md" },
+                { "HPC 中的计算机系统 1" = "study/hpc/notes/0707p.md" },
+                { "HPC 中的计算机系统 2" = "study/hpc/notes/0708p.md" },
+                { "向量化并行计算基础" = "study/hpc/notes/0710p.md" },
+                { "OpenMP/MPI 基础" = "study/hpc/notes/0712a.md" },
+                { "性能分析基础 Profiling" = "study/hpc/notes/0712p.md" },
+                { "高性能计算高级话题" = "study/hpc/notes/0713a.md" },
+                { "CUDA 编程基础" = "study/hpc/notes/0713p.md" },
+                { "机器学习基础（上）" = "study/hpc/notes/0716a.md" },
+                { "机器学习基础（下）" = "study/hpc/notes/0716p.md" },
+                { "机器学习高级话题（上）" = "study/hpc/notes/0717a.md" },
+                { "机器学习高级话题（下）" = "study/hpc/notes/0717p.md" },
+            ] },
             { "lab0: Linux Crash Course" = "study/hpc/lab0/index.md" },
             { "lab1: Mini Cluster" = "study/hpc/lab1/index.md" },
             { "lab2: MoE向量化计算" = "study/hpc/lab2/index.md" },
@@ -42,15 +56,21 @@ nav = [
         { "CTF 夺旗赛" = [
             "study/ctf/index.md",
             { "lab0" = "study/ctf/lab0/index.md" },
-            { "lab1 Crypto" = "study/ctf/lab1_crypto/index.md" },
-            { "lab1 Misc" = "study/ctf/lab1_misc/index.md" },
-            { "lab1 Pwn" = "study/ctf/lab1_pwn/index.md" },
-            { "lab1 Reverse" = "study/ctf/lab1_rev/index.md" },
-            { "lab1 Web" = "study/ctf/lab1_web/index.md" },
-            { "lab2 Crypto" = "study/ctf/lab2_crypto/index.md" },
-            { "lab2 Misc" = "study/ctf/lab2_misc/index.md" },
-            { "lab3 Crypto" = "study/ctf/lab3_crypto/index.md" },
-            { "lab3 Misc" = "study/ctf/lab3_misc/index.md" },
+            { "lab1" = [
+                { "Crypto" = "study/ctf/lab1_crypto/crypto.md" },
+                { "Misc" = "study/ctf/lab1_misc/misc.md" },
+                { "Pwn" = "study/ctf/lab1_pwn/pwn.md" },
+                { "Reverse" = "study/ctf/lab1_rev/rev.md" },
+                { "Web" = "study/ctf/lab1_web/web.md" },
+            ] },
+            { "lab2" = [
+                { "Crypto" = "study/ctf/lab2_crypto/crypto.md" },
+                { "Misc" = "study/ctf/lab2_misc/misc.md" },
+            ] },
+            { "lab3" = [
+                { "Crypto" = "study/ctf/lab3_crypto/crypto.md" },
+                { "Misc" = "study/ctf/lab3_misc/misc.md" },
+            ] },
         ] },
     ] },
     { "工具" = [

@@ -7,15 +7,18 @@ CTF课程文档 <https://courses.zjusec.com>
 
 可能会随缘更新一些感想和经验。
 
+
+[部分回放链接(智云课堂)](https://classroom.zju.edu.cn/coursedetail?course_id=85726&tenant_code=112)
+
 ## 实验报告
 
 - [Lab0: 基础知识及技能](lab0/index.md)
-- [Lab1: Crypto](lab1_crypto/index.md)
-- [Lab1: Misc](lab1_misc/index.md)
-- [Lab1: Pwn](lab1_pwn/index.md)
-- [Lab1: Reverse](lab1_rev/index.md)
-- [Lab1: Web](lab1_web/index.md)
-- [Lab2: Crypto](lab2_crypto/index.md)
-- [Lab2: Misc](lab2_misc/index.md)
-- [Lab3: Crypto](lab3_crypto/index.md)
-- [Lab3: Misc](lab3_misc/index.md)
+- [Lab1: Crypto](lab1_crypto/crypto.md)
+- [Lab1: Misc](lab1_misc/misc.md)
+- [Lab1: Pwn](lab1_pwn/pwn.md)
+- [Lab1: Reverse](lab1_rev/rev.md)
+- [Lab1: Web](lab1_web/web.md)
+- [Lab2: Crypto](lab2_crypto/crypto.md)
+- [Lab2: Misc](lab2_misc/misc.md)
+- [Lab3: Crypto](lab3_crypto/crypto.md)
+- [Lab3: Misc](lab3_misc/misc.md)
