@@ -5,9 +5,11 @@
 
 HPC101 课程文档：<https://hpc101.zjusct.io>
 
+[部分回放链接(智云课堂)](https://classroom.zju.edu.cn/coursedetail?course_id=85721&tenant_code=112)
+
 以下笔记目前主要由 gpt-5.6 sol / DeepSeek V4 Flash 生成，由人工初步核查。参考课程语音转写稿、PPT OCR 结果等写成。
 
-☝🏼🤓点击进入体验 AI 味道。
+☝🏼🤓点击进入体验 AI 风味。
 
 | 时间 | 内容 | 讲师 | 笔记 |
 | --- | --- | --- | --- |

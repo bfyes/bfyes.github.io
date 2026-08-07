@@ -9,7 +9,7 @@ body.bfyes-home-page .md-grid {
 }
 </style>
 
-# bfyes
+# Welcome
 
 <section class="home-hero" aria-label="homepage intro">
     <div class="home-hero__main">

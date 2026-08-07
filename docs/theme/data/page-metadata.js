@@ -1,6 +1,6 @@
 window.__BFYES_PAGE_META__ = {
   "/": {
-    "updated": "2026-08-06T13:08:11+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/computers/mba15_2025/": {
     "updated": "2026-07-18T21:17:10+08:00"
@@ -54,37 +54,37 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-28T12:37:20+08:00"
   },
   "/study/ctf/": {
-    "updated": "2026-08-06T13:08:11+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/ctf/lab0/": {
     "updated": "2026-07-16T13:01:30+08:00"
   },
   "/study/ctf/lab1_crypto/crypto/": {
-    "updated": "2026-07-28T12:12:55.837494+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/ctf/lab1_misc/misc/": {
-    "updated": "2026-07-28T12:12:55.837512+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/ctf/lab1_pwn/pwn/": {
-    "updated": "2026-07-28T12:12:55.837571+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/ctf/lab1_rev/rev/": {
-    "updated": "2026-07-28T12:12:55.837527+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/ctf/lab1_web/web/": {
-    "updated": "2026-07-28T12:12:55.837558+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/ctf/lab2_crypto/crypto/": {
-    "updated": "2026-08-01T17:15:46.141228+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/ctf/lab2_misc/misc/": {
-    "updated": "2026-08-06T13:01:32.304997+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/ctf/lab3_crypto/crypto/": {
-    "updated": "2026-08-01T17:15:46.141518+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/ctf/lab3_misc/misc/": {
-    "updated": "2026-08-01T17:15:46.141724+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/fds/": {
     "updated": "2026-07-16T13:01:30+08:00"
@@ -99,7 +99,7 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-11T23:43:42+08:00"
   },
   "/study/hpc/": {
-    "updated": "2026-08-07T13:04:13+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/hpc/lab0/": {
     "updated": "2026-07-16T13:01:30+08:00"
@@ -123,19 +123,19 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-08-07T13:59:20+08:00"
   },
   "/study/hpc/notes/0707p/": {
-    "updated": "2026-08-07T13:59:20+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/hpc/notes/0708p/": {
-    "updated": "2026-08-07T13:59:20+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/hpc/notes/0710p/": {
-    "updated": "2026-08-07T13:59:20+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/hpc/notes/0712a/": {
     "updated": "2026-08-07T13:59:20+08:00"
   },
   "/study/hpc/notes/0712p/": {
-    "updated": "2026-08-07T13:59:20+08:00"
+    "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/hpc/notes/0713a/": {
     "updated": "2026-08-07T13:59:20+08:00"

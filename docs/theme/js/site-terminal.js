@@ -162,37 +162,30 @@
     }
 
     function printHelp() {
-      addOutput("输入编号进入对应页面");
-      addOutput(HOME_SECTIONS.map(function (s) { return s.id + ":" + s.label; }).join("  "));
-      addOutput("移动端可点击数字按钮快速跳转");
-      addTerminalKeys();
+      addOutput("输入编号进入对应页面 (移动端可点击)");
+      addSectionLinks();
       spawnPrompt();
     }
 
-    function addTerminalKeys() {
-      if (!terminalScreen || terminalScreen.querySelector(".home-terminal-keys")) return;
-      var keys = document.createElement("div");
+    function addSectionLinks() {
+      if (!terminalScreen) return;
+      var line = document.createElement("div");
+      line.className = "home-terminal__line home-terminal__line--output";
+      var keys = document.createElement("span");
       keys.className = "home-terminal-keys";
       keys.setAttribute("role", "group");
-      keys.setAttribute("aria-label", "快速跳转数字键");
+      keys.setAttribute("aria-label", "快速跳转数字链接");
       for (var i = 0; i < HOME_SECTIONS.length; i++) {
         var s = HOME_SECTIONS[i];
-        var btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "home-terminal-key home-card--" + s.name;
-        btn.setAttribute("data-goto", String(s.id));
-        var strong = document.createElement("strong");
-        strong.textContent = String(s.id);
-        var span = document.createElement("span");
-        span.textContent = s.name;
-        var em = document.createElement("em");
-        em.textContent = s.label;
-        btn.appendChild(strong);
-        btn.appendChild(span);
-        btn.appendChild(em);
-        keys.appendChild(btn);
+        var link = document.createElement("a");
+        link.href = s.path;
+        link.className = "home-terminal-link";
+        link.setAttribute("data-goto", String(s.id));
+        link.textContent = s.id + ":" + s.label;
+        keys.appendChild(link);
       }
-      terminalScreen.appendChild(keys);
+      line.appendChild(keys);
+      terminalScreen.appendChild(line);
     }
 
     function spawnPrompt(dir) {
@@ -241,7 +234,12 @@
         spawnPrompt();
         return;
       }
-      if (text === "ls" || text === "help" || text === "?") {
+      if (text === "ls") {
+        addSectionLinks();
+        spawnPrompt();
+        return;
+      }
+      if (text === "help" || text === "?") {
         printHelp();
         return;
       }
@@ -332,9 +330,10 @@
       if (document.__bfyesKeysBound) return;
       document.__bfyesKeysBound = true;
       document.addEventListener("click", function (e) {
-        var btn = e.target && e.target.closest ? e.target.closest(".home-terminal-key") : null;
-        if (!btn) return;
-        var num = parseInt(btn.getAttribute("data-goto"), 10);
+        var link = e.target && e.target.closest ? e.target.closest(".home-terminal-link") : null;
+        if (!link) return;
+        e.preventDefault();
+        var num = parseInt(link.getAttribute("data-goto"), 10);
         if (currentCmd && document.body.contains(currentCmd)) {
           currentCmd.textContent = String(num);
         }

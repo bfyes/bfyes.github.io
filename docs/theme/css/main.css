@@ -467,18 +467,19 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   color: var(--fgColor-muted);
 }
 
-/* 标题自动编号：等宽字体 + 轻盈字重，与标题文字形成对比 */
+/* 标题自动编号：与标题同族无衬线、同字重、同色的轻微透明——编号安静地辅助标题 */
 .md-typeset h1::before,
 .md-typeset h2::before,
 .md-typeset h3::before,
 .md-typeset h4::before,
 .md-typeset h5::before,
 .md-typeset h6::before {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", "Noto Sans Mono CJK SC", monospace !important;
-  font-weight: 400 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Helvetica Neue",
+    Helvetica, Arial, sans-serif !important;
+  font-weight: 600 !important;
   margin-right: 0.8em !important;
-  color: var(--fgColor-muted) !important;
+  color: color-mix(in srgb, var(--fgColor-default) 70%, transparent) !important;
 }
 
 /* 列表：对齐 GitHub（padding-left: 2em，只取消 Material 的多余左缩进） */

@@ -7,6 +7,9 @@ CTF课程文档 <https://courses.zjusec.com>
 
 可能会随缘更新一些感想和经验。
 
+
+[部分回放链接(智云课堂)](https://classroom.zju.edu.cn/coursedetail?course_id=85726&tenant_code=112)
+
 ## 实验报告
 
 - [Lab0: 基础知识及技能](lab0/index.md)
