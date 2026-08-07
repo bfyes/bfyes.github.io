@@ -132,11 +132,13 @@
     }
 
     // ---- 交互：ls 列出分类，输入编号跳转 ----
+    // path 使用相对站点根的绝对路径（以 / 开头），避免在 /study/ 等
+    // 深层页面解析成叠加路径（如 /study/study/）导致 404。
     var HOME_SECTIONS = [
-      { id: 1, name: "study", label: "学习", path: "study/" },
-      { id: 2, name: "tools", label: "工具", path: "tools/" },
-      { id: 3, name: "diaries", label: "随笔", path: "diaries/" },
-      { id: 4, name: "games", label: "游戏", path: "games/" }
+      { id: 1, name: "study", label: "学习", path: "/study/" },
+      { id: 2, name: "tools", label: "工具", path: "/tools/" },
+      { id: 3, name: "diaries", label: "随笔", path: "/diaries/" },
+      { id: 4, name: "games", label: "游戏", path: "/games/" }
     ];
 
     var terminalScreen = scope.querySelector(".home-terminal__screen");
