@@ -43,7 +43,11 @@ body.bfyes-home-page .md-grid {
       <h2 id="home-log-title" class="home-section__title">Changelog</h2>
     </div>
     <div class="home-log-list">
-    <div class="home-log">
+      <div class="home-log">
+        <span class="home-log__date">2026.08.07</span>
+        <span>HPC 课堂笔记初步整理 (AIGC 0.99)。</span>
+      </div>
+      <div class="home-log">
         <span class="home-log__date">2026.08.06</span>
         <span>CTF 报告部分暂时完结。</span>
       </div>
