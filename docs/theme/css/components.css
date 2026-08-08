@@ -555,6 +555,10 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: 0;
+  /* 把固定网格层提升为独立合成层，避免滚动改 background-position 时
+     触发整页图层重组，从而干扰公式（MathJax）的渲染层。 */
+  transform: translateZ(0);
+  will-change: transform;
   pointer-events: none;
   background-image: var(--bfyes-page-grid);
   background-position: 0 var(--bfyes-grid-y, 0);
@@ -1506,4 +1510,39 @@ body.bfyes-rainbow-page::before {
 @keyframes rainbow-beam-c {
   0% { transform: translate3d(-0.8rem, -0.2rem, 0) scale(0.96); opacity: 0.12; }
   100% { transform: translate3d(1.2rem, 1.2rem, 0) scale(1.08); opacity: 0.24; }
+}
+
+/* ============================================================================
+   08. MathJax 公式图层修复
+   解决：公式偶尔被正文纯色背景盖住（浅色为白块/深色为黑块），
+   公式底部漏条、选中或滚动时反复切换。
+   成因：正文 .md-typeset/.md-content 有强制背景色，且滚动时网格层的
+   background-position 变化会触发整页图层重组，与 MathJax CHTML 的
+   合成层相互干扰。
+   处理：给公式容器建立独立合成层并置于正文背景之上；让可访问性副本
+   （mjx-assistive-mml）不继承背景，避免它自身形成色块。
+   ============================================================================ */
+.md-typeset mjx-container {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  background-color: transparent !important;
+  /* 独立合成层，避免被父级纯色背景的图层重组"盖住"或"漏出" */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
+}
+.md-typeset .arithmatex {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+}
+.md-typeset mjx-assistive-mml {
+  background-color: transparent !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+.md-typeset mjx-container *,
+.md-typeset .arithmatex * {
+  background-color: transparent !important;
 }
