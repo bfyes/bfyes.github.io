@@ -33,5 +33,5 @@ HPC101 课程文档：<https://hpc101.zjusct.io>
 | 2026-07-17 14:00 | 机器学习高级话题 | 张寅老师 | [笔记](notes/0717p.md) |
 
 <p align="center">
-  <img src="notes/assets/kipfel.png" alt="啦啦啦" width="20%" />
+  <img src="notes/assets/kipfel.gif" alt="啦啦啦" width="20%" />
 </p>

@@ -120,7 +120,7 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-28T12:37:20+08:00"
   },
   "/study/hpc/notes/0706p/": {
-    "updated": "2026-08-08T12:05:13+08:00"
+    "updated": "2026-08-08T12:33:47+08:00"
   },
   "/study/hpc/notes/0707p/": {
     "updated": "2026-08-08T12:05:13+08:00"
