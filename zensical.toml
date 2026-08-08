@@ -30,7 +30,7 @@ nav = [
             { "Project2" = "study/fds/project2/index.md" },
             { "Project3" = "study/fds/project3/index.md" },
         ] },
-        { "HPC 高性能计算 (加紧施工中)" = [
+        { "HPC 高性能计算" = [
             "study/hpc/index.md",
             { "课程笔记" = [
                 { "集群软硬件及运维基础" = "study/hpc/notes/0706p.md" },
