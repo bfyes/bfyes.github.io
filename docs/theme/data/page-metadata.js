@@ -99,7 +99,7 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-11T23:43:42+08:00"
   },
   "/study/hpc/": {
-    "updated": "2026-08-08T12:05:13+08:00"
+    "updated": "2026-08-08T12:58:04+08:00"
   },
   "/study/hpc/lab0/": {
     "updated": "2026-07-16T13:01:30+08:00"
