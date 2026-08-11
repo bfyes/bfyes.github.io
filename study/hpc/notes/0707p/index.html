@@ -1,0 +1,4433 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="bfyes 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。">
+      
+      
+        <meta name="author" content="BillFeng">
+      
+      
+        <link rel="canonical" href="https://bfyes.github.io/study/hpc/notes/0707p/">
+      
+      
+        <link rel="prev" href="../0706p/">
+      
+      
+        <link rel="next" href="../0708p/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../theme/assets/favicon.svg">
+      <meta name="generator" content="zensical-0.0.47">
+    
+    
+      
+        <title>07-07 下午：HPC 中的计算机系统 I - bfyes 的文档站</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../../../../assets/stylesheets/modern/main.5e19f6ca.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../theme/css/main.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/components.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  
+  <script>
+    (function () {
+      try {
+        var saved = (typeof __md_get === "function") ? __md_get("__palette") : null;
+        var scheme;
+        if (saved && saved.color && saved.color.media) {
+          if (saved.color.media === "(prefers-color-scheme)") {
+            scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "slate" : "default";
+          } else {
+            scheme = saved.color.scheme;
+          }
+        } else {
+          scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "slate" : "default";
+        }
+        document.documentElement.setAttribute("data-md-color-scheme", scheme);
+        var attach = function () {
+          document.body.setAttribute("data-md-color-scheme", scheme);
+          new MutationObserver(function () {
+            var s = document.body.getAttribute("data-md-color-scheme");
+            if (s) document.documentElement.setAttribute("data-md-color-scheme", s);
+          }).observe(document.body, {
+            attributes: true,
+            attributeFilter: ["data-md-color-scheme"],
+          });
+        };
+        if (document.body) {
+          attach();
+        } else {
+          new MutationObserver(function (_, obs) {
+            if (document.body) {
+              attach();
+              obs.disconnect();
+            }
+          }).observe(document.documentElement, { childList: true });
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#07-07-下午hpc-中的计算机系统-i" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="bfyes 的文档站" class="md-header__button md-logo" aria-label="bfyes 的文档站" data-md-component="logo">
+      <!-- BillFeng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="BillFeng">
+  <text x="0" y="36" class="bf-logo__text">BillFeng</text>
+</svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            bfyes 的文档站
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              07-07 下午：HPC 中的计算机系统 I
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun-moon" viewBox="0 0 24 24"><path d="M12 2v2M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715M16 12a4 4 0 0 0-4-4M19 5l-1.256 1.256M20 12h2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="根据系统模式切换主题"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="根据系统模式切换主题" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/bfyes/bfyes.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bfyes.github.io
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="/" class="md-tabs__link">
+        
+  
+  主页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../" class="md-tabs__link">
+          
+  
+  学习
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../tools/" class="md-tabs__link">
+          
+  
+  工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../diaries/" class="md-tabs__link">
+          
+  
+  随笔
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../games/" class="md-tabs__link">
+          
+  
+  游戏
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="bfyes 的文档站" class="md-nav__button md-logo" aria-label="bfyes 的文档站" data-md-component="logo">
+      <!-- BillFeng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="BillFeng">
+  <text x="0" y="36" class="bf-logo__text">BillFeng</text>
+</svg>
+    </a>
+    bfyes 的文档站
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bfyes/bfyes.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bfyes.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  主页
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学习
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  学习
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ismath/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  信息安全原理与数学基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../asm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  汇编语言设计与调试
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../sys1/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  计算机系统Ⅰ
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  计算机系统Ⅰ
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0: 数字电路仿真
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1: 八选一多路选择器
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2: 64位全加减法器
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3: 时序电路/FSM
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab4: 卷积模块
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab5: RISC-V 汇编
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  project: 单周期CPU
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../fds/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  数据结构基础
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  数据结构基础
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../fds/project1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project1
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../fds/project2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project2
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../fds/project3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project3
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 高性能计算
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  HPC 高性能计算
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  课程笔记
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  课程笔记
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0706p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  集群软硬件及运维基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 中的计算机系统 1
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 中的计算机系统 1
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpu-执行与流水线" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        CPU 执行与流水线
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CPU 执行与流水线">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#分支预测" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        分支预测
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#流水线停顿与依赖" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        流水线停顿与依赖
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#乱序推测与提交" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        乱序、推测与提交
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#存储层级与访存代价" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        存储层级与访存代价
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="存储层级与访存代价">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#缓存一致性与-false-sharing" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        缓存一致性与 false sharing
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#缓存行关联度与预取" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        缓存行、关联度与预取
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#进程与地址空间" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        进程与地址空间
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="进程与地址空间">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#进程状态与抢占" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        进程状态与抢占
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#系统调用页与缺页" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        系统调用、页与缺页
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forkexec-与文件描述符" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>fork</code>、<code>exec</code> 与文件描述符
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#线程与共享内存" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        线程与共享内存
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="线程与共享内存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#原子性可见性与等待" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        原子性、可见性与等待
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#上下文切换与调度" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        上下文切换与调度
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="上下文切换与调度">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#核硬件线程与调度任务" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        核、硬件线程与调度任务
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#numa-架构" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        NUMA 架构
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NUMA 架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#numa-分配与并行划分" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        NUMA 分配与并行划分
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#虚拟内存与页表" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        虚拟内存与页表
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="虚拟内存与页表">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#地址空间布局" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        地址空间布局
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#性能优化基础" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        性能优化基础
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能优化基础">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#阿姆达尔amdahl定律" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        阿姆达尔（Amdahl）定律
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0708p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 中的计算机系统 2
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0710p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  向量化并行计算基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0712a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  OpenMP/MPI 基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0712p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  性能分析基础 Profiling
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0713a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  高性能计算高级话题
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0713p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CUDA 编程基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0716a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习基础（上）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0716p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习基础（下）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0717a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习高级话题（上）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0717p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习高级话题（下）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0: Linux Crash Course
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1: Mini Cluster
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2: MoE向量化计算
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3: GDN Prefill优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab4: 数值相对论优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab5: Gemma4推理优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../ctf/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CTF 夺旗赛
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  CTF 夺旗赛
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_3" id="__nav_2_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab1
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1_crypto/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1_misc/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1_pwn/pwn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Pwn
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1_rev/rev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reverse
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1_web/web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Web
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_4" id="__nav_2_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab2
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab2_crypto/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab2_misc/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_5" id="__nav_2_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab3
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab3_crypto/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab3_misc/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../tools/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  工具
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  工具
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/xp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  XP on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/rosetta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Rosetta on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/vivado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Vivado on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/notepadnext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Mac 记事本
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/xzzd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学在浙大 & PTA
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/run/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  校园跑
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../diaries/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  随笔
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  随笔
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../diaries/fa25_review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  2025 年度十图
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../diaries/sp26_midterm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 半期总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../diaries/sp26_final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 期末总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../games/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  游戏
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  游戏
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/4D_Intuition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  四维直觉
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/Shenzhen_IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  深圳I/O
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/The_Farmer_Was_Replaced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  编程农场
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/Turing_Complete/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  图灵完备
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  样式测试
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpu-执行与流水线" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        CPU 执行与流水线
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CPU 执行与流水线">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#分支预测" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        分支预测
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#流水线停顿与依赖" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        流水线停顿与依赖
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#乱序推测与提交" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        乱序、推测与提交
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#存储层级与访存代价" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        存储层级与访存代价
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="存储层级与访存代价">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#缓存一致性与-false-sharing" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        缓存一致性与 false sharing
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#缓存行关联度与预取" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        缓存行、关联度与预取
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#进程与地址空间" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        进程与地址空间
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="进程与地址空间">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#进程状态与抢占" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        进程状态与抢占
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#系统调用页与缺页" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        系统调用、页与缺页
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forkexec-与文件描述符" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <code>fork</code>、<code>exec</code> 与文件描述符
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#线程与共享内存" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        线程与共享内存
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="线程与共享内存">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#原子性可见性与等待" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        原子性、可见性与等待
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#上下文切换与调度" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        上下文切换与调度
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="上下文切换与调度">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#核硬件线程与调度任务" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        核、硬件线程与调度任务
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#numa-架构" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        NUMA 架构
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NUMA 架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#numa-分配与并行划分" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        NUMA 分配与并行划分
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#虚拟内存与页表" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        虚拟内存与页表
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="虚拟内存与页表">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#地址空间布局" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        地址空间布局
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#性能优化基础" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        性能优化基础
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能优化基础">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#阿姆达尔amdahl定律" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        阿姆达尔（Amdahl）定律
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../../.." class="md-path__link">
+        
+  
+  <span class="md-ellipsis">
+    Welcome
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-path__item">
+        <a href="../../../" class="md-path__link">
+          
+  
+  <span class="md-ellipsis">
+    学习
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  
+  <span class="md-ellipsis">
+    HPC 高性能计算
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-path__item">
+        <a href="../0706p/" class="md-path__link">
+          
+  
+  <span class="md-ellipsis">
+    课程笔记
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+  
+                  
+  
+    <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/study/hpc/notes/0707p.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-pen" viewBox="0 0 24 24"><path d="M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"/></svg>
+    </a>
+  
+  
+
+
+
+
+
+<h1 id="07-07-下午hpc-中的计算机系统-i">07-07 下午：HPC 中的计算机系统 I<a class="headerlink" href="#07-07-下午hpc-中的计算机系统-i" title="Permanent link">&para;</a></h1>
+<p>一条算术指令很少单独决定程序速度。数据抵达执行单元之前会经过 cache 和地址翻译；多个线程又会争用 cache、内存带宽和同步点。理解这些路径，才能解释同一份循环为何会随数据布局和线程数而变化。</p>
+<h2 id="cpu-执行与流水线">CPU 执行与流水线<a class="headerlink" href="#cpu-执行与流水线" title="Permanent link">&para;</a></h2>
+<p>CPU 执行的是指令。编译器把 C/C++ 等源代码翻译成目标指令；程序计数器（PC，在 x86 上常称 RIP）指向下一条指令；控制器取指、译码，把操作送到算术逻辑单元、浮点单元、访存单元等部件。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/cpu-die-abstraction.jpg"><img width="1280" height="720" alt="课件用 CPU die 的抽象说明 CPU 抽象：真正重要的是程序计数器、寄存器文件与算术/访存单元这些可见状态。" src="../assets/0707p/cpu-die-abstraction.preview.jpg" data-fullsrc="../assets/0707p/cpu-die-abstraction.jpg" /></a></p>
+<p><em>图：CPU 的抽象视图——PC 指向下一条指令，寄存器保存中间状态；流水线与 cache 都是在这之上为提吞吐添加的内部结构。</em></p>
+<details class="note" open="open">
+<summary>从单周期 CPU 到流水线</summary>
+<p>单周期 CPU 在一个时钟周期里取指、译码、执行、访存、写回一口气全部做完，下个周期再做下一条。这种设计直观但有问题。</p>
+<ul>
+<li>时钟周期必须按<strong>最慢的那条指令</strong>（常常是访存或乘法）来定长，快指令也被拖到这同一个周期</li>
+<li>每个时刻只有一个部件在干活，其余都在等。</li>
+</ul>
+<p>流水线的思路是把取指、译码、执行、访存、写回拆成<strong>独立阶段</strong>，让不同指令同时处在不同阶段——第 1 条做写回的同时，第 2 条在访存、第 3 条在执行、第 4 条在译码、第 5 条在取指。单条指令的延迟并没有变短，但<strong>每周期能完成一条指令</strong>，吞吐大幅提升。代价是引入了依赖：第 2 条若要第 1 条的结果，就得等；跳转指令还会让已经取进来的后续指令可能作废。</p>
+<p>理解 HPC 时，流水线告诉你一个基本事实，<strong>处理器在意的是吞吐（每周期完成几条），而不只是单条指令有多快</strong>。写高性能代码时，尽量多提供彼此独立的指令，让流水线一直被有用工作填满。</p>
+</details>
+<p>顺序地看，一条指令经历取指、译码、执行、访存、写回。现代处理器把这些阶段重叠成流水线，也会在不改变可见结果的前提下乱序执行彼此独立的指令。比如一条内存读取还没回来，后面与它无关的算术指令可以先做。</p>
+<p>but，乱序不是任意改顺序，如下面的第二行依赖第一行的结果，不能提前。</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos="1 "></span></a><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><a href="#__codelineno-0-2"><span class="linenos" data-linenos="2 "></span></a><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+</code></pre></div>
+<p>相反，若 <code>u = d + e</code> 与 <code>x = a + b</code> 无关，硬件或编译器可能同时安排它们。高性能程序常试图提供更多独立工作，以隐藏一次运算或访存的延迟。</p>
+<h3 id="分支预测">分支预测<a class="headerlink" href="#分支预测" title="Permanent link">&para;</a></h3>
+<p>遇到 <code>if</code>、循环跳转时，处理器需要猜下一条指令在哪里。猜对时流水线继续流动；猜错时已经取入/执行的一部分工作要丢弃，重新从正确路径开始。数据随机、条件难预测的分支常比直觉上慢得多。把大量小分支改写成规则数组操作，有时既利于分支预测，也利于向量化，但必须先验证语义没有变化。</p>
+<h3 id="流水线停顿与依赖">流水线停顿与依赖<a class="headerlink" href="#流水线停顿与依赖" title="Permanent link">&para;</a></h3>
+<p>从顺序模型看，CPU 每个周期执行一条指令；现实中一条指令分成取指、译码、分派、执行、访存、提交等阶段。流水线让不同指令同时占据不同阶段。理想情况下，每周期都有新指令完成，吞吐很高；一条指令的总延迟却没有因此消失。</p>
+<p>流水线被打断的原因常被归为三类。数据相关最直观：后一条要使用前一条尚未产生的结果。结构冲突指多个操作争同一个执行单元或访存端口。控制相关来自分支，处理器不知道接下来该取哪条指令。现代 CPU 用 forwarding、更多执行单元、分支预测和推测执行缓解这些问题，但真实依赖和错误分支仍然会留下空泡。</p>
+<p>例如下面的累加有一条很长的依赖链：</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">    </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</code></pre></div>
+<p>每次 <code>sum</code> 都依赖上一次的结果。编译器或手写代码可以使用多个局部累加器，把一条链拆为几条独立链，最后再合并；向量化归约也采用相近想法。效果取决于处理器能否借此发现原先不存在的独立工作，循环展开本身不保证更快。</p>
+<h3 id="乱序推测与提交">乱序、推测与提交<a class="headerlink" href="#乱序推测与提交" title="Permanent link">&para;</a></h3>
+<p>乱序执行让处理器在等待某条慢指令时，先发射已经具备输入的其他指令。为了让程序对外仍像按顺序运行，现代 CPU 会给寄存器重命名，记录指令真正依赖的是哪一个临时物理寄存器；计算结果可以先完成，但通常按程序顺序提交到架构可见状态。</p>
+<p>分支预测则先猜条件结果，并沿猜测路径取指、执行。预测正确时，延迟被隐藏；预测错时，需要撤销错误路径上的推测工作，流水线重新从正确地址开始。随机数据上的阈值判断、间接跳转和难预测的状态机都可能因此变慢。优化前应先测量：有时改数据表示、消除分支或让条件按块集中，比微调某条算术指令更有效。</p>
+<h2 id="存储层级与访存代价">存储层级与访存代价<a class="headerlink" href="#存储层级与访存代价" title="Permanent link">&para;</a></h2>
+<p>寄存器最接近执行单元、容量最小；其次是 L1、L2、L3 cache；再往外是 DRAM。越往外容量越大、单位容量越便宜，但访问延迟和带宽代价也越高。CPU 通常以 <strong>cache line</strong> 为单位搬运一段连续字节，很少单独取一个 <code>double</code>。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-hierarchy-registers.jpg"><img width="1280" height="720" alt="课件的 Memory Hierarchy：从寄存器、cache、主存到外存，越往里越快越小，越往外越大越慢。" src="../assets/0707p/memory-hierarchy-registers.preview.jpg" data-fullsrc="../assets/0707p/memory-hierarchy-registers.jpg" /></a></p>
+<p><em>图：存储层级是快、小、贵与大、慢、便宜的连续权衡。访存位置决定性能。</em></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-cost.jpg"><img width="1280" height="720" alt="课件用一条对数轴展示各操作的成本（CPU cycles）：寄存器/L1 极快，DRAM 在百周期量级，磁盘更慢好几个数量级。" src="../assets/0707p/memory-cost.preview.jpg" data-fullsrc="../assets/0707p/memory-cost.jpg" /></a></p>
+<p><em>图：不同层级访存代价相差甚远。</em></p>
+<details class="note" open="open">
+<summary>为什么现代 CPU 需要 cache</summary>
+<p>现代真实系统里，主存 DRAM 的访问延迟大约是 CPU 寄存器/执行单元的几十到几百倍。如果每条指令要访存的都直接去 DRAM，处理器大部分时间会干等着数电压的流动，算力白搭。</p>
+<p>cache 就是为了弥合这个速度差：在 CPU 和主存之间放几层又快又小的存储，把最近用过的数据（及其附近的数据）暂时放在离 CPU 更近的地方。核心思想是两条经验——<strong>时间局部性</strong>（刚用过的数据很可能马上再用）和<strong>空间局部性</strong>（刚用过的地址附近的数据很可能马上也会用）。连续遍历数组所以快，正因为下一批元素大概率已在 cache 里。</p>
+<p>程序性能往往取决于数据所处的层级和是否停在足够近的 cache，指令条数是次要因素。后面几乎所有优化——改循环顺序、分块、SoA 布局——都是为了把数据更多地留在较近的层级、减少从 DRAM 反复搬上来的次数。</p>
+</details>
+<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><a href="#__codelineno-2-1"><span class="linenos" data-linenos="1 "></span></a>寄存器
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><a href="#__codelineno-2-2"><span class="linenos" data-linenos="2 "></span></a>  L1 cache（每核，最快的小缓存）
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><a href="#__codelineno-2-3"><span class="linenos" data-linenos="3 "></span></a>  L2 cache（每核或小范围共享）
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><a href="#__codelineno-2-4"><span class="linenos" data-linenos="4 "></span></a>  L3 cache（多个核心共享）
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><a href="#__codelineno-2-5"><span class="linenos" data-linenos="5 "></span></a>主内存 DRAM
+</code></pre></div>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-latency-x200.jpg"><img width="1280" height="720" alt="课件给出 cache 与内存延迟的相对倍数（这里 ×200 量级）：64KB 以内约一条时间线、4MB 以内约另一条时间线、更大的数据落回更慢的外部内存；工作集越大越容易超出 cache 容量。" src="../assets/0707p/memory-latency-x200.preview.jpg" data-fullsrc="../assets/0707p/memory-latency-x200.jpg" /></a></p>
+<p><em>图：工作集可以按三层看——64KB 以内由 L1 cache 承接，4MB 以内由 L2 cache 承接，更大则落到外部内存（DRAM）；每往一层，延迟都会跳高一大截，这正是 cache 命中和 miss 性能相差悬殊的原因。</em></p>
+<p>缓存设计利用两种经验：最近用过的数据可能再用（时间局部性），某个地址附近的数据可能很快也会用（空间局部性）。因此，连续遍历数组往往比随机跳转访问更快；矩阵乘法用小块计算，是为了让一块 A/B/C 数据留在 cache 里被重复使用。</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><a href="#__codelineno-3-1"><span class="linenos" data-linenos="1 "></span></a><span class="c1">// C/C++ 多维数组按行存放；j 在内层时通常是连续访问。</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a><a href="#__codelineno-3-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">rows</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a><a href="#__codelineno-3-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">cols</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a><a href="#__codelineno-3-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">        </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+</code></pre></div>
+<p>缓存命中不等于一定快，未命中也不必然是 bug。要看访问模式、工作集大小和总时间。性能分析课中的 cache-miss 指标正是用来验证这些判断。</p>
+<h3 id="缓存一致性与-false-sharing">缓存一致性与 false sharing<a class="headerlink" href="#缓存一致性与-false-sharing" title="Permanent link">&para;</a></h3>
+<p>多核机器中，同一内存位置可能被多个核心缓存。硬件通过一致性协议保证一个核心写入后，其他核心最终不会长期读到旧值。代价是写入会让其他缓存中的相关 cache line 失效。</p>
+<p>即使两个线程写的是不同变量，只要变量落在同一 cache line，也会互相使对方的缓存失效。这称为 false sharing。典型例子是多个线程把局部统计量紧挨着放在数组里。常见处理办法是每线程保存私有结果、最后归约，或在确认是热点后做适当填充；不要一开始就到处加 padding。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/cache-line-false-sharing.jpg"><img width="1280" height="720" alt="课件用 cache line 与系统查询命令说明：相邻变量可被装入同一条 line，从而造成 false sharing。" src="../assets/0707p/cache-line-false-sharing.preview.jpg" data-fullsrc="../assets/0707p/cache-line-false-sharing.jpg" /></a></p>
+<p><em>图：line 大小应在目标机器上查询。课件示例为 64 B；不能把这个数当成所有 CPU 的固定常量。</em></p>
+<div class="admonition warning">
+<p class="admonition-title">把 false sharing 与数据竞争分开</p>
+<p>两个线程写同一个 <code>sum</code> 是正确性错误；两个线程写同一 cache line 中不同的私有槽位，结果可以正确却很慢。前者需要重新定义所有权或同步，后者才考虑 padding、分块或改变归约布局。</p>
+</div>
+<h3 id="缓存行关联度与预取">缓存行、关联度与预取<a class="headerlink" href="#缓存行关联度与预取" title="Permanent link">&para;</a></h3>
+<p>cache 以缓存行（line）为单位填充，x86 常见一行 64 字节。读一个 <code>float x[i]</code> 可能把相邻 15 个 float 一并带入 L1；这正是连续访问容易快的物理原因，也是伪共享（false sharing）会发生在不同变量上的原因。若每次跨很大的固定步长访问，只用到每行的一个元素，内存带宽会被无效字节消耗。结构体里只使用少数热点字段时，改用结构体数组（SoA）有时能避免把无关字段也带进缓存行（上一节那张图已画出缓存行的这一行为，并用查询命令给出当前机器的行大小）。</p>
+<p>cache 是有限且按组组织的。地址中的一部分位选择缓存组（cache set），同一组能同时容纳的行数由相联度（associativity）决定。多个频繁访问的地址若恰好映射到同一组，会相互驱逐，即使总工作集小于 cache 容量也会发生冲突未命中（conflict miss）。大多数程序无需手工计算组，但矩阵行列访问、固定步长数组和多数组同步遍历出现反常性能时，填充（padding）或改变分块（tile）尺寸可能消除冲突；它应由硬件计数器和尺寸扫描验证。</p>
+<p>硬件预取器（prefetcher）会尝试预测线性或规则步长流，在真正读入（load）前把后续缓存行拉近。它对顺序数组极有效，对随机指针链、哈希表或数据相关间接索引帮助很小。软件预取（prefetch）也不是通用加速器：预取得太早会被挤出，太晚来不及，错误预取还会占用带宽。先让布局和循环顺序规律，通常比插入预取指令更可靠。</p>
+<h2 id="进程与地址空间">进程与地址空间<a class="headerlink" href="#进程与地址空间" title="Permanent link">&para;</a></h2>
+<p>进程是操作系统分配和保护资源的基本单位。一个进程拥有自己的虚拟地址空间、打开的文件、权限和运行状态。它看见的地址是虚拟地址，不等于物理内存条上的地址；这使两个进程都可以使用看似相同的地址而互不干扰。</p>
+<details class="note" open="open">
+<summary>进程 &amp; 线程</summary>
+<p>进程是资源隔离的单位、线程是共享内存并行执行的最小单位。</p>
+<p><strong>进程</strong>是一个程序运行时的完整实例。它有自己独立的虚拟地址空间、自己的寄存器状态、自己的文件描述符和权限。两个进程不能互相直接读对方内存，这是一层隔离，也是安全的基础。</p>
+<p><strong>线程</strong>是进程内部更小的执行单元。同一进程的多个线程<strong>共享</strong>地址空间（所以能直接读写同一变量、同一块动态内存）和大部分资源，只是各自有独立的栈和寄存器上下文。创建线程比创建进程更轻，但共享内存也意味着它们需要自己处理谁先写、谁后读的同步。</p>
+<p>现代 CPU 多核并行，通常就是在一个进程里开多个线程、或开多个进程各自跑一块，再靠通信把结果合起来。OpenMP 在进程内开线程、MPI 跨进程通信，底子都是这里讲的进程/线程区别。</p>
+</details>
+<p>磁盘上的可执行文件采用 ELF（Executable and Linkable Format）时，文件里既有待加载的代码和数据，也可能有符号表、调试信息等运行时不必装入内存的内容。加载器读取 program header，把若干 section 组合成具有读、写、执行权限的内存 segment。于是文件里有什么和进程地址空间里映射了什么并非一一对应。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/elf-sections.jpg"><img width="1280" height="720" alt="ELF 文件中的 section 会按运行权限组合成代码段和可写数据段，符号及调试信息通常不映射进进程。" src="../assets/0707p/elf-sections.preview.jpg" data-fullsrc="../assets/0707p/elf-sections.jpg" /></a></p>
+<p><em>图：<code>.text</code>、<code>.rodata</code> 常进入只读/可执行映射，<code>.data</code>、<code>.bss</code> 进入可写映射；section header 主要描述链接视角，program header 服务于加载。</em></p>
+<details class="info">
+<summary>ELF 为什么值得认识</summary>
+<p>编译报错、链接报错和程序启动失败落在不同边界。<code>readelf -h/-S/-l</code> 可分别查看 ELF 头、section 和 segment；<code>nm</code> 看符号；<code>ldd</code> 看动态依赖。源码里有函数却出现 <code>undefined reference</code>，多半是链接器没找到定义；文件已经生成却提示缺少 <code>.so</code>，则是动态加载阶段的问题。</p>
+</details>
+<p>进程运行时至少可粗略分为代码区、全局/静态数据、堆和栈。代码区放机器指令；堆用于动态分配；每个线程有自己的栈。<code>fork</code> 在 Unix 中可创建子进程，常配合 copy-on-write：创建时不急着复制所有内存页，只有某一方修改时才真正复制，以降低启动开销。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/process-address-space.jpg"><img width="1280" height="720" alt="一个常见的进程虚拟地址空间：text、data、heap 向上增长，stack 向下增长。" src="../assets/0707p/process-address-space.preview.jpg" data-fullsrc="../assets/0707p/process-address-space.jpg" /></a></p>
+<p><em>图：这些区域属于进程的虚拟地址视图；实际物理页由页表映射，图中的增长方向也是典型布局而非语言保证。</em></p>
+<p>进程间默认不能直接读写彼此内存。要交换数据，使用文件、管道、socket、共享内存或 MPI 等明确机制。隔离提高安全性，但也让跨进程通信比同进程访问变量更贵。</p>
+<details class="info" open="open">
+<summary>虚拟地址为什么有用</summary>
+<p>虚拟地址是进程使用的地址编号，不是内存条上的坐标。它让每个进程拥有独立、连续的地址视图，并让内核能在页表中标记可读、可写、可执行等权限。同一个数值地址在两个进程中可以映射到不同物理页；一个进程越界访问时，硬件和内核可据此阻止它伤害另一个进程。</p>
+</details>
+<h3 id="进程状态与抢占">进程状态与抢占<a class="headerlink" href="#进程状态与抢占" title="Permanent link">&para;</a></h3>
+<p>进程并非从启动到退出一直占着 CPU。它至少会在运行（running）、就绪（runnable/ready）和等待（sleeping/blocked）之间变化。就绪表示它有事可做、但尚未得到核心；等待表示它在等磁盘、网络、锁、子进程或定时器，暂时不能继续执行。结束后内核还会短暂保留退出状态，直到父进程读取退出码。</p>
+<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><a href="#__codelineno-4-1"><span class="linenos" data-linenos="1 "></span></a>创建 -&gt; 就绪 --被调度--&gt; 运行 --时间片到/被抢占--&gt; 就绪
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a><a href="#__codelineno-4-2"><span class="linenos" data-linenos="2 "></span></a>                         |  
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a><a href="#__codelineno-4-3"><span class="linenos" data-linenos="3 "></span></a>                         +--等待 I/O 或锁--&gt; 等待 --事件到达--&gt; 就绪
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a><a href="#__codelineno-4-4"><span class="linenos" data-linenos="4 "></span></a>                         |
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><a href="#__codelineno-4-5"><span class="linenos" data-linenos="5 "></span></a>                         +--exit--&gt; 退出
+</code></pre></div>
+<p>从就绪到运行，由操作系统按某种策略挑选下一个进程，进程自己并不抢占 CPU。课件以 Round Robin（时间片轮转）为例：给每个进程一小段固定时间片，到点后无论是否跑完都被换下，轮给下一个进程。下面图里 P1、P2、P3 在一条时间轴上轮流占 CPU。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/process-schedule-round-robin.png"><img width="1280" height="720" alt="课件以 Round Robin 时间片轮转调度为例：P1、P2、P3 在时间轴上轮流占用 CPU，每个进程的时间片到点就被换下，交给下一个。" src="../assets/0707p/process-schedule-round-robin.preview.jpg" data-fullsrc="../assets/0707p/process-schedule-round-robin.png" /></a></p>
+<p><em>图：进程调度有 Non-preemptive（非抢占，跑完才换）与 Preemptive（抢占，可被中断换下）之分；Round Robin 属于后者，靠固定时间片轮流。</em></p>
+<p>I/O 完成、网卡收到包、定时器到期等硬件事件会通过中断通知内核；内核再唤醒相应任务，必要时安排调度。中断处理本身要尽量短，较重的工作会延后处理，否则一个设备事件也可能拖慢整台机器。程序看起来没在使用 CPU，往往是在等待另一项资源，或已经被阻塞在同步点。</p>
+<details class="info" open="open">
+<summary>抢占（preemption）</summary>
+<p>抢占是内核暂时停止一个仍可运行的任务，把 CPU 让给另一个任务的机制。交互系统靠它避免一个程序独占机器；共享集群也靠它维护调度策略。计算作业不应假设某个线程从开始到结束都不被打断，因此计时要重复多次，并避免把一次偶然的系统干扰当成优化结论。</p>
+</details>
+<p><code>ps -o pid,ppid,stat,psr,comm -p &lt;pid&gt;</code> 可查看一个进程的状态、父进程和最近运行的 CPU；<code>top -H -p &lt;pid&gt;</code> 可在系统支持时查看进程中的线程。它们是瞬时观察，不是完整的性能证据：某线程显示为 sleeping，只说明采样时刻它没有运行，仍需结合程序的 I/O、锁和 profiler 事件判断等待原因。</p>
+<h3 id="系统调用页与缺页">系统调用、页与缺页<a class="headerlink" href="#系统调用页与缺页" title="Permanent link">&para;</a></h3>
+<p>用户态代码执行 <code>read</code>、<code>write</code>、<code>mmap</code> 或创建线程时，会经由系统调用陷入内核。这里的陷入，指 CPU 切换到受保护的执行权限，让内核检查参数和权限，再操作文件系统、页表或调度器。系统调用边界有固定成本，因此逐字节调用 <code>read</code>、每次循环都打开文件，常会比按块缓冲处理慢得多；这也是并行文件系统偏好大块、顺序 I/O 的一个微观原因。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/trap-control-flow.jpg"><img width="1280" height="720" alt="异常或系统调用发生后，处理器保存返回位置并转入内核处理函数，处理结束后再恢复用户程序。" src="../assets/0707p/trap-control-flow.preview.jpg" data-fullsrc="../assets/0707p/trap-control-flow.jpg" /></a></p>
+<p><em>图：控制流跨过用户态—内核态边界时，程序计数器和寄存器状态必须可恢复；进程没有跳过原程序，只是暂时执行受保护的处理路径。RISC-V 统称这类事件为 trap，涵盖异常与中断；处理器保存现场、执行处理、再恢复原程序，是系统调用与缺页的共同基础。</em></p>
+<p>陷入内核的原因可以分开看。用户态程序想做特权操作（读写文件、分配内存、网络）时，就要通过系统调用请求内核代劳。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/system-call-privileged.jpg"><img width="1280" height="720" alt="课件说明什么时候需要系统调用：用户程序要做特权操作时陷入内核；系统调用是受保护的请求，不是程序本身出错。" src="../assets/0707p/system-call-privileged.preview.jpg" data-fullsrc="../assets/0707p/system-call-privileged.jpg" /></a></p>
+<p><em>图：系统调用把特权操作交给内核执行；CPU 切换权限并检查参数是它的固定开销来源。</em></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/system-call-handler.jpg"><img width="1280" height="720" alt="课件画出系统调用处理的路径：用户进程发起调用，CPU 陷入内核，系统调用处理函数执行后返回用户态。" src="../assets/0707p/system-call-handler.preview.jpg" data-fullsrc="../assets/0707p/system-call-handler.jpg" /></a></p>
+<p><em>图：从用户态进入、内核处理、返回用户态，这套路径的固定成本，让每次调用尽量多干点活变得重要。</em></p>
+<table>
+<thead>
+<tr>
+<th>来源</th>
+<th>是否由当前指令主动触发</th>
+<th>例子</th>
+<th>处理后能否继续</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>系统调用</td>
+<td>是</td>
+<td><code>read</code>、<code>mmap</code>、<code>futex</code></td>
+<td>通常返回下一条用户指令</td>
+</tr>
+<tr>
+<td>异常</td>
+<td>由当前指令产生</td>
+<td>page fault、除零、非法指令</td>
+<td>取决于异常能否修复</td>
+</tr>
+<tr>
+<td>中断</td>
+<td>否，来自外部设备或时钟</td>
+<td>网卡收包、定时器</td>
+<td>内核处理后恢复被打断任务</td>
+</tr>
+</tbody>
+</table>
+<p>一次 minor page fault 可以由内核补上页表映射后重试原指令；越界访问若没有合法映射，内核会给进程发送 <code>SIGSEGV</code>。两者在硬件入口上都涉及异常，但软件语义和代价完全不同。（页和缺页的基本含义，后文虚拟内存与页表一节会系统讲解；这里先用得上的两点：页是内存按固定大小切出的块，缺页是访问时该块尚未有物理映射、由内核补上或判定非法。）</p>
+<p>虚拟内存以页为单位管理，常见页大小是 4 KiB（系统也可能使用 huge page）。<code>malloc</code> 成功通常只取得一段虚拟地址，不代表相同数量的 DRAM 已经立即占用。第一次写入某页时，处理器发现页表尚无有效物理映射，内核分配页面并更新页表，这就是按需分配造成的 minor page fault；若数据必须从磁盘换回，才是代价高得多的 major page fault。初始化一个数十 GB 数组也因此是实际工作，不能偷偷排除在端到端计时之外。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/huge-pages-tlb.jpg"><img width="1280" height="720" alt="4 KiB、2 MiB 与 1 GiB 页对 TLB 覆盖范围的影响；大页以更粗粒度减少地址翻译条目压力。" src="../assets/0707p/huge-pages-tlb.preview.jpg" data-fullsrc="../assets/0707p/huge-pages-tlb.jpg" /></a></p>
+<p><em>图：课件列出常见页大小及其覆盖范围。是否使用 huge page 取决于工作集、分配策略和系统配额，并非默认优化。</em></p>
+<p>地址翻译本身有缓存：TLB 保存最近的虚拟页到物理页映射。连续扫描数组时，一条 TLB 项能覆盖其后一段地址；指针追逐或巨大的随机工作集会更频繁地耗尽 TLB。cache blocking 改善数据复用时，往往也同时改善 TLB 行为，不过页大小、对齐和访问顺序仍需要用测量确认。</p>
+<h3 id="forkexec-与文件描述符"><code>fork</code>、<code>exec</code> 与文件描述符<a class="headerlink" href="#forkexec-与文件描述符" title="Permanent link">&para;</a></h3>
+<p>Unix 进程创建常见于 <code>fork()</code>。子进程最初得到父进程地址空间和文件描述符表的逻辑副本，但内核不会立刻复制全部物理页，先把双方页面标为 <strong>copy-on-write</strong>。只有父或子尝试写某页时，内核才复制该页。这让创建后立刻 <code>exec</code> 新程序的模式不必浪费复制整段内存的时间。</p>
+<p><code>execve()</code> 不创建新进程，它把当前进程的地址空间替换为目标可执行文件及其依赖库；PID 通常不变。shell 执行外部命令的基本过程便是 fork 一个子进程、在子进程中 exec、父进程按需要等待。作业系统启动 MPI rank、Python 的多进程库和管道也会建立在相似的进程机制上。</p>
+<p>文件描述符是进程内的小整数，指向内核维护的打开文件、管道、socket 或设备对象。标准输入/输出/错误一般是 0、1、2。fork 后父子会继承描述符，因此重定向、管道和日志输出需要特别注意谁还持有写端：管道读端只有在所有写端关闭后才会读到 EOF。这里的资源所有权，与多线程中谁可以写共享变量，是同一类工程问题。</p>
+<h2 id="线程与共享内存">线程与共享内存<a class="headerlink" href="#线程与共享内存" title="Permanent link">&para;</a></h2>
+<p>线程是 CPU 调度和执行的基本单位。一个进程可包含多个线程：它们共享代码、堆、全局变量和打开文件，但各自拥有寄存器状态、程序计数器和栈。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/thread-lightweight-process.jpg"><img width="1280" height="720" alt="课件把线程称作轻量级进程：每个线程有自己的线程 ID、程序计数器、寄存器组和栈，并与同一进程的其它线程共享代码段、数据段、堆和打开的文件。" src="../assets/0707p/thread-lightweight-process.preview.jpg" data-fullsrc="../assets/0707p/thread-lightweight-process.jpg" /></a></p>
+<p><em>图：线程作为轻量级进程，私有状态只有执行上下文（PC、寄存器、栈），其余全部共享；共享让线程间通信便宜，也让悬空指针、数据竞争和错误关闭文件影响整个进程。</em></p>
+<table>
+<thead>
+<tr>
+<th>对象</th>
+<th>同一进程的线程</th>
+<th>不同进程</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>虚拟地址空间</td>
+<td>共享</td>
+<td>默认隔离</td>
+</tr>
+<tr>
+<td>栈与寄存器</td>
+<td>每线程独立</td>
+<td>每进程中的线程各自独立</td>
+</tr>
+<tr>
+<td>打开的文件</td>
+<td>共享文件描述符表</td>
+<td>需继承或显式传递</td>
+</tr>
+<tr>
+<td>普通变量通信</td>
+<td>可直接共享，但要同步</td>
+<td>需要 IPC 或共享映射</td>
+</tr>
+<tr>
+<td>故障边界</td>
+<td>一个线程越界可能终止整个进程</td>
+<td>通常限制在出错进程内</td>
+</tr>
+</tbody>
+</table>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/create-threads-openmp.png"><img width="1280" height="720" alt="课件对比两种创建线程的方式：POSIX 线程（pthread）低层显式、需要手工同步，OpenMP 基于编译指令、是 HPC 的事实标准。" src="../assets/0707p/create-threads-openmp.preview.jpg" data-fullsrc="../assets/0707p/create-threads-openmp.png" /></a></p>
+<p><em>图：pthread_create 是底层建线程接口，啰嗦易错；OpenMP 用 <code>#pragma omp</code> 指令让编译器代劳建线程和同步，代码更接近串行。</em></p>
+<p>共享内存使线程通信方便，也带来数据竞争。<code>count++</code> 并不是一个不可分割的动作，它包含读、加、写。两个线程交错执行，结果可能少加一次：</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><a href="#__codelineno-5-1"><span class="linenos" data-linenos="1 "></span></a><span class="c1">// 错误示例：多个线程同时执行会发生数据竞争。</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a><a href="#__codelineno-5-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">count</span><span class="o">++</span><span class="p">;</span>
+</code></pre></div>
+<p>解决方式有三类：</p>
+<ol>
+<li>用互斥锁让同一时刻只有一个线程修改共享状态；</li>
+<li>对简单读改写使用原子操作；</li>
+<li>更常见也更高效的是避免共享写：各线程算自己的局部部分，最后归约。</li>
+</ol>
+<p>锁保证正确性，不保证性能。临界区过大，所有线程会排队；同步次数过多，程序即使有很多核心也会接近串行。写并行程序时先说明谁拥有数据、谁能写、何时合并，比先挑 OpenMP 语法更重要。</p>
+<h3 id="原子性可见性与等待">原子性、可见性与等待<a class="headerlink" href="#原子性可见性与等待" title="Permanent link">&para;</a></h3>
+<details class="note" open="open">
+<summary>原子性（atomicity）是什么</summary>
+<p>原子（atomic）就是<strong>不可分割</strong>。一个原子操作要么完整做完、要么完全没做，不会被其他线程看到中间状态。反例是前面的 <code>count++</code>：它编译后其实是读 → 加 → 写三步，不是原子操作。两个线程交错时可能同时读到旧值，各自加一、再各写回，导致本应加两次却只加了一次。互斥锁、原子类型（<code>std::atomic</code>）、<code>omp atomic</code> 的作用，就是把这类读改写合成不可分割的一步，或保证同一时刻只有一个线程在做。要注意：原子只保证正确性，不保证快——多个线程抢同一个原子变量仍会排队、争同一条 cache line。</p>
+</details>
+<p>互斥锁让线程排队，还要保证先后读写的顺序跨线程可见。即便两个线程没有真正同时写，也要让先写后读的顺序对消费者成立：线程 A 解锁前的写入，必须对随后成功加锁的线程 B 可见，否则即使锁挡住了同时的修改，消费者仍可能读到旧值。<code>std::mutex</code>、OpenMP 的同步构造和语言原子类型会建立这一层顺序关系。反过来，多个线程无任何同步地读写同一个普通变量属于<strong>数据竞争</strong>（data race），在 C/C++ 里是未定义行为，不能靠我的电脑多跑几次都对就证明安全。</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><a href="#__codelineno-6-1"><span class="linenos" data-linenos=" 1 "></span></a><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="w"> </span><span class="n">m</span><span class="p">;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a><a href="#__codelineno-6-2"><span class="linenos" data-linenos=" 2 "></span></a><span class="n">std</span><span class="o">::</span><span class="n">condition_variable</span><span class="w"> </span><span class="n">cv</span><span class="p">;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a><a href="#__codelineno-6-3"><span class="linenos" data-linenos=" 3 "></span></a><span class="kt">bool</span><span class="w"> </span><span class="n">ready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4"></a><a href="#__codelineno-6-4"><span class="linenos" data-linenos=" 4 "></span></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5"></a><a href="#__codelineno-6-5"><span class="linenos" data-linenos=" 5 "></span></a><span class="c1">// 生产者：写入数据后再公布 ready，并唤醒等待者。</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6"></a><a href="#__codelineno-6-6"><span class="linenos" data-linenos=" 6 "></span></a><span class="p">{</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7"></a><a href="#__codelineno-6-7"><span class="linenos" data-linenos=" 7 "></span></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lock</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8"></a><a href="#__codelineno-6-8"><span class="linenos" data-linenos=" 8 "></span></a><span class="w">    </span><span class="n">ready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9"></a><a href="#__codelineno-6-9"><span class="linenos" data-linenos=" 9 "></span></a><span class="p">}</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10"></a><a href="#__codelineno-6-10"><span class="linenos" data-linenos="10 "></span></a><span class="n">cv</span><span class="p">.</span><span class="n">notify_one</span><span class="p">();</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11"></a><a href="#__codelineno-6-11"><span class="linenos" data-linenos="11 "></span></a>
+<a id="__codelineno-6-12" name="__codelineno-6-12"></a><a href="#__codelineno-6-12"><span class="linenos" data-linenos="12 "></span></a><span class="c1">// 消费者：等待条件成立，不能只凭一次唤醒就继续。</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13"></a><a href="#__codelineno-6-13"><span class="linenos" data-linenos="13 "></span></a><span class="n">std</span><span class="o">::</span><span class="n">unique_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lock</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14"></a><a href="#__codelineno-6-14"><span class="linenos" data-linenos="14 "></span></a><span class="n">cv</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ready</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
+</code></pre></div>
+<p>锁解决同时访问，条件变量解决无事可做时如何等待。等待端若只是 <code>while (!ready) {}</code> 轮询，会一直占满一个核心、制造 cache 一致性流量；条件变量让它在条件不成立时睡眠，等 <code>notify</code> 才唤醒。等待必须写成谓词并在锁保护下检查，因为唤醒可能是虚假的，或数据已被其他线程先取走。只有极短、经过测量的等待才适合用自旋。</p>
+<div class="admonition tip">
+<p class="admonition-title">把共享对象的所有权写下来</p>
+<p>对每个数组或队列标明：哪个线程/进程创建它，哪些执行单元可以读，谁可以写，写完后如何通知读者。这个约定同时指导正确性和性能：独占写入避免锁，分块所有权减少 false sharing，明确的合并点也让计时边界更清楚。</p>
+</div>
+<h2 id="上下文切换与调度">上下文切换与调度<a class="headerlink" href="#上下文切换与调度" title="Permanent link">&para;</a></h2>
+<p>一颗核心在任一时刻只能执行一个硬件线程。操作系统的调度器在许多可运行线程间切换：保存当前线程的寄存器、程序计数器等上下文，恢复下一个线程，再继续执行。切换本身有成本；更大的损失往往是新线程迁移到另一核心后，原来热的 L1/L2 cache 失效了。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/process-switch.jpg"><img width="1280" height="720" alt="进程切换时，内核把当前寄存器状态保存到 PCB，再恢复另一个进程的状态。" src="../assets/0707p/process-switch.preview.jpg" data-fullsrc="../assets/0707p/process-switch.jpg" /></a></p>
+<p><em>图：图中的两条竖线表示两个进程交替运行；保存和恢复期间由操作系统执行，用户进程本身没有推进。</em></p>
+<p>调度器需要同时照顾吞吐、公平、响应时间和优先级。这些目标不能全部最大化。长时间片减少切换开销，却让交互任务等得更久；短时间片响应快，却增加保存状态和 cache 冷启动。HPC 批作业通常依靠作业系统先划定 CPU 集合，再由节点内调度器处理该集合中的线程。程序绑核只能限制允许往哪些核心去，不能让超过配额的线程凭空获得更多执行资源。</p>
+<p>这解释了几个实践现象：</p>
+<ul>
+<li>不要为极小任务反复创建/销毁线程；线程池和较粗的任务块更合适。</li>
+<li>线程数开得远多于核心数，不一定更快；它可能只增加调度、同步和缓存干扰。</li>
+<li>把一个工作线程随意迁移到不同核心，会丢失 cache 亲和性。</li>
+</ul>
+<p>调度器仍需要公平和响应性，所以把所有线程都绑死也不是默认答案。只有当测量表明迁移/NUMA 是瓶颈时，再使用 <code>taskset</code>、<code>numactl</code>、OpenMP 的 affinity 选项或作业系统的绑核设置。</p>
+<p>线程数应区分三个数量：程序创建的 software threads、操作系统可调度的任务数、以及作业实际被允许运行的 logical CPUs。容器或作业系统可能只授予 8 个 CPU，即使宿主机有 128 个逻辑核；盲目让 OpenMP 创建 128 个线程会产生超额订阅。可用 <code>nproc</code>、调度器环境变量或 <code>sched_getaffinity</code> 的结果确认可用集合，再设置 <code>OMP_NUM_THREADS</code>。SMT 的两个逻辑核也不等于两份完整执行资源：访存停顿较多的循环可能受益，已饱和 FMA 或内存带宽的循环则可能变慢。</p>
+<h3 id="核硬件线程与调度任务">核、硬件线程与调度任务<a class="headerlink" href="#核硬件线程与调度任务" title="Permanent link">&para;</a></h3>
+<p>物理核心有独立的执行资源和较近的 L1 cache。SMT/Hyper-Threading 在同一物理核心上提供多个硬件线程上下文；当一个线程因 cache miss 暂时没有可执行指令时，另一个线程可能使用闲下来的发射槽。它提高的是资源利用机会，不会把一个核心变成两颗完整核心。两个硬件线程仍共享部分执行单元、cache 和带宽，计算密集型程序甚至可能互相干扰。</p>
+<p>Linux 从内核实现上将可调度实体统一看作 task，进程和线程在调度层面有很多共同点。调度器根据优先级、运行时间、CPU 亲和性等选择下一个 task；切换时保存寄存器、栈指针、程序计数器和地址空间相关状态。不同进程切换还可能影响 TLB 和页表上下文，通常比同一进程线程间切换更重。</p>
+<p>对于吞吐型 HPC 作业，理想情形是每个 worker 长时间占用一个明确的 CPU，处理足够大的数据块。若工作队列过细、线程频繁休眠唤醒、任务不断跨核迁移，调度和 cache 冷启动会吞掉并行收益。反过来，服务型程序为响应交互请求而让出 CPU 是合理的；优化前先分清工作负载，不要把所有 Linux 程序都按同一准则绑核。</p>
+<h2 id="numa-架构">NUMA 架构<a class="headerlink" href="#numa-架构" title="Permanent link">&para;</a></h2>
+<details class="note" open="open">
+<summary>NUMA（Non-Uniform Memory Access）</summary>
+<p>大多数程序以为内存就是内存，从哪访问都一样。单路小机上确实接近这样：所有 CPU 核访问同一块内存，代价相近，这叫 UMA（一致内存访问）。但多路服务器不是这样：每颗 CPU（socket）旁边各挂一组本地内存，访问很快；跨 socket 去取另一颗 CPU 的内存，要穿过两颗 CPU 之间的高速互连，更慢、带宽也更低。这种不同位置内存访问代价不同的架构就叫 <strong>NUMA</strong>（非一致内存访问）；一个 socket 加它身边的内存合称一个 <strong>NUMA 节点</strong>（node）。</p>
+</details>
+<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><a href="#__codelineno-7-1"><span class="linenos" data-linenos="1 "></span></a>CPU socket 0 -- 本地内存 0
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a><a href="#__codelineno-7-2"><span class="linenos" data-linenos="2 "></span></a>       |\
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a><a href="#__codelineno-7-3"><span class="linenos" data-linenos="3 "></span></a>       | \  跨 socket 互连
+<a id="__codelineno-7-4" name="__codelineno-7-4"></a><a href="#__codelineno-7-4"><span class="linenos" data-linenos="4 "></span></a>       |  \
+<a id="__codelineno-7-5" name="__codelineno-7-5"></a><a href="#__codelineno-7-5"><span class="linenos" data-linenos="5 "></span></a>CPU socket 1 -- 本地内存 1
+</code></pre></div>
+<p>Linux 常按 first touch 分配物理页：哪个线程第一次写某块新内存，页面往往就分配到该线程所在 NUMA 节点。若主线程在 socket 0 一次性初始化全部大数组，之后 socket 1 的工作线程处理其中一半数据，就会发生大量远端访问。</p>
+<p>更合理的方式是让各线程初始化并处理自己的数据块；MPI/线程划分也与数据分块保持一致。可用 <code>numactl --hardware</code> 查看节点和距离，用 <code>numastat</code> 观察进程页分布。是否需要强制绑定，要以实际机器和测量为准。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/numa-latency.jpg"><img width="1280" height="720" alt="课件中的延迟矩阵显示：同一 socket 内访问较低，跨 socket 的格子明显更高。" src="../assets/0707p/numa-latency.preview.jpg" data-fullsrc="../assets/0707p/numa-latency.jpg" /></a></p>
+<p><em>图：线程与页面位于同一 NUMA node 时延迟较低；跨 socket 访问要经过处理器互连。</em></p>
+<h3 id="numa-分配与并行划分">NUMA 分配与并行划分<a class="headerlink" href="#numa-分配与并行划分" title="Permanent link">&para;</a></h3>
+<p>first touch 的含义常被说得过于简单。它只说明页面在第一次实际触碰时倾向分配到执行该操作的 NUMA node；究竟由哪个线程触碰，取决于初始化代码、线程绑定、内核策略和内存压力。只在主线程中 <code>memset</code> 全部数组，再让多个 socket 并行处理，是分布式内存布局和计算布局相反的典型情况。</p>
+<p>更可靠的写法是让未来负责某块数据的线程先初始化这块数据。例如并行初始化数组，再用相同分块进入计算循环。对于 MPI，每个 rank 通常只申请并初始化自己的局部数组；对于共享内存程序，则需要把 OpenMP 的初始化、计算调度和 CPU affinity 放在一起考虑。</p>
+<p><code>numactl --hardware</code> 可查看节点、CPU 与距离矩阵；<code>numastat -p &lt;pid&gt;</code> 可粗略观察一个进程页面分布；<code>taskset -cp &lt;pid&gt;</code> 可查看或设置 CPU 亲和性。这些工具回答的是数据和线程实际上在哪里，不能替代对算法的数据划分判断。发现远端访问高以后，还要确认它是否恰好是程序需要共享的数据，别机械地把所有内存绑到一个节点。</p>
+<h2 id="虚拟内存与页表">虚拟内存与页表<a class="headerlink" href="#虚拟内存与页表" title="Permanent link">&para;</a></h2>
+<details class="note" open="open">
+<summary>页表（page table）是什么</summary>
+<p>程序里的指针是虚拟地址，要想真的去内存取数据，得先把虚拟地址翻译成物理地址。谁来查这个对应关系？就是页表（page table）——一张把虚拟页号 → 物理页框号对应起来的表，进程每访问一个虚拟页，内核/MMU 就查这张表找到它实际落在哪块物理内存。表的每一行叫一个页表项（PTE），除了记录映射到哪个物理页框，还附带这一页的权限位：可读、可写、可执行。每个进程都有自己的一份页表，所以两个进程能各自用看似相同的地址而互不冲突；页表里没有对应条目时，这次访问就会触发缺页（page fault）。</p>
+</details>
+<p>程序里的指针是虚拟地址。CPU 真正发起 DRAM 访问前，需要由 MMU（memory management unit）根据页表把它翻译成物理地址。操作系统按页管理内存；常见页大小是 4 KiB，但系统也可以使用更大的 huge page。页表记录虚拟页号到物理页框的映射，以及该页是否可读、可写、可执行。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/why-virtual-memory.jpg"><img width="1280" height="720" alt="课件说明为什么需要虚拟内存：隔离各进程的地址空间、统一编程模型，并允许按需分页，让可用地址不必受物理磁盘大小限制。" src="../assets/0707p/why-virtual-memory.preview.jpg" data-fullsrc="../assets/0707p/why-virtual-memory.jpg" /></a></p>
+<p><em>图：虚拟内存把逻辑地址与物理内存解耦，带来隔离与灵活，也带来地址翻译这一层需要缓存的额外成本。</em></p>
+<p>如果每次读写都要先走内存里的多级页表，地址翻译本身会很慢，因此 CPU 有 TLB（translation lookaside buffer）缓存最近的页表项。一次普通访问大致经历这样的判断：</p>
+<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><a href="#__codelineno-8-1"><span class="linenos" data-linenos="1 "></span></a>虚拟地址
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a><a href="#__codelineno-8-2"><span class="linenos" data-linenos="2 "></span></a>  -&gt; TLB 命中：得到物理页号，继续查 L1/L2/L3/DRAM
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a><a href="#__codelineno-8-3"><span class="linenos" data-linenos="3 "></span></a>  -&gt; TLB 未命中：页表遍历，填入 TLB，再继续访问
+<a id="__codelineno-8-4" name="__codelineno-8-4"></a><a href="#__codelineno-8-4"><span class="linenos" data-linenos="4 "></span></a>  -&gt; 页表项不存在：触发 page fault，交给操作系统处理
+</code></pre></div>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/paging-page-frame.jpg"><img width="1280" height="720" alt="课件画出分页的基本思想：物理内存被切成页框，虚拟地址空间按页映射到这些页框，未映射或缺页时借助磁盘。" src="../assets/0707p/paging-page-frame.preview.jpg" data-fullsrc="../assets/0707p/paging-page-frame.jpg" /></a></p>
+<p><em>图：页与页框的映射是虚拟内存的核心；缺页、swap、共享与保护都建立在这张映射之上。</em></p>
+<p>这里的 <code>page fault</code> 并不自动等于程序出错。进程第一次触碰一块按需分配的匿名内存时，内核可能分配物理页并建立映射，这也是一种正常缺页。访问无权限地址、访问已经释放的映射，或系统不得不从磁盘换回被置换的页，才会分别成为异常或非常昂贵的缺页。</p>
+<p>大数组的访问模式会同时影响 cache 与 TLB。若每隔很远访问一个元素，带入的 cache line 很少被用到，TLB 里的页表项也可能频繁被替换。按块连续处理数据能让同一页、同一 cache line 上的内容被多次利用。该原则与后面矩阵分块、向量化课程里的数据布局是连着的。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/tlb-translation-cache.jpg"><img width="1280" height="720" alt="课件说明 TLB 是地址翻译的缓存：每个内存访问都要翻译虚拟地址，TLB 保存最近的映射以加速这一过程。" src="../assets/0707p/tlb-translation-cache.preview.jpg" data-fullsrc="../assets/0707p/tlb-translation-cache.jpg" /></a></p>
+<p><em>图：TLB 缓存虚拟页到物理页的翻译；随机大工作集更容易耗尽 TLB，与 cache miss 是两类不同但相关的开销。</em></p>
+<h3 id="地址空间布局">地址空间布局<a class="headerlink" href="#地址空间布局" title="Permanent link">&para;</a></h3>
+<p>进程地址空间图里常见的 <code>text</code>、<code>data</code>、heap、stack 并非只是教材标记，它们对应不同的分配与保护方式。</p>
+<ul>
+<li><code>text</code> 段存放机器指令，通常可读可执行、不可写；</li>
+<li>已初始化的全局和静态变量在 data 段，未初始化变量常以 BSS 形式记录；</li>
+<li>heap 由 <code>malloc</code>、<code>new</code> 等动态分配接口使用，分配器再向内核申请或归还页面；</li>
+<li>stack 保存函数调用帧、局部变量和返回地址，每个线程各有一份；</li>
+<li>共享库、文件映射和匿名映射通常落在专门的 mmap 区域。</li>
+</ul>
+<p>局部大数组放在栈上很容易触发 stack overflow；把大量互不相关的小对象逐个堆分配，也可能让分配器开销和访问碎片变大。HPC 程序常一次分配连续的大块数组，并明确数据布局，原因既包括易于并行，也包括对页面和 cache 更友好。</p>
+<h2 id="性能优化基础">性能优化基础<a class="headerlink" href="#性能优化基础" title="Permanent link">&para;</a></h2>
+<p>向量化试图让单核在 cache 命中时吞吐更多数据；OpenMP 处理同一节点的线程和同步；MPI 在进程和节点间通信；性能分析工具帮助判断到底在等 DRAM、等锁、等远端 NUMA 内存，还是计算单元本身已满。</p>
+<p>判断一个程序慢时，先确认循环有没有规则访问，数据是否能留在 cache，线程是否争同一份可写数据，任务和内存是否在同一个 NUMA 节点。每一步都能通过实验验证。</p>
+<h3 id="阿姆达尔amdahl定律">阿姆达尔（Amdahl）定律<a class="headerlink" href="#阿姆达尔amdahl定律" title="Permanent link">&para;</a></h3>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/amdahl-law.jpg"><img width="1280" height="720" alt="课件用 Amdahl 定律说明并行加速受串行部分限制：线程级并行（TLP）能并行运行时越多，加速越好，但总有串行段成为上界。" src="../assets/0707p/amdahl-law.preview.jpg" data-fullsrc="../assets/0707p/amdahl-law.jpg" /></a></p>
+<p><em>图：Amdahl 定律表明，即使并行部分无限加速，串行占比仍决定加速上限；这也是为什么先减少必须串行的部分。</em></p>
+<p>它用一句话概括并行能带来多少收益：<strong>可并行部分可以无限加核提速，不可并行部分却始终占着一段时间</strong>。设一次运行不可并行的时间占比为 <span class="arithmatex">\(s\)</span>（例如 0.05），其余部分在 <span class="arithmatex">\(p\)</span> 个处理器上理想并行，则总加速比为</p>
+<div class="arithmatex">\[
+S=\frac{1}{s+(1-s)/p}.
+\]</div>
+<p>当处理器数趋于无穷，<span class="arithmatex">\((1-s)/p\)</span> 趋于 0，加速上限就收敛到 <span class="arithmatex">\(1/s\)</span>。所以 5% 的串行时间，无论加多少核，加速都不会超过 20 倍。加核是否划算，取决于并行部分是否真占大头、能否被有效切分。反过来，若读文件、初始化、汇总输出这些串行步骤很重，先压缩它们，往往比继续加核更见效。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+  
+<script src="../../../../theme/data/page-metadata.js"></script>
+
+<div class="page-info">
+  <span class="page-info__item page-info__updated" hidden>
+    <span class="page-info__label">最后更新于 / Last updated</span>
+    <span class="page-info__value"><time id="page-last-updated" datetime=""></time></span>
+  </span>
+  <span class="page-info__item" id="busuanzi_container_site_pv">
+    <span class="page-info__label">本站总浏览 / Site views</span>
+    <span class="page-info__value"><span id="busuanzi_value_site_pv"></span></span>
+  </span>
+  <span class="page-info__item page-info__stars">
+    <span class="page-info__label">
+      有用的话请给我个
+      <a href="https://github.com/bfyes/bfyes.github.io/stargazers">star</a>
+      =&gt;
+    </span>
+    <span class="page-info__value">
+      <a href="https://github.com/bfyes/bfyes.github.io/stargazers" aria-label="GitHub Stars">
+        <img
+          alt="Stars"
+          src="https://img.shields.io/github/stars/bfyes/bfyes.github.io?label=Stars&style=flat"
+        >
+      </a>
+    </span>
+  </span>
+</div>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<script>
+  (function () {
+    function pageMetaCandidates() {
+      var path = window.location.pathname || "/";
+      var decoded = path;
+      try {
+        decoded = decodeURIComponent(path);
+      } catch (e) {}
+
+      return [
+        path,
+        decoded,
+        path.endsWith("/") ? path : path + "/",
+        decoded.endsWith("/") ? decoded : decoded + "/",
+      ];
+    }
+
+    function updatedText(value) {
+      var date = new Date(value);
+      return date.toLocaleDateString("zh-CN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    }
+
+    function ensureTopUpdated() {
+      var inner = document.querySelector(".md-content__inner");
+      if (!inner) {
+        return null;
+      }
+
+      var top = inner.querySelector(".page-updated-top");
+      if (!top) {
+        top = document.createElement("div");
+        top.className = "page-updated-top";
+        top.hidden = true;
+        top.innerHTML =
+          '<span class="page-updated-top__label">最后更新于 / Last updated</span>' +
+          '<time class="page-updated-top__time" datetime=""></time>';
+
+        var title = inner.querySelector("h1");
+        if (title) {
+          title.insertAdjacentElement("afterend", top);
+        } else {
+          inner.insertBefore(top, inner.firstChild);
+        }
+      }
+
+      return top;
+    }
+
+    function renderTime(wrap, time, value, text) {
+      if (!wrap || !time) {
+        return;
+      }
+
+      time.dateTime = value;
+      time.textContent = text;
+      wrap.hidden = false;
+    }
+
+    function renderLastUpdated() {
+      var meta = window.__BFYES_PAGE_META__ || {};
+      var candidates = pageMetaCandidates();
+      var data = null;
+
+      for (var i = 0; i < candidates.length; i++) {
+        if (meta[candidates[i]]) {
+          data = meta[candidates[i]];
+          break;
+        }
+      }
+
+      if (!data || !data.updated) {
+        return;
+      }
+
+      var text = updatedText(data.updated);
+      renderTime(
+        document.querySelector(".page-info__updated"),
+        document.querySelector("#page-last-updated"),
+        data.updated,
+        text
+      );
+
+      var top = ensureTopUpdated();
+      renderTime(
+        top,
+        top ? top.querySelector(".page-updated-top__time") : null,
+        data.updated,
+        text
+      );
+    }
+
+    function renderPageInfo() {
+      renderLastUpdated();
+    }
+
+    function scheduleRenderPageInfo() {
+      renderPageInfo();
+      setTimeout(renderPageInfo, 50);
+      setTimeout(renderPageInfo, 200);
+    }
+
+    if (!window.__bfyesPageInfoReady) {
+      window.__bfyesPageInfoReady = true;
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", scheduleRenderPageInfo);
+      } else {
+        scheduleRenderPageInfo();
+      }
+
+      if (window.document$) {
+        window.document$.subscribe(scheduleRenderPageInfo);
+      }
+    } else {
+      scheduleRenderPageInfo();
+    }
+  })();
+</script>
+
+  <!-- Giscus 评论区 -->
+
+<div class="giscus"></div>
+<script>
+  // 让 giscus 首次加载和后续切换都跟随站点主题。
+  (function () {
+    var SCRIPT_ID = "bfyes-giscus-client";
+    var FRAME_SEL = "iframe.giscus-frame";
+
+    function currentMode() {
+      if (window.bfyes && window.bfyes.theme) return window.bfyes.theme.mode;
+      var htmlScheme = document.documentElement.getAttribute("data-md-color-scheme");
+      var bodyScheme = document.body && document.body.getAttribute("data-md-color-scheme");
+      return (htmlScheme || bodyScheme) === "slate" ? "dark" : "light";
+    }
+
+    function themeFor(mode) {
+      // dark = GitHub dark (#0d1117 纯净黑底)，比 dark_dimmed 的灰底更干净。
+      return mode === "dark" ? "dark" : "light";
+    }
+
+    function getFrame() {
+      return document.querySelector(FRAME_SEL);
+    }
+
+    function postTheme(theme) {
+      var iframe = getFrame();
+      if (!iframe || !iframe.contentWindow) return false;
+      iframe.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: theme } } },
+        "https://giscus.app"
+      );
+      return true;
+    }
+
+    // 无论之前是否发过，都按当前主题再发一次（不带 lastTheme 去重短路，
+    // 避免 giscus iframe 尚未应用主题就被误判为"已同步"而漏发）。
+    function sync(mode) {
+      var theme = themeFor(mode || currentMode());
+      postTheme(theme);
+    }
+
+    function loadGiscus() {
+      if (document.getElementById(SCRIPT_ID)) return;
+      var script = document.createElement("script");
+      script.id = SCRIPT_ID;
+      script.src = "https://giscus.app/client.js";
+      script.async = true;
+      script.crossOrigin = "anonymous";
+      script.setAttribute("data-repo", "bfyes/bfyes.github.io");
+      script.setAttribute("data-repo-id", "R_kgDOQ6xWqA");
+      script.setAttribute("data-category", "Announcements");
+      script.setAttribute("data-category-id", "DIC_kwDOQ6xWqM4DA0Jv");
+      script.setAttribute("data-mapping", "pathname");
+      script.setAttribute("data-strict", "1");
+      script.setAttribute("data-reactions-enabled", "1");
+      script.setAttribute("data-emit-metadata", "0");
+      script.setAttribute("data-input-position", "bottom");
+      script.setAttribute("data-theme", themeFor(currentMode()));
+      script.setAttribute("data-lang", "zh-CN");
+      document.currentScript.parentNode.appendChild(script);
+    }
+
+    function bindThemeChanges() {
+      if (window.bfyes && window.bfyes.theme) {
+        window.bfyes.theme.subscribe(sync);
+        return;
+      }
+      if (typeof MutationObserver === "undefined") return;
+      new MutationObserver(function () { sync(); }).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-md-color-scheme"],
+      });
+    }
+
+    // giscus iframe 在 DOM 出现但内容可能尚未加载完成。若此刻 postMessage，
+    // giscus 可能还来不及注册 message 监听而丢弃消息——这是"要刷新才同步"的根因。
+    // 所以除了 DOM 出现时同步一次，还要在 iframe 真正 load 完成后按当前主题再补发一次。
+    function watchFrame(iframe) {
+      if (iframe && !iframe.__bfyesThemeWatched) {
+        iframe.__bfyesThemeWatched = true;
+        iframe.addEventListener("load", function () { sync(); });
+        // 兜底：load 事件有时早已触发，用超时再补一次。
+        setTimeout(function () { sync(); }, 1000);
+      }
+    }
+
+    function syncWhenFrameReady() {
+      var frame = getFrame();
+      if (frame) {
+        sync();
+        watchFrame(frame);
+        return;
+      }
+      if (typeof MutationObserver === "undefined" || !document.body) return;
+      var obs = new MutationObserver(function () {
+        var f = getFrame();
+        if (!f) return;
+        obs.disconnect();
+        sync();
+        watchFrame(f);
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+      setTimeout(function () { obs.disconnect(); }, 8000);
+    }
+
+    loadGiscus();
+    bindThemeChanges();
+    syncWhenFrameReady();
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", sync);
+    } else {
+      sync();
+    }
+  })();
+</script>
+
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../0706p/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 集群软硬件及运维基础">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                集群软硬件及运维基础
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../0708p/" class="md-footer__link md-footer__link--next" aria-label="Next: HPC 中的计算机系统 2">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                HPC 中的计算机系统 2
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"../../../..","features":["content.action.edit","content.code.annotate","content.code.copy","content.code.select","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.instant.progress","navigation.path","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.share","search.suggest","toc.follow"],"search":"../../../../assets/javascripts/workers/search.b6b7e04f.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.0df4f2d0.min.js"></script>
+      
+        <script src="../../../../theme/js/theme-sync.js"></script>
+      
+        <script src="../../../../theme/js/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="../../../../theme/js/site.js"></script>
+      
+        <script src="../../../../theme/js/site-home.js"></script>
+      
+        <script src="../../../../theme/js/site-terminal.js"></script>
+      
+        <script src="../../../../theme/js/site-images.js"></script>
+      
+        <script src="../../../../theme/js/site-pdf.js"></script>
+      
+        <script src="../../../../theme/js/site-friends.js"></script>
+      
+        <script src="../../../../theme/js/site-github.js"></script>
+      
+    
+  </body>
+</html>

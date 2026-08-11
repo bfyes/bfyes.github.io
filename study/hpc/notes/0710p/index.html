@@ -1,0 +1,4551 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="bfyes 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。">
+      
+      
+        <meta name="author" content="BillFeng">
+      
+      
+        <link rel="canonical" href="https://bfyes.github.io/study/hpc/notes/0710p/">
+      
+      
+        <link rel="prev" href="../0708p/">
+      
+      
+        <link rel="next" href="../0712a/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../theme/assets/favicon.svg">
+      <meta name="generator" content="zensical-0.0.47">
+    
+    
+      
+        <title>07-10 下午：向量化并行计算基础 - bfyes 的文档站</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../../../../assets/stylesheets/modern/main.5e19f6ca.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../theme/css/main.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/components.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  
+  <script>
+    (function () {
+      try {
+        var saved = (typeof __md_get === "function") ? __md_get("__palette") : null;
+        var scheme;
+        if (saved && saved.color && saved.color.media) {
+          if (saved.color.media === "(prefers-color-scheme)") {
+            scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "slate" : "default";
+          } else {
+            scheme = saved.color.scheme;
+          }
+        } else {
+          scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "slate" : "default";
+        }
+        document.documentElement.setAttribute("data-md-color-scheme", scheme);
+        var attach = function () {
+          document.body.setAttribute("data-md-color-scheme", scheme);
+          new MutationObserver(function () {
+            var s = document.body.getAttribute("data-md-color-scheme");
+            if (s) document.documentElement.setAttribute("data-md-color-scheme", s);
+          }).observe(document.body, {
+            attributes: true,
+            attributeFilter: ["data-md-color-scheme"],
+          });
+        };
+        if (document.body) {
+          attach();
+        } else {
+          new MutationObserver(function (_, obs) {
+            if (document.body) {
+              attach();
+              obs.disconnect();
+            }
+          }).observe(document.documentElement, { childList: true });
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#07-10-下午向量化并行计算基础" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="bfyes 的文档站" class="md-header__button md-logo" aria-label="bfyes 的文档站" data-md-component="logo">
+      <!-- BillFeng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="BillFeng">
+  <text x="0" y="36" class="bf-logo__text">BillFeng</text>
+</svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            bfyes 的文档站
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              07-10 下午：向量化并行计算基础
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至浅色模式"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun-moon" viewBox="0 0 24 24"><path d="M12 2v2M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715M16 12a4 4 0 0 0-4-4M19 5l-1.256 1.256M20 12h2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="切换至深色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="根据系统模式切换主题"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="根据系统模式切换主题" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/bfyes/bfyes.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bfyes.github.io
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="/" class="md-tabs__link">
+        
+  
+  主页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../" class="md-tabs__link">
+          
+  
+  学习
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../tools/" class="md-tabs__link">
+          
+  
+  工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../diaries/" class="md-tabs__link">
+          
+  
+  随笔
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../games/" class="md-tabs__link">
+          
+  
+  游戏
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="bfyes 的文档站" class="md-nav__button md-logo" aria-label="bfyes 的文档站" data-md-component="logo">
+      <!-- BillFeng 字体图标 Logo -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 48" class="bf-logo" role="img" aria-label="BillFeng">
+  <text x="0" y="36" class="bf-logo__text">BillFeng</text>
+</svg>
+    </a>
+    bfyes 的文档站
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bfyes/bfyes.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bfyes.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  主页
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学习
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  学习
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ismath/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  信息安全原理与数学基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../asm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  汇编语言设计与调试
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../sys1/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  计算机系统Ⅰ
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  计算机系统Ⅰ
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0: 数字电路仿真
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1: 八选一多路选择器
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2: 64位全加减法器
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3: 时序电路/FSM
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab4: 卷积模块
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab5: RISC-V 汇编
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  project: 单周期CPU
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../fds/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  数据结构基础
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  数据结构基础
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../fds/project1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project1
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../fds/project2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project2
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../fds/project3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project3
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 高性能计算
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  HPC 高性能计算
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  课程笔记
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  课程笔记
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0706p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  集群软硬件及运维基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0707p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 中的计算机系统 1
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0708p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 中的计算机系统 2
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  向量化并行计算基础
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  向量化并行计算基础
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#标量循环与批量计算" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        标量循环与批量计算
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#数据依赖" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        数据依赖
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="数据依赖">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#循环并行性的条件" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        循环并行性的条件
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#循环融合拆分与数据布局" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        循环融合、拆分与数据布局
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#numpy-与数组编程" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        NumPy 与数组编程
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NumPy 与数组编程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#广播与数组形状" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        广播与数组形状
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#切片二维邻居求和" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        切片：二维邻居求和
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#矩阵乘法与-blas" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        矩阵乘法与 BLAS
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simd-指令与向量寄存器" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SIMD 指令与向量寄存器
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SIMD 指令与向量寄存器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#加速比的限制" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        加速比的限制
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#点积归约与-fma" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        点积、归约与 FMA
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#自动向量化" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        自动向量化
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="自动向量化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#读懂向量化报告" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        读懂向量化报告
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#尾部元素与掩码" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        尾部元素与掩码
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simd-intrinsic" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SIMD intrinsic
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#矩阵乘法与缓存分块" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        矩阵乘法与缓存分块
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="矩阵乘法与缓存分块">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#低精度矩阵乘法字节数累加精度和数据布局" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        低精度矩阵乘法：字节数、累加精度和数据布局
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnniamx-与矩阵-tile" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        VNNI、AMX 与矩阵 Tile
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#固定宽度-avx-与可伸缩-sve" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        固定宽度 AVX 与可伸缩 SVE
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#risc-v-向量扩展rvv" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        RISC-V 向量扩展（RVV）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#基准测试" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        基准测试
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基准测试">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#结果验证与计时" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        结果验证与计时
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#对齐与别名" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        对齐与别名
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#浮点归约与可重复性" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        浮点归约与可重复性
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#练习" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        练习
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0712a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  OpenMP/MPI 基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0712p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  性能分析基础 Profiling
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0713a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  高性能计算高级话题
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0713p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CUDA 编程基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0716a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习基础（上）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0716p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习基础（下）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0717a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习高级话题（上）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0717p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习高级话题（下）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0: Linux Crash Course
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1: Mini Cluster
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2: MoE向量化计算
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3: GDN Prefill优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab4: 数值相对论优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab5: Gemma4推理优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../ctf/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CTF 夺旗赛
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  CTF 夺旗赛
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_3" id="__nav_2_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab1
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1_crypto/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1_misc/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1_pwn/pwn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Pwn
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1_rev/rev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reverse
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1_web/web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Web
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_4" id="__nav_2_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab2
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab2_crypto/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab2_misc/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_5" id="__nav_2_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab3
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab3_crypto/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab3_misc/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../tools/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  工具
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  工具
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/xp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  XP on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/rosetta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Rosetta on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/vivado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Vivado on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/notepadnext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Mac 记事本
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/xzzd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学在浙大 & PTA
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/run/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  校园跑
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../diaries/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  随笔
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  随笔
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../diaries/fa25_review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  2025 年度十图
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../diaries/sp26_midterm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 半期总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../diaries/sp26_final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 期末总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../games/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  游戏
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  游戏
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/4D_Intuition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  四维直觉
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/Shenzhen_IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  深圳I/O
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/The_Farmer_Was_Replaced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  编程农场
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/Turing_Complete/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  图灵完备
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  样式测试
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#标量循环与批量计算" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        标量循环与批量计算
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#数据依赖" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        数据依赖
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="数据依赖">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#循环并行性的条件" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        循环并行性的条件
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#循环融合拆分与数据布局" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        循环融合、拆分与数据布局
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#numpy-与数组编程" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        NumPy 与数组编程
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NumPy 与数组编程">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#广播与数组形状" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        广播与数组形状
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#切片二维邻居求和" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        切片：二维邻居求和
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#矩阵乘法与-blas" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        矩阵乘法与 BLAS
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simd-指令与向量寄存器" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SIMD 指令与向量寄存器
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SIMD 指令与向量寄存器">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#加速比的限制" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        加速比的限制
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#点积归约与-fma" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        点积、归约与 FMA
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#自动向量化" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        自动向量化
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="自动向量化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#读懂向量化报告" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        读懂向量化报告
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#尾部元素与掩码" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        尾部元素与掩码
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simd-intrinsic" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SIMD intrinsic
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#矩阵乘法与缓存分块" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        矩阵乘法与缓存分块
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="矩阵乘法与缓存分块">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#低精度矩阵乘法字节数累加精度和数据布局" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        低精度矩阵乘法：字节数、累加精度和数据布局
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vnniamx-与矩阵-tile" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        VNNI、AMX 与矩阵 Tile
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#固定宽度-avx-与可伸缩-sve" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        固定宽度 AVX 与可伸缩 SVE
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#risc-v-向量扩展rvv" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        RISC-V 向量扩展（RVV）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#基准测试" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        基准测试
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基准测试">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#结果验证与计时" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        结果验证与计时
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#对齐与别名" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        对齐与别名
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#浮点归约与可重复性" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        浮点归约与可重复性
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#练习" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        练习
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../../.." class="md-path__link">
+        
+  
+  <span class="md-ellipsis">
+    Welcome
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-path__item">
+        <a href="../../../" class="md-path__link">
+          
+  
+  <span class="md-ellipsis">
+    学习
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-path__item">
+        <a href="../../" class="md-path__link">
+          
+  
+  <span class="md-ellipsis">
+    HPC 高性能计算
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-path__item">
+        <a href="../0706p/" class="md-path__link">
+          
+  
+  <span class="md-ellipsis">
+    课程笔记
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+  
+                  
+  
+    <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/study/hpc/notes/0710p.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-pen" viewBox="0 0 24 24"><path d="M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"/></svg>
+    </a>
+  
+  
+
+
+
+
+
+<h1 id="07-10-下午向量化并行计算基础">07-10 下午：向量化并行计算基础<a class="headerlink" href="#07-10-下午向量化并行计算基础" title="Permanent link">&para;</a></h1>
+<p>同一段数组计算可能停在 Python 解释器、标量指令、cache miss，或不规则的数据依赖上。SIMD 只处理其中许多相同、独立元素操作的一段；进入 intrinsic 之前，先让循环边界、别名关系和数据布局足够明确。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/vector-simd.png"><img width="2000" height="1125" alt="一条 SIMD 指令在多个 lane 上完成相同运算" src="../assets/0710p/vector-simd.preview.jpg" data-fullsrc="../assets/0710p/vector-simd.png" /></a></p>
+<p><em>图：标量指令一次处理一个元素，SIMD 指令把同一种运算分发到多个 lane。lane 数由寄存器宽度和元素类型共同决定。</em></p>
+<details class="note" open="open">
+<summary>为什么叫“向量化”</summary>
+<p>之所以叫<strong>向量化</strong>，是因为把一批连续的元素抽象成一个整体来处理，就像把一堆标量从视觉上竖成一列、排成一串，数学和硬件里都习惯把这串数叫<strong>向量（vector）</strong>。于是把一整串数一次处理，就叫向量化。这里的向量指一串同类型数据，和上一章讲数学向量是同一层意思；两者的共同点都是把一组数当作一个单元，整体参与同一运算。</p>
+<p>它和把代码写得像 NumPy 那样逐行简洁是两个不同层面的事——向量化指的是最终被硬件以整串方式执行，具体是否真的发生，要看编译器、指令集和数据是否连续。</p>
+</details>
+<h2 id="标量循环与批量计算">标量循环与批量计算<a class="headerlink" href="#标量循环与批量计算" title="Permanent link">&para;</a></h2>
+<p>设有两个长度为 <code>n</code> 的向量，需要计算逐元素和：</p>
+<div class="arithmatex">\[
+c_i=a_i+b_i,\qquad 0\le i&lt;n
+\]</div>
+<p>标量写法把 <code>i=0,1,2,...</code> 依次执行；向量化写法把一段连续的 <code>a</code> 和 <code>b</code> 当成整体交给硬件。假如一条指令有 8 个 <code>float</code> lane，理论上可以同时做 8 次加法。</p>
+<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos="1 "></span></a>标量： a[0]+b[0] -&gt; c[0]，再处理 a[1]+b[1] -&gt; c[1]
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a><a href="#__codelineno-0-2"><span class="linenos" data-linenos="2 "></span></a>向量： [a0..a7] + [b0..b7] -&gt; [c0..c7]
+</code></pre></div>
+<p>“同时”在这里有逻辑和硬件两个层次。</p>
+<ul>
+<li><strong>逻辑向量化</strong>：把逐个元素的意图写成一整个数组操作，例如 <code>a + b</code>；底层实现选择怎样做。</li>
+<li><strong>硬件向量化</strong>：处理器实际用一条 SIMD 指令驱动多个运算 lane。</li>
+</ul>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/vectorization-scalar-vs-vector.jpg"><img width="1004" height="611" alt="课件用“标量运算 vs 向量运算”说明什么是向量化：同样的 2*a，标量一次处理一个元素，向量一次处理一整个数组。" src="../assets/0710p/vectorization-scalar-vs-vector.preview.jpg" data-fullsrc="../assets/0710p/vectorization-scalar-vs-vector.jpg" /></a></p>
+<p><em>图：同一个表达式，标量按元素逐个算，向量把多个元素放进一条指令。</em></p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/simd-gpu-hierarchy.jpg"><img width="1448" height="1086" alt="课件展示标量、向量指令、GPU 与向量处理单元在硬件中的层级：同一段代码可以落在 SIMD 指令，也可以落到 GPU 或专用向量单元。" src="../assets/0710p/simd-gpu-hierarchy.preview.jpg" data-fullsrc="../assets/0710p/simd-gpu-hierarchy.jpg" /></a></p>
+<p><em>图：向量化的逻辑可以由不同硬件执行；SIMD、GPU 与向量处理单元是同一思想的几种落地方式。</em></p>
+<p>两者有关，但不是同义词。NumPy 代码快，可能因为避开了 Python 解释器循环、调用了 C/BLAS 库、用了 SIMD，或三者兼有。不要把使用 NumPy 机械地等同于一定使用 AVX。</p>
+<h2 id="数据依赖">数据依赖<a class="headerlink" href="#数据依赖" title="Permanent link">&para;</a></h2>
+<p>向量化的关键要看不同迭代之间是否互相需要结果，而不是循环的语法。下面这个循环的每次迭代只读 <code>a[i]</code>、<code>b[i]</code>，只写 <code>c[i]</code>，所以它是典型的数据并行：</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">    </span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.0f</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><a href="#__codelineno-1-3"><span class="linenos" data-linenos="3 "></span></a><span class="p">}</span>
+</code></pre></div>
+<p>下面两个循环看起来也很短，性质却不同：</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><a href="#__codelineno-2-1"><span class="linenos" data-linenos="1 "></span></a><span class="c1">// 依赖上一轮的结果：不能直接把 i 的各轮独立并行。</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><a href="#__codelineno-2-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><a href="#__codelineno-2-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><a href="#__codelineno-2-4"><span class="linenos" data-linenos="4 "></span></a><span class="p">}</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><a href="#__codelineno-2-5"><span class="linenos" data-linenos="5 "></span></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a><a href="#__codelineno-2-6"><span class="linenos" data-linenos="6 "></span></a><span class="c1">// 多轮都写同一个 sum：直接并行会产生数据竞争。</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a><a href="#__codelineno-2-7"><span class="linenos" data-linenos="7 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a><a href="#__codelineno-2-8"><span class="linenos" data-linenos="8 "></span></a><span class="w">    </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a><a href="#__codelineno-2-9"><span class="linenos" data-linenos="9 "></span></a><span class="p">}</span>
+</code></pre></div>
+<p>第一个是前缀和，形成一条依赖链；第二个是归约。它们并非永远不能并行，而是需要不同算法：并行前缀和会分块再合并，归约会让每个工作者先算局部和、最后相加。不能因为看到 <code>for</code> 就默认可以加并行指示，是否可行取决于循环里是哪种依赖。</p>
+<details class="example">
+<summary>为什么前缀和不能只把循环改成 AVX</summary>
+<p><code>a[i] += a[i-1]</code> 中第 8 个元素需要第 7 个元素的最终值。把八个元素装进一个向量后，这个依赖仍在向量内部。并行 scan 会先在各块内求局部前缀，再扫描各块总和，最后把前缀偏移加回各块；它是另一种算法，而非一条更宽的加法指令。</p>
+</details>
+<h3 id="循环并行性的条件">循环并行性的条件<a class="headerlink" href="#循环并行性的条件" title="Permanent link">&para;</a></h3>
+<p>下列四个问题</p>
+<ol>
+<li>第 <code>i</code> 轮会读取第 <code>i-1</code> 轮刚写的值吗？</li>
+<li>两轮会写到同一地址吗？</li>
+<li>循环体是否有改变控制流的早停、I/O 或随机状态？</li>
+<li>即使算术独立，数据是否以规则、连续的方式存放？</li>
+</ol>
+<p>前两项为“是”时，先处理依赖或共享写；第四项为“否”时，即便能够向量化，内存访问也可能让收益很小。</p>
+<h3 id="循环融合拆分与数据布局">循环融合、拆分与数据布局<a class="headerlink" href="#循环融合拆分与数据布局" title="Permanent link">&para;</a></h3>
+<p>同样的数学式可以写成很不一样的循环。考虑</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><a href="#__codelineno-3-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">tmp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a><a href="#__codelineno-3-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</code></pre></div>
+<p>若 <code>tmp</code> 没有别的用途，可以融合成一个循环，少写一次、少读一次 <code>tmp</code>：</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><a href="#__codelineno-4-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</code></pre></div>
+<p>这种改写通常有利于 cache，也让编译器更容易生成 FMA。反过来，循环体若同时夹着一段难向量化的分支和一段规则算术，拆成两个循环有时更好：规则部分可保持连续访问和无分支，代价是多走一遍数组。没有固定答案，关键在于估算多出的内存流量和获得的规则性谁更重要。</p>
+<p>数据结构也会决定循环能否形成连续向量。若每次只需要很多粒子的 <code>x</code> 坐标，结构数组（AoS）会把不需要的 <code>y,z,mass</code> 一起读进来：</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><a href="#__codelineno-5-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">struct</span><span class="w"> </span><span class="nc">Particle</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">mass</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a><a href="#__codelineno-5-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+</code></pre></div>
+<p>把热点字段分开保存（SoA）后，<code>x[i]</code> 连续，SIMD load 和 cache line 都不会携带无关字段：</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><a href="#__codelineno-6-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">struct</span><span class="w"> </span><span class="nc">Particles</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="w"> </span><span class="n">z</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="w"> </span><span class="n">mass</span><span class="p">[</span><span class="n">n</span><span class="p">];</span><span class="w"> </span><span class="p">};</span>
+</code></pre></div>
+<p>AoS 并非总错。一次总要同时读取一个粒子的全部字段时，它反而方便。布局应服从最内层循环实际读取的字段，而不是服从数据结构看上去是否面向对象。</p>
+<h2 id="numpy-与数组编程">NumPy 与数组编程<a class="headerlink" href="#numpy-与数组编程" title="Permanent link">&para;</a></h2>
+<p>Python 的 <code>for</code> 循环每一轮都要处理对象、类型和解释器调度，对大数组很不划算。NumPy 的 <code>ndarray</code> 把同类型元素连续存储，并把循环放在编译后的底层实现中。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/numpy-not-vectorization.png"><img width="1728" height="972" alt="课件提醒：NumPy 本身不是向量化这个概念，它只是提供数组、矩阵和批量运算的接口；我们用 NumPy 要做的是把数据整理成能用向量化接口的样子。" src="../assets/0710p/numpy-not-vectorization.preview.jpg" data-fullsrc="../assets/0710p/numpy-not-vectorization.png" /></a></p>
+<p><em>图：NumPy 提供的是批量运算接口；是否真正用上 SIMD，取决于底层库与数据布局，而不是调用 <code>np.*</code> 本身。</em></p>
+<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><a href="#__codelineno-7-1"><span class="linenos" data-linenos="1 "></span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a><a href="#__codelineno-7-2"><span class="linenos" data-linenos="2 "></span></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a><a href="#__codelineno-7-3"><span class="linenos" data-linenos="3 "></span></a><span class="n">n</span> <span class="o">=</span> <span class="mi">1_000_000</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4"></a><a href="#__codelineno-7-4"><span class="linenos" data-linenos="4 "></span></a><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5"></a><a href="#__codelineno-7-5"><span class="linenos" data-linenos="5 "></span></a><span class="n">b</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6"></a><a href="#__codelineno-7-6"><span class="linenos" data-linenos="6 "></span></a>
+<a id="__codelineno-7-7" name="__codelineno-7-7"></a><a href="#__codelineno-7-7"><span class="linenos" data-linenos="7 "></span></a><span class="c1"># 写出问题的数学结构，而不是在 Python 中重复解释一百万次循环。</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8"></a><a href="#__codelineno-7-8"><span class="linenos" data-linenos="8 "></span></a><span class="n">c</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9"></a><a href="#__codelineno-7-9"><span class="linenos" data-linenos="9 "></span></a><span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span>
+</code></pre></div>
+<p>这里 <code>2 * a + b</code> 的每个位置相互独立。它不仅更短，也给底层实现留下了使用连续循环、SIMD 与多线程库的空间。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/numpy-matrix-sum.jpg"><img width="737" height="356" alt="课件用三层循环的 matrix_sum 与 NumPy 写法对照：手工 for 循环逐元素相加，而数组接口一次表达整个矩阵相加。" src="../assets/0710p/numpy-matrix-sum.preview.jpg" data-fullsrc="../assets/0710p/numpy-matrix-sum.jpg" /></a></p>
+<p><em>图：两段代码做同一件事——逐元素矩阵相加；用 NumPy 接口写出的形式更容易被底层的批量循环和 SIMD 加速。</em></p>
+<h3 id="广播与数组形状">广播与数组形状<a class="headerlink" href="#广播与数组形状" title="Permanent link">&para;</a></h3>
+<p>NumPy 经常不需要显式复制数据。若 <code>x</code> 的形状是 <code>(m, n)</code>，<code>bias</code> 的形状是 <code>(n,)</code>，<code>x + bias</code> 会把同一条 <code>bias</code> 逻辑上应用于每一行。这叫广播（broadcasting）。</p>
+<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><a href="#__codelineno-8-1"><span class="linenos" data-linenos="1 "></span></a><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">]])</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a><a href="#__codelineno-8-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">bias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="mf">30.</span><span class="p">])</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a><a href="#__codelineno-8-3"><span class="linenos" data-linenos="3 "></span></a><span class="nb">print</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">bias</span><span class="p">)</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4"></a><a href="#__codelineno-8-4"><span class="linenos" data-linenos="4 "></span></a><span class="c1"># [[11., 22., 33.], [14., 25., 36.]]</span>
+</code></pre></div>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/numpy-arange-reshape.jpg"><img width="474" height="304" alt="课件通过 np.arange(...).reshape(...) 演示数组的形状：一维连续数据可以按行/列重排成不同 view，广播与切片都建立在这个形状概念上。" src="../assets/0710p/numpy-arange-reshape.preview.jpg" data-fullsrc="../assets/0710p/numpy-arange-reshape.jpg" /></a></p>
+<p><em>图：<code>reshape</code> 只改变形状解释，不复制元素；后续广播、切片和矩阵乘法都依赖对形状的正确理解。</em></p>
+<p>广播很方便，但要先确认 shape。<code>(m, 1)</code> 和 <code>(m,)</code> 在 NumPy 中含义不同；不确定时打印 <code>array.shape</code>，而不是凭感觉猜结果。</p>
+<h3 id="切片二维邻居求和">切片：二维邻居求和<a class="headerlink" href="#切片二维邻居求和" title="Permanent link">&para;</a></h3>
+<p>每个格子的新值等于原值加右上和右下邻居；最右列没有邻居，按 0 处理。朴素实现会有边界判断：</p>
+<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><a href="#__codelineno-9-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">slow</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2"></a><a href="#__codelineno-9-2"><span class="linenos" data-linenos="2 "></span></a>    <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3"></a><a href="#__codelineno-9-3"><span class="linenos" data-linenos="3 "></span></a>    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4"></a><a href="#__codelineno-9-4"><span class="linenos" data-linenos="4 "></span></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5"></a><a href="#__codelineno-9-5"><span class="linenos" data-linenos="5 "></span></a>        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6"></a><a href="#__codelineno-9-6"><span class="linenos" data-linenos="6 "></span></a>            <span class="n">upper_right</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">cols</span> <span class="k">else</span> <span class="mi">0</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7"></a><a href="#__codelineno-9-7"><span class="linenos" data-linenos="7 "></span></a>            <span class="n">lower_right</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">rows</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">cols</span> <span class="k">else</span> <span class="mi">0</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8"></a><a href="#__codelineno-9-8"><span class="linenos" data-linenos="8 "></span></a>            <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">upper_right</span> <span class="o">+</span> <span class="n">lower_right</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9"></a><a href="#__codelineno-9-9"><span class="linenos" data-linenos="9 "></span></a>    <span class="k">return</span> <span class="n">out</span>
+</code></pre></div>
+<p>更适合数组表达的做法是先补零，再用相同形状的切片对齐：</p>
+<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><a href="#__codelineno-10-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">vectorized</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2"></a><a href="#__codelineno-10-2"><span class="linenos" data-linenos="2 "></span></a>    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">)</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3"></a><a href="#__codelineno-10-3"><span class="linenos" data-linenos="3 "></span></a>    <span class="c1"># p[1:-1, :-1] 对应原数组；其余两个切片已对齐到右上、右下邻居。</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4"></a><a href="#__codelineno-10-4"><span class="linenos" data-linenos="4 "></span></a>    <span class="k">return</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="mi">1</span><span class="p">:]</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5"></a><a href="#__codelineno-10-5"><span class="linenos" data-linenos="5 "></span></a>
+<a id="__codelineno-10-6" name="__codelineno-10-6"></a><a href="#__codelineno-10-6"><span class="linenos" data-linenos="6 "></span></a><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7"></a><a href="#__codelineno-10-7"><span class="linenos" data-linenos="7 "></span></a><span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">slow</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">vectorized</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+</code></pre></div>
+<p>这里并没有神奇地消除计算，我们只是把边界问题转成一次规则的 padding，把两重循环转成三个规则的切片。向量化的价值在于改变数据的表示，让计算形状变规则。</p>
+<h3 id="矩阵乘法与-blas">矩阵乘法与 BLAS<a class="headerlink" href="#矩阵乘法与-blas" title="Permanent link">&para;</a></h3>
+<p>若 <span class="arithmatex">\(A\in\mathbb{R}^{N\times K}\)</span>、<span class="arithmatex">\(B\in\mathbb{R}^{K\times M}\)</span>，结果为：</p>
+<div class="arithmatex">\[
+C_{ij}=\sum_{k=0}^{K-1}A_{ik}B_{kj}
+\]</div>
+<p>每个 <code>C[i, j]</code> 的输出位置独立，因而可以并行；但计算同一个位置时需要沿 <code>k</code> 累加。正确的首选是：</p>
+<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><a href="#__codelineno-11-1"><span class="linenos" data-linenos="1 "></span></a><span class="n">C</span> <span class="o">=</span> <span class="n">A</span> <span class="o">@</span> <span class="n">B</span>                 <span class="c1"># 或 np.matmul(A, B)</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2"></a><a href="#__codelineno-11-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))</span>
+</code></pre></div>
+<p><code>@</code> 通常会进入 BLAS 库。它不只做 SIMD，还会考虑缓存分块、线程数、寄存器阻塞和目标 CPU。自己写三重 Python 循环几乎不可能赢过它。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/numpy-matrix-mul-python.jpg"><img width="1271" height="523" alt="课件用三层 for 的 matrix_mul 展示手写矩阵乘法的样子：逐个元素遍历三个下标，循环开销大，也难以被 SIMD 与缓存分块利用。" src="../assets/0710p/numpy-matrix-mul-python.preview.jpg" data-fullsrc="../assets/0710p/numpy-matrix-mul-python.jpg" /></a></p>
+<p><em>图：手写 Python 三重循环做矩阵乘法；相同的计算改写成 <code>A @ B</code> 后交由 BLAS，才能让缓存分块、SIMD 与多线程真正生效。</em></p>
+<div class="admonition warning">
+<p class="admonition-title">数组表达式也可能制造临时数组</p>
+<p><code>y = a * b + c * d</code> 可能需要中间数组。对极大数组，这会增加内存流量和峰值内存。先用 <code>timeit</code>/profiler 验证；必要时用 <code>out=</code>、就地操作、NumExpr 或融合后的 kernel，而不是凭空假设少一行代码一定更快。</p>
+</div>
+<h2 id="simd-指令与向量寄存器">SIMD 指令与向量寄存器<a class="headerlink" href="#simd-指令与向量寄存器" title="Permanent link">&para;</a></h2>
+<p>SIMD 是 Single Instruction, Multiple Data。一条指令携带一个操作码，例如 packed add；向量寄存器中有多个 lane；所有有效 lane 同时做相同动作。以 256 位寄存器为例，它可装 8 个 <code>float</code> 或 4 个 <code>double</code>。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/simd-definition.png"><img width="1728" height="972" alt="课件对 SIMD 的定义：Single Instruction Multiple Data，单指令多数据流；在 x86 上通常与 AVX 等指令集联系在一起，由一条指令同时操作多个数据单元。" src="../assets/0710p/simd-definition.preview.jpg" data-fullsrc="../assets/0710p/simd-definition.png" /></a></p>
+<p><em>图：SIMD 指一条指令同时作用于多个数据元素；x86 的实现集中在 AVX 这类指令集。</em></p>
+<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a><a href="#__codelineno-12-1"><span class="linenos" data-linenos="1 "></span></a>__m256:  [a0 a1 a2 a3 a4 a5 a6 a7]
+<a id="__codelineno-12-2" name="__codelineno-12-2"></a><a href="#__codelineno-12-2"><span class="linenos" data-linenos="2 "></span></a>          +  +  +  +  +  +  +  +
+<a id="__codelineno-12-3" name="__codelineno-12-3"></a><a href="#__codelineno-12-3"><span class="linenos" data-linenos="3 "></span></a>__m256:  [b0 b1 b2 b3 b4 b5 b6 b7]
+<a id="__codelineno-12-4" name="__codelineno-12-4"></a><a href="#__codelineno-12-4"><span class="linenos" data-linenos="4 "></span></a>          =  =  =  =  =  =  =  =
+<a id="__codelineno-12-5" name="__codelineno-12-5"></a><a href="#__codelineno-12-5"><span class="linenos" data-linenos="5 "></span></a>__m256:  [c0 c1 c2 c3 c4 c5 c6 c7]
+</code></pre></div>
+<p>常见指令扩展的向量宽度和编程模型并不相同。</p>
+<table>
+<thead>
+<tr>
+<th>指令扩展</th>
+<th style="text-align: right;">向量宽度</th>
+<th style="text-align: right;">8 位元素数</th>
+<th style="text-align: right;">32 位元素数</th>
+<th>需要留意的边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SSE</td>
+<td style="text-align: right;">128 位</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">4</td>
+<td>x86 的较早一代 SIMD</td>
+</tr>
+<tr>
+<td>AVX2</td>
+<td style="text-align: right;">256 位</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">8</td>
+<td>整数和浮点 intrinsic 名称不同</td>
+</tr>
+<tr>
+<td>AVX-512</td>
+<td style="text-align: right;">512 位</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">16</td>
+<td>支持 mask；具体子扩展需查 CPU</td>
+</tr>
+<tr>
+<td>NEON</td>
+<td style="text-align: right;">128 位</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">4</td>
+<td>ARM Advanced SIMD</td>
+</tr>
+<tr>
+<td>SVE</td>
+<td style="text-align: right;">实现决定</td>
+<td style="text-align: right;">运行时决定</td>
+<td style="text-align: right;">运行时决定</td>
+<td>循环不能把 lane 数写死</td>
+</tr>
+</tbody>
+</table>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/intel-simd-isa-evolution.jpg"><img width="942" height="662" alt="课件梳理 Intel SIMD ISA 的演进：从 64 位的 MMX、128 位的 SSE 一路到 256 位的 AVX/AVX2 和 512 位的 AVX-512，每一代由新的微架构引入。" src="../assets/0710p/intel-simd-isa-evolution.preview.jpg" data-fullsrc="../assets/0710p/intel-simd-isa-evolution.jpg" /></a></p>
+<p><em>图：Intel x86 SIMD 是逐步叠加出来的——MMX、SSE、AVX、AVX-512 一代代加宽加能力；指令集版本决定有哪些工具可用。</em></p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/arm-vector-extensions.jpg"><img width="1013" height="519" alt="课件展示 Arm 架构的持续演进：ARM 侧也有 SIMD（NEON）与更富集的向量扩展，SVE 更强调可变向量长度。" src="../assets/0710p/arm-vector-extensions.preview.jpg" data-fullsrc="../assets/0710p/arm-vector-extensions.jpg" /></a></p>
+<p><em>图：Arm 同样在持续加入向量指令；理解 SIMD 时，x86 与 Arm 只是同一思想的两种实现。</em></p>
+<p>更宽的寄存器需要更多电路、供电和散热，还可能让 CPU 降频；内存带宽也可能先到极限。指令集版本只能说明有哪些工具，不能单独推出程序会快多少。</p>
+<h3 id="加速比的限制">加速比的限制<a class="headerlink" href="#加速比的限制" title="Permanent link">&para;</a></h3>
+<p>假设 AVX2 一次可处理 8 个 <code>float</code>，这只意味着计算指令的工作量有机会缩小约 8 倍。总时间还包括：</p>
+<ul>
+<li>从缓存或 DRAM 加载 <code>a</code>、<code>b</code>；</li>
+<li>存回 <code>c</code>；</li>
+<li>循环控制和地址计算；</li>
+<li>未对齐或跨 cache line 的访问；</li>
+<li>尾部元素处理；</li>
+<li>分支、依赖和其他不可向量化部分。</li>
+</ul>
+<p>若程序每个元素只做一次加法却需要读两次、写一次，那么它很可能先受内存带宽限制。SIMD 仍有帮助，但不会线性加速。这是阅读 benchmark 时必须保留的怀疑。</p>
+<p>更宽的向量寄存器也不是无条件更好。AVX2 一条指令处理 256 位，AVX-512 处理 512 位；但向量单元、寄存器文件、供电和内存带宽都不是无限的。某些处理器在高强度 AVX-512 下会降频，若程序本来受内存限制，翻倍的算术 lane 也没有足够数据可吃。这就是为什么不一直加宽的背景。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/avx512-width-limit.jpg"><img width="1728" height="972" alt="向量宽度并非越长越好：处理 512 位需要更宽的运算单元，代价是面积、成本与发热。" src="../assets/0710p/avx512-width-limit.preview.jpg" data-fullsrc="../assets/0710p/avx512-width-limit.jpg" /></a></p>
+<p><em>图：课件把为什么不再更长作为问题提出：一条指令覆盖更多数据，意味着指令侧面积成本与发热上升。AVX-512 曾因过热降频而出现表现不如 AVX2 的反常现象，因此更宽的指令集不等于更快。</em></p>
+<h3 id="点积归约与-fma">点积、归约与 FMA<a class="headerlink" href="#点积归约与-fma" title="Permanent link">&para;</a></h3>
+<p>逐元素计算最容易向量化；归约多了一层麻烦。点积</p>
+<div class="arithmatex">\[
+s=\sum_{i=0}^{n-1}a_i b_i
+\]</div>
+<p>所有迭代都会更新同一个 <span class="arithmatex">\(s\)</span>。正确的 SIMD 做法是让向量寄存器先积累多个局部和，最后再横向求和。概念代码如下：</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><a href="#__codelineno-13-1"><span class="linenos" data-linenos="1 "></span></a><span class="n">__m256</span><span class="w"> </span><span class="n">acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_setzero_ps</span><span class="p">();</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2"></a><a href="#__codelineno-13-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3"></a><a href="#__codelineno-13-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="n">__m256</span><span class="w"> </span><span class="n">va</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_loadu_ps</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4"></a><a href="#__codelineno-13-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">    </span><span class="n">__m256</span><span class="w"> </span><span class="n">vb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_loadu_ps</span><span class="p">(</span><span class="n">b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5"></a><a href="#__codelineno-13-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">    </span><span class="n">acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_fmadd_ps</span><span class="p">(</span><span class="n">va</span><span class="p">,</span><span class="w"> </span><span class="n">vb</span><span class="p">,</span><span class="w"> </span><span class="n">acc</span><span class="p">);</span><span class="w"> </span><span class="c1">// acc += va * vb</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6"></a><a href="#__codelineno-13-6"><span class="linenos" data-linenos="6 "></span></a><span class="p">}</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7"></a><a href="#__codelineno-13-7"><span class="linenos" data-linenos="7 "></span></a><span class="kt">float</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">horizontal_add</span><span class="p">(</span><span class="n">acc</span><span class="p">);</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8"></a><a href="#__codelineno-13-8"><span class="linenos" data-linenos="8 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</code></pre></div>
+<p><code>horizontal_add</code> 把 8 个 lane 合并为一个标量。它不是主循环中的热点，因而放在循环末尾即可。与标量顺序逐项相加相比，向量归约改变了加法顺序；浮点加法不满足严格结合律，所以最后几位可能不同。测试应使用误差阈值，而不是对浮点结果逐位比较。</p>
+<p>FMA（fused multiply-add）把 <span class="arithmatex">\(a\times b+c\)</span> 作为一次舍入的运算执行，既减少指令，也常带来更好的数值行为。编译器能否使用 FMA 与目标 CPU、编译选项和浮点语义有关。需要可复现实验结果时，应记录是否启用了 <code>-ffast-math</code>；它可能允许更激进的重排，速度提高的同时也可能改变误差分布。</p>
+<h2 id="自动向量化">自动向量化<a class="headerlink" href="#自动向量化" title="Permanent link">&para;</a></h2>
+<p>对于规则 C/C++ 循环，先写清楚、正确、连续的数据访问，再打开优化。以 Clang 为例：</p>
+<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1"></a><a href="#__codelineno-14-1"><span class="linenos" data-linenos="1 "></span></a>clang++<span class="w"> </span>-O3<span class="w"> </span>-march<span class="o">=</span>native<span class="w"> </span>-Rpass<span class="o">=</span>loop-vectorize<span class="w"> </span>saxpy.cpp<span class="w"> </span>-o<span class="w"> </span>saxpy
+</code></pre></div>
+<p><code>-O3</code> 开启较激进优化；<code>-Rpass=loop-vectorize</code> 给出成功向量化的报告。GCC 可用 <code>-fopt-info-vec</code> 观察类似信息。报告是排查线索，不是性能证明，仍要实际计时。</p>
+<h3 id="读懂向量化报告">读懂向量化报告<a class="headerlink" href="#读懂向量化报告" title="Permanent link">&para;</a></h3>
+<p>报告常见的两种信息分别是已向量化和无法向量化。后者比前者更有价值，因为它指出编译器缺少什么证明。例如：</p>
+<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1"></a><a href="#__codelineno-15-1"><span class="linenos" data-linenos="1 "></span></a>remark: loop not vectorized: unsafe dependent memory operations
+<a id="__codelineno-15-2" name="__codelineno-15-2"></a><a href="#__codelineno-15-2"><span class="linenos" data-linenos="2 "></span></a>remark: loop not vectorized: value that could not be identified as reduction
+</code></pre></div>
+<p>第一类通常来自指针别名或跨迭代读写，先检查 <code>x</code>、<code>y</code> 是否真的可能重叠；只有接口语义保证不重叠时才加 <code>restrict</code>。第二类提示编译器没有识别出归约，可将复杂表达式拆成局部累加，或用 OpenMP 的 <code>reduction</code> 明确语义。若循环本身充满随机索引、函数调用或数据相关分支，强行加 pragma 往往只是把正确性风险交给调用者，先改算法或布局更稳妥。</p>
+<p>报告显示 vectorized width: 8 也不等于每个循环都在跑 8 lane。检查生成汇编时，应看到连续的向量 load/store 与 packed arithmetic；同时仍可能有标量尾循环、对齐检查或运行时 alias check。这些前置检查通常很小，除非循环本身极短。</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1"></a><a href="#__codelineno-16-1"><span class="linenos" data-linenos="1 "></span></a><span class="kt">void</span><span class="w"> </span><span class="nf">saxpy</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="k">__restrict</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="k">__restrict</span><span class="w"> </span><span class="n">x</span><span class="p">,</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2"></a><a href="#__codelineno-16-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">           </span><span class="kt">float</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3"></a><a href="#__codelineno-16-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4"></a><a href="#__codelineno-16-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">        </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5"></a><a href="#__codelineno-16-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6"></a><a href="#__codelineno-16-6"><span class="linenos" data-linenos="6 "></span></a><span class="p">}</span>
+</code></pre></div>
+<p>这里 <code>__restrict</code> 的意思是调用者承诺 <code>x</code> 和 <code>y</code> 所指的可访问区域不重叠。若承诺不成立，程序行为会不正确；因此只有在接口语义确实保证不重叠时才写它。编译器不敢向量化时，常见原因正是它无法证明指针不别名、循环有跨迭代依赖，或者分支和边界太复杂。</p>
+<h3 id="尾部元素与掩码">尾部元素与掩码<a class="headerlink" href="#尾部元素与掩码" title="Permanent link">&para;</a></h3>
+<p>假设向量宽度为 8、<code>n=18</code>，前两次处理 16 个元素，最后 2 个怎么办？最直观的办法是向量主循环后补一个标量尾循环。AVX-512 和 SVE 支持 mask/predicate，让无效 lane 不读写；SVE 的 <code>svwhilelt</code> 按还有多少元素构造谓词，所以同一份代码能适应不同硬件向量长度。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/avx-mask-256bit.jpg"><img width="2000" height="454" alt="课件展示 256 位 YMM 寄存器上的 masked 操作：用 mask 标记哪些 lane 有效，无效 lane 不被读写，从而一次性处理不整除的尾部。" src="../assets/0710p/avx-mask-256bit.preview.jpg" data-fullsrc="../assets/0710p/avx-mask-256bit.jpg" /></a></p>
+<p><em>图：masked operation 用一位标志描述每个 lane 是否参与，是 AVX-512 处理尾部与条件执行的基础，和 SVE 的谓词是同一思想。</em></p>
+<p>尾处理并不难，真正的难点是确保没有越界读取、没有漏算，也没有为了处理尾部把主循环搞得分支很多。</p>
+<p>写或读 intrinsic 时还应留意四类实际问题：数据是否按所需边界对齐、循环长度是否正好是 lane 数的倍数、循环控制的分支是否已经吃掉收益、寄存器是否因临时变量过多而 spill。它们解释了为什么一段看上去每次算八个数目的代码，可能并不比编译器生成的版本快。</p>
+<h2 id="simd-intrinsic">SIMD intrinsic<a class="headerlink" href="#simd-intrinsic" title="Permanent link">&para;</a></h2>
+<p>Intrinsic 是 C/C++ 函数形式的指令接口。下面示例给 8 个 32 位整数逐元素相加：</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1"></a><a href="#__codelineno-17-1"><span class="linenos" data-linenos="1 "></span></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;immintrin.h&gt;</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2"></a><a href="#__codelineno-17-2"><span class="linenos" data-linenos="2 "></span></a>
+<a id="__codelineno-17-3" name="__codelineno-17-3"></a><a href="#__codelineno-17-3"><span class="linenos" data-linenos="3 "></span></a><span class="n">__m256i</span><span class="w"> </span><span class="nf">add8</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4"></a><a href="#__codelineno-17-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">    </span><span class="n">__m256i</span><span class="w"> </span><span class="n">va</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_loadu_si256</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">__m256i</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">a</span><span class="p">));</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5"></a><a href="#__codelineno-17-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">    </span><span class="n">__m256i</span><span class="w"> </span><span class="n">vb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_loadu_si256</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">__m256i</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">b</span><span class="p">));</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6"></a><a href="#__codelineno-17-6"><span class="linenos" data-linenos="6 "></span></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_mm256_add_epi32</span><span class="p">(</span><span class="n">va</span><span class="p">,</span><span class="w"> </span><span class="n">vb</span><span class="p">);</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7"></a><a href="#__codelineno-17-7"><span class="linenos" data-linenos="7 "></span></a><span class="p">}</span>
+</code></pre></div>
+<p>读 intrinsic 名称时可以拆开：<code>_mm256</code> 表示 256 位，<code>add</code> 表示加法，<code>epi32</code> 表示 packed 32-bit integer。真正编写前，必须查 <a href="https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html">Intel Intrinsics Guide</a>：确认所需头文件、目标 ISA、等价伪代码、输入输出类型、延迟与吞吐。不要让 AI 或名称猜测替代文档。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/intel-intrinsics-guide.jpg"><img width="2748" height="1604" alt="课件给出 Intel Intrinsics Guide 的界面：可以按指令集家族（SSE、AVX 等）过滤，查到每条 intrinsic 的概要、头文件与语义。" src="../assets/0710p/intel-intrinsics-guide.preview.jpg" data-fullsrc="../assets/0710p/intel-intrinsics-guide.jpg" /></a></p>
+<p><em>图：写 intrinsic 前用官方 Guide 核对名称、头文件、输入输出类型与延迟/吞吐，而不是靠猜测。</em></p>
+<p>上例只演示概念，不能直接当成完整数组函数：还需循环、尾部处理、输出存储、对齐/别名约束和目标机器检测。多数简单循环中，编译器已经能生成接近的代码；手写只在确认自动向量化无法表达关键结构、且 profiler 证明该处是热点时才值得。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/simd-pitfalls.png"><img width="1728" height="972" alt="课件列出常见问题：内存对齐、循环边界不确定、循环分支开销掩盖 SIMD 收益、寄存器数量超限，通常是手写 intrinsic 时最常踩的坑。" src="../assets/0710p/simd-pitfalls.preview.jpg" data-fullsrc="../assets/0710p/simd-pitfalls.png" /></a></p>
+<p><em>图：对齐、尾边界、分支开销与寄存器溢出，解释了为什么逐元素代码可能并不比编译器向量化版本快。</em></p>
+<h2 id="矩阵乘法与缓存分块">矩阵乘法与缓存分块<a class="headerlink" href="#矩阵乘法与缓存分块" title="Permanent link">&para;</a></h2>
+<p>朴素矩阵乘法若按不合适的循环顺序访问 B，可能每次内层迭代都把新的 cache line 从内存搬入，缓存几乎没有复用。优化的第一步通常是<strong>分块（tiling/blocking）</strong>：把 <code>A</code>、<code>B</code>、<code>C</code> 切成能放进缓存的小块，在块内完成更多乘加。</p>
+<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1"></a><a href="#__codelineno-18-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">BS</span><span class="p">)</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2"></a><a href="#__codelineno-18-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">kk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">kk</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="n">kk</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">BS</span><span class="p">)</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3"></a><a href="#__codelineno-18-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">BS</span><span class="p">)</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4"></a><a href="#__codelineno-18-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ii</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">ii</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">BS</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5"></a><a href="#__codelineno-18-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kk</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">kk</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">BS</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">k</span><span class="p">)</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6"></a><a href="#__codelineno-18-6"><span class="linenos" data-linenos="6 "></span></a><span class="w">          </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jj</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">jj</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">BS</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7"></a><a href="#__codelineno-18-7"><span class="linenos" data-linenos="7 "></span></a><span class="w">            </span><span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">B</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
+</code></pre></div>
+<p>这个顺序让 <code>B[k][j]</code> 沿 <code>j</code> 连续访问（假设 C/C++ 行主序），并让 <code>A[i][k]</code>、<code>C[i][j]</code> 在小块内复用。之后，内层 <code>j</code> 循环才是编译器向量化的好目标。真实项目优先调用 MKL、OpenBLAS、BLIS；这些库会继续做寄存器分块、预取和微内核调优。</p>
+<p>AVX-512 VNNI、AMX 与 ARM SME 面向更专门的低精度/矩阵乘加场景，本质仍是相同的数据流：<strong>load tile，计算 tile，store tile</strong>。只有确认数据类型、矩阵形状和硬件支持后，才进入这一步。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/arm-sme-tile.jpg"><img width="1906" height="1132" alt="课件画出 ARM SME 的 tile 与 SMOPA（外积累加）指令：A/B 矩阵以 ZA 寄存器的 tile 形式参与，一次完成整块矩阵乘加。" src="../assets/0710p/arm-sme-tile.preview.jpg" data-fullsrc="../assets/0710p/arm-sme-tile.jpg" /></a></p>
+<p><em>图：ARM SME 用 ZA 寄存器里的二维 tile 表达矩阵乘加，和 AMX、Tensor Core 的 load tile—算 tile—store tile 是同一数据流思想。</em></p>
+<h3 id="低精度矩阵乘法字节数累加精度和数据布局">低精度矩阵乘法：字节数、累加精度和数据布局<a class="headerlink" href="#低精度矩阵乘法字节数累加精度和数据布局" title="Permanent link">&para;</a></h3>
+<p>深度学习和一些数值核会把权重或输入从 <code>float32</code> 转成更低精度格式。W8A8 是一个常见记法：weight 和 activation 都用 8 位整数保存。它先把浮点数 <span class="arithmatex">\(x\)</span> 按 scale <span class="arithmatex">\(s\)</span> 映射为整数 <span class="arithmatex">\(q\)</span>：</p>
+<div class="arithmatex">\[
+q=\operatorname{clip}\left(\operatorname{round}\left(\frac{x}{s}\right),-128,127\right),
+\qquad x\approx s q.
+\]</div>
+<p>矩阵乘法的内层随即变成整数点积。两项 <code>int8</code> 相乘仍可放进较小的整数，但很多项相加会很快超过 8 位范围，所以实现通常使用 <code>int32</code> accumulator：</p>
+<div class="arithmatex">\[
+A_{ij}=\sum_k X^{(q)}_{ik}W^{(q)}_{kj},\qquad
+Y_{ij}\approx s_{x,i}\,s_{w,j}\,A_{ij}.
+\]</div>
+<p>也就是说，低精度的关键并不是把结果也粗暴地截成 8 位。输入和权重以小格式搬运，乘加以足够宽的格式积累，最后再根据激活和权重的 scale 恢复近似的数值范围。scale 可以按整张张量、每一列或更小的 block 设置；粒度越细，通常越能适应不同范围的数，代价是需要保存和读取更多元数据。</p>
+<p>这与向量化直接相连。低精度会减少内存流量，也可能让 CPU 的 VNNI/AMX 或 GPU 的矩阵单元一次完成更多乘加；但它只有在数据连续、tile 大小合适、量化和反量化没有盖过计算收益时才会变快。遇到 MoE 这类每个 expert 收到的小 batch，还要比较先按 expert 重排再做一批 GEMM 的收益是否足以覆盖重排成本。阅读 W8A8 实现时可沿这条链检查：量化发生在哪一步，累加器是什么类型，scale 的形状是什么，哪段循环真正进入矩阵核。</p>
+<h3 id="vnniamx-与矩阵-tile">VNNI、AMX 与矩阵 Tile<a class="headerlink" href="#vnniamx-与矩阵-tile" title="Permanent link">&para;</a></h3>
+<p>AVX-512 VNNI 面向整数点积。它把多组小整数乘法及其累加压进一条指令，适合 <code>int8</code> 权重和激活的内层循环。程序员仍需要保证内存中的元素顺序与指令期待的打包方式一致；数据类型对了、布局不对，吞吐也上不去。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/avx512-vnni.jpg"><img width="1536" height="1024" alt="课件演示 AVX-512 VNNI 的 _mm512_dpbusd_epi32：一组 4 位/8 位输入与一个 32 位累加器，一个 lane 一次完成多项乘累加。" src="../assets/0710p/avx512-vnni.preview.jpg" data-fullsrc="../assets/0710p/avx512-vnni.jpg" /></a></p>
+<p><em>图：VNNI 把多个 int8 乘累加压进一条指令，是低精度矩阵内层循环能借用硬件加速的关键。</em></p>
+<p>AMX 更接近显式的二维矩阵单元。它用 tile 寄存器保存小矩阵块，概念上的计算是</p>
+<div class="arithmatex">\[
+C_{m\times n}\mathrel{+}=A_{m\times k}B_{k\times n}.
+\]</div>
+<p>一次 tile 计算会沿 <span class="arithmatex">\(k\)</span> 维做大量点积，因此应让 <span class="arithmatex">\(A,B\)</span> 的 tile 在 cache 中复用。使用前需要配置 tile 的行数、列字节数和数据类型；配置与 load/store 也有成本。小得离谱的矩阵、频繁改变形状的调用，未必能摊薄这些成本。实际项目优先调用支持 AMX 的 BLAS 或 oneDNN，手写 tile 代码只适合确定的热点和受控形状。</p>
+<h3 id="固定宽度-avx-与可伸缩-sve">固定宽度 AVX 与可伸缩 SVE<a class="headerlink" href="#固定宽度-avx-与可伸缩-sve" title="Permanent link">&para;</a></h3>
+<p>AVX 的代码通常明确假设一次处理多少元素，例如 256 位寄存器中装 8 个 <code>float</code>。ARM SVE 则让向量长度由机器决定：循环每次前进 <code>svcntw()</code> 个 32 位元素，<code>svwhilelt_b32(i, n)</code> 生成谓词，标出最后一轮哪些 lane 仍有效。于是同一源代码可在不同 SVE 向量长度的实现上运行。</p>
+<p>这不是另一套更快的 AVX，而是另一种尾部与条件执行的编程模型。<code>_m</code>、<code>_z</code>、<code>_x</code> 后缀分别说明无效 lane 是保留旧值、写零还是不关心；在读写掩码代码前，必须先确认这种语义。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0710p/sve-predicate.png"><img width="1728" height="972" alt="SVE 用谓词处理尾部和条件执行，循环步长由硬件的实际向量长度决定。" src="../assets/0710p/sve-predicate.preview.jpg" data-fullsrc="../assets/0710p/sve-predicate.png" /></a></p>
+<p><em>图：谓词标记有效 lane，使最后一次迭代无需越界读写；代码不把向量长度写死。</em></p>
+<h3 id="risc-v-向量扩展rvv">RISC-V 向量扩展（RVV）<a class="headerlink" href="#risc-v-向量扩展rvv" title="Permanent link">&para;</a></h3>
+<p>RISC-V 的向量扩展（RVV）同样是长度由机器决定的模型，但用一组更细的寄存器配置来描述一次算多少个元素。处理器有固定的向量寄存器位宽 <code>VLEN</code>（如 128 或 256 位）；一条指令到底用多宽的向量，由两个量共同决定：</p>
+<ul>
+<li><strong>SEW</strong>（selected element width）是每个元素的位宽，例如 <code>i8</code>/<code>fp32</code>；</li>
+<li><strong>LMUL</strong>（length multiplier）表示一条向量寄存器组合了几个寄存器，取值可为分数或整数（如 <span class="arithmatex">\(1/4,1,2,8\)</span>）。它让逻辑向量长度 <span class="arithmatex">\(=\mathrm{VLEN}\times\mathrm{LMUL}/\mathrm{SEW}\)</span>。</li>
+</ul>
+<p>程序通过 <code>vsetvl</code> 之类的指令把还剩下多少元素结合 SEW/LMUL，动态算出本次实际处理的元素数，因此同一份代码能适应不同 <code>VLEN</code>。课程后面在 SpaceMiT 这类 RISC-V CPU 上做向量化，用的正是 RVV 的 intrinsic（如 <code>vrsub</code>、<code>vle</code>、<code>vse</code> 系列）让循环一次处理多个元素；读懂 <code>vsetvl</code>、SEW/LMUL 这些配置，是读 RISC-V 向量代码的入口。它和 AVX 的关键区别在于：AVX 把宽度写死在指令集里，RVV/SVE 让宽度由硬件和运行时的 <code>vsetvl</code> 决定。</p>
+<h2 id="基准测试">基准测试<a class="headerlink" href="#基准测试" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1"></a><a href="#__codelineno-19-1"><span class="linenos" data-linenos=" 1 "></span></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2"></a><a href="#__codelineno-19-2"><span class="linenos" data-linenos=" 2 "></span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3"></a><a href="#__codelineno-19-3"><span class="linenos" data-linenos=" 3 "></span></a>
+<a id="__codelineno-19-4" name="__codelineno-19-4"></a><a href="#__codelineno-19-4"><span class="linenos" data-linenos=" 4 "></span></a><span class="n">N</span> <span class="o">=</span> <span class="mi">2_000_000</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5"></a><a href="#__codelineno-19-5"><span class="linenos" data-linenos=" 5 "></span></a><span class="n">a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6"></a><a href="#__codelineno-19-6"><span class="linenos" data-linenos=" 6 "></span></a><span class="n">b</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">N</span><span class="p">))</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7"></a><a href="#__codelineno-19-7"><span class="linenos" data-linenos=" 7 "></span></a>
+<a id="__codelineno-19-8" name="__codelineno-19-8"></a><a href="#__codelineno-19-8"><span class="linenos" data-linenos=" 8 "></span></a><span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9"></a><a href="#__codelineno-19-9"><span class="linenos" data-linenos=" 9 "></span></a><span class="n">c_py</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span>
+<a id="__codelineno-19-10" name="__codelineno-19-10"></a><a href="#__codelineno-19-10"><span class="linenos" data-linenos="10 "></span></a><span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11"></a><a href="#__codelineno-19-11"><span class="linenos" data-linenos="11 "></span></a>
+<a id="__codelineno-19-12" name="__codelineno-19-12"></a><a href="#__codelineno-19-12"><span class="linenos" data-linenos="12 "></span></a><span class="n">an</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+<a id="__codelineno-19-13" name="__codelineno-19-13"></a><a href="#__codelineno-19-13"><span class="linenos" data-linenos="13 "></span></a><span class="n">bn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14"></a><a href="#__codelineno-19-14"><span class="linenos" data-linenos="14 "></span></a><span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<a id="__codelineno-19-15" name="__codelineno-19-15"></a><a href="#__codelineno-19-15"><span class="linenos" data-linenos="15 "></span></a><span class="n">cn</span> <span class="o">=</span> <span class="n">an</span> <span class="o">+</span> <span class="n">bn</span>
+<a id="__codelineno-19-16" name="__codelineno-19-16"></a><a href="#__codelineno-19-16"><span class="linenos" data-linenos="16 "></span></a><span class="n">t3</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<a id="__codelineno-19-17" name="__codelineno-19-17"></a><a href="#__codelineno-19-17"><span class="linenos" data-linenos="17 "></span></a>
+<a id="__codelineno-19-18" name="__codelineno-19-18"></a><a href="#__codelineno-19-18"><span class="linenos" data-linenos="18 "></span></a><span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c_py</span><span class="p">),</span> <span class="n">cn</span><span class="p">)</span>
+<a id="__codelineno-19-19" name="__codelineno-19-19"></a><a href="#__codelineno-19-19"><span class="linenos" data-linenos="19 "></span></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Python: </span><span class="si">{</span><span class="n">t1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+<a id="__codelineno-19-20" name="__codelineno-19-20"></a><a href="#__codelineno-19-20"><span class="linenos" data-linenos="20 "></span></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NumPy : </span><span class="si">{</span><span class="n">t3</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t2</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>接着把 <code>an + bn</code> 改成 <code>an[::2] + bn[::2]</code>，比较连续访问与步长访问；再尝试矩阵 <code>@</code> 与三重 Python 循环。记录数组大小、dtype、CPU、线程设置和运行次数，否则数字无法解释。</p>
+<h3 id="结果验证与计时">结果验证与计时<a class="headerlink" href="#结果验证与计时" title="Permanent link">&para;</a></h3>
+<p>优化前先保存一个小规模参考实现。每次修改后，先比输出，再测时间。对浮点数组可记录最大绝对误差和相对误差：</p>
+<div class="arithmatex">\[
+\max_i|y_i-y_i^{\mathrm{ref}}|,
+\qquad
+\max_i\frac{|y_i-y_i^{\mathrm{ref}}|}{\max(|y_i^{\mathrm{ref}}|,\epsilon)}.
+\]</div>
+<p>性能表则至少写明输入 shape、数据类型、编译选项、线程数、预热次数和统计量。把一次偶然的最短时间当结论没有意义；更可靠的是报告多次运行的中位数，并在异常波动时检查 CPU 降频、后台负载、NUMA 放置和内存分配。代码快了却把尾部漏算、把 <code>int32</code> 累加改成溢出的 <code>int8</code>，不算优化。</p>
+<h3 id="对齐与别名">对齐与别名<a class="headerlink" href="#对齐与别名" title="Permanent link">&para;</a></h3>
+<p>对齐影响的是一次向量加载能否自然落在所需边界。现代 x86 的非对齐 load 通常可用，却可能跨两个 cache line；在热点循环中仍值得让分配器和数据布局保持良好对齐。更常见的向量化障碍是别名：编译器看到 <code>void f(float *a, float *b)</code> 时，必须保守地考虑 <code>a</code> 和 <code>b</code> 指向重叠区域，写 <code>a[i]</code> 可能改变随后读到的 <code>b[i]</code>。只有调用者能保证两个区间不重叠时，C/C++ 才可以用 <code>restrict</code>（或编译器等价标注）交出这一事实；错误承诺会产生未定义行为，不能为了报告中出现 vectorized 而加入。</p>
+<h3 id="浮点归约与可重复性">浮点归约与可重复性<a class="headerlink" href="#浮点归约与可重复性" title="Permanent link">&para;</a></h3>
+<p>浮点加法不满足数学上的结合律。<code>(a+b)+c</code> 与 <code>a+(b+c)</code> 因舍入点不同可得到略有差异的结果；并行归约、向量树形归约和编译器的 reassociation 都会改变求和顺序。因而把标量版本和 AVX/OpenMP 版本用逐位相等比较，常会制造假错误。更合理的是为问题尺度和数据范围设定绝对/相对误差：</p>
+<div class="arithmatex">\[
+|x-y| \le \epsilon_{abs}+\epsilon_{rel}|y|.
+\]</div>
+<p>这不是放松正确性。若输出是概率、能量守恒量或迭代停止条件，还必须确认误差不会改变下游决策；若需要跨机器可重复，则要使用固定归约树、补偿求和或相应数值库。<code>-ffast-math</code> 允许更激进的重排，是否启用应由数值契约决定。</p>
+<h2 id="练习">练习<a class="headerlink" href="#练习" title="Permanent link">&para;</a></h2>
+<ol>
+<li>解释为什么 <code>out[i] = x[i] * 2</code> 容易向量化，而 <code>out[i] = out[i - 1] + x[i]</code> 不容易。</li>
+<li>用 <code>np.pad</code> 和切片实现任意二维数组的上下左右四邻居之和，并用小数组验证边界。</li>
+<li>对一个 <code>float32</code> 数组，推算 128/256/512 位寄存器分别可容纳多少个元素。再解释为什么这不等于必然 4/8/16 倍加速。</li>
+<li>编译一个简单 SAXPY 循环，保存编译器向量化报告；修改循环使 <code>x</code>、<code>y</code> 可能重叠，观察报告和结果如何变化。</li>
+<li>任选一个矩阵乘法尺寸，分别使用朴素循环、调整循环顺序、分块、<code>np.matmul</code> 或 BLAS，验证先改善访问模式、再谈指令的顺序。</li>
+</ol>
+<p>性能优化通常从热点开始，随后确认读写依赖和访问布局，再比较自动向量化、线程和更低层的指令实现。每一步都要保留正确性基线；否则某个看上去很快的版本，可能只是少算了工作。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+  
+<script src="../../../../theme/data/page-metadata.js"></script>
+
+<div class="page-info">
+  <span class="page-info__item page-info__updated" hidden>
+    <span class="page-info__label">最后更新于 / Last updated</span>
+    <span class="page-info__value"><time id="page-last-updated" datetime=""></time></span>
+  </span>
+  <span class="page-info__item" id="busuanzi_container_site_pv">
+    <span class="page-info__label">本站总浏览 / Site views</span>
+    <span class="page-info__value"><span id="busuanzi_value_site_pv"></span></span>
+  </span>
+  <span class="page-info__item page-info__stars">
+    <span class="page-info__label">
+      有用的话请给我个
+      <a href="https://github.com/bfyes/bfyes.github.io/stargazers">star</a>
+      =&gt;
+    </span>
+    <span class="page-info__value">
+      <a href="https://github.com/bfyes/bfyes.github.io/stargazers" aria-label="GitHub Stars">
+        <img
+          alt="Stars"
+          src="https://img.shields.io/github/stars/bfyes/bfyes.github.io?label=Stars&style=flat"
+        >
+      </a>
+    </span>
+  </span>
+</div>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<script>
+  (function () {
+    function pageMetaCandidates() {
+      var path = window.location.pathname || "/";
+      var decoded = path;
+      try {
+        decoded = decodeURIComponent(path);
+      } catch (e) {}
+
+      return [
+        path,
+        decoded,
+        path.endsWith("/") ? path : path + "/",
+        decoded.endsWith("/") ? decoded : decoded + "/",
+      ];
+    }
+
+    function updatedText(value) {
+      var date = new Date(value);
+      return date.toLocaleDateString("zh-CN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    }
+
+    function ensureTopUpdated() {
+      var inner = document.querySelector(".md-content__inner");
+      if (!inner) {
+        return null;
+      }
+
+      var top = inner.querySelector(".page-updated-top");
+      if (!top) {
+        top = document.createElement("div");
+        top.className = "page-updated-top";
+        top.hidden = true;
+        top.innerHTML =
+          '<span class="page-updated-top__label">最后更新于 / Last updated</span>' +
+          '<time class="page-updated-top__time" datetime=""></time>';
+
+        var title = inner.querySelector("h1");
+        if (title) {
+          title.insertAdjacentElement("afterend", top);
+        } else {
+          inner.insertBefore(top, inner.firstChild);
+        }
+      }
+
+      return top;
+    }
+
+    function renderTime(wrap, time, value, text) {
+      if (!wrap || !time) {
+        return;
+      }
+
+      time.dateTime = value;
+      time.textContent = text;
+      wrap.hidden = false;
+    }
+
+    function renderLastUpdated() {
+      var meta = window.__BFYES_PAGE_META__ || {};
+      var candidates = pageMetaCandidates();
+      var data = null;
+
+      for (var i = 0; i < candidates.length; i++) {
+        if (meta[candidates[i]]) {
+          data = meta[candidates[i]];
+          break;
+        }
+      }
+
+      if (!data || !data.updated) {
+        return;
+      }
+
+      var text = updatedText(data.updated);
+      renderTime(
+        document.querySelector(".page-info__updated"),
+        document.querySelector("#page-last-updated"),
+        data.updated,
+        text
+      );
+
+      var top = ensureTopUpdated();
+      renderTime(
+        top,
+        top ? top.querySelector(".page-updated-top__time") : null,
+        data.updated,
+        text
+      );
+    }
+
+    function renderPageInfo() {
+      renderLastUpdated();
+    }
+
+    function scheduleRenderPageInfo() {
+      renderPageInfo();
+      setTimeout(renderPageInfo, 50);
+      setTimeout(renderPageInfo, 200);
+    }
+
+    if (!window.__bfyesPageInfoReady) {
+      window.__bfyesPageInfoReady = true;
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", scheduleRenderPageInfo);
+      } else {
+        scheduleRenderPageInfo();
+      }
+
+      if (window.document$) {
+        window.document$.subscribe(scheduleRenderPageInfo);
+      }
+    } else {
+      scheduleRenderPageInfo();
+    }
+  })();
+</script>
+
+  <!-- Giscus 评论区 -->
+
+<div class="giscus"></div>
+<script>
+  // 让 giscus 首次加载和后续切换都跟随站点主题。
+  (function () {
+    var SCRIPT_ID = "bfyes-giscus-client";
+    var FRAME_SEL = "iframe.giscus-frame";
+
+    function currentMode() {
+      if (window.bfyes && window.bfyes.theme) return window.bfyes.theme.mode;
+      var htmlScheme = document.documentElement.getAttribute("data-md-color-scheme");
+      var bodyScheme = document.body && document.body.getAttribute("data-md-color-scheme");
+      return (htmlScheme || bodyScheme) === "slate" ? "dark" : "light";
+    }
+
+    function themeFor(mode) {
+      // dark = GitHub dark (#0d1117 纯净黑底)，比 dark_dimmed 的灰底更干净。
+      return mode === "dark" ? "dark" : "light";
+    }
+
+    function getFrame() {
+      return document.querySelector(FRAME_SEL);
+    }
+
+    function postTheme(theme) {
+      var iframe = getFrame();
+      if (!iframe || !iframe.contentWindow) return false;
+      iframe.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: theme } } },
+        "https://giscus.app"
+      );
+      return true;
+    }
+
+    // 无论之前是否发过，都按当前主题再发一次（不带 lastTheme 去重短路，
+    // 避免 giscus iframe 尚未应用主题就被误判为"已同步"而漏发）。
+    function sync(mode) {
+      var theme = themeFor(mode || currentMode());
+      postTheme(theme);
+    }
+
+    function loadGiscus() {
+      if (document.getElementById(SCRIPT_ID)) return;
+      var script = document.createElement("script");
+      script.id = SCRIPT_ID;
+      script.src = "https://giscus.app/client.js";
+      script.async = true;
+      script.crossOrigin = "anonymous";
+      script.setAttribute("data-repo", "bfyes/bfyes.github.io");
+      script.setAttribute("data-repo-id", "R_kgDOQ6xWqA");
+      script.setAttribute("data-category", "Announcements");
+      script.setAttribute("data-category-id", "DIC_kwDOQ6xWqM4DA0Jv");
+      script.setAttribute("data-mapping", "pathname");
+      script.setAttribute("data-strict", "1");
+      script.setAttribute("data-reactions-enabled", "1");
+      script.setAttribute("data-emit-metadata", "0");
+      script.setAttribute("data-input-position", "bottom");
+      script.setAttribute("data-theme", themeFor(currentMode()));
+      script.setAttribute("data-lang", "zh-CN");
+      document.currentScript.parentNode.appendChild(script);
+    }
+
+    function bindThemeChanges() {
+      if (window.bfyes && window.bfyes.theme) {
+        window.bfyes.theme.subscribe(sync);
+        return;
+      }
+      if (typeof MutationObserver === "undefined") return;
+      new MutationObserver(function () { sync(); }).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-md-color-scheme"],
+      });
+    }
+
+    // giscus iframe 在 DOM 出现但内容可能尚未加载完成。若此刻 postMessage，
+    // giscus 可能还来不及注册 message 监听而丢弃消息——这是"要刷新才同步"的根因。
+    // 所以除了 DOM 出现时同步一次，还要在 iframe 真正 load 完成后按当前主题再补发一次。
+    function watchFrame(iframe) {
+      if (iframe && !iframe.__bfyesThemeWatched) {
+        iframe.__bfyesThemeWatched = true;
+        iframe.addEventListener("load", function () { sync(); });
+        // 兜底：load 事件有时早已触发，用超时再补一次。
+        setTimeout(function () { sync(); }, 1000);
+      }
+    }
+
+    function syncWhenFrameReady() {
+      var frame = getFrame();
+      if (frame) {
+        sync();
+        watchFrame(frame);
+        return;
+      }
+      if (typeof MutationObserver === "undefined" || !document.body) return;
+      var obs = new MutationObserver(function () {
+        var f = getFrame();
+        if (!f) return;
+        obs.disconnect();
+        sync();
+        watchFrame(f);
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+      setTimeout(function () { obs.disconnect(); }, 8000);
+    }
+
+    loadGiscus();
+    bindThemeChanges();
+    syncWhenFrameReady();
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", sync);
+    } else {
+      sync();
+    }
+  })();
+</script>
+
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../0708p/" class="md-footer__link md-footer__link--prev" aria-label="Previous: HPC 中的计算机系统 2">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                HPC 中的计算机系统 2
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../0712a/" class="md-footer__link md-footer__link--next" aria-label="Next: OpenMP&#x2f;MPI 基础">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                OpenMP/MPI 基础
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"../../../..","features":["content.action.edit","content.code.annotate","content.code.copy","content.code.select","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.instant.progress","navigation.path","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.share","search.suggest","toc.follow"],"search":"../../../../assets/javascripts/workers/search.b6b7e04f.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.0df4f2d0.min.js"></script>
+      
+        <script src="../../../../theme/js/theme-sync.js"></script>
+      
+        <script src="../../../../theme/js/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="../../../../theme/js/site.js"></script>
+      
+        <script src="../../../../theme/js/site-home.js"></script>
+      
+        <script src="../../../../theme/js/site-terminal.js"></script>
+      
+        <script src="../../../../theme/js/site-images.js"></script>
+      
+        <script src="../../../../theme/js/site-pdf.js"></script>
+      
+        <script src="../../../../theme/js/site-friends.js"></script>
+      
+        <script src="../../../../theme/js/site-github.js"></script>
+      
+    
+  </body>
+</html>
