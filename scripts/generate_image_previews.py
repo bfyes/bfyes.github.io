@@ -11,7 +11,10 @@ Output naming:
 
 Usage:
     python scripts/generate_image_previews.py          # generate in docs/ (local dev)
-    python scripts/generate_image_previews.py --site   # generate in site/ + cleanup stale (deploy)
+    python scripts/generate_image_previews.py --site   # generate in site/ (deploy)
+
+Both modes also delete orphaned previews whose source image no longer exists,
+so every run (which already hashes sources) doubles as a cleanup pass.
 """
 
 from __future__ import annotations
@@ -198,7 +201,7 @@ def generate(base: Path, force: bool) -> tuple[int, int]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--site", action="store_true", help="generate in site/ + cleanup stale previews")
+    parser.add_argument("--site", action="store_true", help="generate in site/ (orphan cleanup runs in both modes)")
     parser.add_argument("--force", action="store_true", help="regenerate all previews")
     args = parser.parse_args()
 
@@ -209,9 +212,7 @@ def main() -> int:
     base = SITE if args.site else DOCS
     generated, skipped = generate(base, args.force)
 
-    cleaned = 0
-    if args.site:
-        cleaned = clean_stale_previews(base)
+    cleaned = clean_stale_previews(base)
 
     print(
         f"[image-previews] {base.relative_to(ROOT)}/ — generated {generated}, skipped {skipped}, cleaned {cleaned}",

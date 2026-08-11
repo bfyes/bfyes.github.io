@@ -4,11 +4,12 @@
     **实验平台：Intel Sapphire Rapids**（x86，AVX-512，AMX）
 
     [点击查看报告 PDF 版](./lab2.pdf)
+
 我是把代码都写完再来写报告的，有点不知道从哪里写起，脑子乱乱的……
 
-先贴一张我认为比较“平均”的成绩（？
+先贴一张我认为比较"平均"的成绩（？
 
-<img src="./lab2.assets/image-20260810183737702.png" alt="image-20260810183737702" style="zoom: 40%;" />
+<img src="./lab2.assets/image-20260810183737702.png" alt="image-20260810183737702" style="zoom: 25%;" />
 
 为什么说平均呢？是因为我感觉节点的性能不怎么稳定……同样的代码跑几遍会有不同的结果（当然和我写的垃有关系，S4 一直很稳定，S2 则时好时坏，最好的时候120，差的时候只有八九十，这点会在后面提及）。S4 在最后一轮优化（量化输出结果）之后能稳定119.xxxxx分，<img src="./lab2.assets/image-20260810214653402.png" alt="image-20260810214653402" style="zoom:35%;" />上面总分108那张其实是没定稿时候截的。然而 S4 优化之后，其余测试点有拉胯了(x)，所以没法弄一个完美的截图，把最后几次机会消耗了也没试出，可能是高峰期的问题吗，不太懂这个。在本地成绩稳定提升后在oj上甚至下降了一截，且不稳定。
 
@@ -16,13 +17,11 @@
 
 我也比较认可这个成绩波动区间了，具体的分数我想并没有那么重要，优化的思路才是报告应该体现的。（OJ 上是满分，<span style="text-decoration:line-through; color:#808080;">因为缓存的问题</span>，应该不止一个人发现了这个问题）
 
-ai风味图片：
-
-<img src="./lab2.assets/oj_variation.png" alt="OJ 多次样本的加速比波动" style="zoom: 30%;" />
+<img src="./lab2.assets/oj_variation.png" alt="OJ 多次样本的加速比波动" style="zoom: 25%;" />
 
 ---
 
-哦对了，还有，这个测试平台好评！（这是 lab1 “进阶挑战”的终极实现了，我也想有朝一日做出/维护这样的平台，这一定很有成就感吧……）
+哦对了，还有，这个测试平台好评！（这是 lab1 "进阶挑战"的终极实现了，我也想有朝一日做出/维护这样的平台，这一定很有成就感吧……）
 
 ### 一些<span style="color:#808080; text-decoration:line-through; font-size:0.8em;">(尚未完善好的)</span>课程笔记
 
@@ -39,15 +38,13 @@ ai风味图片：
 - Baseline 的访存模式好吗？不好，没有数据重排，权重元素在内存里彼此相隔很远，每条 cache line 只供一次乘法消费；权重在多次前向/多条 token 间没有复用。
 - Baseline 纯 FP32、串行、单线程
 
-
-
 ## 优化记录
 
 淹没在知识的海洋里
 
-阅读完一遍这个 Lab 的前置知识后，有一种未曾读过的感觉，这东西还是要结合实践，否则难以理解，于是我开始边做边学边问求着 AI 讲……
+阅读一遍这个 Lab 的实验文档，让我有一种知识滑过大脑的感觉。这东西还是要结合实践，否则难以理解，于是我开始边做边学边问求着 AI 讲……
 
-<img src="./lab2.assets/image-20260811014735558.png" alt="image-20260811014735558" style="zoom:30%;" />
+<img src="./lab2.assets/image-20260811014735558.png" alt="image-20260811014735558" style="zoom:18%;" />
 
 ☝🏼🤓上手的第一件事当然是大搞 AVX，我以为弄两条并行化指令上去就能拿到个 60 分，事实证明我太天真了…… 60 分的标准也是需要大幅优化的。
 
@@ -55,7 +52,7 @@ ai风味图片：
 
 <img src="./lab2.assets/image-20260811153632452.png" alt="image-20260811153632452" style="zoom:40%;" />
 
-好的明显可见这个糖 DeepSeek 很“给力”，直接复现了。（没绷住）（ds 依旧执着地表示不可以，gpt 在这个领域还是强一些）
+好的明显可见这个糖 DeepSeek 很"给力"，直接复现了。（没绷住）（ds 依旧执着地表示不可以，gpt 在这个领域还是强一些）
 
 当然解决办法很简单，`syscall(SYS_arch_prctl, ARCH_REQ_XCOMP_PERM, XFEATURE_XTILEDATA);`，在程序内部申请权限就好了（毕竟一个核心只有一个 AMX 计算单元，系统需要确保不产生竞争）<img src="./lab2.assets/image-20260811154038148.png" alt="image-20260811154038148" style="zoom:50%;" />
 
@@ -66,21 +63,19 @@ AMX 相较于 AVX 的好处就是吞吐量更大，这一点在 S2 ~ S4 很有�
 
 这个到后来才发现，难怪之前如何优化都没发在这个测试点及格。
 
-接着就是漫长的优化，见**3. 附录**，我问 AI 各种愚蠢问题（包括但不限于：“你觉得还有空间吗”“能不能提高opt时候的主频”“他们怎么在不跳算的前提下满分的”），然后被稳稳接住，换做是人早就❌崩溃了。
+接着就是漫长的优化，见**3. 附录**，我问 AI 各种愚蠢问题（包括但不限于："你觉得还有空间吗""能不能提高opt时候的主频""他们怎么在不跳算的前提下满分的"），然后被稳稳接住，换做是人早就❌崩溃了。
 
 其中值得一提的是 **3.2.3 routed slot FP16** 输出，这项优化给 S3 和 S4 带来明显正收益，缓存减半/搬运减半，仅用一点点误差作为代价。但是，同时在 S2 的尝试中，这个手段没有明显变化，说明 S2 hotspot 不在这里，这就有点黑盒测试的感觉了，让人很有挫败感，这就要提到下文的 VTune Profiler 工具了。
 
-正如课件所说，向量化之后，“<span style="text-decoration:underline; color:#FF0000;">可读性喂了狗！</span>”。我对这种代码的阅读和修改目前很大程度依赖 AI，我想应该在接下来的实验中逐渐减少这种依赖（少不到哪去。。）
+正如课件所说，向量化之后，"<span style="text-decoration:underline; color:#FF0000;">可读性喂了狗！</span>"。我对这种代码的阅读和修改目前很大程度依赖 AI，我想应该在接下来的实验中逐渐减少这种依赖（少不到哪去。。）
 
 还值得一提的是 **3.2.4 并行计算排序所需数值**，给 S4 带来明显受益，将 512 次 FP32 点积每 token 变成 BF16 AMX + 3 次 FP32 点积每 token。
 
 这里也走了不少弯路，比如 S3：
 
-<img src="./lab2.assets/image-20260811161858449.png" alt="image-20260811161858449" style="zoom:40%;" />
+<img src="./lab2.assets/image-20260811161858449.png" alt="image-20260811161858449" style="zoom:30%;" />
 
 还比如 S1，我曾执意地想吃满所有的核心，但是将任务拆散到核心这件事本身耗费时间。最终只用5线程，分别负责并行时的1个 shared 和4个 private。实际上，真正的优化在于减少访存，消除**落栈**，尽量在寄存器中直接算（**3.2.2 内联汇编**/寄存器融合），顺带批评一下这个输入法<img src="./lab2.assets/image-20260811162257182.png" alt="image-20260811162257182" style="zoom:50%;" />
-
-<img src="./lab2.assets/major_improvements.png" alt="重大优化的配对实测结果" style="zoom: 25%;" />
 
 先写这么多，优化过程本身是略枯燥的，但是做完之后会对这些知识有更深刻的理解。后面的实验我会补上测试中间数据的截图<span style="color:#606060; background:#E0E0E0;">（这次真是没经验，再复现需要之前的代码，我commit的次数太少了，找不回</span>
 
@@ -92,7 +87,7 @@ AMX 相较于 AVX 的好处就是吞吐量更大，这一点在 S2 ~ S4 很有�
 
 我好像在磕磕碰碰好几天弄完之后才关注到 **VTune Profiler**。。。
 
->  文档原文写到：有一个可解释的指标会给你在优化过程中较强的正反馈，同时也不会让你陷入对着代码穷举各种优化方式的那种“炼丹”的痛苦。哈哈，现在深有体会这些挫败感。我打算在写报告时候补上分析步骤吧（<span style="text-decoration:line-through;">只能假装分析了</span>，后面一定会利用好这个工具🧐）
+>  文档原文写到：有一个可解释的指标会给你在优化过程中较强的正反馈，同时也不会让你陷入对着代码穷举各种优化方式的那种"炼丹"的痛苦。哈哈，现在深有体会这些挫败感。我打算在写报告时候补上分析步骤吧（<span style="text-decoration:line-through;">只能假装分析了</span>，后面一定会利用好这个工具🧐）
 >
 
 当然，提到优化，最基本的一定是：
@@ -142,13 +137,13 @@ AMX 相较于 AVX 的好处就是吞吐量更大，这一点在 S2 ~ S4 很有�
 
     经过实测，S3 8 线程效果最优，可以解释为线程更多时一个核心内部的两个线程会抢用 AMX 等计算单元导致效率下降。
 
-    <img src="./lab2.assets/thread_scan.png" alt="S2 和 S3 线程扫描" style="zoom:65%;" />
-
     <img src="./lab2.assets/image-20260811005610974.png" alt="image-20260811005610974" style="zoom:40%;" />
 
     题外话，S2 **10核心**的时候有时候能打出很好的分数，但是 oj 波动很大，最后求稳改回了 8 核心。暂时归结为玄学问题。（上图想复现，发现异常了？这个真不知道为什么）
 
     <img src="./lab2.assets/image-20260811010959202.png" alt="image-20260811010959202" style="zoom:50%;" />
+
+    <img src="./lab2.assets/thread_scan.png" alt="S2 和 S3 线程扫描" style="zoom:65%;" />
 
 ??? tip "3. 向量/矩阵计算用并行指令集（AVX-512 VNNI + AMX）"
 
@@ -173,8 +168,6 @@ AMX 相较于 AVX 的好处就是吞吐量更大，这一点在 S2 ~ S4 很有�
         }
     }
     ```
-
-
 
 ??? tip "4. W8A8 量化"
 
@@ -256,21 +249,19 @@ AMX 相较于 AVX 的好处就是吞吐量更大，这一点在 S2 ~ S4 很有�
 
     <img src="./lab2.assets/silu_approx.png" alt="SiLU 各阶近似与绝对误差" style="zoom:60%;" />
 
-    最终相对 RMSE（均方根误差） 。
-
-    <img src="./lab2.assets/error_boundary.png" alt="近似和量化方案的误差边界" style="zoom:65%;" />
-
 ??? tip "2. 内联汇编"
 
     内联汇编减少无用搬运/寄存器融合
 
     如：下图中的汇编就有无效搬运。
 
-    <img src="./lab2.assets/image-20260811124056633.png" alt="image-20260811124056633" style="zoom:40%;" />
+    <img src="./lab2.assets/image-20260811124056633.png" alt="image-20260811124056633" style="zoom:30%;" />
 
     内联汇编可见3.1.1中的代码块。
 
 ??? tip "3. routed slot FP16 输出"
+
+    具体说明在正文"优化记录"部分。
 
     ```cpp
     static inline uint16_t to_bf16(float x) {
@@ -287,7 +278,6 @@ AMX 相较于 AVX 的好处就是吞吐量更大，这一点在 S2 ~ S4 很有�
 
     用 BF16 AMX 全量粗筛出 3 候选、再仅对 3 个候选做 FP32 精排取前 2。这样实现了排序计算的并行化，同时权衡了精度和结果可信性。如果都用 FP32 排序，无法用 AMX 并行，速度慢。
 
-
 ??? tip "5. 调度"
 
     Shared/Router 重叠调度（仅S1）
@@ -296,11 +286,44 @@ AMX 相较于 AVX 的好处就是吞吐量更大，这一点在 S2 ~ S4 很有�
 
 ??? tip "6. 统计数据，看个热闹"
 
+    优化相对收益
+
     <img src="./lab2.assets/relative_gains.png" alt="记录中的优化相对收益" style="zoom:65%;" />
 
-    <img src="./lab2.assets/experiment_status.png" alt="完整实验记录中的结论分类" style="zoom: 25%;" />
+    最终相对 RMSE（均方根误差） 。
 
-    <img src="./lab2.assets/failed_experiments.png" alt="无效或证据不足的尝试汇总" style="zoom: 25%;" />
+    <img src="./lab2.assets/error_boundary.png" alt="近似和量化方案的误差边界" style="zoom:65%;" />
+
+    实验记录
+
+    <img src="./lab2.assets/experiment_summary.png" alt="实验记录全貌：结论分类与失败汇总" style="zoom:55%;" />
+
+### 各场景优化策略汇总
+
+| 场景 | 核心瓶颈                                | 关键优化                                                     | 线程数                  | 关键收益                                          |
+| ---- | --------------------------------------- | ------------------------------------------------------------ | ----------------------- | ------------------------------------------------- |
+| S1   | M=1，AMX tile 利用率 1/16；栈帧落栈严重 | VNNI 替代 AMX；寄存器融合（栈帧 10.7KB→8B）；FP16 跨核输出；Shared/Router 重叠调度 | 5（4 worker + 主线程）  | 寄存器融合 +7.7%；FP16 输出 +4.4%；重叠调度 +5.6% |
+| S2   | 三次大 VNNI 投影；OpenMP 落核劣化       | gate/up 成对计算复用输入广播；紧凑单 token 工作区；物理核显式绑定；一阶 SiLU | 8（10 是否更优 玄学？） | 拓扑绑定修复 threads-place 劣化（11×→14×）        |
+| S3   | routed slot 缓冲跨核读写                | routed slot FP16 输出；显式 ZMM gather；二阶 SiLU            | 8                       | FP16 slot +14.5%；ZMM gather +1.4%~2%             |
+| S4   | 512 专家全精度 FP32 排序                | BF16 AMX 粗筛 Top-3 + FP32 精排 Top-2；四阶 exp；routed slot FP16 | 16                      | FP32 点积 512→3 次/token；exp 降阶 +6.2%          |
+
+
+
+### VTune Profiler 分析
+
+> HPC 计算节点：Intel Xeon Gold 5418Y, 2.0 GHz
+>
+
+<img src="./lab2.assets/vtune_hotspots.png" alt="VTune 热点：ref 与 opt 函数级 CPU 占比（HPC 节点）" style="zoom:55%;" />
+
+**Baseline（ref）**：S1–S3 瓶颈都是 `expert_ffn`（标量 SwiGLU + expf），占 77.7%～88.6%。S2 最高（88.6%），维度大（D=1024, F=512），矩阵乘计算量被放大，expf 占比反降到 4.7%。S4 不同，`moe_forward_ref`（router 逐 token×512 expert 标量点积）占 66.8%，`expert_ffn` 仅 19.8%，E=512 的 router 才是主要矛盾。
+
+**Optimized（opt）**：
+
+- **S1**：热点是 `s1_gate_up_activate<0/64>`（32.6%）和 `s1_down_dequantize`（20.5%），`s1_worker` 占 27.0%。同步开销在 HPC 上可忽略（worker 钉独立物理核）。`router_all` 未进前列，重叠调度把 router 藏在了 worker 计算后面。
+- **S2**：`run_n1_large._omp_fn.0` 占 63.7%，libgomp 运行时 33.0%。单 token 计算量不足以摊薄 fork/join 固定开销。S1 用常驻 worker 绕开了这个问题，S2 三阶段任务图更复杂，暂未迁移。
+- **S3**：`moe_forward_optimized._omp_fn.0` 占 74.9%，libgomp 20.0%，计算绝对主导。forward 只有几十微秒，一个额外 barrier 就吃掉想省的全部工作，这解释了并行分桶（慢 5%～7%）和双阶段 OpenMP 的失败。
+- **S4**：`moe_forward_optimized._omp_fn.0` 占 62.6%，libgomp 9.0%。`moe_forward_ref` 从 ref 的 66.8% 降到 opt 的 5.1%，BF16 AMX router 把 512 路标量点积换成批量矩阵乘，瓶颈消除。
 
 ## 思考题
 
@@ -336,6 +359,6 @@ AMX 相较于 AVX 的好处就是吞吐量更大，这一点在 S2 ~ S4 很有�
 
 
 
-## 代码
+## Source Code
 
-已经单独提交。
+已提交在平台上。
