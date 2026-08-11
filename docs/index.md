@@ -44,13 +44,14 @@ body.bfyes-home-page .md-grid {
     </div>
     <div class="home-log-list">
       <div class="home-log">
-        <span class="home-log__date">2026.08.08</span>
-        <span>HPC 课堂笔记初步整理 (AIGC 0.98)。修复首页终端跳转路径叠加导致的 404。
+        <span class="home-log__date">2026.08.12</span>
+        <span>HPC lab2 主线任务报告。
         </span>
       </div>
       <div class="home-log">
-        <span class="home-log__date">2026.08.07</span>
-        <span>HPC 课堂笔记初步整理 (AIGC 0.99)。</span>
+        <span class="home-log__date">2026.08.08</span>
+        <span>HPC 课堂笔记初步整理 (AIGC 0.98)。修复首页终端跳转路径叠加导致的 404。
+        </span>
       </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.06</span>
