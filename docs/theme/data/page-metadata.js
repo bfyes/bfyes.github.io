@@ -1,6 +1,6 @@
 window.__BFYES_PAGE_META__ = {
   "/": {
-    "updated": "2026-08-08T00:12:01+08:00"
+    "updated": "2026-08-12T01:40:41+08:00"
   },
   "/computers/mba15_2025/": {
     "updated": "2026-07-18T21:17:10+08:00"
@@ -108,7 +108,7 @@ window.__BFYES_PAGE_META__ = {
     "updated": "2026-07-11T23:43:42+08:00"
   },
   "/study/hpc/lab2/": {
-    "updated": "2026-08-11T18:14:49+08:00"
+    "updated": "2026-08-12T01:40:41+08:00"
   },
   "/study/hpc/lab3/": {
     "updated": "2026-07-28T12:37:20+08:00"
