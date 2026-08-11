@@ -41,34 +41,54 @@
      .pl-* 规则（main.css 内自带的 --color-prettylights-syntax-* 变量未定义，
      需同时在主题变量区补全），届时再对照观感取舍。
 */
+/* ---- 浅色模式（GitHub Light） ---- */
+
+/* 关键字 / 预处理指令（#include）—— 红 */
 [data-md-color-scheme="default"] .md-typeset .highlight .k,
 [data-md-color-scheme="default"] .md-typeset .highlight .kc,
 [data-md-color-scheme="default"] .md-typeset .highlight .kd,
 [data-md-color-scheme="default"] .md-typeset .highlight .kn,
 [data-md-color-scheme="default"] .md-typeset .highlight .kp,
 [data-md-color-scheme="default"] .md-typeset .highlight .kr,
-[data-md-color-scheme="default"] .md-typeset .highlight .kt,
+[data-md-color-scheme="default"] .md-typeset .highlight .cp,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .k,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .kc,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .kd,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .kn,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .kp,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .kr,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .kt {
-  color: #b42318;
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .cp {
+  color: #cf222e;
 }
+/* 类型名（int/void/str）—— GitHub 浅色当普通文本色 */
+[data-md-color-scheme="default"] .md-typeset .highlight .kt,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .kt {
+  color: #1f2328;
+}
+/* 预处理头文件名（cpf，如 <stdio.h>）—— 深蓝（GitHub 当字符串色） */
+[data-md-color-scheme="default"] .md-typeset .highlight .cpf,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .cpf {
+  color: #0a3069;
+}
+/* 函数名 / 内置命令 / 标签 / 属性 —— 紫 */
 [data-md-color-scheme="default"] .md-typeset .highlight .nf,
 [data-md-color-scheme="default"] .md-typeset .highlight .fm,
+[data-md-color-scheme="default"] .md-typeset .highlight .nb,
+[data-md-color-scheme="default"] .md-typeset .highlight .nl,
+[data-md-color-scheme="default"] .md-typeset .highlight .na,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nf,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .fm {
-  color: #175cd3;
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .fm,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nb,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nl,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .na {
+  color: #6639ba;
 }
+/* 字符串 —— 深蓝 */
 [data-md-color-scheme="default"] .md-typeset .highlight .s,
 [data-md-color-scheme="default"] .md-typeset .highlight .sa,
 [data-md-color-scheme="default"] .md-typeset .highlight .sb,
 [data-md-color-scheme="default"] .md-typeset .highlight .sc,
 [data-md-color-scheme="default"] .md-typeset .highlight .sd,
-[data-md-color-scheme="default"] .md-typeset .highlight .se,
 [data-md-color-scheme="default"] .md-typeset .highlight .sh,
 [data-md-color-scheme="default"] .md-typeset .highlight .si,
 [data-md-color-scheme="default"] .md-typeset .highlight .sx,
@@ -80,60 +100,116 @@
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .sb,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .sc,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .sd,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .se,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .sh,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .si,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .sx,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .sr,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .s1,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .s2 {
-  color: #067647;
+  color: #0a3069;
 }
+/* 字符串转义（\n 等）—— 蓝 */
+[data-md-color-scheme="default"] .md-typeset .highlight .se,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .se {
+  color: #0550ae;
+}
+/* 注释 —— 灰 */
 [data-md-color-scheme="default"] .md-typeset .highlight .c,
 [data-md-color-scheme="default"] .md-typeset .highlight .ch,
 [data-md-color-scheme="default"] .md-typeset .highlight .cm,
-[data-md-color-scheme="default"] .md-typeset .highlight .cp,
-[data-md-color-scheme="default"] .md-typeset .highlight .cpf,
 [data-md-color-scheme="default"] .md-typeset .highlight .c1,
 [data-md-color-scheme="default"] .md-typeset .highlight .cs,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .c,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .ch,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .cm,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .cp,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .cpf,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .c1,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .cs {
-  color: #667085;
+  color: #6e7781;
+}
+/* 数字 / 运算符 —— 蓝 */
+[data-md-color-scheme="default"] .md-typeset .highlight .mi,
+[data-md-color-scheme="default"] .md-typeset .highlight .mf,
+[data-md-color-scheme="default"] .md-typeset .highlight .mh,
+[data-md-color-scheme="default"] .md-typeset .highlight .mo,
+[data-md-color-scheme="default"] .md-typeset .highlight .il,
+[data-md-color-scheme="default"] .md-typeset .highlight .o,
+[data-md-color-scheme="default"] .md-typeset .highlight .ow,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .mi,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .mf,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .mh,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .mo,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .il,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .o,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .ow {
+  color: #0550ae;
+}
+/* 标点 —— 近黑 */
+[data-md-color-scheme="default"] .md-typeset .highlight .p,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .p {
+  color: #1f2328;
+}
+/* 寄存器 / 变量 —— 橙棕 */
+[data-md-color-scheme="default"] .md-typeset .highlight .no,
+[data-md-color-scheme="default"] .md-typeset .highlight .nv,
+[data-md-color-scheme="default"] .md-typeset .highlight .vc,
+[data-md-color-scheme="default"] .md-typeset .highlight .vg,
+[data-md-color-scheme="default"] .md-typeset .highlight .vi,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .no,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nv,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .vc,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .vg,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .vi {
+  color: #953800;
 }
 
+/* ---- 暗色模式（GitHub Dark） ---- */
+
+/* 关键字 / 预处理指令（#include）—— 红 */
 [data-md-color-scheme="slate"] .md-typeset .highlight .k,
 [data-md-color-scheme="slate"] .md-typeset .highlight .kc,
 [data-md-color-scheme="slate"] .md-typeset .highlight .kd,
 [data-md-color-scheme="slate"] .md-typeset .highlight .kn,
 [data-md-color-scheme="slate"] .md-typeset .highlight .kp,
 [data-md-color-scheme="slate"] .md-typeset .highlight .kr,
-[data-md-color-scheme="slate"] .md-typeset .highlight .kt,
+[data-md-color-scheme="slate"] .md-typeset .highlight .cp,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .k,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .kc,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .kd,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .kn,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .kp,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .kr,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .kt {
-  color: #ff6b6b;
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .cp {
+  color: #ff7b72;
 }
+/* 类型名（int/void/str）—— GitHub 暗色当普通文本色 */
+[data-md-color-scheme="slate"] .md-typeset .highlight .kt,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .kt {
+  color: #f0f6fc;
+}
+/* 预处理头文件名（cpf，如 <stdio.h>）—— 蓝 */
+[data-md-color-scheme="slate"] .md-typeset .highlight .cpf,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .cpf {
+  color: #a5d6ff;
+}
+/* 函数名 / 内置命令 / 标签 / 属性 —— 紫 */
 [data-md-color-scheme="slate"] .md-typeset .highlight .nf,
 [data-md-color-scheme="slate"] .md-typeset .highlight .fm,
+[data-md-color-scheme="slate"] .md-typeset .highlight .nb,
+[data-md-color-scheme="slate"] .md-typeset .highlight .nl,
+[data-md-color-scheme="slate"] .md-typeset .highlight .na,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .nf,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .fm {
-  color: #7cc4ff;
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .fm,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .nb,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .nl,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .na {
+  color: #d2a8ff;
 }
+/* 字符串 —— 蓝 */
 [data-md-color-scheme="slate"] .md-typeset .highlight .s,
 [data-md-color-scheme="slate"] .md-typeset .highlight .sa,
 [data-md-color-scheme="slate"] .md-typeset .highlight .sb,
 [data-md-color-scheme="slate"] .md-typeset .highlight .sc,
 [data-md-color-scheme="slate"] .md-typeset .highlight .sd,
-[data-md-color-scheme="slate"] .md-typeset .highlight .se,
 [data-md-color-scheme="slate"] .md-typeset .highlight .sh,
 [data-md-color-scheme="slate"] .md-typeset .highlight .si,
 [data-md-color-scheme="slate"] .md-typeset .highlight .sx,
@@ -145,101 +221,55 @@
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .sb,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .sc,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .sd,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .se,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .sh,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .si,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .sx,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .sr,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .s1,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .s2 {
-  color: #86efac;
+  color: #a5d6ff;
 }
+/* 字符串转义（\n 等）—— 浅蓝 */
+[data-md-color-scheme="slate"] .md-typeset .highlight .se,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .se {
+  color: #79c0ff;
+}
+/* 注释 —— 灰 */
 [data-md-color-scheme="slate"] .md-typeset .highlight .c,
 [data-md-color-scheme="slate"] .md-typeset .highlight .ch,
 [data-md-color-scheme="slate"] .md-typeset .highlight .cm,
-[data-md-color-scheme="slate"] .md-typeset .highlight .cp,
-[data-md-color-scheme="slate"] .md-typeset .highlight .cpf,
 [data-md-color-scheme="slate"] .md-typeset .highlight .c1,
 [data-md-color-scheme="slate"] .md-typeset .highlight .cs,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .c,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .ch,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .cm,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .cp,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .cpf,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .c1,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .cs {
-  color: #98a2b3;
+  color: #8b949e;
 }
-
-/* 数字高亮（默认 Material 没配） */
-[data-md-color-scheme="default"] .md-typeset .highlight .mi,
-[data-md-color-scheme="default"] .md-typeset .highlight .mf,
-[data-md-color-scheme="default"] .md-typeset .highlight .mh,
-[data-md-color-scheme="default"] .md-typeset .highlight .mo,
-[data-md-color-scheme="default"] .md-typeset .highlight .il,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .mi,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .mf,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .mh,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .mo,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .il {
-  color: #7c2d12;
-}
-
+/* 数字 / 运算符 —— 蓝 */
 [data-md-color-scheme="slate"] .md-typeset .highlight .mi,
 [data-md-color-scheme="slate"] .md-typeset .highlight .mf,
 [data-md-color-scheme="slate"] .md-typeset .highlight .mh,
 [data-md-color-scheme="slate"] .md-typeset .highlight .mo,
 [data-md-color-scheme="slate"] .md-typeset .highlight .il,
+[data-md-color-scheme="slate"] .md-typeset .highlight .o,
+[data-md-color-scheme="slate"] .md-typeset .highlight .ow,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .mi,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .mf,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .mh,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .mo,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .il {
-  color: #fdba74;
-}
-
-/* bash 内置命令（Name.Builtin）高亮 */
-[data-md-color-scheme="default"] .md-typeset .highlight .nb,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nb {
-  color: #b42318;
-}
-[data-md-color-scheme="slate"] .md-typeset .highlight .nb,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .nb {
-  color: #ff6b6b;
-}
-
-/* bash 运算符/标点（Operator / Punctuation）高亮 */
-[data-md-color-scheme="default"] .md-typeset .highlight .o,
-[data-md-color-scheme="default"] .md-typeset .highlight .ow,
-[data-md-color-scheme="default"] .md-typeset .highlight .p,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .o,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .ow,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .p {
-  color: #b42318;
-}
-[data-md-color-scheme="slate"] .md-typeset .highlight .o,
-[data-md-color-scheme="slate"] .md-typeset .highlight .ow,
-[data-md-color-scheme="slate"] .md-typeset .highlight .p,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .il,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .o,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .ow,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .ow {
+  color: #79c0ff;
+}
+/* 标点 —— 白 */
+[data-md-color-scheme="slate"] .md-typeset .highlight .p,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .p {
-  color: #ff6b6b;
+  color: #f0f6fc;
 }
-
-/* 寄存器/变量名高亮 */
-[data-md-color-scheme="default"] .md-typeset .highlight .no,
-[data-md-color-scheme="default"] .md-typeset .highlight .nv,
-[data-md-color-scheme="default"] .md-typeset .highlight .vc,
-[data-md-color-scheme="default"] .md-typeset .highlight .vg,
-[data-md-color-scheme="default"] .md-typeset .highlight .vi,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .no,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nv,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .vc,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .vg,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .vi {
-  color: #6e59d9;
-}
-
+/* 寄存器 / 变量 —— 橙 */
 [data-md-color-scheme="slate"] .md-typeset .highlight .no,
 [data-md-color-scheme="slate"] .md-typeset .highlight .nv,
 [data-md-color-scheme="slate"] .md-typeset .highlight .vc,
@@ -250,21 +280,28 @@
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .vc,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .vg,
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .vi {
-  color: #c084fc;
+  color: #ffa657;
+}
+/* 普通标识符（Name）—— 暗色模式给明确前景色 */
+[data-md-color-scheme="slate"] .md-typeset .highlight .n,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .n {
+  color: #f0f6fc;
 }
 
-/* 标签/标号高亮 (红色) */
-[data-md-color-scheme="default"] .md-typeset .highlight .nl,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nl,
-[data-md-color-scheme="default"] .md-typeset .highlight .na,
-[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .na {
-  color: #b42318;
+/* ---- 汇编语言专用覆盖 ----
+   Pygments 的 ASM lexer 把指令（mov/int/ret）和伪指令（global/section）
+   都标记为 nf（函数名），把标签/符号（_start/.text）标记为 no（常量）。
+   GitHub 的 lexer 分类不同：指令→pl-k（红），伪指令→pl-c1（蓝），
+   符号→pl-en（紫）。这里按 GitHub 行为覆盖。 */
+
+/* ASM 指令（mov/int/ret/li/addi）—— 红（同关键字色） */
+[data-md-color-scheme="default"] .language-asm .highlight .nf,
+[data-md-color-scheme="default"] .language-asm.highlight .nf {
+  color: #cf222e;
 }
-[data-md-color-scheme="slate"] .md-typeset .highlight .nl,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .nl,
-[data-md-color-scheme="slate"] .md-typeset .highlight .na,
-[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .na {
-  color: #ff6b6b;
+[data-md-color-scheme="slate"] .language-asm .highlight .nf,
+[data-md-color-scheme="slate"] .language-asm.highlight .nf {
+  color: #ff7b72;
 }
 
 /* ============================================================================

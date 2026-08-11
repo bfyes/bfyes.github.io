@@ -4782,16 +4782,14 @@ P(\text{戴口罩}) &amp;= P(\text{有雾})\cdot P(\text{戴口罩}\mid\text{有
 <li><strong>频数转概率</strong>：每个格子 <span class="arithmatex">\(\div\)</span> 总数 <span class="arithmatex">\(N\)</span> 得 <span class="arithmatex">\(P(X=x_i,Y=y_j)\)</span></li>
 <li><strong>边缘 PMF</strong>：对行求和得 <span class="arithmatex">\(P(Y=y_j)\)</span>，对列求和得 <span class="arithmatex">\(P(X=x_i)\)</span></li>
 <li><strong>判独立</strong>：检查 <span class="arithmatex">\(P(X=x_i,Y=y_j) \stackrel{?}{=} P(X=x_i)P(Y=y_j)\)</span></li>
-<li>
-<p><strong>协方差/相关系数</strong>：</p>
-</li>
-<li>
-<p><span class="arithmatex">\(E(X)=\sum x_i P(X=x_i)\)</span>，<span class="arithmatex">\(E(Y)=\sum y_j P(Y=y_j)\)</span></p>
-</li>
+<li><strong>协方差/相关系数</strong>：</li>
+</ol>
+<ul>
+<li><span class="arithmatex">\(E(X)=\sum x_i P(X=x_i)\)</span>，<span class="arithmatex">\(E(Y)=\sum y_j P(Y=y_j)\)</span></li>
 <li><span class="arithmatex">\(E(XY)=\sum\sum x_i y_j P(X=x_i,Y=y_j)\)</span></li>
 <li><span class="arithmatex">\(\mathrm{Cov}(X,Y)=E(XY)-E(X)E(Y)\)</span></li>
 <li><span class="arithmatex">\(\rho_{XY}=\dfrac{\mathrm{Cov}(X,Y)}{\sqrt{\mathrm{Var}(X)\mathrm{Var}(Y)}}\)</span></li>
-</ol>
+</ul>
 </details>
 </div>
 <div class="admonition question">
@@ -5606,6 +5604,8 @@ P[Y\le X] &amp;= \int_{-1}^0\int_{y^2}^1 \frac{5}{4}x\,\mathrm{d}x\,\mathrm{d}y 
         <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
       
         <script src="../../theme/js/site.js"></script>
+      
+        <script src="../../theme/js/site-anchors.js"></script>
       
         <script src="../../theme/js/site-home.js"></script>
       
