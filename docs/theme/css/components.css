@@ -28,36 +28,80 @@
    01. Markdown 扩展组件
    ============================================================================ */
 
-/* ---- 标题编号 ---- */
-.md-content__inner { counter-reset: section; }
+/* ---- 标题编号与 GitHub 风格 permalink ----
+   使用站点专用 counter 名称，避免和主题或第三方组件的 counter 冲突。 */
+.md-content__inner { counter-reset: bfyes-section; }
 .md-content__inner h2 {
-  counter-increment: section;
-  counter-reset: subsection;
+  counter-increment: bfyes-section;
+  counter-reset: bfyes-subsection;
 }
 .md-content__inner h2::before {
-  content: counter(section);
+  content: counter(bfyes-section);
   color: var(--fgColor-default);
   font-weight: 700;
   margin-right: 0.6em;   /* 编号与标题文字之间留出明显间隙 */
 }
 .md-content__inner h3 {
-  counter-increment: subsection;
-  counter-reset: subsubsection;
+  counter-increment: bfyes-subsection;
+  counter-reset: bfyes-subsubsection;
 }
 .md-content__inner h3::before {
-  content: counter(section) "." counter(subsection);
+  content: counter(bfyes-section) "." counter(bfyes-subsection);
   color: var(--fgColor-default);
   font-weight: 700;
   margin-right: 0.6em;
 }
 .md-content__inner h4 {
-  counter-increment: subsubsection;
+  counter-increment: bfyes-subsubsection;
 }
 .md-content__inner h4::before {
-  content: counter(section) "." counter(subsection) "." counter(subsubsection);
+  content: counter(bfyes-section) "." counter(bfyes-subsection) "." counter(bfyes-subsubsection);
   color: var(--fgColor-default);
   font-weight: 700;
   margin-right: 0.6em;
+}
+
+/* permalink 由 site-anchors.js 移到标题文字之前；SVG 使用 DOM 绘制，
+   因而不会与标题编号的 ::before 伪元素发生冲突。 */
+.md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
+  position: absolute;
+  left: -40px;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 1.25em;
+  margin: 0;
+  color: #1f2328;
+  font-size: inherit;
+  line-height: 1;
+  text-decoration: none;
+  opacity: 0;
+  transition: color 120ms ease, opacity 120ms ease;
+}
+.md-typeset :is(h1, h2, h3, h4, h5, h6) {
+  position: relative;
+}
+.md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:hover,
+.md-typeset :is(h1, h2, h3, h4, h5, h6):hover > .headerlink {
+  color: #1f2328;
+  opacity: 1;
+}
+.md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:focus-visible {
+  opacity: 1;
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink,
+[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:hover {
+  color: #f0f6fc;
+}
+.md-typeset .headerlink > svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
 }
 
 /* ---- Tabbed 折叠组件（=== "日期" 等）间距 ----
