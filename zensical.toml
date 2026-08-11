@@ -173,6 +173,7 @@ toggle.name = "根据系统模式切换主题"
 [project.markdown_extensions.attr_list]
 [project.markdown_extensions.def_list]
 [project.markdown_extensions.md_in_html]
+[project.markdown_extensions.sane_lists]
 [project.markdown_extensions.tables]
 [project.markdown_extensions.pymdownx.tilde]
 smart_delete = false

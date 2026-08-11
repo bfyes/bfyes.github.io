@@ -72,8 +72,8 @@
 
 - 无序列表项目
 - 第二项包含一些较长文字，用来检查换行和列表缩进是否自然。
-  - 嵌套项目
-  - 另一个嵌套项目
+    - 嵌套项目
+    - 另一个嵌套项目
 
 1. 有序列表第一项
 2. 有序列表第二项
@@ -102,36 +102,116 @@
 
 ```c
 #include <stdio.h>
+#include <string.h>
 
-int main(void) {
-    int value = 42;
-    printf("value = %d\n", value);
+#define MAX_LEN 256
+
+// 行注释
+/* 块注释 */
+# python 注释 (非法)
+
+typedef struct {
+    char name[64];
+    int age;
+} Person;
+
+int main(int argc, char *argv[]) {
+    Person p = {"Alice", 30};
+    char buf[MAX_LEN];
+
+    snprintf(buf, sizeof(buf), "%s is %d", p.name, p.age);
+    if (strlen(buf) > 0) {
+        printf("%s\n", buf);
+    }
     return 0;
 }
 ```
 
 ```python
-def greet(name: str) -> str:
-    return f"hello, {name}"
+# 注释
+// C 注释 (非法)
 
-print(greet("bfyes"))
+import os
+from typing import List
+
+class Stack:
+    def __init__(self):
+        self._items: List[int] = []
+
+    def push(self, x: int) -> None:
+        self._items.append(x)
+
+    def pop(self) -> int:
+        return self._items.pop() if self._items else -1
+
+data = [1, 2, 3]
+squares = [x ** 2 for x in data]
+print(f"sum = {sum(squares)}")
+```
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+// 行注释
+/* 块注释 */
+# python 注释 (非法)
+
+public class Main {
+    public static void main(String[] args) {
+        List<String> names = new ArrayList<>();
+        names.add("Alice");
+        names.add("Bob");
+
+        for (String name : names) {
+            System.out.println("Hello, " + name + "!");
+        }
+
+        int x = 0x1F;
+        double pi = 3.14;
+        String s = "value = %d\n";
+        boolean flag = (x > 10) && (pi < 4);
+    }
+}
 ```
 
 ```asm
+; x86 注释
+# rv
 global _start
+
+section .data
+    msg db "hello", 0xA
+    len equ $ - msg
 
 section .text
 _start:
-    mov eax, 1
-    mov ebx, 0
+    mov eax, 4          ; sys_write
+    mov ebx, 1          ; stdout
+    mov ecx, msg
+    mov edx, len
+    int 0x80
+
+    mov eax, 1          ; sys_exit
+    xor ebx, ebx
     int 0x80
 ```
 
 ```asm
+# RISC-V 注释
+; x86
 .text
 .globl _start
+
 _start:
     li a0, 42
-    addi a0, a0, 1
+    li a1, 7
+    add a0, a0, a1      # a0 = 49
+    sub a1, a0, a1      # a1 = 42
+
+    li t0, 0x100
+    lw t1, 0(t0)
+    sw a0, 0(t0)
+
     ret
 ```
