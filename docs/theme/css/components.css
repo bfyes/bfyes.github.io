@@ -3,7 +3,7 @@
    ----------------------------------------------------------------------------
    目录
    01. Markdown 扩展组件
-       标题自动编号、Tabbed 间距、admonition/details 提示块
+       标题自动编号、GitHub 风格标题书签、Tabbed 间距、admonition/details 提示块
    02. GitHub 贡献图
        .ghc-* / .ContributionCalendar-* 静态贡献日历
    03. 站点框架组件
@@ -21,7 +21,7 @@
 
    这些组件依赖 Material for MkDocs 的 --md-* 变量以及正文观感层 main.css。
    加载顺序：main.css（正文观感层）→ components.css（组件覆盖层）。
-   原文件已备份为 css/old_main.css.bak，与 github-markdown-css（sindresorhus）观感结合。
+   与 github-markdown-css（sindresorhus）观感结合。
    ============================================================================ */
 
 /* ============================================================================
@@ -61,7 +61,7 @@
   margin-right: 0.6em;
 }
 
-/* permalink 由 site-anchors.js 移到标题文字之前；SVG 使用 DOM 绘制，
+/* permalink 保留生成器的 HTML 结构，由 CSS 移到标题左侧；SVG 作为背景图绘制，
    因而不会与标题编号的 ::before 伪元素发生冲突。 */
 .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
   position: absolute;
@@ -77,6 +77,11 @@
   font-size: inherit;
   line-height: 1;
   text-decoration: none;
+  text-indent: -9999px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%231f2328' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
   opacity: 0;
   transition: color 120ms ease, opacity 120ms ease;
 }
@@ -96,12 +101,7 @@
 [data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink,
 [data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:hover {
   color: #f0f6fc;
-}
-.md-typeset .headerlink > svg {
-  display: block;
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23f0f6fc' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
 }
 
 /* ---- Tabbed 折叠组件（=== "日期" 等）间距 ----

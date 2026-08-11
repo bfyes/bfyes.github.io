@@ -1,11 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap");
-
 /* ============================================================================
    main.css —— 正文观感层（GitHub markdown 风格）
    ----------------------------------------------------------------------------
    目录
    01. 字体资源
-       Google Fonts
+       Google Fonts（文件首行 @import）
    02. 代码语法高亮
        Pygments token 色彩增强，适配亮色/暗色
    03. 字体栈与站点基础
@@ -24,8 +22,9 @@
    ============================================================================ */
 
 /* ============================================================================
-   01. 字体资源
+   01. 字体资源 Google Fonts（@import 必须位于所有 CSS 规则之前）
    ============================================================================ */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap");
 
 /* ============================================================================
    02. 代码语法高亮

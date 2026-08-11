@@ -114,7 +114,6 @@ extra_javascript = [
     "theme/js/mathjax.js",
     "https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js",
     "theme/js/site.js",
-    "theme/js/site-anchors.js",
     "theme/js/site-home.js",
     "theme/js/site-terminal.js",
     "theme/js/site-images.js",
