@@ -64,10 +64,6 @@
     
       <link rel="stylesheet" href="../../../../theme/css/components.css">
     
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-    
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-    
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
@@ -75,6 +71,8 @@
     
     
   
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -90,6 +88,13 @@
           scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "slate" : "default";
         }
         document.documentElement.setAttribute("data-md-color-scheme", scheme);
+        var hljsTheme = document.createElement("link");
+        hljsTheme.id = "bfyes-hljs-theme";
+        hljsTheme.rel = "stylesheet";
+        hljsTheme.href = scheme === "slate"
+          ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+          : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
+        document.head.appendChild(hljsTheme);
         var attach = function () {
           document.body.setAttribute("data-md-color-scheme", scheme);
           new MutationObserver(function () {
