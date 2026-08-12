@@ -28,7 +28,18 @@
       link.rel = "stylesheet";
       document.head.appendChild(link);
     }
-    link.href = mode === "dark" ? DARK_URL : LIGHT_URL;
+    var url = mode === "dark" ? DARK_URL : LIGHT_URL;
+    if (link.href !== url) link.href = url;
+    return link;
+  }
+
+  function whenThemeReady(callback) {
+    var link = applyTheme(currentMode());
+    if (link.sheet) {
+      callback();
+      return;
+    }
+    link.addEventListener("load", callback, { once: true });
   }
 
   /** 高亮当前根内的所有代码块。 */
@@ -87,26 +98,17 @@
     return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   }
 
-  function init() {
-    applyTheme(currentMode());
-    highlightRoot(document);
-  }
-
   // 主题切换：复用 theme-sync.js 的 subscribe（立即回调一次当前 mode）
   if (window.bfyes && window.bfyes.theme && window.bfyes.theme.subscribe) {
     window.bfyes.theme.subscribe(applyTheme);
   }
 
-  // 每次导航（含 instant）后重新高亮新增块
+  // 与 MathJax 一样，document$ 同时覆盖首次页面完成与 instant 无刷新导航。
   if (window.document$) {
     window.document$.subscribe(function () {
-      highlightRoot(document);
+      whenThemeReady(function () { highlightRoot(document); });
     });
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
   } else {
-    init();
+    whenThemeReady(function () { highlightRoot(document); });
   }
 })();

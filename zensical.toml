@@ -107,9 +107,6 @@ nav = [
 extra_css = [
     "theme/css/main.css",
     "theme/css/components.css",
-    # highlight.js 官方 GitHub 配色（明暗两套，运行前用 highlight.js 统一切换）—— cdnjs 11.9.0 完整版同步
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css",
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css",
 ]
 
 extra_javascript = [
