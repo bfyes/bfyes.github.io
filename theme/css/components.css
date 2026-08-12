@@ -1522,6 +1522,11 @@ body.bfyes-home-page .md-content__inner {
    ============================================================================ */
 
 @media screen and (max-width: 44.984375em) {
+  /* 移动端宽度有限，不显示左侧 permalink，也不保留左侧间距。 */
+  .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
+    display: none;
+  }
+
   .home-link-grid {
     grid-template-columns: 1fr;
   }
