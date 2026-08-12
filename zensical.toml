@@ -16,8 +16,8 @@ nav = [
         { "汇编语言设计与调试" = "study/asm.md" },
         { "计算机系统Ⅰ" = [
             "study/sys1/index.md",
-            { "lab0: 数字电路仿真" = "study/sys1/lab0/index.md" },
-            { "lab1: 八选一多路选择器" = "study/sys1/lab1/index.md" },
+            { "lab0: 环境准备" = "study/sys1/lab0/index.md" },
+            { "lab1: MUX/七段数码管" = "study/sys1/lab1/index.md" },
             { "lab2: 64位全加减法器" = "study/sys1/lab2/index.md" },
             { "lab3: 时序电路/FSM" = "study/sys1/lab3/index.md" },
             { "lab4: 卷积模块" = "study/sys1/lab4/index.md" },

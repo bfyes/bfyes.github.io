@@ -9,6 +9,20 @@ HPC101 课程文档：<https://hpc101.zjusct.io>
 
 [部分回放链接(智云课堂)](https://classroom.zju.edu.cn/coursedetail?course_id=85721&tenant_code=112)
 
+
+## 实验报告
+
+- [Lab0: Linux快速入门](lab0/index.md)
+- [Lab1: 简单集群搭建](lab1/index.md)
+- [Lab2: MoE 的向量化计算](lab2/index.md)
+- [Lab3: GDN Prefill 前向优化](lab3/index.md)
+- [Lab4: AMSS-NCKU 数值相对论程序优化](lab4/index.md)
+- [Lab5: Gemma4 端到端推理优化](lab5/index.md)
+
+
+
+## 笔记
+
 以下笔记目前主要由 gpt-5.6 sol / DeepSeek V4 Flash 生成，由人工初步核查。参考课程语音转写稿、PPT OCR 结果等写成。
 
 ☝🏼🤓点击进入体验 AI 风味。
