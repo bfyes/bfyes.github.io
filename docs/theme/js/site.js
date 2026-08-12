@@ -21,6 +21,22 @@
     pageHandlers.push(fn);
   }
 
+  // 点击标题书签后，浏览器可能保留链接焦点，使书签一直显示。
+  // 失焦不影响锚点跳转；键盘 Tab 导航产生的 focus-visible 仍由 CSS 保留。
+  function installHeaderlinkFocusFix() {
+    if (document.documentElement.dataset.bfyesHeaderlinkFocusFix) return;
+    document.documentElement.dataset.bfyesHeaderlinkFocusFix = "1";
+    document.addEventListener("click", function (event) {
+      var link = event.target && event.target.closest
+        ? event.target.closest(".headerlink")
+        : null;
+      if (!link) return;
+      setTimeout(function () {
+        if (document.activeElement === link) link.blur();
+      }, 0);
+    });
+  }
+
   function schedulePageReady() {
     if (scheduled) return;
     scheduled = true;
@@ -68,5 +84,6 @@
   window.bfyes.onPageReady = onPageReady;
   window.bfyes.htmlEl = htmlEl;
 
+  installHeaderlinkFocusFix();
   initPageLifecycle();
 })();

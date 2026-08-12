@@ -201,7 +201,7 @@ _start:
 # RISC-V 注释
 ; x86
 .text
-.globl _start
+.global _start
 
 _start:
     li a0, 42
@@ -214,4 +214,36 @@ _start:
     sw a0, 0(t0)
 
     ret
+```
+
+## 命令行
+
+```bash
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+name="bfyes"
+root="$(pwd)"
+printf 'Hello, %s!\n' "$name"
+
+if [[ -d "$root/docs" ]]; then
+    echo "docs exists"
+else
+    echo "docs is missing" >&2
+    exit 1
+fi
+
+find docs -type f -name '*.md' \
+    | sort \
+    | xargs grep -nH 'GitHub' \
+    | sed -n '1,5p'
+
+for file in docs/games/*.md; do
+    printf '%s: %s lines\n' "$file" "$(wc -l < "$file")"
+done
+
+git status --short
+git diff -- docs/theme/css/main.css
+curl -fsSL "https://example.com/api?name=${name}" -o response.json
 ```
