@@ -45,6 +45,11 @@ body.bfyes-home-page .md-grid {
     <div class="home-log-list">
       <div class="home-log">
         <span class="home-log__date">2026.08.12</span>
+        <span>1. 公式渲染器 MathJax v3 -> v4。 2. 更新高亮机制 (Pygments -> hightlight.js, 为了效果牺牲构建时高亮)。 3. 滚动条透明度提高。 4. 代码块适配Safari取整机制。 5. 移动端若干适配。
+        </span>
+      </div>
+      <div class="home-log">
+        <span class="home-log__date">2026.08.12</span>
         <span>HPC lab2 主线任务报告。
         </span>
       </div>
@@ -55,11 +60,11 @@ body.bfyes-home-page .md-grid {
       </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.06</span>
-        <span>CTF 报告部分暂时完结。HPC 课堂笔记初步整理 (AIGC 1.00)。</span>
+        <span>CTF 报告部分暂时完结。</span>
       </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.04</span>
-        <span>没忍住又在折腾没用的东西，复刻 Github 的主题。大幅修改/拆分 css 文件，调教 AI 已红温，浪费了大量金钱最终没得到理想效果。最终由万能的 gpt 5.5 完成。</span>
+        <span>没忍住又在折腾没用的东西，复刻 Github 的主题。大幅修改/拆分 css 文件，最终由万能的 gpt 5.5 完成。</span>
       </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.01</span>
