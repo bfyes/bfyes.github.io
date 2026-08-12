@@ -64,6 +64,10 @@
     
       <link rel="stylesheet" href="../../../../theme/css/components.css">
     
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
@@ -3569,9 +3573,8 @@
 </details>
 <p>顺序地看，一条指令经历取指、译码、执行、访存、写回。现代处理器把这些阶段重叠成流水线，也会在不改变可见结果的前提下乱序执行彼此独立的指令。比如一条内存读取还没回来，后面与它无关的算术指令可以先做。</p>
 <p>but，乱序不是任意改顺序，如下面的第二行依赖第一行的结果，不能提前。</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos="1 "></span></a><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a><a href="#__codelineno-0-2"><span class="linenos" data-linenos="2 "></span></a><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">int x = a + b;
+int y = x * c;</code></pre>
 <p>相反，若 <code>u = d + e</code> 与 <code>x = a + b</code> 无关，硬件或编译器可能同时安排它们。高性能程序常试图提供更多独立工作，以隐藏一次运算或访存的延迟。</p>
 <h3 id="分支预测">分支预测<a class="headerlink" href="#分支预测" title="Permanent link">&para;</a></h3>
 <p>遇到 <code>if</code>、循环跳转时，处理器需要猜下一条指令在哪里。猜对时流水线继续流动；猜错时已经取入/执行的一部分工作要丢弃，重新从正确路径开始。数据随机、条件难预测的分支常比直觉上慢得多。把大量小分支改写成规则数组操作，有时既利于分支预测，也利于向量化，但必须先验证语义没有变化。</p>
@@ -3579,9 +3582,8 @@
 <p>从顺序模型看，CPU 每个周期执行一条指令；现实中一条指令分成取指、译码、分派、执行、访存、提交等阶段。流水线让不同指令同时占据不同阶段。理想情况下，每周期都有新指令完成，吞吐很高；一条指令的总延迟却没有因此消失。</p>
 <p>流水线被打断的原因常被归为三类。数据相关最直观：后一条要使用前一条尚未产生的结果。结构冲突指多个操作争同一个执行单元或访存端口。控制相关来自分支，处理器不知道接下来该取哪条指令。现代 CPU 用 forwarding、更多执行单元、分支预测和推测执行缓解这些问题，但真实依赖和错误分支仍然会留下空泡。</p>
 <p>例如下面的累加有一条很长的依赖链：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">    </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">for (int i = 0; i &lt; n; ++i)
+    sum += x[i];</code></pre>
 <p>每次 <code>sum</code> 都依赖上一次的结果。编译器或手写代码可以使用多个局部累加器，把一条链拆为几条独立链，最后再合并；向量化归约也采用相近想法。效果取决于处理器能否借此发现原先不存在的独立工作，循环展开本身不保证更快。</p>
 <h3 id="乱序推测与提交">乱序、推测与提交<a class="headerlink" href="#乱序推测与提交" title="Permanent link">&para;</a></h3>
 <p>乱序执行让处理器在等待某条慢指令时，先发射已经具备输入的其他指令。为了让程序对外仍像按顺序运行，现代 CPU 会给寄存器重命名，记录指令真正依赖的是哪一个临时物理寄存器；计算结果可以先完成，但通常按程序顺序提交到架构可见状态。</p>
@@ -3598,20 +3600,18 @@
 <p>cache 就是为了弥合这个速度差：在 CPU 和主存之间放几层又快又小的存储，把最近用过的数据（及其附近的数据）暂时放在离 CPU 更近的地方。核心思想是两条经验——<strong>时间局部性</strong>（刚用过的数据很可能马上再用）和<strong>空间局部性</strong>（刚用过的地址附近的数据很可能马上也会用）。连续遍历数组所以快，正因为下一批元素大概率已在 cache 里。</p>
 <p>程序性能往往取决于数据所处的层级和是否停在足够近的 cache，指令条数是次要因素。后面几乎所有优化——改循环顺序、分块、SoA 布局——都是为了把数据更多地留在较近的层级、减少从 DRAM 反复搬上来的次数。</p>
 </details>
-<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><a href="#__codelineno-2-1"><span class="linenos" data-linenos="1 "></span></a>寄存器
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><a href="#__codelineno-2-2"><span class="linenos" data-linenos="2 "></span></a>  L1 cache（每核，最快的小缓存）
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><a href="#__codelineno-2-3"><span class="linenos" data-linenos="3 "></span></a>  L2 cache（每核或小范围共享）
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><a href="#__codelineno-2-4"><span class="linenos" data-linenos="4 "></span></a>  L3 cache（多个核心共享）
-<a id="__codelineno-2-5" name="__codelineno-2-5"></a><a href="#__codelineno-2-5"><span class="linenos" data-linenos="5 "></span></a>主内存 DRAM
-</code></pre></div>
+<pre class="highlight"><code class="language-text">寄存器
+  L1 cache（每核，最快的小缓存）
+  L2 cache（每核或小范围共享）
+  L3 cache（多个核心共享）
+主内存 DRAM</code></pre>
 <p><a class="glightbox" data-type="image" href="../assets/0707p/memory-latency-x200.jpg"><img width="1280" height="720" alt="课件给出 cache 与内存延迟的相对倍数（这里 ×200 量级）：64KB 以内约一条时间线、4MB 以内约另一条时间线、更大的数据落回更慢的外部内存；工作集越大越容易超出 cache 容量。" src="../assets/0707p/memory-latency-x200.preview.jpg" data-fullsrc="../assets/0707p/memory-latency-x200.jpg" /></a></p>
 <p><em>图：工作集可以按三层看——64KB 以内由 L1 cache 承接，4MB 以内由 L2 cache 承接，更大则落到外部内存（DRAM）；每往一层，延迟都会跳高一大截，这正是 cache 命中和 miss 性能相差悬殊的原因。</em></p>
 <p>缓存设计利用两种经验：最近用过的数据可能再用（时间局部性），某个地址附近的数据可能很快也会用（空间局部性）。因此，连续遍历数组往往比随机跳转访问更快；矩阵乘法用小块计算，是为了让一块 A/B/C 数据留在 cache 里被重复使用。</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><a href="#__codelineno-3-1"><span class="linenos" data-linenos="1 "></span></a><span class="c1">// C/C++ 多维数组按行存放；j 在内层时通常是连续访问。</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2"></a><a href="#__codelineno-3-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">rows</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3"></a><a href="#__codelineno-3-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">cols</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4"></a><a href="#__codelineno-3-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">        </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">// C/C++ 多维数组按行存放；j 在内层时通常是连续访问。
+for (int i = 0; i &lt; rows; ++i)
+    for (int j = 0; j &lt; cols; ++j)
+        sum += a[i][j];</code></pre>
 <p>缓存命中不等于一定快，未命中也不必然是 bug。要看访问模式、工作集大小和总时间。性能分析课中的 cache-miss 指标正是用来验证这些判断。</p>
 <h3 id="缓存一致性与-false-sharing">缓存一致性与 false sharing<a class="headerlink" href="#缓存一致性与-false-sharing" title="Permanent link">&para;</a></h3>
 <p>多核机器中，同一内存位置可能被多个核心缓存。硬件通过一致性协议保证一个核心写入后，其他核心最终不会长期读到旧值。代价是写入会让其他缓存中的相关 cache line 失效。</p>
@@ -3652,12 +3652,11 @@
 </details>
 <h3 id="进程状态与抢占">进程状态与抢占<a class="headerlink" href="#进程状态与抢占" title="Permanent link">&para;</a></h3>
 <p>进程并非从启动到退出一直占着 CPU。它至少会在运行（running）、就绪（runnable/ready）和等待（sleeping/blocked）之间变化。就绪表示它有事可做、但尚未得到核心；等待表示它在等磁盘、网络、锁、子进程或定时器，暂时不能继续执行。结束后内核还会短暂保留退出状态，直到父进程读取退出码。</p>
-<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><a href="#__codelineno-4-1"><span class="linenos" data-linenos="1 "></span></a>创建 -&gt; 就绪 --被调度--&gt; 运行 --时间片到/被抢占--&gt; 就绪
-<a id="__codelineno-4-2" name="__codelineno-4-2"></a><a href="#__codelineno-4-2"><span class="linenos" data-linenos="2 "></span></a>                         |  
-<a id="__codelineno-4-3" name="__codelineno-4-3"></a><a href="#__codelineno-4-3"><span class="linenos" data-linenos="3 "></span></a>                         +--等待 I/O 或锁--&gt; 等待 --事件到达--&gt; 就绪
-<a id="__codelineno-4-4" name="__codelineno-4-4"></a><a href="#__codelineno-4-4"><span class="linenos" data-linenos="4 "></span></a>                         |
-<a id="__codelineno-4-5" name="__codelineno-4-5"></a><a href="#__codelineno-4-5"><span class="linenos" data-linenos="5 "></span></a>                         +--exit--&gt; 退出
-</code></pre></div>
+<pre class="highlight"><code class="language-text">创建 -&gt; 就绪 --被调度--&gt; 运行 --时间片到/被抢占--&gt; 就绪
+                         |  
+                         +--等待 I/O 或锁--&gt; 等待 --事件到达--&gt; 就绪
+                         |
+                         +--exit--&gt; 退出</code></pre>
 <p>从就绪到运行，由操作系统按某种策略挑选下一个进程，进程自己并不抢占 CPU。课件以 Round Robin（时间片轮转）为例：给每个进程一小段固定时间片，到点后无论是否跑完都被换下，轮给下一个进程。下面图里 P1、P2、P3 在一条时间轴上轮流占 CPU。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0707p/process-schedule-round-robin.png"><img width="1280" height="720" alt="课件以 Round Robin 时间片轮转调度为例：P1、P2、P3 在时间轴上轮流占用 CPU，每个进程的时间片到点就被换下，交给下一个。" src="../assets/0707p/process-schedule-round-robin.preview.jpg" data-fullsrc="../assets/0707p/process-schedule-round-robin.png" /></a></p>
 <p><em>图：进程调度有 Non-preemptive（非抢占，跑完才换）与 Preemptive（抢占，可被中断换下）之分；Round Robin 属于后者，靠固定时间片轮流。</em></p>
@@ -3758,9 +3757,8 @@
 <p><a class="glightbox" data-type="image" href="../assets/0707p/create-threads-openmp.png"><img width="1280" height="720" alt="课件对比两种创建线程的方式：POSIX 线程（pthread）低层显式、需要手工同步，OpenMP 基于编译指令、是 HPC 的事实标准。" src="../assets/0707p/create-threads-openmp.preview.jpg" data-fullsrc="../assets/0707p/create-threads-openmp.png" /></a></p>
 <p><em>图：pthread_create 是底层建线程接口，啰嗦易错；OpenMP 用 <code>#pragma omp</code> 指令让编译器代劳建线程和同步，代码更接近串行。</em></p>
 <p>共享内存使线程通信方便，也带来数据竞争。<code>count++</code> 并不是一个不可分割的动作，它包含读、加、写。两个线程交错执行，结果可能少加一次：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><a href="#__codelineno-5-1"><span class="linenos" data-linenos="1 "></span></a><span class="c1">// 错误示例：多个线程同时执行会发生数据竞争。</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2"></a><a href="#__codelineno-5-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">count</span><span class="o">++</span><span class="p">;</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">// 错误示例：多个线程同时执行会发生数据竞争。
+count++;</code></pre>
 <p>解决方式有三类：</p>
 <ol>
 <li>用互斥锁让同一时刻只有一个线程修改共享状态；</li>
@@ -3774,21 +3772,20 @@
 <p>原子（atomic）就是<strong>不可分割</strong>。一个原子操作要么完整做完、要么完全没做，不会被其他线程看到中间状态。反例是前面的 <code>count++</code>：它编译后其实是读 → 加 → 写三步，不是原子操作。两个线程交错时可能同时读到旧值，各自加一、再各写回，导致本应加两次却只加了一次。互斥锁、原子类型（<code>std::atomic</code>）、<code>omp atomic</code> 的作用，就是把这类读改写合成不可分割的一步，或保证同一时刻只有一个线程在做。要注意：原子只保证正确性，不保证快——多个线程抢同一个原子变量仍会排队、争同一条 cache line。</p>
 </details>
 <p>互斥锁让线程排队，还要保证先后读写的顺序跨线程可见。即便两个线程没有真正同时写，也要让先写后读的顺序对消费者成立：线程 A 解锁前的写入，必须对随后成功加锁的线程 B 可见，否则即使锁挡住了同时的修改，消费者仍可能读到旧值。<code>std::mutex</code>、OpenMP 的同步构造和语言原子类型会建立这一层顺序关系。反过来，多个线程无任何同步地读写同一个普通变量属于<strong>数据竞争</strong>（data race），在 C/C++ 里是未定义行为，不能靠我的电脑多跑几次都对就证明安全。</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><a href="#__codelineno-6-1"><span class="linenos" data-linenos=" 1 "></span></a><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="w"> </span><span class="n">m</span><span class="p">;</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2"></a><a href="#__codelineno-6-2"><span class="linenos" data-linenos=" 2 "></span></a><span class="n">std</span><span class="o">::</span><span class="n">condition_variable</span><span class="w"> </span><span class="n">cv</span><span class="p">;</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3"></a><a href="#__codelineno-6-3"><span class="linenos" data-linenos=" 3 "></span></a><span class="kt">bool</span><span class="w"> </span><span class="n">ready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4"></a><a href="#__codelineno-6-4"><span class="linenos" data-linenos=" 4 "></span></a>
-<a id="__codelineno-6-5" name="__codelineno-6-5"></a><a href="#__codelineno-6-5"><span class="linenos" data-linenos=" 5 "></span></a><span class="c1">// 生产者：写入数据后再公布 ready，并唤醒等待者。</span>
-<a id="__codelineno-6-6" name="__codelineno-6-6"></a><a href="#__codelineno-6-6"><span class="linenos" data-linenos=" 6 "></span></a><span class="p">{</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7"></a><a href="#__codelineno-6-7"><span class="linenos" data-linenos=" 7 "></span></a><span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lock</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8"></a><a href="#__codelineno-6-8"><span class="linenos" data-linenos=" 8 "></span></a><span class="w">    </span><span class="n">ready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9"></a><a href="#__codelineno-6-9"><span class="linenos" data-linenos=" 9 "></span></a><span class="p">}</span>
-<a id="__codelineno-6-10" name="__codelineno-6-10"></a><a href="#__codelineno-6-10"><span class="linenos" data-linenos="10 "></span></a><span class="n">cv</span><span class="p">.</span><span class="n">notify_one</span><span class="p">();</span>
-<a id="__codelineno-6-11" name="__codelineno-6-11"></a><a href="#__codelineno-6-11"><span class="linenos" data-linenos="11 "></span></a>
-<a id="__codelineno-6-12" name="__codelineno-6-12"></a><a href="#__codelineno-6-12"><span class="linenos" data-linenos="12 "></span></a><span class="c1">// 消费者：等待条件成立，不能只凭一次唤醒就继续。</span>
-<a id="__codelineno-6-13" name="__codelineno-6-13"></a><a href="#__codelineno-6-13"><span class="linenos" data-linenos="13 "></span></a><span class="n">std</span><span class="o">::</span><span class="n">unique_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lock</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
-<a id="__codelineno-6-14" name="__codelineno-6-14"></a><a href="#__codelineno-6-14"><span class="linenos" data-linenos="14 "></span></a><span class="n">cv</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ready</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">std::mutex m;
+std::condition_variable cv;
+bool ready = false;
+
+// 生产者：写入数据后再公布 ready，并唤醒等待者。
+{
+    std::lock_guard&lt;std::mutex&gt; lock(m);
+    ready = true;
+}
+cv.notify_one();
+
+// 消费者：等待条件成立，不能只凭一次唤醒就继续。
+std::unique_lock&lt;std::mutex&gt; lock(m);
+cv.wait(lock, [] { return ready; });</code></pre>
 <p>锁解决同时访问，条件变量解决无事可做时如何等待。等待端若只是 <code>while (!ready) {}</code> 轮询，会一直占满一个核心、制造 cache 一致性流量；条件变量让它在条件不成立时睡眠，等 <code>notify</code> 才唤醒。等待必须写成谓词并在锁保护下检查，因为唤醒可能是虚假的，或数据已被其他线程先取走。只有极短、经过测量的等待才适合用自旋。</p>
 <div class="admonition tip">
 <p class="admonition-title">把共享对象的所有权写下来</p>
@@ -3816,12 +3813,11 @@
 <summary>NUMA（Non-Uniform Memory Access）</summary>
 <p>大多数程序以为内存就是内存，从哪访问都一样。单路小机上确实接近这样：所有 CPU 核访问同一块内存，代价相近，这叫 UMA（一致内存访问）。但多路服务器不是这样：每颗 CPU（socket）旁边各挂一组本地内存，访问很快；跨 socket 去取另一颗 CPU 的内存，要穿过两颗 CPU 之间的高速互连，更慢、带宽也更低。这种不同位置内存访问代价不同的架构就叫 <strong>NUMA</strong>（非一致内存访问）；一个 socket 加它身边的内存合称一个 <strong>NUMA 节点</strong>（node）。</p>
 </details>
-<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><a href="#__codelineno-7-1"><span class="linenos" data-linenos="1 "></span></a>CPU socket 0 -- 本地内存 0
-<a id="__codelineno-7-2" name="__codelineno-7-2"></a><a href="#__codelineno-7-2"><span class="linenos" data-linenos="2 "></span></a>       |\
-<a id="__codelineno-7-3" name="__codelineno-7-3"></a><a href="#__codelineno-7-3"><span class="linenos" data-linenos="3 "></span></a>       | \  跨 socket 互连
-<a id="__codelineno-7-4" name="__codelineno-7-4"></a><a href="#__codelineno-7-4"><span class="linenos" data-linenos="4 "></span></a>       |  \
-<a id="__codelineno-7-5" name="__codelineno-7-5"></a><a href="#__codelineno-7-5"><span class="linenos" data-linenos="5 "></span></a>CPU socket 1 -- 本地内存 1
-</code></pre></div>
+<pre class="highlight"><code class="language-text">CPU socket 0 -- 本地内存 0
+       |\
+       | \  跨 socket 互连
+       |  \
+CPU socket 1 -- 本地内存 1</code></pre>
 <p>Linux 常按 first touch 分配物理页：哪个线程第一次写某块新内存，页面往往就分配到该线程所在 NUMA 节点。若主线程在 socket 0 一次性初始化全部大数组，之后 socket 1 的工作线程处理其中一半数据，就会发生大量远端访问。</p>
 <p>更合理的方式是让各线程初始化并处理自己的数据块；MPI/线程划分也与数据分块保持一致。可用 <code>numactl --hardware</code> 查看节点和距离，用 <code>numastat</code> 观察进程页分布。是否需要强制绑定，要以实际机器和测量为准。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0707p/numa-latency.jpg"><img width="1280" height="720" alt="课件中的延迟矩阵显示：同一 socket 内访问较低，跨 socket 的格子明显更高。" src="../assets/0707p/numa-latency.preview.jpg" data-fullsrc="../assets/0707p/numa-latency.jpg" /></a></p>
@@ -3839,11 +3835,10 @@
 <p><a class="glightbox" data-type="image" href="../assets/0707p/why-virtual-memory.jpg"><img width="1280" height="720" alt="课件说明为什么需要虚拟内存：隔离各进程的地址空间、统一编程模型，并允许按需分页，让可用地址不必受物理磁盘大小限制。" src="../assets/0707p/why-virtual-memory.preview.jpg" data-fullsrc="../assets/0707p/why-virtual-memory.jpg" /></a></p>
 <p><em>图：虚拟内存把逻辑地址与物理内存解耦，带来隔离与灵活，也带来地址翻译这一层需要缓存的额外成本。</em></p>
 <p>如果每次读写都要先走内存里的多级页表，地址翻译本身会很慢，因此 CPU 有 TLB（translation lookaside buffer）缓存最近的页表项。一次普通访问大致经历这样的判断：</p>
-<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><a href="#__codelineno-8-1"><span class="linenos" data-linenos="1 "></span></a>虚拟地址
-<a id="__codelineno-8-2" name="__codelineno-8-2"></a><a href="#__codelineno-8-2"><span class="linenos" data-linenos="2 "></span></a>  -&gt; TLB 命中：得到物理页号，继续查 L1/L2/L3/DRAM
-<a id="__codelineno-8-3" name="__codelineno-8-3"></a><a href="#__codelineno-8-3"><span class="linenos" data-linenos="3 "></span></a>  -&gt; TLB 未命中：页表遍历，填入 TLB，再继续访问
-<a id="__codelineno-8-4" name="__codelineno-8-4"></a><a href="#__codelineno-8-4"><span class="linenos" data-linenos="4 "></span></a>  -&gt; 页表项不存在：触发 page fault，交给操作系统处理
-</code></pre></div>
+<pre class="highlight"><code class="language-text">虚拟地址
+  -&gt; TLB 命中：得到物理页号，继续查 L1/L2/L3/DRAM
+  -&gt; TLB 未命中：页表遍历，填入 TLB，再继续访问
+  -&gt; 页表项不存在：触发 page fault，交给操作系统处理</code></pre>
 <p><a class="glightbox" data-type="image" href="../assets/0707p/paging-page-frame.jpg"><img width="1280" height="720" alt="课件画出分页的基本思想：物理内存被切成页框，虚拟地址空间按页映射到这些页框，未映射或缺页时借助磁盘。" src="../assets/0707p/paging-page-frame.preview.jpg" data-fullsrc="../assets/0707p/paging-page-frame.jpg" /></a></p>
 <p><em>图：页与页框的映射是虚拟内存的核心；缺页、swap、共享与保护都建立在这张映射之上。</em></p>
 <p>这里的 <code>page fault</code> 并不自动等于程序出错。进程第一次触碰一块按需分配的匿名内存时，内核可能分配物理页并建立映射，这也是一种正常缺页。访问无权限地址、访问已经释放的映射，或系统不得不从磁盘换回被置换的页，才会分别成为异常或非常昂贵的缺页。</p>
@@ -4252,6 +4247,16 @@ S=\frac{1}{s+(1-s)/p}.
         <script src="../../../../theme/js/mathjax.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../../../theme/js/highlight.js"></script>
       
         <script src="../../../../theme/js/site.js"></script>
       

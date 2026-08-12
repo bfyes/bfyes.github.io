@@ -64,6 +64,10 @@
     
       <link rel="stylesheet" href="../../theme/css/components.css">
     
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
     <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
@@ -3435,14 +3439,12 @@
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>(1/3) 安装转换工具：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos="1 "></span></a>brew<span class="w"> </span>install<span class="w"> </span>qemu
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">brew install qemu</code></pre>
 </div>
 <div class="tabbed-block">
 <p>(2/3) 执行转换命令：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a>qemu-img<span class="w"> </span>convert<span class="w"> </span>-f<span class="w"> </span>vmdk<span class="w"> </span>-O<span class="w"> </span>qcow2<span class="w"> </span>你的虚拟机文件路径.vmdk<span class="w"> </span>输出文件路径.qcow2
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a><span class="c1"># 如：qemu-img convert -f vmdk -O qcow2 ~/Downloads/xp.vmdk ~/Downloads/xp.qcow2</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">qemu-img convert -f vmdk -O qcow2 你的虚拟机文件路径.vmdk 输出文件路径.qcow2
+# 如：qemu-img convert -f vmdk -O qcow2 ~/Downloads/xp.vmdk ~/Downloads/xp.qcow2</code></pre>
 </div>
 <div class="tabbed-block">
 <p>(3/3) 完成验证：得到可被 UTM 直接导入的 .qcow2 磁盘文件，大小应与vmdk文件类似。</p>
@@ -3501,8 +3503,7 @@
 <li>下面给出了笔者安装时的资源（可以用迅雷等打开。） 
 （注意：非官方资源，请自行甄别。也可从老师主页上的链接下载。）</li>
 </ul>
-<div class="language-http highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><a href="#__codelineno-2-1"><span class="linenos" data-linenos="1 "></span></a><span class="err">ed2k://|file|zh-hans_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-74070.iso|630237184|EC51916C9D9B8B931195EE0D6EE9B40E|/</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-http">ed2k://|file|zh-hans_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-74070.iso|630237184|EC51916C9D9B8B931195EE0D6EE9B40E|/</code></pre>
 </div>
 <p><strong>下载 ISO 本质上是从 ISO 恢复 XP 系统</strong></p>
 </li>
@@ -3577,8 +3578,7 @@
 </li>
 <li>
 <p>查看内网 IP 地址：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><a href="#__codelineno-3-1"><span class="linenos" data-linenos="1 "></span></a>ifconfig<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>inet
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">ifconfig | grep inet</code></pre>
 <p><a class="glightbox" href="../xp.assets/1Capture%202026-03-26%2014.09.58.png" data-type="image"><img width="1360" height="970" src="../xp.assets/1Capture%202026-03-26%2014.09.58.preview.jpg" data-fullsrc="../xp.assets/1Capture%202026-03-26%2014.09.58.png" alt="1Capture 2026-03-26 14.09.58" style="display: block; margin: 0 auto;"></a></p>
 <p>得到并记住该地址。（高亮部分）</p>
 </li>
@@ -3632,8 +3632,7 @@
 <li>
 <p>安装 7-Zip 工具(若未安装)</p>
 <p>在终端(terminal)中输入:</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><a href="#__codelineno-4-1"><span class="linenos" data-linenos="1 "></span></a>brew<span class="w"> </span>install<span class="w"> </span>p7zip
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">brew install p7zip</code></pre>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>压缩前请关闭虚拟机，防止磁盘映像损坏。</p>
@@ -3641,11 +3640,10 @@
 </li>
 <li>
 <p>指令示例:</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><a href="#__codelineno-5-1"><span class="linenos" data-linenos="1 "></span></a>7za<span class="w"> </span>a<span class="w"> </span>test.7z<span class="w"> </span>~/Parallels/Windows<span class="se">\ </span>XP.utm
-<a id="__codelineno-5-2" name="__codelineno-5-2"></a><a href="#__codelineno-5-2"><span class="linenos" data-linenos="2 "></span></a><span class="c1"># .utm并非后缀，而是文件夹名称的一部分</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3"></a><a href="#__codelineno-5-3"><span class="linenos" data-linenos="3 "></span></a><span class="c1"># 这里7z压缩效率较高</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4"></a><a href="#__codelineno-5-4"><span class="linenos" data-linenos="4 "></span></a><span class="c1"># 详见“指令参考”</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">7za a test.7z ~/Parallels/Windows\ XP.utm
+# .utm并非后缀，而是文件夹名称的一部分
+# 这里7z压缩效率较高
+# 详见“指令参考”</code></pre>
 <details class="info">
 <summary>点击查看：7za指令参考</summary>
 <p><code>Usage: 7za &lt;command&gt; [&lt;switches&gt;...] &lt;archive_name&gt; [&lt;file_names&gt;...]</code><br />
@@ -3673,10 +3671,9 @@ x : eXtract files with full paths  </p>
 </div>
 <h2 id="结语">结语<a class="headerlink" href="#结语" title="Permanent link">&para;</a></h2>
 <p>祝学习顺利！</p>
-<div class="language-asm highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><a href="#__codelineno-6-1"><span class="linenos" data-linenos="1 "></span></a><span class="nf">mov</span><span class="w"> </span><span class="no">al</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2"></a><a href="#__codelineno-6-2"><span class="linenos" data-linenos="2 "></span></a><span class="nf">mov</span><span class="w"> </span><span class="no">ah</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="no">Ch</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3"></a><a href="#__codelineno-6-3"><span class="linenos" data-linenos="3 "></span></a><span class="nf">int</span><span class="w"> </span><span class="mi">21</span><span class="no">h</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-asm">mov al, 0
+mov ah, 4Ch
+int 21h</code></pre>
 
 
 
@@ -4058,6 +4055,16 @@ x : eXtract files with full paths  </p>
         <script src="../../theme/js/mathjax.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../theme/js/highlight.js"></script>
       
         <script src="../../theme/js/site.js"></script>
       

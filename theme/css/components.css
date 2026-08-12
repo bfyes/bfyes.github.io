@@ -736,6 +736,70 @@ body.bfyes-home-page .md-content__inner {
   max-width: 65rem;
 }
 
+/* ---- highlight.js 运行时行号（不破坏高亮） ----
+   每个 <code> 由 theme/js/highlight.js 在 <pre> 内 <code> 前插入独立的
+   .bfy-gutter 行号列，与 <code> 用 flex 并排。不修改 <code> 内部的高亮
+   span，因此绝不破坏高亮。行号样式对齐线上正式版：灰字、等宽、右对齐、
+   右侧分隔竖线、不可选中。 */
+.md-typeset pre.highlight,
+.md-typeset pre[class*="language-"] {
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;           /* 防止 gutter 与 code 溢出时的双滚动 */
+}
+.md-typeset pre.highlight code,
+.md-typeset pre[class*="language-"] code {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: block;
+}
+.md-typeset .bfy-gutter {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  user-select: none;
+  box-sizing: border-box;
+  padding-right: 0.8em;
+  border-right: 1px solid var(--md-default-fg-color--lightest);
+  margin-right: 1em;
+  color: var(--md-default-fg-color--lighter);  /* 淡化行号，降低存在感 */
+  font-family: inherit;           /* 继承等宽代码字体 */
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+.md-typeset .bfy-gutter .bfy-ln {
+  display: block;
+  height: 1.45em;
+  line-height: 1.45;
+}
+@media screen and (max-width: 44.984375em) {
+  .md-typeset .bfy-gutter {
+    padding-right: 0.5em;
+    margin-right: 0.6em;
+  }
+}
+
+/* ---- highlight.js 与 Material 布局兼容 ----
+   github.min.css 会给 .hljs 加自身背景与 padding，导致与 Material 的
+   pre(内边距/背景) 叠加冲突。这里让 code 回归 Material 的裸排版，
+   仅保留 github 的 token 配色。 */
+.md-typeset pre .hljs {
+  padding: 0 !important;
+  background: transparent !important;
+  overflow: visible;
+  border-radius: 0;
+  line-height: 1.45;
+}
+
+/* ---- 代码块取消圆角（hljs 与 Material pre 均去掉） ---- */
+.md-typeset .highlight,
+.md-typeset pre,
+.md-typeset pre code {
+  border-radius: 0 !important;
+}
+
 /* ============================================================================
    04. PDF 阅读器
    ============================================================================ */

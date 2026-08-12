@@ -64,6 +64,10 @@
     
       <link rel="stylesheet" href="../../../theme/css/components.css">
     
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
     <script>__md_scope=new URL("../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
@@ -3287,36 +3291,33 @@
 <summary>1. 数据重排</summary>
 <p>即权重预打包，重排为 AMX/VNNI 布局。</p>
 <p>以 VNNI 为例，VNNI 布局按 64 行分块 <code>[row_block/64][K/4][256]</code>，使每条 <code>vpdpbusd</code> 的权重在一次 512-bit load 中完成。</p>
-<div class="language-c++ highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos=" 1 "></span></a><span class="c1">// VNNI 布局：[row_block/64][K/4][256]</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a><a href="#__codelineno-0-2"><span class="linenos" data-linenos=" 2 "></span></a><span class="c1">//每条 vpdpbusd 的权重在一次 512b load 中完备</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a><a href="#__codelineno-0-3"><span class="linenos" data-linenos=" 3 "></span></a><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pack_weight_vnni</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="o">*</span><span class="n">src</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">rows</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a><a href="#__codelineno-0-4"><span class="linenos" data-linenos=" 4 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">rb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">rb</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">rows</span><span class="p">;</span><span class="w"> </span><span class="n">rb</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">64</span><span class="p">)</span><span class="w">   </span><span class="c1">// 64 行一块（一个 ZMM）</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5"></a><a href="#__codelineno-0-5"><span class="linenos" data-linenos=" 5 "></span></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">kb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">kb</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">K</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">kb</span><span class="p">)</span><span class="w">  </span><span class="c1">// 沿 K/4</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6"></a><a href="#__codelineno-0-6"><span class="linenos" data-linenos=" 6 "></span></a><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">r</span><span class="p">)</span><span class="w">    </span><span class="c1">// 块内 64 行</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7"></a><a href="#__codelineno-0-7"><span class="linenos" data-linenos=" 7 "></span></a><span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="c1">// 块内 4 字节连续</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8"></a><a href="#__codelineno-0-8"><span class="linenos" data-linenos=" 8 "></span></a><span class="w">                    </span><span class="n">out</span><span class="p">[((</span><span class="n">rb</span><span class="o">/</span><span class="mi">64</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">kb</span><span class="p">)</span><span class="o">*</span><span class="mi">256</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r</span><span class="o">*</span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9"></a><a href="#__codelineno-0-9"><span class="linenos" data-linenos=" 9 "></span></a><span class="w">                    </span><span class="n">src</span><span class="p">[(</span><span class="n">rb</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">K</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">kb</span><span class="o">*</span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">j</span><span class="p">];</span><span class="w"> </span><span class="c1">// 线性打包</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10"></a><a href="#__codelineno-0-10"><span class="linenos" data-linenos="10 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-c++">// VNNI 布局：[row_block/64][K/4][256]
+//每条 vpdpbusd 的权重在一次 512b load 中完备
+static void pack_weight_vnni(const int8_t *src, int rows, int K, int8_t *out) {
+    for (int rb = 0; rb &lt; rows; rb += 64)   // 64 行一块（一个 ZMM）
+        for (int kb = 0; kb &lt; K / 4; ++kb)  // 沿 K/4
+            for (int r = 0; r &lt; 64; ++r)    // 块内 64 行
+                for (int j = 0; j &lt; 4; ++j) // 块内 4 字节连续
+                    out[((rb/64)*(K/4) + kb)*256 + r*4 + j] =
+                    src[(rb + r)*K + kb*4 + j]; // 线性打包
+}</code></pre>
 <p>在预打包时变成线性，缓存友好，计算时下面的内联汇编在连续内存中取数据。</p>
-<div class="language-c++ highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">asm</span><span class="w"> </span><span class="k">volatile</span><span class="p">(</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">    </span><span class="s">&quot;vpdpbusd   0(%[bp]), %[av], %[a0]</span><span class="se">\n\t</span><span class="s">&quot;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a><a href="#__codelineno-1-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="s">&quot;vpdpbusd  64(%[bp]), %[av], %[a1]</span><span class="se">\n\t</span><span class="s">&quot;</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4"></a><a href="#__codelineno-1-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">    </span><span class="s">&quot;vpdpbusd 128(%[bp]), %[av], %[a2]</span><span class="se">\n\t</span><span class="s">&quot;</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5"></a><a href="#__codelineno-1-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">    </span><span class="s">&quot;vpdpbusd 192(%[bp]), %[av], %[a3]</span><span class="se">\n\t</span><span class="s">&quot;</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6"></a><a href="#__codelineno-1-6"><span class="linenos" data-linenos="6 "></span></a><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="n">a0</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;+v&quot;</span><span class="p">(</span><span class="n">a0</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">a1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;+v&quot;</span><span class="p">(</span><span class="n">a1</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">a2</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;+v&quot;</span><span class="p">(</span><span class="n">a2</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">a3</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;+v&quot;</span><span class="p">(</span><span class="n">a3</span><span class="p">)</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7"></a><a href="#__codelineno-1-7"><span class="linenos" data-linenos="7 "></span></a><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="n">av</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;v&quot;</span><span class="p">(</span><span class="n">av</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">bp</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8"></a><a href="#__codelineno-1-8"><span class="linenos" data-linenos="8 "></span></a><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;memory&quot;</span><span class="p">);</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9"></a><a href="#__codelineno-1-9"><span class="linenos" data-linenos="9 "></span></a><span class="n">bp</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-c++">asm volatile(
+    "vpdpbusd   0(%[bp]), %[av], %[a0]\n\t"
+    "vpdpbusd  64(%[bp]), %[av], %[a1]\n\t"
+    "vpdpbusd 128(%[bp]), %[av], %[a2]\n\t"
+    "vpdpbusd 192(%[bp]), %[av], %[a3]\n\t"
+    : [a0] "+v"(a0), [a1] "+v"(a1), [a2] "+v"(a2), [a3] "+v"(a3)
+    : [av] "v"(av), [bp] "r"(bp)
+    : "memory");
+bp += 256;</code></pre>
 </details>
 <details class="tip">
 <summary>2. 并行化 OpenMP（详见 0.1.5 的网址）</summary>
 <p>这句话的前提是在合理范围内，比如下面的节选片段并不是全用满 16 线程。</p>
-<div class="language-c++ highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><a href="#__codelineno-2-1"><span class="linenos" data-linenos="1 "></span></a><span class="c1">// S2/S3 各使用 8 个物理核，S4 使用全部 16 个逻辑线程。(S1 是常驻线程池)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><a href="#__codelineno-2-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">g_compute_threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">E</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">OPENMP_NTHREADS_S4</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><a href="#__codelineno-2-3"><span class="linenos" data-linenos="3 "></span></a><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">D</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">256</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">OPENMP_NTHREADS_LARGE</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">OPENMP_NTHREADS_SMALL</span><span class="p">);</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-c++">// S2/S3 各使用 8 个物理核，S4 使用全部 16 个逻辑线程。(S1 是常驻线程池)
+g_compute_threads = E &gt; 16 ? OPENMP_NTHREADS_S4
+: (D &gt; 256 ? OPENMP_NTHREADS_LARGE : OPENMP_NTHREADS_SMALL);</code></pre>
 <p>经过实测，S3 8 线程效果最优，可以解释为线程更多时一个核心内部的两个线程会抢用 AMX 等计算单元导致效率下降。</p>
 <p><a class="glightbox" href="./lab2.assets/image-20260811005610974.png" data-type="image"><img width="1238" height="922" src="./lab2.assets/image-20260811005610974.preview.jpg" data-fullsrc="./lab2.assets/image-20260811005610974.png" alt="image-20260811005610974" style="zoom:40%;"></a></p>
 <p>题外话，S2 <strong>10核心</strong>的时候有时候能打出很好的分数，但是 oj 波动很大，最后求稳改回了 8 核心。暂时归结为玄学问题。（上图想复现，发现异常了？这个真不知道为什么）</p>
@@ -3326,59 +3327,57 @@
 <details class="tip">
 <summary>3. 向量/矩阵计算用并行指令集（AVX-512 VNNI + AMX）</summary>
 <p>如：用 AMX 加速的 INT8 矩阵乘加内核</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><a href="#__codelineno-3-1"><span class="linenos" data-linenos=" 1 "></span></a><span class="c1">// ── AMX int8 GEMM: A[M][K] × B[rows][K]^T → C[M][rows] ──</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2"></a><a href="#__codelineno-3-2"><span class="linenos" data-linenos=" 2 "></span></a><span class="c1">// tile: tmm0=A(M×64B), tmm1=B(16×64B), tmm2..5=四个M×16的int32输出</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3"></a><a href="#__codelineno-3-3"><span class="linenos" data-linenos=" 3 "></span></a><span class="c1">// 四条C链交错: load B块i → dpbssd tile i → load B块i+1...隐藏TMUL延迟</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4"></a><a href="#__codelineno-3-4"><span class="linenos" data-linenos=" 4 "></span></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">proj_amx</span><span class="p">(</span><span class="n">xxx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5"></a><a href="#__codelineno-3-5"><span class="linenos" data-linenos=" 5 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">rows</span><span class="p">;</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">64</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6"></a><a href="#__codelineno-3-6"><span class="linenos" data-linenos=" 6 "></span></a><span class="w">        </span><span class="n">_tile_zero</span><span class="p">(</span><span class="mf">2..5</span><span class="p">);</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7"></a><a href="#__codelineno-3-7"><span class="linenos" data-linenos=" 7 "></span></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">K</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">64</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8"></a><a href="#__codelineno-3-8"><span class="linenos" data-linenos=" 8 "></span></a><span class="w">            </span><span class="n">_tile_loadd</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">lda</span><span class="p">);</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9"></a><a href="#__codelineno-3-9"><span class="linenos" data-linenos=" 9 "></span></a><span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="o">*</span><span class="n">bp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pack</span><span class="o">+</span><span class="p">(</span><span class="kt">size_t</span><span class="p">)(</span><span class="n">k</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span><span class="o">*</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10"></a><a href="#__codelineno-3-10"><span class="linenos" data-linenos="10 "></span></a><span class="w">            </span><span class="n">_tile_loadd</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">bp</span><span class="p">,</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
-<a id="__codelineno-3-11" name="__codelineno-3-11"></a><a href="#__codelineno-3-11"><span class="linenos" data-linenos="11 "></span></a><span class="w">            </span><span class="n">_tile_dpbssd</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<a id="__codelineno-3-12" name="__codelineno-3-12"></a><a href="#__codelineno-3-12"><span class="linenos" data-linenos="12 "></span></a><span class="w">            </span><span class="p">...</span>
-<a id="__codelineno-3-13" name="__codelineno-3-13"></a><a href="#__codelineno-3-13"><span class="linenos" data-linenos="13 "></span></a><span class="w">        </span><span class="p">}</span>
-<a id="__codelineno-3-14" name="__codelineno-3-14"></a><a href="#__codelineno-3-14"><span class="linenos" data-linenos="14 "></span></a><span class="w">        </span><span class="n">_tile_stored</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">col</span><span class="p">,</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int32_t</span><span class="p">));</span>
-<a id="__codelineno-3-15" name="__codelineno-3-15"></a><a href="#__codelineno-3-15"><span class="linenos" data-linenos="15 "></span></a><span class="w">        </span><span class="p">...</span>
-<a id="__codelineno-3-16" name="__codelineno-3-16"></a><a href="#__codelineno-3-16"><span class="linenos" data-linenos="16 "></span></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-3-17" name="__codelineno-3-17"></a><a href="#__codelineno-3-17"><span class="linenos" data-linenos="17 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">// ── AMX int8 GEMM: A[M][K] × B[rows][K]^T → C[M][rows] ──
+// tile: tmm0=A(M×64B), tmm1=B(16×64B), tmm2..5=四个M×16的int32输出
+// 四条C链交错: load B块i → dpbssd tile i → load B块i+1...隐藏TMUL延迟
+static inline void proj_amx(xxx) {
+    for (int col = 0; col &lt; rows; col += 64) {
+        _tile_zero(2..5);
+        for (int k = 0; k &lt; K; k += 64) {
+            _tile_loadd(0, a + k, lda);
+            const int8_t *bp = pack+(size_t)(k/4)* rows * 4 + col * 4;
+            _tile_loadd(1, bp, rows * 4);
+            _tile_dpbssd(2, 0, 1);
+            ...
+        }
+        _tile_stored(2, out + col, rows * (int)sizeof(int32_t));
+        ...
+    }
+}</code></pre>
 </details>
 <details class="tip">
 <summary>4. W8A8 量化</summary>
 <ol>
 <li>
 <p>FP32-&gt;int8</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><a href="#__codelineno-4-1"><span class="linenos" data-linenos=" 1 "></span></a><span class="c1">// 对单个 token 做 per-token 对称量化：float → int8。</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2"></a><a href="#__codelineno-4-2"><span class="linenos" data-linenos=" 2 "></span></a><span class="c1">// 每个 token 用独立的 scale，把动态范围充分利用到 [-127, 127]。</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3"></a><a href="#__codelineno-4-3"><span class="linenos" data-linenos=" 3 "></span></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">quantize_token</span><span class="p">(</span><span class="n">xxx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4"></a><a href="#__codelineno-4-4"><span class="linenos" data-linenos=" 4 "></span></a><span class="w">    </span><span class="c1">// 1) 扫描整个 token 向量，求所有元素的绝对值最大值 vmax</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5"></a><a href="#__codelineno-4-5"><span class="linenos" data-linenos=" 5 "></span></a><span class="w">    </span><span class="c1">//    ZMM lane 上逐块取 max，最后归并成一个标量 x_amax，为了算scale</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6"></a><a href="#__codelineno-4-6"><span class="linenos" data-linenos=" 6 "></span></a><span class="w">    </span><span class="p">...</span><span class="n">details</span><span class="w"> </span><span class="n">omitted</span><span class="p">...</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7"></a><a href="#__codelineno-4-7"><span class="linenos" data-linenos=" 7 "></span></a>
-<a id="__codelineno-4-8" name="__codelineno-4-8"></a><a href="#__codelineno-4-8"><span class="linenos" data-linenos=" 8 "></span></a><span class="w">    </span><span class="c1">// 2) 算出该 token 的 scale = max/127，随后反量化时乘回它即可还原；</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9"></a><a href="#__codelineno-4-9"><span class="linenos" data-linenos=" 9 "></span></a><span class="w">    </span><span class="c1">//    （若全为 0 则 scale 取 1 避免除零。</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10"></a><a href="#__codelineno-4-10"><span class="linenos" data-linenos="10 "></span></a><span class="w">    </span><span class="o">*</span><span class="n">s_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">x_amax</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">x_amax</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">INT8_MAX_ABS</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">;</span>
-<a id="__codelineno-4-11" name="__codelineno-4-11"></a><a href="#__codelineno-4-11"><span class="linenos" data-linenos="11 "></span></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">__m512</span><span class="w"> </span><span class="n">inv_sx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">1.0f</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">s_x</span><span class="p">));</span>
-<a id="__codelineno-4-12" name="__codelineno-4-12"></a><a href="#__codelineno-4-12"><span class="linenos" data-linenos="12 "></span></a>
-<a id="__codelineno-4-13" name="__codelineno-4-13"></a><a href="#__codelineno-4-13"><span class="linenos" data-linenos="13 "></span></a><span class="w">    </span><span class="c1">// 3) 逐 16 元素块量化：先把 x 乘上 1/scale，再 float→int32 取整，</span>
-<a id="__codelineno-4-14" name="__codelineno-4-14"></a><a href="#__codelineno-4-14"><span class="linenos" data-linenos="14 "></span></a><span class="w">    </span><span class="c1">//    再由 int32 压窄成 int8 存回 xq。</span>
-<a id="__codelineno-4-15" name="__codelineno-4-15"></a><a href="#__codelineno-4-15"><span class="linenos" data-linenos="15 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">D</span><span class="p">;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-16" name="__codelineno-4-16"></a><a href="#__codelineno-4-16"><span class="linenos" data-linenos="16 "></span></a><span class="w">        </span><span class="n">__m512i</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_cvtps_epi32</span>
-<a id="__codelineno-4-17" name="__codelineno-4-17"></a><a href="#__codelineno-4-17"><span class="linenos" data-linenos="17 "></span></a><span class="w">        </span><span class="p">(</span><span class="n">_mm512_mul_ps</span><span class="p">(</span><span class="n">_mm512_loadu_ps</span><span class="p">(</span><span class="n">xt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">d</span><span class="p">),</span><span class="w"> </span><span class="n">inv_sx</span><span class="p">));</span><span class="w">   </span>
-<a id="__codelineno-4-18" name="__codelineno-4-18"></a><a href="#__codelineno-4-18"><span class="linenos" data-linenos="18 "></span></a><span class="w">        </span><span class="c1">// * (1/scale) → int32</span>
-<a id="__codelineno-4-19" name="__codelineno-4-19"></a><a href="#__codelineno-4-19"><span class="linenos" data-linenos="19 "></span></a><span class="w">        </span><span class="n">_mm_storeu_si128</span><span class="p">((</span><span class="kr">__m128i</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">xq</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">d</span><span class="p">),</span><span class="n">_mm512_cvtepi32_epi8</span><span class="p">(</span><span class="n">q</span><span class="p">));</span><span class="w">  </span>
-<a id="__codelineno-4-20" name="__codelineno-4-20"></a><a href="#__codelineno-4-20"><span class="linenos" data-linenos="20 "></span></a><span class="w">        </span><span class="c1">// int32 → int8</span>
-<a id="__codelineno-4-21" name="__codelineno-4-21"></a><a href="#__codelineno-4-21"><span class="linenos" data-linenos="21 "></span></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-4-22" name="__codelineno-4-22"></a><a href="#__codelineno-4-22"><span class="linenos" data-linenos="22 "></span></a><span class="w">    </span><span class="c1">// 结果：xq 为量化的 int8 激活，s_x 为该 token 的量化 scale。</span>
-<a id="__codelineno-4-23" name="__codelineno-4-23"></a><a href="#__codelineno-4-23"><span class="linenos" data-linenos="23 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">// 对单个 token 做 per-token 对称量化：float → int8。
+// 每个 token 用独立的 scale，把动态范围充分利用到 [-127, 127]。
+static inline void quantize_token(xxx) {
+    // 1) 扫描整个 token 向量，求所有元素的绝对值最大值 vmax
+    //    ZMM lane 上逐块取 max，最后归并成一个标量 x_amax，为了算scale
+    ...details omitted...
+
+    // 2) 算出该 token 的 scale = max/127，随后反量化时乘回它即可还原；
+    //    （若全为 0 则 scale 取 1 避免除零。
+    *s_x = (x_amax &gt; 0.0f) ? x_amax / INT8_MAX_ABS : 1.0f;
+    const __m512 inv_sx = _mm512_set1_ps(1.0f / (*s_x));
+
+    // 3) 逐 16 元素块量化：先把 x 乘上 1/scale，再 float→int32 取整，
+    //    再由 int32 压窄成 int8 存回 xq。
+    for (int d = 0; d &lt; D; d += 16) {
+        __m512i q = _mm512_cvtps_epi32
+        (_mm512_mul_ps(_mm512_loadu_ps(xt + d), inv_sx));   
+        // * (1/scale) → int32
+        _mm_storeu_si128((__m128i *)(xq + d),_mm512_cvtepi32_epi8(q));  
+        // int32 → int8
+    }
+    // 结果：xq 为量化的 int8 激活，s_x 为该 token 的量化 scale。
+}
+</code></pre>
 </li>
 <li>
 <p>int8-&gt;int32，如 2.3 中的函数签名</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><a href="#__codelineno-5-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">proj_amx</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">lda</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="o">*</span><span class="n">pack</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">rows</span><span class="p">,</span><span class="w"> </span><span class="kt">int32_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="c1">//int8 输入、int32 输出</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">static inline void proj_amx(const int8_t *a, int lda, int m, int K, const int8_t *pack, int rows, int32_t *out) //int8 输入、int32 输出</code></pre>
 </li>
 <li>
 <p>反量化int32-&gt;FP32</p>
@@ -3394,25 +3393,24 @@
 <summary>1. 多项式函数</summary>
 <p>看可支配的精度，简化一些函数（如用低阶多项式替代 exp）</p>
 <p>不同的简化程度用于不同测试点。</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><a href="#__codelineno-6-1"><span class="linenos" data-linenos=" 1 "></span></a><span class="c1">// exp(x) = 2^{x·log2(e)} = 2^{t+f}</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2"></a><a href="#__codelineno-6-2"><span class="linenos" data-linenos=" 2 "></span></a><span class="c1">// 令 t = round(x·log2(e))，f = x·log2(e)−t ∈ [-0.5,0.5]</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3"></a><a href="#__codelineno-6-3"><span class="linenos" data-linenos=" 3 "></span></a><span class="c1">// 则 exp(x) = 2^t × 2^f；2^t 直接用整数 bit-field 写入 FP32 指数位，</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4"></a><a href="#__codelineno-6-4"><span class="linenos" data-linenos=" 4 "></span></a><span class="c1">// 2^f 在小区间上用多项式 p(f) ≈ 2^f 近似。</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5"></a><a href="#__codelineno-6-5"><span class="linenos" data-linenos=" 5 "></span></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">__m512</span><span class="w"> </span><span class="nf">exp_simd</span><span class="p">(</span><span class="n">__m512</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-6-6" name="__codelineno-6-6"></a><a href="#__codelineno-6-6"><span class="linenos" data-linenos=" 6 "></span></a><span class="w">    </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_mul_ps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">1.4426950408889634f</span><span class="p">));</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7"></a><a href="#__codelineno-6-7"><span class="linenos" data-linenos=" 7 "></span></a><span class="w">    </span><span class="n">__m512</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_roundscale_ps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="mh">0x00</span><span class="p">);</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8"></a><a href="#__codelineno-6-8"><span class="linenos" data-linenos=" 8 "></span></a><span class="w">    </span><span class="n">__m512</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_sub_ps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">);</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9"></a><a href="#__codelineno-6-9"><span class="linenos" data-linenos=" 9 "></span></a><span class="w">    </span><span class="c1">// 在 f∈[-0.5,0.5] 上近似 2^f。</span>
-<a id="__codelineno-6-10" name="__codelineno-6-10"></a><a href="#__codelineno-6-10"><span class="linenos" data-linenos="10 "></span></a><span class="w">    </span><span class="n">__m512</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_fmadd_ps</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">0.009618129f</span><span class="p">),</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">0.05550411f</span><span class="p">));</span>
-<a id="__codelineno-6-11" name="__codelineno-6-11"></a><a href="#__codelineno-6-11"><span class="linenos" data-linenos="11 "></span></a><span class="w">    </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_fmadd_ps</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">0.24022650f</span><span class="p">));</span>
-<a id="__codelineno-6-12" name="__codelineno-6-12"></a><a href="#__codelineno-6-12"><span class="linenos" data-linenos="12 "></span></a><span class="w">    </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_fmadd_ps</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">0.69314718f</span><span class="p">));</span>
-<a id="__codelineno-6-13" name="__codelineno-6-13"></a><a href="#__codelineno-6-13"><span class="linenos" data-linenos="13 "></span></a><span class="w">    </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_fmadd_ps</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">1.0f</span><span class="p">));</span>
-<a id="__codelineno-6-14" name="__codelineno-6-14"></a><a href="#__codelineno-6-14"><span class="linenos" data-linenos="14 "></span></a><span class="w">    </span><span class="c1">// 2^t 直接写入 FP32 exponent。</span>
-<a id="__codelineno-6-15" name="__codelineno-6-15"></a><a href="#__codelineno-6-15"><span class="linenos" data-linenos="15 "></span></a><span class="w">    </span><span class="p">...</span>
-<a id="__codelineno-6-16" name="__codelineno-6-16"></a><a href="#__codelineno-6-16"><span class="linenos" data-linenos="16 "></span></a><span class="p">}</span>
-<a id="__codelineno-6-17" name="__codelineno-6-17"></a><a href="#__codelineno-6-17"><span class="linenos" data-linenos="17 "></span></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">__m512</span><span class="w"> </span><span class="nf">exp_simd_linear</span><span class="p">(</span><span class="n">__m512</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-6-18" name="__codelineno-6-18"></a><a href="#__codelineno-6-18"><span class="linenos" data-linenos="18 "></span></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">__m512</span><span class="w"> </span><span class="n">exp_simd_quadratic</span><span class="p">(</span><span class="n">__m512</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">// exp(x) = 2^{x·log2(e)} = 2^{t+f}
+// 令 t = round(x·log2(e))，f = x·log2(e)−t ∈ [-0.5,0.5]
+// 则 exp(x) = 2^t × 2^f；2^t 直接用整数 bit-field 写入 FP32 指数位，
+// 2^f 在小区间上用多项式 p(f) ≈ 2^f 近似。
+static inline __m512 exp_simd(__m512 x) {
+    x = _mm512_mul_ps(x, _mm512_set1_ps(1.4426950408889634f));
+    __m512 t = _mm512_roundscale_ps(x, 0x00);
+    __m512 f = _mm512_sub_ps(x, t);
+    // 在 f∈[-0.5,0.5] 上近似 2^f。
+    __m512 p = _mm512_fmadd_ps(f, _mm512_set1_ps(0.009618129f), _mm512_set1_ps(0.05550411f));
+    p = _mm512_fmadd_ps(f, p, _mm512_set1_ps(0.24022650f));
+    p = _mm512_fmadd_ps(f, p, _mm512_set1_ps(0.69314718f));
+    p = _mm512_fmadd_ps(f, p, _mm512_set1_ps(1.0f));
+    // 2^t 直接写入 FP32 exponent。
+    ...
+}
+static inline __m512 exp_simd_linear(__m512 x) {
+static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
 <p>不同阶数的 exp：</p>
 <p><a class="glightbox" href="./lab2.assets/exp_approx.png" data-type="image"><img width="1950" height="780" src="./lab2.assets/exp_approx.preview.jpg" data-fullsrc="./lab2.assets/exp_approx.png" alt="exp 各阶近似与相对误差" style="zoom:60%;"></a></p>
 <p>对应到激活函数上，各阶近似的偏差：</p>
@@ -3428,13 +3426,12 @@
 <details class="tip">
 <summary>3. routed slot FP16 输出</summary>
 <p>具体说明在正文"优化记录"部分。</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><a href="#__codelineno-7-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="nf">to_bf16</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2"></a><a href="#__codelineno-7-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">bits</span><span class="p">;</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3"></a><a href="#__codelineno-7-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="n">__builtin_memcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bits</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">bits</span><span class="p">));</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4"></a><a href="#__codelineno-7-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">    </span><span class="n">bits</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mh">0x7fffu</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">((</span><span class="n">bits</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1u</span><span class="p">);</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5"></a><a href="#__codelineno-7-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">uint16_t</span><span class="p">)(</span><span class="n">bits</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">16</span><span class="p">);</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6"></a><a href="#__codelineno-7-6"><span class="linenos" data-linenos="6 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">static inline uint16_t to_bf16(float x) {
+    uint32_t bits;
+    __builtin_memcpy(&amp;bits, &amp;x, sizeof(bits));
+    bits += 0x7fffu + ((bits &gt;&gt; 16) &amp; 1u);
+    return (uint16_t)(bits &gt;&gt; 16);
+}</code></pre>
 </details>
 <details class="tip">
 <summary>4. 并行计算排序所需数值</summary>
@@ -3943,6 +3940,16 @@
         <script src="../../../theme/js/mathjax.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../../theme/js/highlight.js"></script>
       
         <script src="../../../theme/js/site.js"></script>
       

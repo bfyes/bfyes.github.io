@@ -60,6 +60,10 @@
     
       <link rel="stylesheet" href="../../theme/css/components.css">
     
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
     <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
@@ -3074,27 +3078,24 @@
 <h3 id="通过-7-zip-解压">通过 7-Zip 解压<a class="headerlink" href="#通过-7-zip-解压" title="Permanent link">&para;</a></h3>
 <h4 id="安装-7-zip-工具">安装 7-Zip 工具<a class="headerlink" href="#安装-7-zip-工具" title="Permanent link">&para;</a></h4>
 <p>在终端(terminal)中输入:</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos="1 "></span></a>brew<span class="w"> </span>install<span class="w"> </span>p7zip
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">brew install p7zip</code></pre>
 <h4 id="指令示例">指令示例<a class="headerlink" href="#指令示例" title="Permanent link">&para;</a></h4>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a>7za<span class="w"> </span>x<span class="w"> </span>test.7z<span class="w"> </span><span class="c1"># 解压</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a><span class="c1"># 详见“指令参考”</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">7za x test.7z # 解压
+# 详见“指令参考”</code></pre>
 <details class="info">
 <summary>点击查看：7za指令参考</summary>
 <p><code>Usage: 7za &lt;command&gt; [&lt;switches&gt;...] &lt;archive_name&gt; [&lt;file_names&gt;...]</code><br />
-<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><a href="#__codelineno-2-1"><span class="linenos" data-linenos=" 1 "></span></a>a : Add files to archive  
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><a href="#__codelineno-2-2"><span class="linenos" data-linenos=" 2 "></span></a>b : Benchmark  
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><a href="#__codelineno-2-3"><span class="linenos" data-linenos=" 3 "></span></a>d : Delete files from archive  
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><a href="#__codelineno-2-4"><span class="linenos" data-linenos=" 4 "></span></a>e : Extract files from archive (without using directory names)  
-<a id="__codelineno-2-5" name="__codelineno-2-5"></a><a href="#__codelineno-2-5"><span class="linenos" data-linenos=" 5 "></span></a>h : Calculate hash values for files  
-<a id="__codelineno-2-6" name="__codelineno-2-6"></a><a href="#__codelineno-2-6"><span class="linenos" data-linenos=" 6 "></span></a>i : Show information about supported formats  
-<a id="__codelineno-2-7" name="__codelineno-2-7"></a><a href="#__codelineno-2-7"><span class="linenos" data-linenos=" 7 "></span></a>l : List contents of archive  
-<a id="__codelineno-2-8" name="__codelineno-2-8"></a><a href="#__codelineno-2-8"><span class="linenos" data-linenos=" 8 "></span></a>rn : Rename files in archive  
-<a id="__codelineno-2-9" name="__codelineno-2-9"></a><a href="#__codelineno-2-9"><span class="linenos" data-linenos=" 9 "></span></a>t : Test integrity of archive  
-<a id="__codelineno-2-10" name="__codelineno-2-10"></a><a href="#__codelineno-2-10"><span class="linenos" data-linenos="10 "></span></a>u : Update files to archive  
-<a id="__codelineno-2-11" name="__codelineno-2-11"></a><a href="#__codelineno-2-11"><span class="linenos" data-linenos="11 "></span></a>x : eXtract files with full paths  
-</code></pre></div></p>
+<pre class="highlight"><code>a : Add files to archive  
+b : Benchmark  
+d : Delete files from archive  
+e : Extract files from archive (without using directory names)  
+h : Calculate hash values for files  
+i : Show information about supported formats  
+l : List contents of archive  
+rn : Rename files in archive  
+t : Test integrity of archive  
+u : Update files to archive  
+x : eXtract files with full paths  </code></pre></p>
 </details>
 <h3 id="其他方案">其他方案<a class="headerlink" href="#其他方案" title="Permanent link">&para;</a></h3>
 <p>如果你的压缩软件（如BandiZip）支持 <code>XZ</code> 算法，也可以选用该算法进行压缩，效果与 7-Zip 一致。</p>
@@ -3110,8 +3111,7 @@
 </li>
 <li>
 <p>查看内网 IP 地址：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><a href="#__codelineno-3-1"><span class="linenos" data-linenos="1 "></span></a>ifconfig<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>inet
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">ifconfig | grep inet</code></pre>
 <p><a class="glightbox" href="../xp.assets/1Capture%202026-03-26%2014.09.58.png" data-type="image"><img width="1360" height="970" src="../xp.assets/1Capture%202026-03-26%2014.09.58.preview.jpg" data-fullsrc="../xp.assets/1Capture%202026-03-26%2014.09.58.png" alt="1Capture 2026-03-26 14.09.58" style="display: block; margin: 0 auto;"></a></p>
 <p>得到并记住该地址。(高亮部分)</p>
 </li>
@@ -3160,10 +3160,9 @@
 <p>在 macOS 系统中，包（Package）是一种被系统特殊处理的文件夹，它会被伪装成单个文件呈现给用户，比如 .utm 虚拟机文件、.app 应用程序都属于这类包。双击它会直接启动关联程序（如 UTM 或对应 App），右键选择“显示包内容”才能查看内部的目录结构和文件；而在 Windows 系统中并没有原生的“包”概念，这类文件夹会直接以普通目录形式展示，没有封装成单文件的视觉效果，也不会自动关联到对应程序，需要手动进入目录或在应用中选择打开。</p>
 </details>
 <p>祝学习顺利！</p>
-<div class="language-asm highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><a href="#__codelineno-4-1"><span class="linenos" data-linenos="1 "></span></a><span class="nf">mov</span><span class="w"> </span><span class="no">al</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2"></a><a href="#__codelineno-4-2"><span class="linenos" data-linenos="2 "></span></a><span class="nf">mov</span><span class="w"> </span><span class="no">ah</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="no">Ch</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3"></a><a href="#__codelineno-4-3"><span class="linenos" data-linenos="3 "></span></a><span class="nf">int</span><span class="w"> </span><span class="mi">21</span><span class="no">h</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-asm">mov al, 0
+mov ah, 4Ch
+int 21h</code></pre>
 
 
 
@@ -3512,6 +3511,16 @@
         <script src="../../theme/js/mathjax.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../theme/js/highlight.js"></script>
       
         <script src="../../theme/js/site.js"></script>
       

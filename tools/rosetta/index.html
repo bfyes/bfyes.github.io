@@ -64,6 +64,10 @@
     
       <link rel="stylesheet" href="../../theme/css/components.css">
     
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
     <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
@@ -3528,9 +3532,8 @@
 <p>下面我们以 Ubuntu 22.04 LTS 为例，展示最简化的配置流程。</p>
 <h3 id="第一步准备安装镜像">第一步：准备安装镜像<a class="headerlink" href="#第一步准备安装镜像" title="Permanent link">&para;</a></h3>
 <p>你需要下载的是 ARM64 架构的 Ubuntu 服务器版镜像。记住，虚拟机本身是 ARM 系统。不要下错成 x86_64 的版本。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos="1 "></span></a><span class="c1"># 在Mac的终端里，使用wget下载（也可以浏览器直接下载）</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a><a href="#__codelineno-0-2"><span class="linenos" data-linenos="2 "></span></a>wget<span class="w"> </span>https://cdimage.ubuntu.com/releases/22.04/release/ubuntu-22.04.4-live-server-arm64.iso
-</code></pre></div>
+<pre class="highlight"><code class="language-bash"># 在Mac的终端里，使用wget下载（也可以浏览器直接下载）
+wget https://cdimage.ubuntu.com/releases/22.04/release/ubuntu-22.04.4-live-server-arm64.iso</code></pre>
 <p>我推荐使用服务器版（Server），因为它更轻量，没有图形桌面那些不必要的开销。后续所有操作我们都可以通过 SSH 连接进行，效率更高。</p>
 <h3 id="第二步安装并配置-utm">第二步：安装并配置 UTM<a class="headerlink" href="#第二步安装并配置-utm" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3562,64 +3565,53 @@
 <h2 id="系统内部精调配置-rosetta-与增强体验">系统内部精调：配置 Rosetta 与增强体验<a class="headerlink" href="#系统内部精调配置-rosetta-与增强体验" title="Permanent link">&para;</a></h2>
 <p>虚拟机启动并登录后，我们还需要在 Linux 内部进行一些配置，才能让 Rosetta 真正工作起来，并优化使用体验。</p>
 <p>首先，更新系统并安装必要组件：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a>sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>upgrade<span class="w"> </span>-y
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>binfmt-support<span class="w"> </span>-y
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">sudo apt update &amp;&amp; sudo apt upgrade -y
+sudo apt install binfmt-support -y</code></pre>
 <p>binfmt-support 是让 Linux 内核识别并调用 Rosetta 来处理 x86 二进制文件的关键包。</p>
 <p>接着，挂载 Rosetta 文件系统：</p>
 <p>UTM 已经在主机和虚拟机之间创建了一个名为 rosetta 的虚拟文件系统（virtiofs），里面包含了 Rosetta 转译器。我们需要把它挂载到虚拟机内部。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><a href="#__codelineno-2-1"><span class="linenos" data-linenos="1 "></span></a><span class="c1"># 创建挂载点</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><a href="#__codelineno-2-2"><span class="linenos" data-linenos="2 "></span></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/media/rosetta
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><a href="#__codelineno-2-3"><span class="linenos" data-linenos="3 "></span></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><a href="#__codelineno-2-4"><span class="linenos" data-linenos="4 "></span></a><span class="c1"># 临时挂载</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5"></a><a href="#__codelineno-2-5"><span class="linenos" data-linenos="5 "></span></a>sudo<span class="w"> </span>mount<span class="w"> </span>-t<span class="w"> </span>virtiofs<span class="w"> </span>rosetta<span class="w"> </span>/media/rosetta
-</code></pre></div>
+<pre class="highlight"><code class="language-bash"># 创建挂载点
+sudo mkdir -p /media/rosetta
+
+# 临时挂载
+sudo mount -t virtiofs rosetta /media/rosetta</code></pre>
 <p>为了让每次启动自动挂载，需要将其写入 <code>/etc/fstab</code> 文件：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><a href="#__codelineno-3-1"><span class="linenos" data-linenos="1 "></span></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;rosetta /media/rosetta virtiofs ro,nofail 0 0&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/etc/fstab
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">echo "rosetta /media/rosetta virtiofs ro,nofail 0 0" | sudo tee -a /etc/fstab</code></pre>
 <p>参数 nofail 很重要，即使挂载失败也不影响系统启动。</p>
 <p>然后，注册 Rosetta 为二进制格式解释器：</p>
 <p>这是最关键的一步，告诉系统：遇到 x86_64 的 ELF 可执行文件，就交给 <code>/media/rosetta/rosetta</code> 这个程序来处理。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><a href="#__codelineno-4-1"><span class="linenos" data-linenos="1 "></span></a>sudo<span class="w"> </span>/usr/sbin/update-binfmts<span class="w"> </span>--install<span class="w"> </span>rosetta<span class="w"> </span>/media/rosetta/rosetta<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2"></a><a href="#__codelineno-4-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">  </span>--magic<span class="w"> </span><span class="s2">&quot;\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3"></a><a href="#__codelineno-4-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">  </span>--mask<span class="w"> </span><span class="s2">&quot;\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff&quot;</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4"></a><a href="#__codelineno-4-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">  </span>--credentials<span class="w"> </span>yes<span class="w"> </span>--preserve<span class="w"> </span>no<span class="w"> </span>--fix-binary<span class="w"> </span>yes
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">sudo /usr/sbin/update-binfmts --install rosetta /media/rosetta/rosetta \
+  --magic "\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00" \
+  --mask "\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff" \
+  --credentials yes --preserve no --fix-binary yes</code></pre>
 <p>执行后，你可以检查是否成功：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><a href="#__codelineno-5-1"><span class="linenos" data-linenos="1 "></span></a>cat<span class="w"> </span>/proc/sys/fs/binfmt_misc/rosetta
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">cat /proc/sys/fs/binfmt_misc/rosetta</code></pre>
 <p>如果输出显示 enabled 和正确的解释器路径，就说明注册成功了。</p>
 <p>最后，安装 SPICE 增强工具（可选但推荐）：</p>
 <p>这能提供剪贴板共享、更好的鼠标集成等功能。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><a href="#__codelineno-6-1"><span class="linenos" data-linenos="1 "></span></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>spice-vdagent<span class="w"> </span>-y
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">sudo apt install spice-vdagent -y</code></pre>
 <p>安装后重启虚拟机生效。</p>
 <h2 id="实战检验编译与运行-x86-程序">实战检验：编译与运行 x86 程序<a class="headerlink" href="#实战检验编译与运行-x86-程序" title="Permanent link">&para;</a></h2>
 <p>配置好了，总得跑点东西试试。我们来实际编译并运行一个简单的 x86_64 C++ 程序。</p>
 <h3 id="第一步安装-x86_64-交叉编译工具链">第一步：安装 x86_64 交叉编译工具链<a class="headerlink" href="#第一步安装-x86_64-交叉编译工具链" title="Permanent link">&para;</a></h3>
 <p>虽然 Rosetta 能运行 x86 程序，但如果你需要在虚拟机内编译 x86 代码，就需要对应的工具链。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><a href="#__codelineno-7-1"><span class="linenos" data-linenos="1 "></span></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>gcc-multilib-x86-64-linux-gnu<span class="w"> </span>g++-multilib-x86-64-linux-gnu<span class="w"> </span>-y
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">sudo apt install gcc-multilib-x86-64-linux-gnu g++-multilib-x86-64-linux-gnu -y</code></pre>
 <p>这个包组提供了能在 ARM 系统上生成 x86_64 代码的 GCC 和 G++。</p>
 <h3 id="第二步编写并编译一个测试程序">第二步：编写并编译一个测试程序<a class="headerlink" href="#第二步编写并编译一个测试程序" title="Permanent link">&para;</a></h3>
 <p>用你喜欢的编辑器（如 nano 或 vim）创建一个文件 test.cpp：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><a href="#__codelineno-8-1"><span class="linenos" data-linenos="1 "></span></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2"></a><a href="#__codelineno-8-2"><span class="linenos" data-linenos="2 "></span></a><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3"></a><a href="#__codelineno-8-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Hello from an x86_64 program running on ARM via Rosetta!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4"></a><a href="#__codelineno-8-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5"></a><a href="#__codelineno-8-5"><span class="linenos" data-linenos="5 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">#include &lt;iostream&gt;
+int main() {
+  std::cout &lt;&lt; "Hello from an x86_64 program running on ARM via Rosetta!\n";
+  return 0;
+}</code></pre>
 <p>使用刚安装的 x86_64 交叉编译器进行编译：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><a href="#__codelineno-9-1"><span class="linenos" data-linenos="1 "></span></a>x86_64-linux-gnu-g++<span class="w"> </span>-o<span class="w"> </span>test_x86<span class="w"> </span>test.cpp
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">x86_64-linux-gnu-g++ -o test_x86 test.cpp</code></pre>
 <p>这会生成一个名为 test_x86 的 x86_64 架构可执行文件。</p>
 <h3 id="第三步通过-rosetta-运行">第三步：通过 Rosetta 运行<a class="headerlink" href="#第三步通过-rosetta-运行" title="Permanent link">&para;</a></h3>
 <p>直接运行即可，系统会自动调用 Rosetta 转译器：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><a href="#__codelineno-10-1"><span class="linenos" data-linenos="1 "></span></a>./test_x86
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">./test_x86</code></pre>
 <p>如果一切顺利，你将看到输出的欢迎信息。你可以用 file 命令验证其架构：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><a href="#__codelineno-11-1"><span class="linenos" data-linenos="1 "></span></a>file<span class="w"> </span>test_x86
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">file test_x86</code></pre>
 <p>输出应为：test_x86: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, ...</p>
 <blockquote>
 <p>可能遇到的动态库问题：</p>
@@ -3631,8 +3623,7 @@
 <p>UTM 的图形控制台有时反应较慢。既然安装了 OpenSSH，我们完全可以用 Mac 本地终端（如 iTerm2）通过 SSH 连接管理虚拟机，体验丝滑的终端操作。</p>
 <p>在 UTM 虚拟机启动后，查看其 IP 地址。可以在虚拟机内执行 <code>ip a</code> 命令，找到 eth0 或 ens 开头的网卡，查看 inet 地址。</p>
 <p>在 Mac 的终端里：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a><a href="#__codelineno-12-1"><span class="linenos" data-linenos="1 "></span></a>ssh<span class="w"> </span>your_username@&lt;虚拟机IP地址&gt;
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">ssh your_username@&lt;虚拟机IP地址&gt;</code></pre>
 <p>输入密码即可连接。你还可以配置 SSH 密钥登录，彻底告别密码。</p>
 <h3 id="性能优化资源分配与源替换">性能优化：资源分配与源替换<a class="headerlink" href="#性能优化资源分配与源替换" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3647,9 +3638,8 @@
 </ul>
 <h3 id="替代方案浅析lima">替代方案浅析：Lima<a class="headerlink" href="#替代方案浅析lima" title="Permanent link">&para;</a></h3>
 <p>在搜索资料时，你肯定会看到 Lima 这个方案。它更像一个轻量级的虚拟机管理器，通过命令行快速创建和管理基于 Apple 虚拟化框架的 Linux VM，并且原生支持 Rosetta。对于喜欢命令行、追求极致简洁和自动化的开发者，Lima 是非常好的选择。它用一条命令就能启动一个预配置好的 Debian/Ubuntu VM：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><a href="#__codelineno-13-1"><span class="linenos" data-linenos="1 "></span></a>brew<span class="w"> </span>install<span class="w"> </span>lima
-<a id="__codelineno-13-2" name="__codelineno-13-2"></a><a href="#__codelineno-13-2"><span class="linenos" data-linenos="2 "></span></a>limactl<span class="w"> </span>start<span class="w"> </span>template://debian<span class="w"> </span>--rosetta<span class="w"> </span>--vm-type<span class="o">=</span>vz
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">brew install lima
+limactl start template://debian --rosetta --vm-type=vz</code></pre>
 <p>但对于大多数刚接触 Mac 虚拟化的用户，UTM 直观的图形界面和详细的设置选项，更能降低学习和排错的门槛。</p>
 <h2 id="总结">总结<a class="headerlink" href="#总结" title="Permanent link">&para;</a></h2>
 <p>从我的实际体验来看，这套 UTM+Rosetta 的方案稳定性相当不错。日常的开发编译、运行一些 x86 的测试工具链都没有问题。性能损耗感知很小，尤其是相比纯模拟的方案，简直是天壤之别。最大的好处是，它把复杂的技术封装成了简单的操作，让你能快速得到一个“全能”的 Linux 环境，把精力重新放回开发本身，而不是没完没了地折腾环境。</p>
@@ -4034,6 +4024,16 @@
         <script src="../../theme/js/mathjax.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../theme/js/highlight.js"></script>
       
         <script src="../../theme/js/site.js"></script>
       

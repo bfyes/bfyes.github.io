@@ -64,6 +64,10 @@
     
       <link rel="stylesheet" href="../../../../theme/css/components.css">
     
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
@@ -3467,10 +3471,9 @@
 <p>InfiniBand 是面向高性能计算的互连体系。在介绍机柜时，它被与普通以太网交换机分开：它服务计算节点/加速器之间的低延迟、高带宽通信。程序通常不会直接操作一台 InfiniBand 交换机；MPI、NCCL 等通信库会依据可用硬件和驱动选择数据路径。它不替代 IP、DNS 或 SSH 所在的业务网络。</p>
 </details>
 <p>同一台电脑可同时有多个网卡，包括有线网卡、Wi-Fi、蓝牙、虚拟机或 VPN 创建的虚拟网卡等。研究 IP、路由和抓包等应先分清正在用哪张网卡。macOS 可在系统设置或 <code>ifconfig</code> 中看接口，Linux 中常用以下命令。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos="1 "></span></a>ip<span class="w"> </span>link<span class="w">                    </span><span class="c1"># 接口是否存在、是否 UP</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a><a href="#__codelineno-0-2"><span class="linenos" data-linenos="2 "></span></a>ip<span class="w"> </span>addr<span class="w">                    </span><span class="c1"># 接口上的 IP 地址</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a><a href="#__codelineno-0-3"><span class="linenos" data-linenos="3 "></span></a>ip<span class="w"> </span>route<span class="w">                   </span><span class="c1"># 默认网关和路由表</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">ip link                    # 接口是否存在、是否 UP
+ip addr                    # 接口上的 IP 地址
+ip route                   # 默认网关和路由表</code></pre>
 <p><code>ip link</code> 显示接口处于 <code>DOWN</code>，说明问题还在链路层；接口有 IP 但没有默认路由，通常只能访问本地网络。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0706p/network-interface-state.jpg"><img width="1280" height="720" alt="ip link 会同时列出 loopback、物理接口和容器虚拟接口；只有已启用且链路就绪的接口才能承载外部通信。" src="../assets/0706p/network-interface-state.preview.jpg" data-fullsrc="../assets/0706p/network-interface-state.jpg" /></a></p>
 <p><em>图：课件中的接口状态输出。接口存在、处于 <code>UP</code>、获得地址和有路由是不同层次的事实。</em></p>
@@ -3515,12 +3518,11 @@
 <p><a class="glightbox" data-type="image" href="../assets/0706p/ssh-encapsulation.jpg"><img width="1280" height="720" alt="课件将 SSH 数据依次封装为 TCP 段、IP 包和以太网帧；接收端按相反方向拆开。" src="../assets/0706p/ssh-encapsulation.preview.jpg" data-fullsrc="../assets/0706p/ssh-encapsulation.jpg" /></a></p>
 <p><em>图：同一份 SSH 数据在不同网络层携带不同的控制信息。</em></p>
 <p>DNS 是名字到地址的查询服务。它出问题时，域名连接会失败，但直接使用已知 IP 有时仍能通。可用：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a>nslookup<span class="w"> </span>host.example.edu
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a>dig<span class="w"> </span>host.example.edu
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a><a href="#__codelineno-1-3"><span class="linenos" data-linenos="3 "></span></a>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span>目标IP<span class="w">             </span><span class="c1"># 只说明 ICMP 是否可达，不等于 SSH 可用</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4"></a><a href="#__codelineno-1-4"><span class="linenos" data-linenos="4 "></span></a>traceroute<span class="w"> </span>目标IP<span class="w">            </span><span class="c1"># 查看到目标的路由路径，Linux 常用 traceroute</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5"></a><a href="#__codelineno-1-5"><span class="linenos" data-linenos="5 "></span></a>nc<span class="w"> </span>-vz<span class="w"> </span>host.example.edu<span class="w"> </span><span class="m">22</span><span class="w">   </span><span class="c1"># 检查 TCP 22 端口能否建立连接</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">nslookup host.example.edu
+dig host.example.edu
+ping -c 3 目标IP             # 只说明 ICMP 是否可达，不等于 SSH 可用
+traceroute 目标IP            # 查看到目标的路由路径，Linux 常用 traceroute
+nc -vz host.example.edu 22   # 检查 TCP 22 端口能否建立连接</code></pre>
 <p>端口是传输层的编号，不是程序的物理插口。服务器可以同时运行 SSH、Web、数据库等服务，操作系统依据目的端口把收到的数据交给对应进程。防火墙可以只允许 443、禁止 22；这时 DNS 和 ping 正常也无法 SSH。</p>
 <h3 id="网络连通性排查">网络连通性排查<a class="headerlink" href="#网络连通性排查" title="Permanent link">&para;</a></h3>
 <p>连接失败不能统一归因于密码。接口/IP、DNS、路由、端口和 SSH 身份认证各自可独立失败；每次只验证一个边界，诊断才会收敛。</p>
@@ -3530,11 +3532,10 @@
 </details>
 <h2 id="linux-内核与用户空间">Linux 内核与用户空间<a class="headerlink" href="#linux-内核与用户空间" title="Permanent link">&para;</a></h2>
 <p>严格地说，Linux 是内核。课程中登录的系统还包括 Shell、基础工具、库、服务和用户空间程序。用户程序不能直接操作磁盘、网卡或 GPU；它通过系统调用请求内核，内核负责权限、资源仲裁和驱动交互。</p>
-<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><a href="#__codelineno-2-1"><span class="linenos" data-linenos="1 "></span></a>应用程序（Python、编译器、MPI、编辑器）
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><a href="#__codelineno-2-2"><span class="linenos" data-linenos="2 "></span></a>Shell / 库 / 系统调用接口
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><a href="#__codelineno-2-3"><span class="linenos" data-linenos="3 "></span></a>Linux 内核（进程、内存、文件系统、网络、驱动）
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><a href="#__codelineno-2-4"><span class="linenos" data-linenos="4 "></span></a>CPU、内存、磁盘、网卡、GPU
-</code></pre></div>
+<pre class="highlight"><code class="language-text">应用程序（Python、编译器、MPI、编辑器）
+Shell / 库 / 系统调用接口
+Linux 内核（进程、内存、文件系统、网络、驱动）
+CPU、内存、磁盘、网卡、GPU</code></pre>
 <p>这种层次不是多余的。若任意程序都能直接控制硬件，一个错误程序就可能让全机崩溃或读取其他用户数据。内核把错误尽量限制在进程边界内，也把多用户之间的权限规则落实到文件、进程和设备上。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0706p/user-kernel-boundary.jpg"><img width="1280" height="720" alt="课件将普通程序、操作系统与外部硬件资源分开，说明用户程序必须经内核取得受控访问。" src="../assets/0706p/user-kernel-boundary.preview.jpg" data-fullsrc="../assets/0706p/user-kernel-boundary.jpg" /></a></p>
 <p><em>图：用户态程序通过系统调用请求内核服务，不能直接读写设备或内核数据。</em></p>
@@ -3589,26 +3590,24 @@
 </tbody>
 </table>
 <p>相关命令。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><a href="#__codelineno-3-1"><span class="linenos" data-linenos="1 "></span></a><span class="nb">pwd</span><span class="w">                         </span><span class="c1"># 当前目录</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2"></a><a href="#__codelineno-3-2"><span class="linenos" data-linenos="2 "></span></a>ls<span class="w"> </span>-lah<span class="w">                     </span><span class="c1"># 列出文件、隐藏文件、大小和权限</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3"></a><a href="#__codelineno-3-3"><span class="linenos" data-linenos="3 "></span></a>find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.c&#39;</span><span class="w">          </span><span class="c1"># 从当前目录查找文件</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4"></a><a href="#__codelineno-3-4"><span class="linenos" data-linenos="4 "></span></a>mkdir<span class="w"> </span>-p<span class="w"> </span>build<span class="w"> </span>results<span class="w">      </span><span class="c1"># 创建目录</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5"></a><a href="#__codelineno-3-5"><span class="linenos" data-linenos="5 "></span></a>cp<span class="w"> </span>-r<span class="w"> </span>src<span class="w"> </span>backup-src<span class="w">        </span><span class="c1"># 复制；原文件仍在</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6"></a><a href="#__codelineno-3-6"><span class="linenos" data-linenos="6 "></span></a>mv<span class="w"> </span>old<span class="w"> </span>new<span class="w">                  </span><span class="c1"># 移动或重命名；会改变原路径</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7"></a><a href="#__codelineno-3-7"><span class="linenos" data-linenos="7 "></span></a>less<span class="w"> </span>output.log<span class="w">             </span><span class="c1"># 分页读日志</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8"></a><a href="#__codelineno-3-8"><span class="linenos" data-linenos="8 "></span></a>head<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>file<span class="p">;</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">20</span><span class="w"> </span>file
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">pwd                         # 当前目录
+ls -lah                     # 列出文件、隐藏文件、大小和权限
+find . -name '*.c'          # 从当前目录查找文件
+mkdir -p build results      # 创建目录
+cp -r src backup-src        # 复制；原文件仍在
+mv old new                  # 移动或重命名；会改变原路径
+less output.log             # 分页读日志
+head -n 20 file; tail -n 20 file</code></pre>
 <p>在共享集群上先用 <code>cp</code> 备份，再改动；<code>rm -r</code>、<code>chmod -R</code>、通配符和管理员权限要格外谨慎。</p>
 <h3 id="路径挂载与工作目录">路径、挂载与工作目录<a class="headerlink" href="#路径挂载与工作目录" title="Permanent link">&para;</a></h3>
 <p><code>/home/alice/project/a.cpp</code> 是绝对路径，从唯一根目录 <code>/</code> 开始；<code>src/a.cpp</code> 是相对路径，含义取决于当前目录。Shell 不会替你猜这个 <code>results</code> 是哪个目录，所以脚本中常先用 <code>cd</code> 进入明确目录，或把输入、输出写成绝对路径。<code>~</code> 只在 shell 展开为当前用户的家目录；程序接收到的是展开后的完整路径，不是字符 <code>~</code>。</p>
 <p>目录树只有一个根，不代表所有路径都在同一块磁盘上。内核会把一个文件系统挂载（mount）到目录树的某个位置：例如本地 SSD 可以挂到 <code>/scratch</code>，网络文件系统可以挂到 <code>/home</code>。路径看起来连续，容量、速度、备份策略和是否随节点变化却可能完全不同。大规模临时输入放在节点本地 scratch 常能减少网络存储压力；要长期保留的代码和结果则应放课程指定的持久目录。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0706p/shared-mounts.jpg"><img width="1280" height="720" alt="登录节点和计算节点可把同一份共享存储挂载到相同路径。" src="../assets/0706p/shared-mounts.preview.jpg" data-fullsrc="../assets/0706p/shared-mounts.jpg" /></a></p>
 <p><em>图：<code>/home</code> 或 <code>/work</code> 在多台机器上名字相同，背后可能是共享文件系统；节点本地 scratch 则通常不会自动出现在别的节点。</em></p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><a href="#__codelineno-4-1"><span class="linenos" data-linenos="1 "></span></a><span class="nb">pwd</span><span class="w">                       </span><span class="c1"># 确认脚本当前实际所在位置</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2"></a><a href="#__codelineno-4-2"><span class="linenos" data-linenos="2 "></span></a>df<span class="w"> </span>-h<span class="w"> </span>.<span class="w">                   </span><span class="c1"># 当前路径属于哪个文件系统、剩余多少空间</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3"></a><a href="#__codelineno-4-3"><span class="linenos" data-linenos="3 "></span></a>findmnt<span class="w"> </span>-T<span class="w"> </span>.<span class="w">              </span><span class="c1"># 当前路径的挂载来源和挂载点</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4"></a><a href="#__codelineno-4-4"><span class="linenos" data-linenos="4 "></span></a>du<span class="w"> </span>-sh<span class="w"> </span>results<span class="w">            </span><span class="c1"># 结果目录实际占用的空间</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">pwd                       # 确认脚本当前实际所在位置
+df -h .                   # 当前路径属于哪个文件系统、剩余多少空间
+findmnt -T .              # 当前路径的挂载来源和挂载点
+du -sh results            # 结果目录实际占用的空间</code></pre>
 <div class="admonition warning">
 <p class="admonition-title">删除前先展开目标</p>
 <p><code>rm -rf "$dir"</code> 只在 <code>dir</code> 已经是经过检查的具体项目目录时才有意义。空变量、错误的当前目录、通配符匹配过多文件都会扩大范围。先运行 <code>printf '%s\n' "$dir"</code> 和 <code>ls -ld -- "$dir"</code>，确认目标后再做不可恢复的删除。</p>
@@ -3622,17 +3621,15 @@
 <p>八进制写法把 <code>r=4,w=2,x=1</code> 相加：<code>640</code> 表示 owner <code>rw-</code>、group <code>r--</code>、others <code>---</code>；<code>755</code> 常用于可进入、可执行的公开目录/脚本；<code>600</code> 常用于私钥。示例：</p>
 <p><a class="glightbox" data-type="image" href="../assets/0706p/linux-permission-model.jpg"><img width="1280" height="720" alt="文件和目录对 r、w、x 的解释不同，访问检查依次匹配 owner、group 或 others。" src="../assets/0706p/linux-permission-model.preview.jpg" data-fullsrc="../assets/0706p/linux-permission-model.jpg" /></a></p>
 <p><em>图：普通文件的 <code>x</code> 表示可执行，目录的 <code>x</code> 表示可以穿过该目录访问其中对象；数字权限来自 <code>r=4</code>、<code>w=2</code>、<code>x=1</code> 的组合。</em></p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><a href="#__codelineno-5-1"><span class="linenos" data-linenos="1 "></span></a>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>~/.ssh/id_ed25519
-<a id="__codelineno-5-2" name="__codelineno-5-2"></a><a href="#__codelineno-5-2"><span class="linenos" data-linenos="2 "></span></a>chmod<span class="w"> </span><span class="m">700</span><span class="w"> </span>~/.ssh
-<a id="__codelineno-5-3" name="__codelineno-5-3"></a><a href="#__codelineno-5-3"><span class="linenos" data-linenos="3 "></span></a>chmod<span class="w"> </span>u+x<span class="w"> </span>run.sh
-<a id="__codelineno-5-4" name="__codelineno-5-4"></a><a href="#__codelineno-5-4"><span class="linenos" data-linenos="4 "></span></a>chgrp<span class="w"> </span>project-team<span class="w"> </span>shared-data
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">chmod 600 ~/.ssh/id_ed25519
+chmod 700 ~/.ssh
+chmod u+x run.sh
+chgrp project-team shared-data</code></pre>
 <p>目录的 <code>x</code> 是穿过/进入权限，不只是执行脚本。一个文件即使可读，若父目录没有相应的进入权限，也未必能访问到它。</p>
 <p>权限检查沿路径逐级发生。读取 <code>/work/team/data.csv</code>，至少需要对 <code>/work</code> 与 <code>/work/team</code> 有 <code>x</code>，再对文件有 <code>r</code>；在目录中新建文件则需要目录的 <code>w</code> 和 <code>x</code>。这解释了两种常见现象：<code>ls</code> 能看到名字却无法 <code>cat</code>，或能读某文件却不能在同目录创建新文件。对共享数据，先用 <code>ls -ld</code> 看父目录，再看文件本身，通常比反复 <code>chmod</code> 更安全。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><a href="#__codelineno-6-1"><span class="linenos" data-linenos="1 "></span></a>ls<span class="w"> </span>-ld<span class="w"> </span>/work<span class="w"> </span>/work/team<span class="w">       </span><span class="c1"># 目录的 owner/group/权限</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2"></a><a href="#__codelineno-6-2"><span class="linenos" data-linenos="2 "></span></a>namei<span class="w"> </span>-l<span class="w"> </span>/work/team/data.csv<span class="w">  </span><span class="c1"># 沿路径逐段显示权限（系统有该命令时）</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3"></a><a href="#__codelineno-6-3"><span class="linenos" data-linenos="3 "></span></a>id<span class="w">                            </span><span class="c1"># 当前 uid、主组和附加组</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">ls -ld /work /work/team       # 目录的 owner/group/权限
+namei -l /work/team/data.csv  # 沿路径逐段显示权限（系统有该命令时）
+id                            # 当前 uid、主组和附加组</code></pre>
 <p><code>umask</code> 决定新建文件的默认权限掩码。它从程序请求的默认模式中去掉某些位，而不是给已有文件加权限。多人项目若依赖同组可写，应由管理员或项目约定统一 group、目录的 setgid 位和 umask；靠成员事后递归 <code>chmod</code> 容易误公开私钥、数据或可执行文件。</p>
 <details class="example">
 <summary>为什么目录只有 <code>r</code> 仍打不开文件</summary>
@@ -3641,12 +3638,11 @@
 <p><code>root</code> 能绕过很多权限检查，因此它不是普通用户更方便的模式。课程容器中显示为 root，通常是容器内部的 root，不等同于宿主机 root；仍应把它当作有破坏力的权限，避免随意安装来历不明的脚本、改动挂载目录或暴露私钥。</p>
 <h2 id="shell管道与作业脚本">Shell、管道与作业脚本<a class="headerlink" href="#shell管道与作业脚本" title="Permanent link">&para;</a></h2>
 <p>Shell 读取一行命令，先处理引号、变量、通配符和重定向，再启动程序。它不是 Linux 内核，也不是普通终端窗口；Bash、Zsh、Fish 是不同的 shell。交互时可选自己喜欢的 shell，批处理脚本则应在第一行明确解释器，例如：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><a href="#__codelineno-7-1"><span class="linenos" data-linenos="1 "></span></a><span class="ch">#!/usr/bin/env bash</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2"></a><a href="#__codelineno-7-2"><span class="linenos" data-linenos="2 "></span></a><span class="nb">set</span><span class="w"> </span>-euo<span class="w"> </span>pipefail
-<a id="__codelineno-7-3" name="__codelineno-7-3"></a><a href="#__codelineno-7-3"><span class="linenos" data-linenos="3 "></span></a>
-<a id="__codelineno-7-4" name="__codelineno-7-4"></a><a href="#__codelineno-7-4"><span class="linenos" data-linenos="4 "></span></a><span class="nv">input</span><span class="o">=</span><span class="si">${</span><span class="nv">1</span><span class="p">:?请提供输入文件</span><span class="si">}</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5"></a><a href="#__codelineno-7-5"><span class="linenos" data-linenos="5 "></span></a>grep<span class="w"> </span>-h<span class="w"> </span><span class="s1">&#39;ERROR&#39;</span><span class="w"> </span>--<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$input</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>uniq<span class="w"> </span>-c<span class="w"> </span>&gt;<span class="w"> </span>error-counts.txt
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">#!/usr/bin/env bash
+set -euo pipefail
+
+input=${1:?请提供输入文件}
+grep -h 'ERROR' -- "$input" | sort | uniq -c &gt; error-counts.txt</code></pre>
 <p><code>#!</code>（shebang）让内核知道用什么程序解释脚本。<code>set -e</code> 遇到未处理失败就退出；<code>set -u</code> 阻止未定义变量悄悄展开为空；<code>pipefail</code> 让管道中任一命令失败时整个管道失败。它们能减少前一步编译失败、后一步却运行旧二进制的误判，但不是万能开关：预计会失败的探测命令需要显式写在条件判断中。</p>
 <p>管道 <code>|</code> 把左侧命令的标准输出（stdout）直接接到右侧命令的标准输入（stdin），中间结果通常不必落到磁盘；<code>&gt;</code> 覆盖写文件，<code>&gt;&gt;</code> 追加，<code>2&gt;</code> 重定向标准错误（stderr）。日志分析中的 <code>grep ... | sort</code> 因而比先写临时文件、再读临时文件排序少一次磁盘往返。stdout 是正常结果，stderr 是错误和诊断；把二者分开保留，才能既收集结果又追踪失败。</p>
 <details class="info">
@@ -3655,28 +3651,25 @@
 </details>
 <h2 id="ssh远程登录与密钥">SSH：远程登录与密钥<a class="headerlink" href="#ssh远程登录与密钥" title="Permanent link">&para;</a></h2>
 <p>SSH 在不可信网络上建立加密通道。密钥认证使用一对密钥：私钥只留在自己的电脑，公钥上传到服务器。服务器发起验证时，只有持有私钥的一方能完成签名。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><a href="#__codelineno-8-1"><span class="linenos" data-linenos="1 "></span></a>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-C<span class="w"> </span><span class="s2">&quot;laptop&quot;</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2"></a><a href="#__codelineno-8-2"><span class="linenos" data-linenos="2 "></span></a>ssh-copy-id<span class="w"> </span>user@host.example.edu
-<a id="__codelineno-8-3" name="__codelineno-8-3"></a><a href="#__codelineno-8-3"><span class="linenos" data-linenos="3 "></span></a>ssh<span class="w"> </span>user@host.example.edu
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">ssh-keygen -t ed25519 -C "laptop"
+ssh-copy-id user@host.example.edu
+ssh user@host.example.edu</code></pre>
 <p>密钥默认在 <code>~/.ssh/</code>。私钥不能提交到 Git、截图发送或放进共享目录。首次连接服务器时，SSH 会记录服务器主机指纹到 <code>known_hosts</code>；以后指纹突然变化，应先确认服务器重装或管理员公告，而不是无条件删除记录。</p>
 <p>密钥认证中有两次不同的身份判断。客户端用私钥证明自己是账户授权过的持有者；客户端也要用服务器主机公钥验证连接的仍是那台服务器。前者依赖服务器账户中的 <code>authorized_keys</code>，后者依赖本机 <code>known_hosts</code>。把自己的<strong>公钥</strong>交给课程平台不会泄露登录能力；把私钥交出去则等于把证明身份的能力交出去。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><a href="#__codelineno-9-1"><span class="linenos" data-linenos="1 "></span></a>ls<span class="w"> </span>-l<span class="w"> </span>~/.ssh
-<a id="__codelineno-9-2" name="__codelineno-9-2"></a><a href="#__codelineno-9-2"><span class="linenos" data-linenos="2 "></span></a>ssh<span class="w"> </span>-v<span class="w"> </span>hpc<span class="w">                  </span><span class="c1"># 显示客户端尝试了哪些密钥和认证方法</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3"></a><a href="#__codelineno-9-3"><span class="linenos" data-linenos="3 "></span></a>ssh<span class="w"> </span>-i<span class="w"> </span>~/.ssh/id_ed25519<span class="w"> </span>hpc<span class="w"> </span><span class="c1"># 临时指定私钥；优先用 config 固化</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4"></a><a href="#__codelineno-9-4"><span class="linenos" data-linenos="4 "></span></a>ssh-keygen<span class="w"> </span>-lf<span class="w"> </span>~/.ssh/id_ed25519.pub<span class="w">  </span><span class="c1"># 查看公钥指纹，便于核对</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">ls -l ~/.ssh
+ssh -v hpc                  # 显示客户端尝试了哪些密钥和认证方法
+ssh -i ~/.ssh/id_ed25519 hpc # 临时指定私钥；优先用 config 固化
+ssh-keygen -lf ~/.ssh/id_ed25519.pub  # 查看公钥指纹，便于核对</code></pre>
 <p>私钥文件权限过宽时，OpenSSH 可能拒绝使用它，因为同一台机器上的其他账户可能读走密钥。<code>chmod 700 ~/.ssh</code> 与 <code>chmod 600 ~/.ssh/id_ed25519</code> 把密钥目录和私钥限制为当前用户可访问，目的不是让 SSH 更快。若 <code>ssh -v</code> 显示 <code>Permission denied (publickey)</code>，应依次确认：私钥是否存在且可读、<code>config</code> 选中的是否是这把私钥、服务器是否装入匹配的公钥、账号名是否正确；不要靠反复生成新密钥去猜。</p>
 <details class="info">
 <summary>主机指纹为什么不能随手删除</summary>
 <p>首次连接时，SSH 会要求确认服务器的 host key 指纹；确认后记录到 <code>known_hosts</code>。下次同一地址给出不同指纹，可能是服务器重装，也可能是 DNS/网络被劫持或连接到了错误主机。正确做法是通过课程公告、管理员或可信渠道核对变更原因，再更新对应记录。</p>
 </details>
 <p><code>~/.ssh/config</code> 可以把复杂连接写成别名：</p>
-<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><a href="#__codelineno-10-1"><span class="linenos" data-linenos="1 "></span></a>Host hpc
-<a id="__codelineno-10-2" name="__codelineno-10-2"></a><a href="#__codelineno-10-2"><span class="linenos" data-linenos="2 "></span></a>    HostName cluster.example.edu
-<a id="__codelineno-10-3" name="__codelineno-10-3"></a><a href="#__codelineno-10-3"><span class="linenos" data-linenos="3 "></span></a>    User your_name
-<a id="__codelineno-10-4" name="__codelineno-10-4"></a><a href="#__codelineno-10-4"><span class="linenos" data-linenos="4 "></span></a>    IdentityFile ~/.ssh/id_ed25519
-</code></pre></div>
+<pre class="highlight"><code class="language-sshconfig">Host hpc
+    HostName cluster.example.edu
+    User your_name
+    IdentityFile ~/.ssh/id_ed25519</code></pre>
 <p>之后只需 <code>ssh hpc</code>。配置文件还可声明跳板机、端口转发等，但课程集群的实际地址和策略以通知为准。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0706p/ssh-config.jpg"><img width="1060" height="560" alt="课件示意 ~/.ssh/config：可以用别名集中管理 HostName、User、IdentityFile 等连接参数，ssh hpc 即读取该配置。" src="../assets/0706p/ssh-config.preview.jpg" data-fullsrc="../assets/0706p/ssh-config.jpg" /></a></p>
 <p><em>图：config 把连接谁、用什么用户名、带哪把私钥集中到一处，避免每次手写长长的参数。</em></p>
@@ -3689,11 +3682,10 @@
 <p>源代码不能直接由 CPU 执行。编译器把 C/C++ 等源代码编译为目标文件，再与系统库、数学库或 MPI 库链接。不同 GCC、Clang、CUDA、MPI 版本之间可能不兼容；在 A 版本 MPI 下编译的程序，不应假设能在 B 版本运行。</p>
 <p>优化选项也不是越高越安全。<code>-O0</code> 方便调试，<code>-O2</code>/<code>-O3</code> 会做更多优化；<code>-Ofast</code> 可能放宽浮点语义，得到更快但不完全等价的结果。科学计算中是否能接受这一点，要看算法和误差要求，不能只看速度。</p>
 <p>集群通常用模块管理多版本软件：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><a href="#__codelineno-11-1"><span class="linenos" data-linenos="1 "></span></a>module<span class="w"> </span>avail
-<a id="__codelineno-11-2" name="__codelineno-11-2"></a><a href="#__codelineno-11-2"><span class="linenos" data-linenos="2 "></span></a>module<span class="w"> </span>load<span class="w"> </span>gcc/版本号
-<a id="__codelineno-11-3" name="__codelineno-11-3"></a><a href="#__codelineno-11-3"><span class="linenos" data-linenos="3 "></span></a>module<span class="w"> </span>load<span class="w"> </span>openmpi/版本号
-<a id="__codelineno-11-4" name="__codelineno-11-4"></a><a href="#__codelineno-11-4"><span class="linenos" data-linenos="4 "></span></a>module<span class="w"> </span>list
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">module avail
+module load gcc/版本号
+module load openmpi/版本号
+module list</code></pre>
 <p>命令名称和版本只是示意。提交作业前应把 <code>module load</code> 写进脚本，不能依赖某次交互终端里碰巧加载过的环境。Python 也应使用项目自己的虚拟环境或课程提供的环境，并记录依赖版本。</p>
 <div class="admonition tip">
 <p class="admonition-title">让一次构建可复现</p>
@@ -3701,11 +3693,10 @@
 </div>
 <h3 id="环境变量与模块的作用域">环境变量与模块的作用域<a class="headerlink" href="#环境变量与模块的作用域" title="Permanent link">&para;</a></h3>
 <p>终端中的环境变量是一组传给子进程的键值对。<code>PATH</code> 决定 shell 按什么顺序寻找命令，<code>LD_LIBRARY_PATH</code> 可能影响动态库查找，<code>OMP_NUM_THREADS</code> 会影响 OpenMP 创建的线程数。它们看不见却会改变同一条命令实际运行的程序和资源配置：打开一个新终端、进入容器或提交批处理作业时，某些变量可能不再存在。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a><a href="#__codelineno-12-1"><span class="linenos" data-linenos="1 "></span></a><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>mpirun<span class="w">            </span><span class="c1"># 此刻会执行哪个 mpirun</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2"></a><a href="#__codelineno-12-2"><span class="linenos" data-linenos="2 "></span></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PATH</span><span class="s2">&quot;</span><span class="w">                 </span><span class="c1"># 命令搜索路径，冒号分隔</span>
-<a id="__codelineno-12-3" name="__codelineno-12-3"></a><a href="#__codelineno-12-3"><span class="linenos" data-linenos="3 "></span></a>printenv<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>less<span class="w">       </span><span class="c1"># 当前进程环境的完整快照</span>
-<a id="__codelineno-12-4" name="__codelineno-12-4"></a><a href="#__codelineno-12-4"><span class="linenos" data-linenos="4 "></span></a>module<span class="w"> </span>show<span class="w"> </span>openmpi/版本号<span class="w">    </span><span class="c1"># 该模块实际改了哪些环境变量</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">command -v mpirun            # 此刻会执行哪个 mpirun
+echo "$PATH"                 # 命令搜索路径，冒号分隔
+printenv | sort | less       # 当前进程环境的完整快照
+module show openmpi/版本号    # 该模块实际改了哪些环境变量</code></pre>
 <p>module 系统通过改动这类变量在多个编译器、MPI、CUDA 版本间切换。<code>module load gcc/...</code> 后的 <code>g++</code>、头文件目录和库目录可能都已改变；<code>module purge</code> 则撤回已加载模块。编译与运行应使用兼容的同一套工具链：用某个 MPI 的 <code>mpicxx</code> 编译，再在另一个 MPI 的 <code>mpirun</code> 下启动，可能能跑、也可能在初始化或通信时失败，最危险的是结果只在部分节点异常。</p>
 <details class="example">
 <summary>为什么交互终端能跑、作业脚本却找不到库</summary>
@@ -3714,12 +3705,11 @@
 <h3 id="git">Git<a class="headerlink" href="#git" title="Permanent link">&para;</a></h3>
 <p>把代码状态也当作实验条件</p>
 <p>编译器、输入和资源配置之外，代码版本同样是性能实验的一部分。Git 的一次 commit 记录一个可回到的工作树状态；branch 允许在不扰动主线的前提下尝试 packing、并行或数据布局改写；remote 则让团队成员在同一段历史上协作。它不是备份的同义词：未 commit 的改动、未 push 的 commit 仍可能只在一台机器上。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><a href="#__codelineno-13-1"><span class="linenos" data-linenos="1 "></span></a>git<span class="w"> </span>status<span class="w">                    </span><span class="c1"># 哪些文件已改、已暂存或未跟踪</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2"></a><a href="#__codelineno-13-2"><span class="linenos" data-linenos="2 "></span></a>git<span class="w"> </span>diff<span class="w">                       </span><span class="c1"># 工作区改动的具体内容</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3"></a><a href="#__codelineno-13-3"><span class="linenos" data-linenos="3 "></span></a>git<span class="w"> </span>switch<span class="w"> </span>-c<span class="w"> </span>vectorize-gemm<span class="w">  </span><span class="c1"># 从当前版本创建试验分支</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4"></a><a href="#__codelineno-13-4"><span class="linenos" data-linenos="4 "></span></a>git<span class="w"> </span>add<span class="w"> </span>src/kernel.cpp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;tile GEMM&quot;</span>
-<a id="__codelineno-13-5" name="__codelineno-13-5"></a><a href="#__codelineno-13-5"><span class="linenos" data-linenos="5 "></span></a>git<span class="w"> </span>log<span class="w"> </span>--oneline<span class="w"> </span>--decorate<span class="w"> </span>-5
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">git status                    # 哪些文件已改、已暂存或未跟踪
+git diff                       # 工作区改动的具体内容
+git switch -c vectorize-gemm  # 从当前版本创建试验分支
+git add src/kernel.cpp &amp;&amp; git commit -m "tile GEMM"
+git log --oneline --decorate -5</code></pre>
 <ul>
 <li>
 <p><strong>性能优化尤其需要小而可解释的 commit。</strong>一次只改变一种数据布局或算法，退化时才能准确比较。构建目录、大型检查点、私钥、token 和模型权重不应直接纳入 Git；用 <code>.gitignore</code> 排除，并保存可复现的下载或生成步骤。</p>
@@ -3747,10 +3737,9 @@
 <li><strong>链接</strong>器把许多 <code>.o</code> 与库组合成最终可执行文件。</li>
 </ul>
 <p>构建系统常把它们藏在一条 <code>make</code> 或 <code>cmake --build</code> 后面，但报错来自哪一步会决定修法。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1"></a><a href="#__codelineno-14-1"><span class="linenos" data-linenos="1 "></span></a>mpicxx<span class="w"> </span>-c<span class="w"> </span>main.cpp<span class="w"> </span>-o<span class="w"> </span>main.o<span class="w">   </span><span class="c1"># 编译并汇编，不链接</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2"></a><a href="#__codelineno-14-2"><span class="linenos" data-linenos="2 "></span></a>mpicxx<span class="w"> </span>main.o<span class="w"> </span>-o<span class="w"> </span>solver<span class="w">        </span><span class="c1"># 链接为可执行文件</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3"></a><a href="#__codelineno-14-3"><span class="linenos" data-linenos="3 "></span></a>./solver
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">mpicxx -c main.cpp -o main.o   # 编译并汇编，不链接
+mpicxx main.o -o solver        # 链接为可执行文件
+./solver</code></pre>
 <p><code>-c</code> 刻意停在目标文件。不同阶段的报错，排查方向也不一样。</p>
 <ul>
 <li><strong>编译阶段</strong>：头文件不存在、语法或类型错误；</li>
@@ -3770,13 +3759,12 @@
 <p>大型项目还会使用 Make、CMake、Ninja 等构建工具维护依赖关系。它们的价值在于把哪个源文件改了、哪些目标必须重建变成可执行规则，而少敲几条编译命令只是顺带的好处。初学时仍应看一次 verbose build 输出：知道 <code>-I</code> 是头文件搜索路径、<code>-L</code> 是库目录、<code>-lfoo</code> 请求链接 <code>libfoo</code>，才能在 CMake 配置成功而链接失败时读懂真正的编译命令。</p>
 <h3 id="模块包管理器与项目环境">模块、包管理器与项目环境<a class="headerlink" href="#模块包管理器与项目环境" title="Permanent link">&para;</a></h3>
 <p>module 解决的是共享系统上<strong>选择已安装的软件栈</strong>的问题：它通过环境变量在 GCC、CUDA、MPI 等预装版本之间切换。包管理器解决的是<strong>获得和构建依赖</strong>的问题。Spack 适合 HPC，同一个软件包可以按编译器、MPI、CUDA、目标架构和开关建立不同变体，避免把所有人都塞进一套全局 <code>/usr/local</code>。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1"></a><a href="#__codelineno-15-1"><span class="linenos" data-linenos="1 "></span></a>module<span class="w"> </span>purge
-<a id="__codelineno-15-2" name="__codelineno-15-2"></a><a href="#__codelineno-15-2"><span class="linenos" data-linenos="2 "></span></a>module<span class="w"> </span>load<span class="w"> </span>gcc/版本号<span class="w"> </span>openmpi/版本号
-<a id="__codelineno-15-3" name="__codelineno-15-3"></a><a href="#__codelineno-15-3"><span class="linenos" data-linenos="3 "></span></a>module<span class="w"> </span>list
-<a id="__codelineno-15-4" name="__codelineno-15-4"></a><a href="#__codelineno-15-4"><span class="linenos" data-linenos="4 "></span></a>
-<a id="__codelineno-15-5" name="__codelineno-15-5"></a><a href="#__codelineno-15-5"><span class="linenos" data-linenos="5 "></span></a>spack<span class="w"> </span>find<span class="w">                 </span><span class="c1"># 若课程环境提供 Spack，列出已安装的包</span>
-<a id="__codelineno-15-6" name="__codelineno-15-6"></a><a href="#__codelineno-15-6"><span class="linenos" data-linenos="6 "></span></a>spack<span class="w"> </span>spec<span class="w"> </span>hdf5<span class="w"> </span>+mpi<span class="w">       </span><span class="c1"># 展开某个依赖/变体的解析结果</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">module purge
+module load gcc/版本号 openmpi/版本号
+module list
+
+spack find                 # 若课程环境提供 Spack，列出已安装的包
+spack spec hdf5 +mpi       # 展开某个依赖/变体的解析结果</code></pre>
 <p>是否每次课题都应在登录节点从源码编译一遍，要分情况。若管理员已提供匹配模块，优先复用；若项目需要特定变体，使用课程允许的 Spack 环境、Python 虚拟环境或容器镜像，把依赖声明留在仓库中。<code>pip install</code> 到系统 Python、手改全局 <code>LD_LIBRARY_PATH</code>、把库散落进 home 目录，短期可能让命令通过，长期却很难解释另一个节点为什么不能复现。</p>
 <h2 id="容器与资源隔离">容器与资源隔离<a class="headerlink" href="#容器与资源隔离" title="Permanent link">&para;</a></h2>
 <p>虚拟机模拟一台完整机器，通常有自己的内核，隔离强但启动和内存开销大。容器共享宿主机内核，只隔离进程视图、文件系统、网络和用户空间，因此更轻量。Docker、containerd 等是常见容器技术；Kubernetes 用来在多机器上调度和维护容器。</p>
@@ -3793,11 +3781,10 @@
 </details>
 <p>镜像、容器和挂载点是三个容易混在一起的对象。镜像是只读的文件系统层和启动配置；从镜像启动后才有一个可写的容器层；挂载卷则把宿主机或网络存储中的一个目录接到容器路径上。编译生成的 <code>build/</code>、下载的 wheel、修改过的系统包若只在可写层，删掉容器就不再存在；课程指定的工作目录若是持久卷，新容器重新挂载后仍能看到它。可以把下面的现象当作一次边界测试：在工作目录和 <code>/tmp</code> 分别写一个文件，重建容器后只保留哪个，取决于平台把哪个路径挂载到了持久存储。</p>
 <p>GPU 容器还多了一层设备暴露。宿主机驱动控制真实 GPU；运行时把被分配的设备节点、用户态 CUDA 库和可见设备编号交给容器。容器里 <code>nvidia-smi</code> 看不到卡，常见原因是调度器没有分配 GPU、设备没有被挂入，或驱动与用户态库不匹配，不应立刻归因于 CUDA 程序。作业脚本应记录申请了多少 CPU、内存和 GPU；性能比较时也要确认两个实验获得的是同一种资源配额。</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1"></a><a href="#__codelineno-16-1"><span class="linenos" data-linenos="1 "></span></a>id<span class="w">                         </span><span class="c1"># 容器中看到的 uid/gid</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2"></a><a href="#__codelineno-16-2"><span class="linenos" data-linenos="2 "></span></a>mount<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w">               </span><span class="c1"># 当前可见的挂载；只作观察，不要手改系统挂载</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3"></a><a href="#__codelineno-16-3"><span class="linenos" data-linenos="3 "></span></a>nproc<span class="w">                      </span><span class="c1"># 此环境实际可用的 CPU 数量</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4"></a><a href="#__codelineno-16-4"><span class="linenos" data-linenos="4 "></span></a>cat<span class="w"> </span>/sys/fs/cgroup/cpu.max<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">true</span><span class="w">   </span><span class="c1"># cgroup v2 的 CPU 限额线索</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">id                         # 容器中看到的 uid/gid
+mount | head               # 当前可见的挂载；只作观察，不要手改系统挂载
+nproc                      # 此环境实际可用的 CPU 数量
+cat /sys/fs/cgroup/cpu.max 2&gt;/dev/null || true   # cgroup v2 的 CPU 限额线索</code></pre>
 <details class="example">
 <summary>为什么 <code>nproc</code> 比宿主机核心数更重要</summary>
 <p>一台宿主机可能有 128 个逻辑 CPU，课程容器却只被授予其中 8 个。若程序仍强制创建 128 个 OpenMP 线程，线程会在可用 CPU 上反复抢占，计时和 cache 行为都变差。程序的线程数应来自当前 cgroup/调度器提供的可用集合，而不是机器宣传页的总核数。</p>
@@ -4222,6 +4209,16 @@
         <script src="../../../../theme/js/mathjax.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../../../theme/js/highlight.js"></script>
       
         <script src="../../../../theme/js/site.js"></script>
       

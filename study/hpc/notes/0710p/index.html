@@ -64,6 +64,10 @@
     
       <link rel="stylesheet" href="../../../../theme/css/components.css">
     
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
@@ -3630,9 +3634,8 @@
 c_i=a_i+b_i,\qquad 0\le i&lt;n
 \]</div>
 <p>标量写法把 <code>i=0,1,2,...</code> 依次执行；向量化写法把一段连续的 <code>a</code> 和 <code>b</code> 当成整体交给硬件。假如一条指令有 8 个 <code>float</code> lane，理论上可以同时做 8 次加法。</p>
-<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos="1 "></span></a>标量： a[0]+b[0] -&gt; c[0]，再处理 a[1]+b[1] -&gt; c[1]
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a><a href="#__codelineno-0-2"><span class="linenos" data-linenos="2 "></span></a>向量： [a0..a7] + [b0..b7] -&gt; [c0..c7]
-</code></pre></div>
+<pre class="highlight"><code class="language-text">标量： a[0]+b[0] -&gt; c[0]，再处理 a[1]+b[1] -&gt; c[1]
+向量： [a0..a7] + [b0..b7] -&gt; [c0..c7]</code></pre>
 <p>“同时”在这里有逻辑和硬件两个层次。</p>
 <ul>
 <li><strong>逻辑向量化</strong>：把逐个元素的意图写成一整个数组操作，例如 <code>a + b</code>；底层实现选择怎样做。</li>
@@ -3645,21 +3648,19 @@ c_i=a_i+b_i,\qquad 0\le i&lt;n
 <p>两者有关，但不是同义词。NumPy 代码快，可能因为避开了 Python 解释器循环、调用了 C/BLAS 库、用了 SIMD，或三者兼有。不要把使用 NumPy 机械地等同于一定使用 AVX。</p>
 <h2 id="数据依赖">数据依赖<a class="headerlink" href="#数据依赖" title="Permanent link">&para;</a></h2>
 <p>向量化的关键要看不同迭代之间是否互相需要结果，而不是循环的语法。下面这个循环的每次迭代只读 <code>a[i]</code>、<code>b[i]</code>，只写 <code>c[i]</code>，所以它是典型的数据并行：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">    </span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2.0f</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a><a href="#__codelineno-1-3"><span class="linenos" data-linenos="3 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">for (int i = 0; i &lt; n; ++i) {
+    c[i] = 2.0f * a[i] + b[i];
+}</code></pre>
 <p>下面两个循环看起来也很短，性质却不同：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><a href="#__codelineno-2-1"><span class="linenos" data-linenos="1 "></span></a><span class="c1">// 依赖上一轮的结果：不能直接把 i 的各轮独立并行。</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><a href="#__codelineno-2-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><a href="#__codelineno-2-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><a href="#__codelineno-2-4"><span class="linenos" data-linenos="4 "></span></a><span class="p">}</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5"></a><a href="#__codelineno-2-5"><span class="linenos" data-linenos="5 "></span></a>
-<a id="__codelineno-2-6" name="__codelineno-2-6"></a><a href="#__codelineno-2-6"><span class="linenos" data-linenos="6 "></span></a><span class="c1">// 多轮都写同一个 sum：直接并行会产生数据竞争。</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7"></a><a href="#__codelineno-2-7"><span class="linenos" data-linenos="7 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8"></a><a href="#__codelineno-2-8"><span class="linenos" data-linenos="8 "></span></a><span class="w">    </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9"></a><a href="#__codelineno-2-9"><span class="linenos" data-linenos="9 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">// 依赖上一轮的结果：不能直接把 i 的各轮独立并行。
+for (int i = 1; i &lt; n; ++i) {
+    a[i] += a[i - 1];
+}
+
+// 多轮都写同一个 sum：直接并行会产生数据竞争。
+for (int i = 0; i &lt; n; ++i) {
+    sum += a[i];
+}</code></pre>
 <p>第一个是前缀和，形成一条依赖链；第二个是归约。它们并非永远不能并行，而是需要不同算法：并行前缀和会分块再合并，归约会让每个工作者先算局部和、最后相加。不能因为看到 <code>for</code> 就默认可以加并行指示，是否可行取决于循环里是哪种依赖。</p>
 <details class="example">
 <summary>为什么前缀和不能只把循环改成 AVX</summary>
@@ -3676,69 +3677,61 @@ c_i=a_i+b_i,\qquad 0\le i&lt;n
 <p>前两项为“是”时，先处理依赖或共享写；第四项为“否”时，即便能够向量化，内存访问也可能让收益很小。</p>
 <h3 id="循环融合拆分与数据布局">循环融合、拆分与数据布局<a class="headerlink" href="#循环融合拆分与数据布局" title="Permanent link">&para;</a></h3>
 <p>同样的数学式可以写成很不一样的循环。考虑</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><a href="#__codelineno-3-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">tmp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2"></a><a href="#__codelineno-3-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">for (int i = 0; i &lt; n; ++i) tmp[i] = a[i] * b[i];
+for (int i = 0; i &lt; n; ++i) out[i] = tmp[i] + c[i];</code></pre>
 <p>若 <code>tmp</code> 没有别的用途，可以融合成一个循环，少写一次、少读一次 <code>tmp</code>：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><a href="#__codelineno-4-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">for (int i = 0; i &lt; n; ++i) out[i] = a[i] * b[i] + c[i];</code></pre>
 <p>这种改写通常有利于 cache，也让编译器更容易生成 FMA。反过来，循环体若同时夹着一段难向量化的分支和一段规则算术，拆成两个循环有时更好：规则部分可保持连续访问和无分支，代价是多走一遍数组。没有固定答案，关键在于估算多出的内存流量和获得的规则性谁更重要。</p>
 <p>数据结构也会决定循环能否形成连续向量。若每次只需要很多粒子的 <code>x</code> 坐标，结构数组（AoS）会把不需要的 <code>y,z,mass</code> 一起读进来：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><a href="#__codelineno-5-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">struct</span><span class="w"> </span><span class="nc">Particle</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">,</span><span class="w"> </span><span class="n">mass</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2"></a><a href="#__codelineno-5-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">struct Particle { float x, y, z, mass; } p[n];
+for (int i = 0; i &lt; n; ++i) sum += p[i].x;</code></pre>
 <p>把热点字段分开保存（SoA）后，<code>x[i]</code> 连续，SIMD load 和 cache line 都不会携带无关字段：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><a href="#__codelineno-6-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">struct</span><span class="w"> </span><span class="nc">Particles</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="w"> </span><span class="n">z</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="w"> </span><span class="n">mass</span><span class="p">[</span><span class="n">n</span><span class="p">];</span><span class="w"> </span><span class="p">};</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">struct Particles { float x[n], y[n], z[n], mass[n]; };</code></pre>
 <p>AoS 并非总错。一次总要同时读取一个粒子的全部字段时，它反而方便。布局应服从最内层循环实际读取的字段，而不是服从数据结构看上去是否面向对象。</p>
 <h2 id="numpy-与数组编程">NumPy 与数组编程<a class="headerlink" href="#numpy-与数组编程" title="Permanent link">&para;</a></h2>
 <p>Python 的 <code>for</code> 循环每一轮都要处理对象、类型和解释器调度，对大数组很不划算。NumPy 的 <code>ndarray</code> 把同类型元素连续存储，并把循环放在编译后的底层实现中。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/numpy-not-vectorization.png"><img width="1728" height="972" alt="课件提醒：NumPy 本身不是向量化这个概念，它只是提供数组、矩阵和批量运算的接口；我们用 NumPy 要做的是把数据整理成能用向量化接口的样子。" src="../assets/0710p/numpy-not-vectorization.preview.jpg" data-fullsrc="../assets/0710p/numpy-not-vectorization.png" /></a></p>
 <p><em>图：NumPy 提供的是批量运算接口；是否真正用上 SIMD，取决于底层库与数据布局，而不是调用 <code>np.*</code> 本身。</em></p>
-<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><a href="#__codelineno-7-1"><span class="linenos" data-linenos="1 "></span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2"></a><a href="#__codelineno-7-2"><span class="linenos" data-linenos="2 "></span></a>
-<a id="__codelineno-7-3" name="__codelineno-7-3"></a><a href="#__codelineno-7-3"><span class="linenos" data-linenos="3 "></span></a><span class="n">n</span> <span class="o">=</span> <span class="mi">1_000_000</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4"></a><a href="#__codelineno-7-4"><span class="linenos" data-linenos="4 "></span></a><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5"></a><a href="#__codelineno-7-5"><span class="linenos" data-linenos="5 "></span></a><span class="n">b</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6"></a><a href="#__codelineno-7-6"><span class="linenos" data-linenos="6 "></span></a>
-<a id="__codelineno-7-7" name="__codelineno-7-7"></a><a href="#__codelineno-7-7"><span class="linenos" data-linenos="7 "></span></a><span class="c1"># 写出问题的数学结构，而不是在 Python 中重复解释一百万次循环。</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8"></a><a href="#__codelineno-7-8"><span class="linenos" data-linenos="8 "></span></a><span class="n">c</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9"></a><a href="#__codelineno-7-9"><span class="linenos" data-linenos="9 "></span></a><span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-python">import numpy as np
+
+n = 1_000_000
+a = np.arange(n, dtype=np.float64)
+b = 2 * a
+
+# 写出问题的数学结构，而不是在 Python 中重复解释一百万次循环。
+c = 2 * a + b
+assert np.all(c == 4 * a)</code></pre>
 <p>这里 <code>2 * a + b</code> 的每个位置相互独立。它不仅更短，也给底层实现留下了使用连续循环、SIMD 与多线程库的空间。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/numpy-matrix-sum.jpg"><img width="737" height="356" alt="课件用三层循环的 matrix_sum 与 NumPy 写法对照：手工 for 循环逐元素相加，而数组接口一次表达整个矩阵相加。" src="../assets/0710p/numpy-matrix-sum.preview.jpg" data-fullsrc="../assets/0710p/numpy-matrix-sum.jpg" /></a></p>
 <p><em>图：两段代码做同一件事——逐元素矩阵相加；用 NumPy 接口写出的形式更容易被底层的批量循环和 SIMD 加速。</em></p>
 <h3 id="广播与数组形状">广播与数组形状<a class="headerlink" href="#广播与数组形状" title="Permanent link">&para;</a></h3>
 <p>NumPy 经常不需要显式复制数据。若 <code>x</code> 的形状是 <code>(m, n)</code>，<code>bias</code> 的形状是 <code>(n,)</code>，<code>x + bias</code> 会把同一条 <code>bias</code> 逻辑上应用于每一行。这叫广播（broadcasting）。</p>
-<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><a href="#__codelineno-8-1"><span class="linenos" data-linenos="1 "></span></a><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">],</span> <span class="p">[</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">]])</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2"></a><a href="#__codelineno-8-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">bias</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">20.</span><span class="p">,</span> <span class="mf">30.</span><span class="p">])</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3"></a><a href="#__codelineno-8-3"><span class="linenos" data-linenos="3 "></span></a><span class="nb">print</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">bias</span><span class="p">)</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4"></a><a href="#__codelineno-8-4"><span class="linenos" data-linenos="4 "></span></a><span class="c1"># [[11., 22., 33.], [14., 25., 36.]]</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-python">x = np.array([[1., 2., 3.], [4., 5., 6.]])
+bias = np.array([10., 20., 30.])
+print(x + bias)
+# [[11., 22., 33.], [14., 25., 36.]]</code></pre>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/numpy-arange-reshape.jpg"><img width="474" height="304" alt="课件通过 np.arange(...).reshape(...) 演示数组的形状：一维连续数据可以按行/列重排成不同 view，广播与切片都建立在这个形状概念上。" src="../assets/0710p/numpy-arange-reshape.preview.jpg" data-fullsrc="../assets/0710p/numpy-arange-reshape.jpg" /></a></p>
 <p><em>图：<code>reshape</code> 只改变形状解释，不复制元素；后续广播、切片和矩阵乘法都依赖对形状的正确理解。</em></p>
 <p>广播很方便，但要先确认 shape。<code>(m, 1)</code> 和 <code>(m,)</code> 在 NumPy 中含义不同；不确定时打印 <code>array.shape</code>，而不是凭感觉猜结果。</p>
 <h3 id="切片二维邻居求和">切片：二维邻居求和<a class="headerlink" href="#切片二维邻居求和" title="Permanent link">&para;</a></h3>
 <p>每个格子的新值等于原值加右上和右下邻居；最右列没有邻居，按 0 处理。朴素实现会有边界判断：</p>
-<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><a href="#__codelineno-9-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">slow</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2"></a><a href="#__codelineno-9-2"><span class="linenos" data-linenos="2 "></span></a>    <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3"></a><a href="#__codelineno-9-3"><span class="linenos" data-linenos="3 "></span></a>    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4"></a><a href="#__codelineno-9-4"><span class="linenos" data-linenos="4 "></span></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5"></a><a href="#__codelineno-9-5"><span class="linenos" data-linenos="5 "></span></a>        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
-<a id="__codelineno-9-6" name="__codelineno-9-6"></a><a href="#__codelineno-9-6"><span class="linenos" data-linenos="6 "></span></a>            <span class="n">upper_right</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">cols</span> <span class="k">else</span> <span class="mi">0</span>
-<a id="__codelineno-9-7" name="__codelineno-9-7"></a><a href="#__codelineno-9-7"><span class="linenos" data-linenos="7 "></span></a>            <span class="n">lower_right</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">rows</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">cols</span> <span class="k">else</span> <span class="mi">0</span>
-<a id="__codelineno-9-8" name="__codelineno-9-8"></a><a href="#__codelineno-9-8"><span class="linenos" data-linenos="8 "></span></a>            <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">upper_right</span> <span class="o">+</span> <span class="n">lower_right</span>
-<a id="__codelineno-9-9" name="__codelineno-9-9"></a><a href="#__codelineno-9-9"><span class="linenos" data-linenos="9 "></span></a>    <span class="k">return</span> <span class="n">out</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-python">def slow(a: np.ndarray) -&gt; np.ndarray:
+    rows, cols = a.shape
+    out = np.empty_like(a)
+    for i in range(rows):
+        for j in range(cols):
+            upper_right = a[i - 1, j + 1] if i &gt; 0 and j + 1 &lt; cols else 0
+            lower_right = a[i + 1, j + 1] if i + 1 &lt; rows and j + 1 &lt; cols else 0
+            out[i, j] = a[i, j] + upper_right + lower_right
+    return out</code></pre>
 <p>更适合数组表达的做法是先补零，再用相同形状的切片对齐：</p>
-<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><a href="#__codelineno-10-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">vectorized</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2"></a><a href="#__codelineno-10-2"><span class="linenos" data-linenos="2 "></span></a>    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">)</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3"></a><a href="#__codelineno-10-3"><span class="linenos" data-linenos="3 "></span></a>    <span class="c1"># p[1:-1, :-1] 对应原数组；其余两个切片已对齐到右上、右下邻居。</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4"></a><a href="#__codelineno-10-4"><span class="linenos" data-linenos="4 "></span></a>    <span class="k">return</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">:,</span> <span class="mi">1</span><span class="p">:]</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5"></a><a href="#__codelineno-10-5"><span class="linenos" data-linenos="5 "></span></a>
-<a id="__codelineno-10-6" name="__codelineno-10-6"></a><a href="#__codelineno-10-6"><span class="linenos" data-linenos="6 "></span></a><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7"></a><a href="#__codelineno-10-7"><span class="linenos" data-linenos="7 "></span></a><span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">slow</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">vectorized</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-python">def vectorized(a: np.ndarray) -&gt; np.ndarray:
+    p = np.pad(a, ((1, 1), (0, 1)), mode="constant")
+    # p[1:-1, :-1] 对应原数组；其余两个切片已对齐到右上、右下邻居。
+    return p[1:-1, :-1] + p[:-2, 1:] + p[2:, 1:]
+
+a = np.arange(9).reshape(3, 3)
+assert np.array_equal(slow(a), vectorized(a))</code></pre>
 <p>这里并没有神奇地消除计算，我们只是把边界问题转成一次规则的 padding，把两重循环转成三个规则的切片。向量化的价值在于改变数据的表示，让计算形状变规则。</p>
 <h3 id="矩阵乘法与-blas">矩阵乘法与 BLAS<a class="headerlink" href="#矩阵乘法与-blas" title="Permanent link">&para;</a></h3>
 <p>若 <span class="arithmatex">\(A\in\mathbb{R}^{N\times K}\)</span>、<span class="arithmatex">\(B\in\mathbb{R}^{K\times M}\)</span>，结果为：</p>
@@ -3746,9 +3739,8 @@ c_i=a_i+b_i,\qquad 0\le i&lt;n
 C_{ij}=\sum_{k=0}^{K-1}A_{ik}B_{kj}
 \]</div>
 <p>每个 <code>C[i, j]</code> 的输出位置独立，因而可以并行；但计算同一个位置时需要沿 <code>k</code> 累加。正确的首选是：</p>
-<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><a href="#__codelineno-11-1"><span class="linenos" data-linenos="1 "></span></a><span class="n">C</span> <span class="o">=</span> <span class="n">A</span> <span class="o">@</span> <span class="n">B</span>                 <span class="c1"># 或 np.matmul(A, B)</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2"></a><a href="#__codelineno-11-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-python">C = A @ B                 # 或 np.matmul(A, B)
+np.testing.assert_allclose(C, np.dot(A, B))</code></pre>
 <p><code>@</code> 通常会进入 BLAS 库。它不只做 SIMD，还会考虑缓存分块、线程数、寄存器阻塞和目标 CPU。自己写三重 Python 循环几乎不可能赢过它。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/numpy-matrix-mul-python.jpg"><img width="1271" height="523" alt="课件用三层 for 的 matrix_mul 展示手写矩阵乘法的样子：逐个元素遍历三个下标，循环开销大，也难以被 SIMD 与缓存分块利用。" src="../assets/0710p/numpy-matrix-mul-python.preview.jpg" data-fullsrc="../assets/0710p/numpy-matrix-mul-python.jpg" /></a></p>
 <p><em>图：手写 Python 三重循环做矩阵乘法；相同的计算改写成 <code>A @ B</code> 后交由 BLAS，才能让缓存分块、SIMD 与多线程真正生效。</em></p>
@@ -3760,12 +3752,11 @@ C_{ij}=\sum_{k=0}^{K-1}A_{ik}B_{kj}
 <p>SIMD 是 Single Instruction, Multiple Data。一条指令携带一个操作码，例如 packed add；向量寄存器中有多个 lane；所有有效 lane 同时做相同动作。以 256 位寄存器为例，它可装 8 个 <code>float</code> 或 4 个 <code>double</code>。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/simd-definition.png"><img width="1728" height="972" alt="课件对 SIMD 的定义：Single Instruction Multiple Data，单指令多数据流；在 x86 上通常与 AVX 等指令集联系在一起，由一条指令同时操作多个数据单元。" src="../assets/0710p/simd-definition.preview.jpg" data-fullsrc="../assets/0710p/simd-definition.png" /></a></p>
 <p><em>图：SIMD 指一条指令同时作用于多个数据元素；x86 的实现集中在 AVX 这类指令集。</em></p>
-<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a><a href="#__codelineno-12-1"><span class="linenos" data-linenos="1 "></span></a>__m256:  [a0 a1 a2 a3 a4 a5 a6 a7]
-<a id="__codelineno-12-2" name="__codelineno-12-2"></a><a href="#__codelineno-12-2"><span class="linenos" data-linenos="2 "></span></a>          +  +  +  +  +  +  +  +
-<a id="__codelineno-12-3" name="__codelineno-12-3"></a><a href="#__codelineno-12-3"><span class="linenos" data-linenos="3 "></span></a>__m256:  [b0 b1 b2 b3 b4 b5 b6 b7]
-<a id="__codelineno-12-4" name="__codelineno-12-4"></a><a href="#__codelineno-12-4"><span class="linenos" data-linenos="4 "></span></a>          =  =  =  =  =  =  =  =
-<a id="__codelineno-12-5" name="__codelineno-12-5"></a><a href="#__codelineno-12-5"><span class="linenos" data-linenos="5 "></span></a>__m256:  [c0 c1 c2 c3 c4 c5 c6 c7]
-</code></pre></div>
+<pre class="highlight"><code class="language-text">__m256:  [a0 a1 a2 a3 a4 a5 a6 a7]
+          +  +  +  +  +  +  +  +
+__m256:  [b0 b1 b2 b3 b4 b5 b6 b7]
+          =  =  =  =  =  =  =  =
+__m256:  [c0 c1 c2 c3 c4 c5 c6 c7]</code></pre>
 <p>常见指令扩展的向量宽度和编程模型并不相同。</p>
 <table>
 <thead>
@@ -3840,36 +3831,32 @@ C_{ij}=\sum_{k=0}^{K-1}A_{ik}B_{kj}
 s=\sum_{i=0}^{n-1}a_i b_i
 \]</div>
 <p>所有迭代都会更新同一个 <span class="arithmatex">\(s\)</span>。正确的 SIMD 做法是让向量寄存器先积累多个局部和，最后再横向求和。概念代码如下：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a><a href="#__codelineno-13-1"><span class="linenos" data-linenos="1 "></span></a><span class="n">__m256</span><span class="w"> </span><span class="n">acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_setzero_ps</span><span class="p">();</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2"></a><a href="#__codelineno-13-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3"></a><a href="#__codelineno-13-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="n">__m256</span><span class="w"> </span><span class="n">va</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_loadu_ps</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
-<a id="__codelineno-13-4" name="__codelineno-13-4"></a><a href="#__codelineno-13-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">    </span><span class="n">__m256</span><span class="w"> </span><span class="n">vb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_loadu_ps</span><span class="p">(</span><span class="n">b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
-<a id="__codelineno-13-5" name="__codelineno-13-5"></a><a href="#__codelineno-13-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">    </span><span class="n">acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_fmadd_ps</span><span class="p">(</span><span class="n">va</span><span class="p">,</span><span class="w"> </span><span class="n">vb</span><span class="p">,</span><span class="w"> </span><span class="n">acc</span><span class="p">);</span><span class="w"> </span><span class="c1">// acc += va * vb</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6"></a><a href="#__codelineno-13-6"><span class="linenos" data-linenos="6 "></span></a><span class="p">}</span>
-<a id="__codelineno-13-7" name="__codelineno-13-7"></a><a href="#__codelineno-13-7"><span class="linenos" data-linenos="7 "></span></a><span class="kt">float</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">horizontal_add</span><span class="p">(</span><span class="n">acc</span><span class="p">);</span>
-<a id="__codelineno-13-8" name="__codelineno-13-8"></a><a href="#__codelineno-13-8"><span class="linenos" data-linenos="8 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">__m256 acc = _mm256_setzero_ps();
+for (int i = 0; i + 8 &lt;= n; i += 8) {
+    __m256 va = _mm256_loadu_ps(a + i);
+    __m256 vb = _mm256_loadu_ps(b + i);
+    acc = _mm256_fmadd_ps(va, vb, acc); // acc += va * vb
+}
+float sum = horizontal_add(acc);
+for (int i = n / 8 * 8; i &lt; n; ++i) sum += a[i] * b[i];</code></pre>
 <p><code>horizontal_add</code> 把 8 个 lane 合并为一个标量。它不是主循环中的热点，因而放在循环末尾即可。与标量顺序逐项相加相比，向量归约改变了加法顺序；浮点加法不满足严格结合律，所以最后几位可能不同。测试应使用误差阈值，而不是对浮点结果逐位比较。</p>
 <p>FMA（fused multiply-add）把 <span class="arithmatex">\(a\times b+c\)</span> 作为一次舍入的运算执行，既减少指令，也常带来更好的数值行为。编译器能否使用 FMA 与目标 CPU、编译选项和浮点语义有关。需要可复现实验结果时，应记录是否启用了 <code>-ffast-math</code>；它可能允许更激进的重排，速度提高的同时也可能改变误差分布。</p>
 <h2 id="自动向量化">自动向量化<a class="headerlink" href="#自动向量化" title="Permanent link">&para;</a></h2>
 <p>对于规则 C/C++ 循环，先写清楚、正确、连续的数据访问，再打开优化。以 Clang 为例：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1"></a><a href="#__codelineno-14-1"><span class="linenos" data-linenos="1 "></span></a>clang++<span class="w"> </span>-O3<span class="w"> </span>-march<span class="o">=</span>native<span class="w"> </span>-Rpass<span class="o">=</span>loop-vectorize<span class="w"> </span>saxpy.cpp<span class="w"> </span>-o<span class="w"> </span>saxpy
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">clang++ -O3 -march=native -Rpass=loop-vectorize saxpy.cpp -o saxpy</code></pre>
 <p><code>-O3</code> 开启较激进优化；<code>-Rpass=loop-vectorize</code> 给出成功向量化的报告。GCC 可用 <code>-fopt-info-vec</code> 观察类似信息。报告是排查线索，不是性能证明，仍要实际计时。</p>
 <h3 id="读懂向量化报告">读懂向量化报告<a class="headerlink" href="#读懂向量化报告" title="Permanent link">&para;</a></h3>
 <p>报告常见的两种信息分别是已向量化和无法向量化。后者比前者更有价值，因为它指出编译器缺少什么证明。例如：</p>
-<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1"></a><a href="#__codelineno-15-1"><span class="linenos" data-linenos="1 "></span></a>remark: loop not vectorized: unsafe dependent memory operations
-<a id="__codelineno-15-2" name="__codelineno-15-2"></a><a href="#__codelineno-15-2"><span class="linenos" data-linenos="2 "></span></a>remark: loop not vectorized: value that could not be identified as reduction
-</code></pre></div>
+<pre class="highlight"><code class="language-text">remark: loop not vectorized: unsafe dependent memory operations
+remark: loop not vectorized: value that could not be identified as reduction</code></pre>
 <p>第一类通常来自指针别名或跨迭代读写，先检查 <code>x</code>、<code>y</code> 是否真的可能重叠；只有接口语义保证不重叠时才加 <code>restrict</code>。第二类提示编译器没有识别出归约，可将复杂表达式拆成局部累加，或用 OpenMP 的 <code>reduction</code> 明确语义。若循环本身充满随机索引、函数调用或数据相关分支，强行加 pragma 往往只是把正确性风险交给调用者，先改算法或布局更稳妥。</p>
 <p>报告显示 vectorized width: 8 也不等于每个循环都在跑 8 lane。检查生成汇编时，应看到连续的向量 load/store 与 packed arithmetic；同时仍可能有标量尾循环、对齐检查或运行时 alias check。这些前置检查通常很小，除非循环本身极短。</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1"></a><a href="#__codelineno-16-1"><span class="linenos" data-linenos="1 "></span></a><span class="kt">void</span><span class="w"> </span><span class="nf">saxpy</span><span class="p">(</span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="k">__restrict</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="k">__restrict</span><span class="w"> </span><span class="n">x</span><span class="p">,</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2"></a><a href="#__codelineno-16-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">           </span><span class="kt">float</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3"></a><a href="#__codelineno-16-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4"></a><a href="#__codelineno-16-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">        </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<a id="__codelineno-16-5" name="__codelineno-16-5"></a><a href="#__codelineno-16-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">    </span><span class="p">}</span>
-<a id="__codelineno-16-6" name="__codelineno-16-6"></a><a href="#__codelineno-16-6"><span class="linenos" data-linenos="6 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">void saxpy(float* __restrict y, const float* __restrict x,
+           float a, int n) {
+    for (int i = 0; i &lt; n; ++i) {
+        y[i] = a * x[i] + y[i];
+    }
+}</code></pre>
 <p>这里 <code>__restrict</code> 的意思是调用者承诺 <code>x</code> 和 <code>y</code> 所指的可访问区域不重叠。若承诺不成立，程序行为会不正确；因此只有在接口语义确实保证不重叠时才写它。编译器不敢向量化时，常见原因正是它无法证明指针不别名、循环有跨迭代依赖，或者分支和边界太复杂。</p>
 <h3 id="尾部元素与掩码">尾部元素与掩码<a class="headerlink" href="#尾部元素与掩码" title="Permanent link">&para;</a></h3>
 <p>假设向量宽度为 8、<code>n=18</code>，前两次处理 16 个元素，最后 2 个怎么办？最直观的办法是向量主循环后补一个标量尾循环。AVX-512 和 SVE 支持 mask/predicate，让无效 lane 不读写；SVE 的 <code>svwhilelt</code> 按还有多少元素构造谓词，所以同一份代码能适应不同硬件向量长度。</p>
@@ -3879,14 +3866,13 @@ s=\sum_{i=0}^{n-1}a_i b_i
 <p>写或读 intrinsic 时还应留意四类实际问题：数据是否按所需边界对齐、循环长度是否正好是 lane 数的倍数、循环控制的分支是否已经吃掉收益、寄存器是否因临时变量过多而 spill。它们解释了为什么一段看上去每次算八个数目的代码，可能并不比编译器生成的版本快。</p>
 <h2 id="simd-intrinsic">SIMD intrinsic<a class="headerlink" href="#simd-intrinsic" title="Permanent link">&para;</a></h2>
 <p>Intrinsic 是 C/C++ 函数形式的指令接口。下面示例给 8 个 32 位整数逐元素相加：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1"></a><a href="#__codelineno-17-1"><span class="linenos" data-linenos="1 "></span></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;immintrin.h&gt;</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2"></a><a href="#__codelineno-17-2"><span class="linenos" data-linenos="2 "></span></a>
-<a id="__codelineno-17-3" name="__codelineno-17-3"></a><a href="#__codelineno-17-3"><span class="linenos" data-linenos="3 "></span></a><span class="n">__m256i</span><span class="w"> </span><span class="nf">add8</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-17-4" name="__codelineno-17-4"></a><a href="#__codelineno-17-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">    </span><span class="n">__m256i</span><span class="w"> </span><span class="n">va</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_loadu_si256</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">__m256i</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">a</span><span class="p">));</span>
-<a id="__codelineno-17-5" name="__codelineno-17-5"></a><a href="#__codelineno-17-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">    </span><span class="n">__m256i</span><span class="w"> </span><span class="n">vb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm256_loadu_si256</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">__m256i</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">b</span><span class="p">));</span>
-<a id="__codelineno-17-6" name="__codelineno-17-6"></a><a href="#__codelineno-17-6"><span class="linenos" data-linenos="6 "></span></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_mm256_add_epi32</span><span class="p">(</span><span class="n">va</span><span class="p">,</span><span class="w"> </span><span class="n">vb</span><span class="p">);</span>
-<a id="__codelineno-17-7" name="__codelineno-17-7"></a><a href="#__codelineno-17-7"><span class="linenos" data-linenos="7 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">#include &lt;immintrin.h&gt;
+
+__m256i add8(const int* a, const int* b) {
+    __m256i va = _mm256_loadu_si256(reinterpret_cast&lt;const __m256i*&gt;(a));
+    __m256i vb = _mm256_loadu_si256(reinterpret_cast&lt;const __m256i*&gt;(b));
+    return _mm256_add_epi32(va, vb);
+}</code></pre>
 <p>读 intrinsic 名称时可以拆开：<code>_mm256</code> 表示 256 位，<code>add</code> 表示加法，<code>epi32</code> 表示 packed 32-bit integer。真正编写前，必须查 <a href="https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html">Intel Intrinsics Guide</a>：确认所需头文件、目标 ISA、等价伪代码、输入输出类型、延迟与吞吐。不要让 AI 或名称猜测替代文档。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/intel-intrinsics-guide.jpg"><img width="2748" height="1604" alt="课件给出 Intel Intrinsics Guide 的界面：可以按指令集家族（SSE、AVX 等）过滤，查到每条 intrinsic 的概要、头文件与语义。" src="../assets/0710p/intel-intrinsics-guide.preview.jpg" data-fullsrc="../assets/0710p/intel-intrinsics-guide.jpg" /></a></p>
 <p><em>图：写 intrinsic 前用官方 Guide 核对名称、头文件、输入输出类型与延迟/吞吐，而不是靠猜测。</em></p>
@@ -3895,14 +3881,13 @@ s=\sum_{i=0}^{n-1}a_i b_i
 <p><em>图：对齐、尾边界、分支开销与寄存器溢出，解释了为什么逐元素代码可能并不比编译器向量化版本快。</em></p>
 <h2 id="矩阵乘法与缓存分块">矩阵乘法与缓存分块<a class="headerlink" href="#矩阵乘法与缓存分块" title="Permanent link">&para;</a></h2>
 <p>朴素矩阵乘法若按不合适的循环顺序访问 B，可能每次内层迭代都把新的 cache line 从内存搬入，缓存几乎没有复用。优化的第一步通常是<strong>分块（tiling/blocking）</strong>：把 <code>A</code>、<code>B</code>、<code>C</code> 切成能放进缓存的小块，在块内完成更多乘加。</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1"></a><a href="#__codelineno-18-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">BS</span><span class="p">)</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2"></a><a href="#__codelineno-18-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">kk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">kk</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="n">kk</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">BS</span><span class="p">)</span>
-<a id="__codelineno-18-3" name="__codelineno-18-3"></a><a href="#__codelineno-18-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">BS</span><span class="p">)</span>
-<a id="__codelineno-18-4" name="__codelineno-18-4"></a><a href="#__codelineno-18-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ii</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">ii</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">BS</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
-<a id="__codelineno-18-5" name="__codelineno-18-5"></a><a href="#__codelineno-18-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kk</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">kk</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">BS</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">k</span><span class="p">)</span>
-<a id="__codelineno-18-6" name="__codelineno-18-6"></a><a href="#__codelineno-18-6"><span class="linenos" data-linenos="6 "></span></a><span class="w">          </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jj</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">jj</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">BS</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span>
-<a id="__codelineno-18-7" name="__codelineno-18-7"></a><a href="#__codelineno-18-7"><span class="linenos" data-linenos="7 "></span></a><span class="w">            </span><span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">B</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">for (int ii = 0; ii &lt; N; ii += BS)
+  for (int kk = 0; kk &lt; N; kk += BS)
+    for (int jj = 0; jj &lt; N; jj += BS)
+      for (int i = ii; i &lt; std::min(ii + BS, N); ++i)
+        for (int k = kk; k &lt; std::min(kk + BS, N); ++k)
+          for (int j = jj; j &lt; std::min(jj + BS, N); ++j)
+            C[i][j] += A[i][k] * B[k][j];</code></pre>
 <p>这个顺序让 <code>B[k][j]</code> 沿 <code>j</code> 连续访问（假设 C/C++ 行主序），并让 <code>A[i][k]</code>、<code>C[i][j]</code> 在小块内复用。之后，内层 <code>j</code> 循环才是编译器向量化的好目标。真实项目优先调用 MKL、OpenBLAS、BLIS；这些库会继续做寄存器分块、预取和微内核调优。</p>
 <p>AVX-512 VNNI、AMX 与 ARM SME 面向更专门的低精度/矩阵乘加场景，本质仍是相同的数据流：<strong>load tile，计算 tile，store tile</strong>。只有确认数据类型、矩阵形状和硬件支持后，才进入这一步。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/arm-sme-tile.jpg"><img width="1906" height="1132" alt="课件画出 ARM SME 的 tile 与 SMOPA（外积累加）指令：A/B 矩阵以 ZA 寄存器的 tile 形式参与，一次完成整块矩阵乘加。" src="../assets/0710p/arm-sme-tile.preview.jpg" data-fullsrc="../assets/0710p/arm-sme-tile.jpg" /></a></p>
@@ -3942,27 +3927,26 @@ C_{m\times n}\mathrel{+}=A_{m\times k}B_{k\times n}.
 </ul>
 <p>程序通过 <code>vsetvl</code> 之类的指令把还剩下多少元素结合 SEW/LMUL，动态算出本次实际处理的元素数，因此同一份代码能适应不同 <code>VLEN</code>。课程后面在 SpaceMiT 这类 RISC-V CPU 上做向量化，用的正是 RVV 的 intrinsic（如 <code>vrsub</code>、<code>vle</code>、<code>vse</code> 系列）让循环一次处理多个元素；读懂 <code>vsetvl</code>、SEW/LMUL 这些配置，是读 RISC-V 向量代码的入口。它和 AVX 的关键区别在于：AVX 把宽度写死在指令集里，RVV/SVE 让宽度由硬件和运行时的 <code>vsetvl</code> 决定。</p>
 <h2 id="基准测试">基准测试<a class="headerlink" href="#基准测试" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1"></a><a href="#__codelineno-19-1"><span class="linenos" data-linenos=" 1 "></span></a><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-<a id="__codelineno-19-2" name="__codelineno-19-2"></a><a href="#__codelineno-19-2"><span class="linenos" data-linenos=" 2 "></span></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<a id="__codelineno-19-3" name="__codelineno-19-3"></a><a href="#__codelineno-19-3"><span class="linenos" data-linenos=" 3 "></span></a>
-<a id="__codelineno-19-4" name="__codelineno-19-4"></a><a href="#__codelineno-19-4"><span class="linenos" data-linenos=" 4 "></span></a><span class="n">N</span> <span class="o">=</span> <span class="mi">2_000_000</span>
-<a id="__codelineno-19-5" name="__codelineno-19-5"></a><a href="#__codelineno-19-5"><span class="linenos" data-linenos=" 5 "></span></a><span class="n">a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
-<a id="__codelineno-19-6" name="__codelineno-19-6"></a><a href="#__codelineno-19-6"><span class="linenos" data-linenos=" 6 "></span></a><span class="n">b</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">N</span><span class="p">))</span>
-<a id="__codelineno-19-7" name="__codelineno-19-7"></a><a href="#__codelineno-19-7"><span class="linenos" data-linenos=" 7 "></span></a>
-<a id="__codelineno-19-8" name="__codelineno-19-8"></a><a href="#__codelineno-19-8"><span class="linenos" data-linenos=" 8 "></span></a><span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<a id="__codelineno-19-9" name="__codelineno-19-9"></a><a href="#__codelineno-19-9"><span class="linenos" data-linenos=" 9 "></span></a><span class="n">c_py</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span>
-<a id="__codelineno-19-10" name="__codelineno-19-10"></a><a href="#__codelineno-19-10"><span class="linenos" data-linenos="10 "></span></a><span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<a id="__codelineno-19-11" name="__codelineno-19-11"></a><a href="#__codelineno-19-11"><span class="linenos" data-linenos="11 "></span></a>
-<a id="__codelineno-19-12" name="__codelineno-19-12"></a><a href="#__codelineno-19-12"><span class="linenos" data-linenos="12 "></span></a><span class="n">an</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
-<a id="__codelineno-19-13" name="__codelineno-19-13"></a><a href="#__codelineno-19-13"><span class="linenos" data-linenos="13 "></span></a><span class="n">bn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
-<a id="__codelineno-19-14" name="__codelineno-19-14"></a><a href="#__codelineno-19-14"><span class="linenos" data-linenos="14 "></span></a><span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<a id="__codelineno-19-15" name="__codelineno-19-15"></a><a href="#__codelineno-19-15"><span class="linenos" data-linenos="15 "></span></a><span class="n">cn</span> <span class="o">=</span> <span class="n">an</span> <span class="o">+</span> <span class="n">bn</span>
-<a id="__codelineno-19-16" name="__codelineno-19-16"></a><a href="#__codelineno-19-16"><span class="linenos" data-linenos="16 "></span></a><span class="n">t3</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<a id="__codelineno-19-17" name="__codelineno-19-17"></a><a href="#__codelineno-19-17"><span class="linenos" data-linenos="17 "></span></a>
-<a id="__codelineno-19-18" name="__codelineno-19-18"></a><a href="#__codelineno-19-18"><span class="linenos" data-linenos="18 "></span></a><span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c_py</span><span class="p">),</span> <span class="n">cn</span><span class="p">)</span>
-<a id="__codelineno-19-19" name="__codelineno-19-19"></a><a href="#__codelineno-19-19"><span class="linenos" data-linenos="19 "></span></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Python: </span><span class="si">{</span><span class="n">t1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
-<a id="__codelineno-19-20" name="__codelineno-19-20"></a><a href="#__codelineno-19-20"><span class="linenos" data-linenos="20 "></span></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NumPy : </span><span class="si">{</span><span class="n">t3</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t2</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-python">import time
+import numpy as np
+
+N = 2_000_000
+a = list(range(N))
+b = list(range(N, 2 * N))
+
+t0 = time.perf_counter()
+c_py = [x + y for x, y in zip(a, b)]
+t1 = time.perf_counter()
+
+an = np.asarray(a, dtype=np.int64)
+bn = np.asarray(b, dtype=np.int64)
+t2 = time.perf_counter()
+cn = an + bn
+t3 = time.perf_counter()
+
+assert np.array_equal(np.asarray(c_py), cn)
+print(f"Python: {t1 - t0:.3f}s")
+print(f"NumPy : {t3 - t2:.3f}s")</code></pre>
 <p>接着把 <code>an + bn</code> 改成 <code>an[::2] + bn[::2]</code>，比较连续访问与步长访问；再尝试矩阵 <code>@</code> 与三重 Python 循环。记录数组大小、dtype、CPU、线程设置和运行次数，否则数字无法解释。</p>
 <h3 id="结果验证与计时">结果验证与计时<a class="headerlink" href="#结果验证与计时" title="Permanent link">&para;</a></h3>
 <p>优化前先保存一个小规模参考实现。每次修改后，先比输出，再测时间。对浮点数组可记录最大绝对误差和相对误差：</p>
@@ -4370,6 +4354,16 @@ C_{m\times n}\mathrel{+}=A_{m\times k}B_{k\times n}.
         <script src="../../../../theme/js/mathjax.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../../../theme/js/highlight.js"></script>
       
         <script src="../../../../theme/js/site.js"></script>
       

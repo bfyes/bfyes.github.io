@@ -64,6 +64,10 @@
     
       <link rel="stylesheet" href="../../../../theme/css/components.css">
     
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
@@ -3443,12 +3447,11 @@ T\approx\alpha+\frac{n}{B},
 <p>walltime 也是算法约束。作业若超过申请时限可能被终止，长模拟需要把检查点写在可恢复的边界；时限申请过长又可能影响排队。交互节点适合编译、调试和小规模试验，正式性能数字应在获得明确资源配额的计算节点上采集，避免他人负载和登录限制混进数据。</p>
 <h2 id="超算的软件栈">超算的软件栈<a class="headerlink" href="#超算的软件栈" title="Permanent link">&para;</a></h2>
 <p>一个 HPC 应用从上到下大致经过：</p>
-<div class="language-text highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos="1 "></span></a>应用：模拟程序、训练程序、脚本
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a><a href="#__codelineno-0-2"><span class="linenos" data-linenos="2 "></span></a>并行/数学库：MPI、OpenMP、BLAS、FFT、GPU runtime
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a><a href="#__codelineno-0-3"><span class="linenos" data-linenos="3 "></span></a>运行时和调度：作业系统、进程管理、通信库
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a><a href="#__codelineno-0-4"><span class="linenos" data-linenos="4 "></span></a>操作系统和驱动：文件系统、网络、GPU 驱动
-<a id="__codelineno-0-5" name="__codelineno-0-5"></a><a href="#__codelineno-0-5"><span class="linenos" data-linenos="5 "></span></a>硬件：CPU、GPU、DRAM、SSD、NIC、交换机
-</code></pre></div>
+<pre class="highlight"><code class="language-text">应用：模拟程序、训练程序、脚本
+并行/数学库：MPI、OpenMP、BLAS、FFT、GPU runtime
+运行时和调度：作业系统、进程管理、通信库
+操作系统和驱动：文件系统、网络、GPU 驱动
+硬件：CPU、GPU、DRAM、SSD、NIC、交换机</code></pre>
 <p>上层应尽可能调用成熟库。例如 <code>dgemm</code>、FFT 或 GPU 框架里的矩阵乘法早就针对缓存、SIMD、线程和设备做了多年调优，调用它们是把这些积累复用起来。需要排错时，也应先定位层次：是算法有问题、库没有正确加载、MPI 通信异常、文件系统慢，还是节点资源没有申请到。</p>
 <h2 id="存储系统文件不是总在本地磁盘上">存储系统：文件不是总在本地磁盘上<a class="headerlink" href="#存储系统文件不是总在本地磁盘上" title="Permanent link">&para;</a></h2>
 <p>HPC 常使用并行文件系统。它把数据分布在多个存储服务上，对计算节点提供一个统一目录树；多个进程可并行读写同一个大文件。这样能提供很高总带宽，但元数据、网络和服务器仍是共享资源。</p>
@@ -3967,6 +3970,16 @@ S(p)=\frac{1}{s+(1-s)/p}.
         <script src="../../../../theme/js/mathjax.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../../../theme/js/highlight.js"></script>
       
         <script src="../../../../theme/js/site.js"></script>
       

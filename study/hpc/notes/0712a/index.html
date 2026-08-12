@@ -64,6 +64,10 @@
     
       <link rel="stylesheet" href="../../../../theme/css/components.css">
     
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
@@ -3423,9 +3427,8 @@
 <p>所有并行程序都受关键路径限制。最长依赖链上的时间不能由增加核心消除。理想加速也会受 Amdahl 定律约束：若串行部分占比为 <span class="arithmatex">\(s\)</span>，即使处理器数趋于无穷，加速上限仍是 <span class="arithmatex">\(1/s\)</span>。</p>
 <h2 id="线程开销与同步">线程开销与同步<a class="headerlink" href="#线程开销与同步" title="Permanent link">&para;</a></h2>
 <p>线程由操作系统调度，不保证执行顺序。两个线程打印文本，字符或行可能交错；这不一定是错误，而是没有同步的自然结果。更危险的是多个线程读改写同一变量：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos="1 "></span></a><span class="kt">int</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a><a href="#__codelineno-0-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="n">sum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">int sum = 0;
+for (int i = 0; i &lt; n; ++i) sum += a[i];</code></pre>
 <p>若把循环直接分给多线程，<code>sum += a[i]</code> 不是原子操作，结果会不稳定。并行的正确性首先来自数据所有权和同步，不来自这次跑出来数值看起来对。</p>
 <details class="note" open="open">
 <summary>为什么 sum += a[i] 在多线程下会出错</summary>
@@ -3438,35 +3441,32 @@
 <p><em>图：进程是地址空间与资源的边界，线程是进程内共享内存的执行单元；开线程比开进程轻，但同步与 cache 开销仍然存在。</em></p>
 <h2 id="openmp-的-fork-join-模型">OpenMP 的 fork-join 模型<a class="headerlink" href="#openmp-的-fork-join-模型" title="Permanent link">&para;</a></h2>
 <p>OpenMP 用 <code>#pragma omp</code> 指示编译器和运行时建立线程组。进入并行域时主线程 fork 出工作线程，离开并行域时 join。最简单的例子：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;omp.h&gt;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a><a href="#__codelineno-1-3"><span class="linenos" data-linenos="3 "></span></a><span class="cp">#pragma omp parallel</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4"></a><a href="#__codelineno-1-4"><span class="linenos" data-linenos="4 "></span></a><span class="p">{</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5"></a><a href="#__codelineno-1-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">omp_get_thread_num</span><span class="p">();</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6"></a><a href="#__codelineno-1-6"><span class="linenos" data-linenos="6 "></span></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">nthreads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">omp_get_num_threads</span><span class="p">();</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7"></a><a href="#__codelineno-1-7"><span class="linenos" data-linenos="7 "></span></a><span class="w">    </span><span class="c1">// 每个线程都执行这里；输出顺序不保证。</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8"></a><a href="#__codelineno-1-8"><span class="linenos" data-linenos="8 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">#include &lt;omp.h&gt;
+
+#pragma omp parallel
+{
+    int tid = omp_get_thread_num();
+    int nthreads = omp_get_num_threads();
+    // 每个线程都执行这里；输出顺序不保证。
+}</code></pre>
 <p><a class="glightbox" data-type="image" href="../assets/0712a/forkjoin-serial-parallel-region.png"><img width="1027" height="602" alt="课件用 Serial Region 与 Parallel Region 画出 fork-join：程序在串行区域只有主线程，进入并行域 fork 出工作线程，离开时 join 回主线程。" src="../assets/0712a/forkjoin-serial-parallel-region.preview.jpg" data-fullsrc="../assets/0712a/forkjoin-serial-parallel-region.png" /></a></p>
 <p><em>图：OpenMP 的并行域在进入/离开时做一次 fork 与 join；串行段与并行段交替出现。</em></p>
 <p><a class="glightbox" data-type="image" href="../assets/0712a/openmp-hello-output.png"><img width="762" height="494" alt="课件给出 hello_openmp 的运行输出：多个线程的 hello/world 交错出现，打印顺序不由线程编号决定。" src="../assets/0712a/openmp-hello-output.preview.jpg" data-fullsrc="../assets/0712a/openmp-hello-output.png" /></a></p>
 <p><em>图：多个线程同时打印，输出行顺序是交错且不保证的；这是没有同步的自然表现。</em></p>
 <p><code>parallel</code> 只说明这段区域由多个线程进入；若要把规则循环的迭代分配给线程，通常写：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><a href="#__codelineno-2-1"><span class="linenos" data-linenos="1 "></span></a><span class="kt">double</span><span class="w"> </span><span class="n">dot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><a href="#__codelineno-2-2"><span class="linenos" data-linenos="2 "></span></a><span class="cp">#pragma omp parallel for reduction(+:dot) schedule(static)</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><a href="#__codelineno-2-3"><span class="linenos" data-linenos="3 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><a href="#__codelineno-2-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">    </span><span class="n">dot</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5"></a><a href="#__codelineno-2-5"><span class="linenos" data-linenos="5 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">double dot = 0.0;
+#pragma omp parallel for reduction(+:dot) schedule(static)
+for (int i = 0; i &lt; n; ++i) {
+    dot += x[i] * y[i];
+}</code></pre>
 <p><code>reduction(+:dot)</code> 创建每线程私有的 <code>dot</code>，结束时再加起来。它既保证正确性，也通常比每次循环进锁更快。变量的 shared/private 属性应显式思考：循环下标通常私有，输入数组可共享读取，输出数组只有在不同线程写不同元素时才能安全共享。</p>
 <p>如果一个变量的归属不清楚，先写 <code>default(none)</code> 让编译器强迫你决定：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><a href="#__codelineno-3-1"><span class="linenos" data-linenos="1 "></span></a><span class="kt">double</span><span class="w"> </span><span class="n">dot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2"></a><a href="#__codelineno-3-2"><span class="linenos" data-linenos="2 "></span></a><span class="cp">#pragma omp parallel for default(none) \</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3"></a><a href="#__codelineno-3-3"><span class="linenos" data-linenos="3 "></span></a><span class="cp">    shared(x, y, n) reduction(+:dot)</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4"></a><a href="#__codelineno-3-4"><span class="linenos" data-linenos="4 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5"></a><a href="#__codelineno-3-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">    </span><span class="n">dot</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6"></a><a href="#__codelineno-3-6"><span class="linenos" data-linenos="6 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">double dot = 0.0;
+#pragma omp parallel for default(none) \
+    shared(x, y, n) reduction(+:dot)
+for (int i = 0; i &lt; n; ++i) {
+    dot += x[i] * y[i];
+}</code></pre>
 <p>这里 <code>x,y,n</code> 是所有线程只读的共享对象，<code>i</code> 是每个线程自己的循环变量，<code>dot</code> 先私有累加、最后归约。若把输出数组也放进共享区，并且不同迭代写到同一个元素，OpenMP 不会替程序推断正确的合并方式。先把谁拥有哪段输出写清楚，比先决定使用几条线程更重要。</p>
 <p>显式作用域还有几个常用关键词，它们决定每个线程看到什么、结束时谁的值留下来。</p>
 <table>
@@ -3514,11 +3514,10 @@
 <p>若退出并行区后还需要循环算出的结果，却没有用 <code>lastprivate</code> 或输出归约，就会读到未定义的旧值。它们改的是变量在并行区内外如何传递，理解这点比死记关键词更重要。</p>
 <h3 id="parallel-forsections-与嵌套循环"><code>parallel for</code>、<code>sections</code> 与嵌套循环<a class="headerlink" href="#parallel-forsections-与嵌套循环" title="Permanent link">&para;</a></h3>
 <p><code>#pragma omp parallel for</code> 适合多次迭代执行同一循环体。若不同线程要运行不同代码块，使用 <code>sections</code>；<code>single</code> 表示并行域中只让一个线程执行某段工作，例如初始化。嵌套循环中，若两个维度的迭代都独立，可用：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><a href="#__codelineno-4-1"><span class="linenos" data-linenos="1 "></span></a><span class="cp">#pragma omp parallel for collapse(2)</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2"></a><a href="#__codelineno-4-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3"></a><a href="#__codelineno-4-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4"></a><a href="#__codelineno-4-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">        </span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">#pragma omp parallel for collapse(2)
+for (int i = 0; i &lt; n; ++i)
+    for (int j = 0; j &lt; m; ++j)
+        c[i][j] = a[i][j] + b[i][j];</code></pre>
 <p><code>collapse(2)</code> 逻辑上把两层迭代空间合并，再分配任务。它不适用于内层依赖外层结果或循环边界不规则的情形。</p>
 <p>矩阵更新常出现另一种情况：每个线程负责一行或一个 tile，内部仍沿连续列访问。此时不必为了让迭代总数看起来更大而随意 <code>collapse</code>。按行切分通常保留了连续写入和较少的共享；按列切分可能让线程同时触碰相邻 cache line。<code>collapse</code> 是改变任务划分的工具，不是并行度不足时的默认开关。</p>
 <h3 id="调度static-还是-dynamic">调度：static 还是 dynamic<a class="headerlink" href="#调度static-还是-dynamic" title="Permanent link">&para;</a></h3>
@@ -3532,9 +3531,8 @@
 <p><a class="glightbox" data-type="image" href="../assets/0712a/openmp-dynamic-schedule.png"><img width="817" height="460" alt="动态调度以额外的运行时开销换取更灵活的负载均衡。" src="../assets/0712a/openmp-dynamic-schedule.preview.jpg" data-fullsrc="../assets/0712a/openmp-dynamic-schedule.png" /></a></p>
 <p><em>图：动态调度让空闲线程继续领取 chunk；chunk 越小越灵活，运行时分发次数也越多。</em></p>
 <h3 id="criticalatomicbarrier-和-reduction">critical、atomic、barrier 和 reduction<a class="headerlink" href="#criticalatomicbarrier-和-reduction" title="Permanent link">&para;</a></h3>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><a href="#__codelineno-5-1"><span class="linenos" data-linenos="1 "></span></a><span class="cp">#pragma omp critical</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2"></a><a href="#__codelineno-5-2"><span class="linenos" data-linenos="2 "></span></a><span class="p">{</span><span class="w"> </span><span class="n">shared_queue</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">value</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">#pragma omp critical
+{ shared_queue.push(value); }</code></pre>
 <p><code>critical</code> 使同一时间只有一个线程进入区域，适合较少发生的复合共享操作。<code>atomic</code> 适合简单的读改写；<code>barrier</code> 让所有线程等待最慢者。它们都可能限制并行度。对可交换/可结合的加、乘、最大值等，<code>reduction</code> 应优先；对可拆分的数据，最好让线程不共享可写状态。</p>
 <p>这三种办法的差别不只是 API 名字。<code>critical</code> 由锁保护，能包住多条语句，但竞争时所有线程串行；<code>atomic</code> 直接依赖硬件原子读改写，适用范围较窄；<code>reduction</code> 让每个线程先独立累加，最后只同步一次。最后一种常常最快，但只有运算满足相应的结合/交换语义，且变量确实可私有化时才正确。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0712a/thread-race-write-sum.png"><img width="703" height="444" alt="课件画出一个数据竞争示例：两条线程都执行 Write sum，对同一变量读写并不原子，结果取决于哪个线程先到。" src="../assets/0712a/thread-race-write-sum.preview.jpg" data-fullsrc="../assets/0712a/thread-race-write-sum.png" /></a></p>
@@ -3557,23 +3555,21 @@
 <h2 id="c-线程与线程池">C++ 线程与线程池<a class="headerlink" href="#c-线程与线程池" title="Permanent link">&para;</a></h2>
 <p>OpenMP 擅长规则循环，C++ <code>std::thread</code> 更适合生产者-消费者、长期后台任务和线程池。线程创建后，<code>join()</code> 等待其结束；忘记 join 或 detach 会导致程序生命周期和资源管理出问题。</p>
 <p>生产者-消费者通常有一个共享队列：生产者放任务，消费者取任务。队列同时被多个线程访问，必须用 <code>std::mutex</code> 保护；空队列时消费者不应不停轮询，而要用条件变量睡眠：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><a href="#__codelineno-6-1"><span class="linenos" data-linenos="1 "></span></a><span class="n">std</span><span class="o">::</span><span class="n">unique_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lock</span><span class="p">(</span><span class="n">mu</span><span class="p">);</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2"></a><a href="#__codelineno-6-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">cv</span><span class="p">.</span><span class="n">wait</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">stopped</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">queue</span><span class="p">.</span><span class="n">empty</span><span class="p">();</span><span class="w"> </span><span class="p">});</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3"></a><a href="#__codelineno-6-3"><span class="linenos" data-linenos="3 "></span></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">stopped</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">queue</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4"></a><a href="#__codelineno-6-4"><span class="linenos" data-linenos="4 "></span></a><span class="n">Task</span><span class="w"> </span><span class="n">task</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">queue</span><span class="p">.</span><span class="n">front</span><span class="p">());</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5"></a><a href="#__codelineno-6-5"><span class="linenos" data-linenos="5 "></span></a><span class="n">queue</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">std::unique_lock&lt;std::mutex&gt; lock(mu);
+cv.wait(lock, [&amp;] { return stopped || !queue.empty(); });
+if (stopped &amp;&amp; queue.empty()) return;
+Task task = std::move(queue.front());
+queue.pop();</code></pre>
 <p>谓词写在 <code>wait</code> 里是为应对虚假唤醒和竞争：线程被唤醒后仍要重新检查条件。生产者入队后用 <code>notify_one()</code> 唤醒一个等待者；结束时常用 <code>notify_all()</code> 让所有线程有机会退出。线程池复用一组工作线程，避免大量短任务反复创建线程。</p>
 <p>C++ 并发库的常用工具按角色大致分几类：<code>&lt;thread&gt;</code> 负责创建线程，<code>&lt;mutex&gt;</code> 保护共享数据，<code>&lt;atomic&gt;</code> 做无锁读改写，<code>&lt;condition_variable&gt;</code> 让线程在被唤醒前睡眠。C++20 还提供了更高级的 <code>std::semaphore</code>、<code>std::latch</code> 和 <code>std::barrier</code>：<code>latch</code> 是一次性的倒计数门（所有人到齐即放开），<code>barrier</code> 可重复使用、还带一个到齐后执行的回调。工具名字虽多，归根到底还是谁持有共享数据、如何通知等待者这两件事。</p>
 <p>用 <code>std::mutex</code> 时，最稳妥的写法是配合 RAII，而不是手动 <code>lock()</code>/<code>unlock()</code>：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><a href="#__codelineno-7-1"><span class="linenos" data-linenos="1 "></span></a><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="w"> </span><span class="n">counter_mutex</span><span class="p">;</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2"></a><a href="#__codelineno-7-2"><span class="linenos" data-linenos="2 "></span></a><span class="kt">void</span><span class="w"> </span><span class="nf">increment_safe</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3"></a><a href="#__codelineno-7-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">iterations</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4"></a><a href="#__codelineno-7-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lock</span><span class="p">(</span><span class="n">counter_mutex</span><span class="p">);</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5"></a><a href="#__codelineno-7-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">        </span><span class="n">counter</span><span class="o">++</span><span class="p">;</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6"></a><a href="#__codelineno-7-6"><span class="linenos" data-linenos="6 "></span></a><span class="w">    </span><span class="p">}</span><span class="w">  </span><span class="c1">// lock 离开作用域时自动解锁</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7"></a><a href="#__codelineno-7-7"><span class="linenos" data-linenos="7 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">std::mutex counter_mutex;
+void increment_safe(int iterations) {
+    for (int i = 0; i &lt; iterations; i++) {
+        std::lock_guard&lt;std::mutex&gt; lock(counter_mutex);
+        counter++;
+    }  // lock 离开作用域时自动解锁
+}</code></pre>
 <p><code>std::lock_guard</code> 在构造时加锁、析构时自动解锁，即使中途抛出异常也能保证锁被释放，避免忘了解锁或在异常路径上留下死锁。这是一种常见的 RAII 风格：资源（锁、文件、缓冲区）的获取与释放绑定到对象的生命周期，而不是靠手写配对代码。</p>
 <p>对简单的计数器，<code>std::atomic&lt;int&gt;</code> 往往比互斥锁更轻：它用硬件原子读改写完成自增，没有锁的排队与唤醒开销，也就没有数据竞争。它的适用面比锁窄——只能覆盖简单类型和小操作，复合的读+判断+写仍需在锁下完成。
 <a class="glightbox" data-type="image" href="../assets/0712a/thread-pool.png"><img width="817" height="460" alt="课件示意线程池：一组长命的工作线程常驻，从共享任务队列领取任务，避免大量短任务反复创建线程。" src="../assets/0712a/thread-pool.preview.jpg" data-fullsrc="../assets/0712a/thread-pool.png" /></a></p>
@@ -3587,27 +3583,24 @@
 <p><em>图：单个对象仍要依次经过 A→B→C，但不同对象可同时处在不同阶段；吞吐因此提升，而单条链的关键路径没有变短。</em></p>
 <h2 id="mpi每个进程有独立地址空间">MPI：每个进程有独立地址空间<a class="headerlink" href="#mpi每个进程有独立地址空间" title="Permanent link">&para;</a></h2>
 <p>MPI（Message Passing Interface）用于多个独立进程间通信，可以跨节点。每个进程有 rank；<code>MPI_COMM_WORLD</code> 是启动时的通信器。程序通常先初始化、查询自己的 rank 和总进程数、完成计算通信、最后结束：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><a href="#__codelineno-8-1"><span class="linenos" data-linenos="1 "></span></a><span class="n">MPI_Init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">argv</span><span class="p">);</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2"></a><a href="#__codelineno-8-2"><span class="linenos" data-linenos="2 "></span></a><span class="kt">int</span><span class="w"> </span><span class="n">rank</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3"></a><a href="#__codelineno-8-3"><span class="linenos" data-linenos="3 "></span></a><span class="n">MPI_Comm_rank</span><span class="p">(</span><span class="n">MPI_COMM_WORLD</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rank</span><span class="p">);</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4"></a><a href="#__codelineno-8-4"><span class="linenos" data-linenos="4 "></span></a><span class="n">MPI_Comm_size</span><span class="p">(</span><span class="n">MPI_COMM_WORLD</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">size</span><span class="p">);</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5"></a><a href="#__codelineno-8-5"><span class="linenos" data-linenos="5 "></span></a><span class="c1">// rank 0、1、...、size-1 执行各自的数据块</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6"></a><a href="#__codelineno-8-6"><span class="linenos" data-linenos="6 "></span></a><span class="n">MPI_Finalize</span><span class="p">();</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">MPI_Init(&amp;argc, &amp;argv);
+int rank, size;
+MPI_Comm_rank(MPI_COMM_WORLD, &amp;rank);
+MPI_Comm_size(MPI_COMM_WORLD, &amp;size);
+// rank 0、1、...、size-1 执行各自的数据块
+MPI_Finalize();</code></pre>
 <p>MPI 进程没有共享的普通变量。rank 0 修改 <code>x</code>，rank 1 不会自动看到；必须发送消息或使用集合通信。消息匹配由 communicator、源/目的 rank 和 tag 共同约束。tag 可以区分不同阶段/不同类型的消息，避免接收端把不该接的消息取走。</p>
 <p>通信器（communicator）定义一组能互相通信的进程，每个通信器内的 rank 都从 0 编号、唯一。启动时的 <code>MPI_COMM_WORLD</code> 包含所有进程；需要把一组进程单独划分时，可以用 <code>MPI_Comm_split(comm, color, key, &amp;new_comm)</code>：<code>color</code> 决定哪些进程归入同一个新通信器，<code>key</code> 决定在新通信器里的排序。例如按奇偶 rank 设 <code>color</code>，就能把进程一分为二、各自独立做点对点或集合通信。这种从大组里划分子组的能力，在多维度并行、按节点/按功能分组的程序里常见。</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><a href="#__codelineno-9-1"><span class="linenos" data-linenos="1 "></span></a><span class="kt">int</span><span class="w"> </span><span class="n">my_color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">rank</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">          </span><span class="c1">// 奇偶分组</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2"></a><a href="#__codelineno-9-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">MPI_Comm</span><span class="w"> </span><span class="n">sub</span><span class="p">;</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3"></a><a href="#__codelineno-9-3"><span class="linenos" data-linenos="3 "></span></a><span class="n">MPI_Comm_split</span><span class="p">(</span><span class="n">MPI_COMM_WORLD</span><span class="p">,</span><span class="w"> </span><span class="n">my_color</span><span class="p">,</span><span class="w"> </span><span class="n">rank</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sub</span><span class="p">);</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4"></a><a href="#__codelineno-9-4"><span class="linenos" data-linenos="4 "></span></a><span class="kt">int</span><span class="w"> </span><span class="n">sub_rank</span><span class="p">,</span><span class="w"> </span><span class="n">sub_size</span><span class="p">;</span>
-<a id="__codelineno-9-5" name="__codelineno-9-5"></a><a href="#__codelineno-9-5"><span class="linenos" data-linenos="5 "></span></a><span class="n">MPI_Comm_rank</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sub_rank</span><span class="p">);</span>
-<a id="__codelineno-9-6" name="__codelineno-9-6"></a><a href="#__codelineno-9-6"><span class="linenos" data-linenos="6 "></span></a><span class="n">MPI_Comm_size</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sub_size</span><span class="p">);</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">int my_color = (rank % 2);          // 奇偶分组
+MPI_Comm sub;
+MPI_Comm_split(MPI_COMM_WORLD, my_color, rank, &amp;sub);
+int sub_rank, sub_size;
+MPI_Comm_rank(sub, &amp;sub_rank);
+MPI_Comm_size(sub, &amp;sub_size);</code></pre>
 <p>拆分后的 <code>sub</code> 是独立通信器，内部 rank 重新从 0 编号；原本跨组的进程之间不能直接用 <code>sub</code> 里的 rank 通信，只能回到上层通信器。</p>
 <h3 id="点对点通信和死锁">点对点通信和死锁<a class="headerlink" href="#点对点通信和死锁" title="Permanent link">&para;</a></h3>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><a href="#__codelineno-10-1"><span class="linenos" data-linenos="1 "></span></a><span class="n">MPI_Send</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_DOUBLE</span><span class="p">,</span><span class="w"> </span><span class="n">dest</span><span class="p">,</span><span class="w"> </span><span class="n">tag</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_COMM_WORLD</span><span class="p">);</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2"></a><a href="#__codelineno-10-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">MPI_Recv</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_DOUBLE</span><span class="p">,</span><span class="w"> </span><span class="n">src</span><span class="p">,</span><span class="w">  </span><span class="n">tag</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_COMM_WORLD</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">status</span><span class="p">);</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">MPI_Send(buf, n, MPI_DOUBLE, dest, tag, MPI_COMM_WORLD);
+MPI_Recv(buf, n, MPI_DOUBLE, src,  tag, MPI_COMM_WORLD, &amp;status);</code></pre>
 <p>阻塞 <code>Send</code>/<code>Recv</code> 的顺序设计不当会死锁。例如两个 rank 都先执行大消息的阻塞 <code>Send</code>，双方都等对方先收。常见处理是约定一边先收、一边先发，使用 <code>MPI_Sendrecv</code>，或用 <code>MPI_Isend</code>/<code>MPI_Irecv</code> 发起非阻塞通信，再 <code>MPI_Waitall</code> 等待完成。</p>
 <p>非阻塞不等于数据立刻可用。在 <code>Wait</code> 完成前，发送缓冲区通常不能随意改，接收缓冲区也不能被当作已经填好。</p>
 <p>死锁例子可以写成两个 rank 都先 <code>MPI_Send</code> 再 <code>MPI_Recv</code>。对于较大的消息，发送可能要等对方先贴出接收，两个进程于是互相等待。可以让一方先收、一方先发，也可以使用 <code>MPI_Sendrecv</code>；<code>MPI_Isend</code>/<code>MPI_Irecv</code> 的正确模式则是先把通信请求发起，再在真正使用缓冲区前 <code>MPI_Wait</code> 或 <code>MPI_Waitall</code>。非阻塞的价值在于避免不必要的等待或让通信和独立计算重叠，不是取消数据依赖。</p>
@@ -3616,16 +3609,15 @@
 <p><a class="glightbox" data-type="image" href="../assets/0712a/mpi-nonblocking.png"><img width="817" height="460" alt="非阻塞发送先返回一个请求对象；必须在复用发送缓冲区或读取接收缓冲区前等待其完成。" src="../assets/0712a/mpi-nonblocking.preview.jpg" data-fullsrc="../assets/0712a/mpi-nonblocking.png" /></a></p>
 <p><em>图：请求对象代表尚未完成的通信；<code>Wait</code> 建立缓冲区可再次访问的边界。</em></p>
 <p>一个相邻 halo 交换的骨架通常是下面这样：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a><a href="#__codelineno-11-1"><span class="linenos" data-linenos="1 "></span></a><span class="n">MPI_Request</span><span class="w"> </span><span class="n">req</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2"></a><a href="#__codelineno-11-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">MPI_Irecv</span><span class="p">(</span><span class="n">top_halo</span><span class="p">,</span><span class="w">    </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_DOUBLE</span><span class="p">,</span><span class="w"> </span><span class="n">up</span><span class="p">,</span><span class="w">   </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">req</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3"></a><a href="#__codelineno-11-3"><span class="linenos" data-linenos="3 "></span></a><span class="n">MPI_Irecv</span><span class="p">(</span><span class="n">bottom_halo</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_DOUBLE</span><span class="p">,</span><span class="w"> </span><span class="n">down</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">req</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
-<a id="__codelineno-11-4" name="__codelineno-11-4"></a><a href="#__codelineno-11-4"><span class="linenos" data-linenos="4 "></span></a><span class="n">MPI_Isend</span><span class="p">(</span><span class="n">first_row</span><span class="p">,</span><span class="w">   </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_DOUBLE</span><span class="p">,</span><span class="w"> </span><span class="n">up</span><span class="p">,</span><span class="w">   </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">req</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
-<a id="__codelineno-11-5" name="__codelineno-11-5"></a><a href="#__codelineno-11-5"><span class="linenos" data-linenos="5 "></span></a><span class="n">MPI_Isend</span><span class="p">(</span><span class="n">last_row</span><span class="p">,</span><span class="w">    </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_DOUBLE</span><span class="p">,</span><span class="w"> </span><span class="n">down</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">req</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
-<a id="__codelineno-11-6" name="__codelineno-11-6"></a><a href="#__codelineno-11-6"><span class="linenos" data-linenos="6 "></span></a>
-<a id="__codelineno-11-7" name="__codelineno-11-7"></a><a href="#__codelineno-11-7"><span class="linenos" data-linenos="7 "></span></a><span class="n">update_interior</span><span class="p">();</span><span class="w">     </span><span class="c1">// 不读取 halo 的网格内部</span>
-<a id="__codelineno-11-8" name="__codelineno-11-8"></a><a href="#__codelineno-11-8"><span class="linenos" data-linenos="8 "></span></a><span class="n">MPI_Waitall</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="n">req</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_STATUSES_IGNORE</span><span class="p">);</span>
-<a id="__codelineno-11-9" name="__codelineno-11-9"></a><a href="#__codelineno-11-9"><span class="linenos" data-linenos="9 "></span></a><span class="n">update_boundary</span><span class="p">();</span><span class="w">     </span><span class="c1">// 此时才能读取收到的 halo</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">MPI_Request req[4];
+MPI_Irecv(top_halo,    width, MPI_DOUBLE, up,   0, comm, &amp;req[0]);
+MPI_Irecv(bottom_halo, width, MPI_DOUBLE, down, 1, comm, &amp;req[1]);
+MPI_Isend(first_row,   width, MPI_DOUBLE, up,   1, comm, &amp;req[2]);
+MPI_Isend(last_row,    width, MPI_DOUBLE, down, 0, comm, &amp;req[3]);
+
+update_interior();     // 不读取 halo 的网格内部
+MPI_Waitall(4, req, MPI_STATUSES_IGNORE);
+update_boundary();     // 此时才能读取收到的 halo</code></pre>
 <p>tag 的 0、1 让两个方向的消息不会混淆。<code>update_interior</code> 必须真的不依赖边界数据，否则它与通信重叠只是在制造竞态。写 MPI 时，把消息何时发起、缓冲区何时可复用、哪块计算能先做标在同一张数据划分图上，比单独记住 <code>Isend</code> 的函数签名更有用。</p>
 <p>一次 MPI 消息由 communicator、source、tag 和顺序共同参与匹配。<code>MPI_Recv</code> 指定的 source/tag 可以精确匹配，也可以使用 <code>MPI_ANY_SOURCE</code>；后者方便，却会让接收次序随运行时变化，调试和可重复性更难。发送缓冲区和接收缓冲区属于各自 rank 的私有地址空间，<code>MPI_Send</code> 传的是内容而不是指针；把本 rank 的指针数值传给另一个 rank 没有意义。</p>
 <p>标准 <code>MPI_Send</code> 可能在内部复制，也可能等待接收方进入匹配，不能依赖小消息在当前机器上没有阻塞来证明顺序安全。消息协议和缓冲阈值变化后，同一写法可能死锁。</p>
@@ -4080,6 +4072,16 @@
         <script src="../../../../theme/js/mathjax.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../../../theme/js/highlight.js"></script>
       
         <script src="../../../../theme/js/site.js"></script>
       

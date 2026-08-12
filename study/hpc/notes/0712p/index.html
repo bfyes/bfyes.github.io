@@ -64,6 +64,10 @@
     
       <link rel="stylesheet" href="../../../../theme/css/components.css">
     
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
       
@@ -3299,11 +3303,10 @@
 <p>并行作业结束要等最慢的 rank，服务请求也常由最慢的一次决定。除平均耗时外，保留中位数、最小/最大值或分位数；一次异常慢是系统噪声、负载不均还是同步阻塞，要从 profiler 的时间线 trace 里看各 rank/线程的等待出现在哪个阶段才能判断。</p>
 </div>
 <p>最基本的度量是 wall-clock time，即用户实际上等待了多久。C++ 可用 <code>std::chrono::steady_clock</code>，C 可用 <code>clock_gettime</code>。计时区间应只包住要比较的核心工作；把随机初始化、打印和文件读取混在一起，无法判断优化改到了哪里。</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><a href="#__codelineno-0-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">auto</span><span class="w"> </span><span class="n">begin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">steady_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2"></a><a href="#__codelineno-0-2"><span class="linenos" data-linenos="2 "></span></a><span class="n">kernel</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a><a href="#__codelineno-0-3"><span class="linenos" data-linenos="3 "></span></a><span class="k">auto</span><span class="w"> </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">steady_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4"></a><a href="#__codelineno-0-4"><span class="linenos" data-linenos="4 "></span></a><span class="kt">double</span><span class="w"> </span><span class="n">seconds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">duration</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">begin</span><span class="p">).</span><span class="n">count</span><span class="p">();</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">auto begin = std::chrono::steady_clock::now();
+kernel(a, b, c, n);
+auto end = std::chrono::steady_clock::now();
+double seconds = std::chrono::duration&lt;double&gt;(end - begin).count();</code></pre>
 <p>对矩阵乘法，常把工作量写作约 <span class="arithmatex">\(2N^3\)</span> FLOP（一次乘加计为两次浮点操作），于是：</p>
 <div class="arithmatex">\[
 \text{GFLOP/s}=\frac{2N^3}{\text{seconds}\times10^9}
@@ -3338,10 +3341,9 @@ P\le\min(P_{\mathrm{peak}}, B_{\mathrm{memory}}\times I)
 <h2 id="cpu-利用率与热点">CPU 利用率与热点<a class="headerlink" href="#cpu-利用率与热点" title="Permanent link">&para;</a></h2>
 <p>CPU 利用率低可能是 I/O、网络、锁、页面缺失或负载不均；CPU 利用率高也可能只是忙于做无用工作。需要同时看热点、调用栈和硬件计数器。</p>
 <p>Linux 上可先用：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><a href="#__codelineno-1-1"><span class="linenos" data-linenos="1 "></span></a>perf<span class="w"> </span>stat<span class="w"> </span>./matmul<span class="w"> </span><span class="m">4096</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><a href="#__codelineno-1-2"><span class="linenos" data-linenos="2 "></span></a>perf<span class="w"> </span>record<span class="w"> </span>-g<span class="w"> </span>./matmul<span class="w"> </span><span class="m">4096</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a><a href="#__codelineno-1-3"><span class="linenos" data-linenos="3 "></span></a>perf<span class="w"> </span>report
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">perf stat ./matmul 4096
+perf record -g ./matmul 4096
+perf report</code></pre>
 <p><code>perf stat</code> 可看到 cycles、instructions、IPC、cache misses 等总体计数；<code>perf record</code> 采样调用栈，定位时间主要在哪个函数/哪行循环。Intel 平台的 VTune、LIKWID/perfctr、AMD 的工具也能提供更细粒度的事件和时间线。工具的读数是证据，不是自动结论：高 cache miss 要结合数据规模和时间占比解释。</p>
 <p><code>perf stat</code> 中的 IPC 是 <code>instructions / cycles</code>。IPC 很低时，处理器可能在等内存，也可能在等长依赖、频繁分支或锁；IPC 很高也不代表程序快，简单的带宽扫描同样可以很高效地发射指令却受 DRAM 限制。cache miss 的绝对次数也要除以访问次数和运行时间看。一个处理几十 GB 数据的程序有很多 LLC miss 很正常；小工作集却频繁 miss，才更值得回到访问模式排查。</p>
 <p>朴素 GEMM 的 <code>perf stat</code> 给出一个具体的数字：IPC 约 <code>0.65</code>，而那颗核每周期能发射 6 条指令，<code>0.65/6</code> 远不到一半——执行单元多数周期在等待，等的是内存把 B 送过来。解释 IPC 时要结合核的发射宽度，否则 <code>0.65</code> 本身说明不了什么；看到核在等待，再进一步查它在等什么。</p>
@@ -3388,20 +3390,18 @@ P\le\min(P_{\mathrm{peak}}, B_{\mathrm{memory}}\times I)
 <p><em>图：先 stat 看整体计数器，再 record+report 采样定位热点源码，最后 top 看实时分布——这是基本流程。</em></p>
 <h2 id="朴素矩阵乘法">朴素矩阵乘法<a class="headerlink" href="#朴素矩阵乘法" title="Permanent link">&para;</a></h2>
 <p>对行主序 C/C++ 数组，最直观的三重循环可能是：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><a href="#__codelineno-2-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><a href="#__codelineno-2-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><a href="#__codelineno-2-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">k</span><span class="p">)</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><a href="#__codelineno-2-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">      </span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">for (int i = 0; i &lt; n; ++i)
+  for (int j = 0; j &lt; n; ++j)
+    for (int k = 0; k &lt; n; ++k)
+      c[i][j] += a[i][k] * b[k][j];</code></pre>
 <p><code>a[i][k]</code> 沿行连续，但 <code>b[k][j]</code> 固定 <code>j</code>、变动 <code>k</code>，是在按列跳跃访问 B。B 很大时，每一步可能碰到新的 <strong>cache line</strong>；数据从 DRAM 反复搬运，算术单元在等内存。</p>
 <p>先换循环次序，常可让内层连续扫描 B 的行：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><a href="#__codelineno-3-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2"></a><a href="#__codelineno-3-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3"></a><a href="#__codelineno-3-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">aik</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">];</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4"></a><a href="#__codelineno-3-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5"></a><a href="#__codelineno-3-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">      </span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">aik</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6"></a><a href="#__codelineno-3-6"><span class="linenos" data-linenos="6 "></span></a><span class="w">  </span><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">for (int i = 0; i &lt; n; ++i)
+  for (int k = 0; k &lt; n; ++k) {
+    double aik = a[i][k];
+    for (int j = 0; j &lt; n; ++j)
+      c[i][j] += aik * b[k][j];
+  }</code></pre>
 <p>这一步未改变数学算法，却改变了访存模式。它往往比一开始写 SIMD 指令带来更大的收益。</p>
 <p>三重循环总共只有六种次序，按最内层到底在流式读什么可以分成三类，实测性能相差一个数量级。</p>
 <table>
@@ -3441,16 +3441,15 @@ P\le\min(P_{\mathrm{peak}}, B_{\mathrm{memory}}\times I)
 <p>改动前后可以用 <code>perf stat</code> 直接对照。<code>naive(ijk)</code> 与 <code>ikj</code>（都是 <code>-O2</code>）指令数几乎相同（约 75 亿条），cycles 却从约 117 亿降到约 14 亿，IPC 从 <code>0.65</code> 升到 <code>5.37</code>，cache-references 也从约 9.7 亿降到约 1.4 亿。同样的指令、少得多的等待，就是访问模式改变带来的。</p>
 <h2 id="cache-blocking">Cache blocking<a class="headerlink" href="#cache-blocking" title="Permanent link">&para;</a></h2>
 <p>即使循环顺序改善，整个矩阵仍可能远大于 cache。<strong>分块（blocking）</strong>把矩阵切成 <code>BS×BS</code> 的 tile：一次只处理几个能放进 cache 的小块，在块内反复使用 A、B、C 数据。</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><a href="#__codelineno-4-1"><span class="linenos" data-linenos="1 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">BS</span><span class="p">)</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2"></a><a href="#__codelineno-4-2"><span class="linenos" data-linenos="2 "></span></a><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">kk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">kk</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">kk</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">BS</span><span class="p">)</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3"></a><a href="#__codelineno-4-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">jj</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">BS</span><span class="p">)</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4"></a><a href="#__codelineno-4-4"><span class="linenos" data-linenos="4 "></span></a><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ii</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">ii</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">BS</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5"></a><a href="#__codelineno-4-5"><span class="linenos" data-linenos="5 "></span></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kk</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">kk</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">BS</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6"></a><a href="#__codelineno-4-6"><span class="linenos" data-linenos="6 "></span></a><span class="w">          </span><span class="kt">double</span><span class="w"> </span><span class="n">aik</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">];</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7"></a><a href="#__codelineno-4-7"><span class="linenos" data-linenos="7 "></span></a><span class="w">          </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jj</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">min</span><span class="p">(</span><span class="n">jj</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">BS</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8"></a><a href="#__codelineno-4-8"><span class="linenos" data-linenos="8 "></span></a><span class="w">            </span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">aik</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">];</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9"></a><a href="#__codelineno-4-9"><span class="linenos" data-linenos="9 "></span></a><span class="w">        </span><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">for (int ii = 0; ii &lt; n; ii += BS)
+  for (int kk = 0; kk &lt; n; kk += BS)
+    for (int jj = 0; jj &lt; n; jj += BS)
+      for (int i = ii; i &lt; std::min(ii + BS, n); ++i)
+        for (int k = kk; k &lt; std::min(kk + BS, n); ++k) {
+          double aik = a[i][k];
+          for (int j = jj; j &lt; std::min(jj + BS, n); ++j)
+            c[i][j] += aik * b[k][j];
+        }</code></pre>
 <p>块大小不是凭空定一个常数。它要考虑 L1/L2/L3 容量、元素大小、线程数和关联度；不同层甚至需要不同块大小。先用少量候选尺寸测量，再决定是否值得进一步微调。成熟 GEMM 库会做多级 blocking、packing 和寄存器分块，因此生产代码通常应直接使用 BLAS。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0712p/blocking-tiles.png"><img width="908" height="511" alt="课件展示 blocking 的思想：把 A、B、C 切成 BS×BS 的 tile，让三个子块在块内计算期间一起驻留 cache，而非让整个矩阵流式通过。" src="../assets/0712p/blocking-tiles.preview.jpg" data-fullsrc="../assets/0712p/blocking-tiles.png" /></a></p>
 <p><em>图：分块让三个子块（A、B、C 的 tile）在一轮 k 循环内驻留 cache，最大限度复用已搬入的数据。</em></p>
@@ -3503,8 +3502,7 @@ P\le\min(P_{\mathrm{peak}}, B_{\mathrm{memory}}\times I)
 </details>
 <h2 id="自动向量化与查看生成代码">自动向量化与查看生成代码<a class="headerlink" href="#自动向量化与查看生成代码" title="Permanent link">&para;</a></h2>
 <p>当最内层循环连续、迭代独立、指针别名清楚时，编译器可把多个 <code>j</code> 合并成 SIMD 操作。对 Clang：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a><a href="#__codelineno-5-1"><span class="linenos" data-linenos="1 "></span></a>clang++<span class="w"> </span>-O3<span class="w"> </span>-march<span class="o">=</span>native<span class="w"> </span>-Rpass<span class="o">=</span>loop-vectorize<span class="w"> </span>matmul.cpp
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">clang++ -O3 -march=native -Rpass=loop-vectorize matmul.cpp</code></pre>
 <p>关闭优化或向量化，再比较生成汇编和运行时间，可以看到优化是否真的发生。不要只因报告写 vectorized 就宣布成功：如果总程序仍被 DRAM 限制，向量化后的速度提升会受带宽约束。</p>
 <p>四个构建组合（N=1024）能分开布局与编译器各自的贡献：</p>
 <table>
@@ -3553,11 +3551,10 @@ P\le\min(P_{\mathrm{peak}}, B_{\mathrm{memory}}\times I)
 <p><em>图：C 的小块留在寄存器中沿 K 维累加，packed B 连续加载，A 的标量广播到向量 lane；最后统一写回。</em></p>
 <h2 id="多线程与内存流量">多线程与内存流量<a class="headerlink" href="#多线程与内存流量" title="Permanent link">&para;</a></h2>
 <p>OpenMP 并行矩阵乘法时，若不同线程负责不同的 C tile，每个线程主要写自己的结果，正确性和缓存行为都较好：</p>
-<div class="language-cpp highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><a href="#__codelineno-6-1"><span class="linenos" data-linenos="1 "></span></a><span class="cp">#pragma omp parallel for schedule(static)</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2"></a><a href="#__codelineno-6-2"><span class="linenos" data-linenos="2 "></span></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">ii</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">BS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3"></a><a href="#__codelineno-6-3"><span class="linenos" data-linenos="3 "></span></a><span class="w">    </span><span class="c1">// 一个线程处理若干行块/结果 tile</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4"></a><a href="#__codelineno-6-4"><span class="linenos" data-linenos="4 "></span></a><span class="p">}</span>
-</code></pre></div>
+<pre class="highlight"><code class="language-cpp">#pragma omp parallel for schedule(static)
+for (int ii = 0; ii &lt; n; ii += BS) {
+    // 一个线程处理若干行块/结果 tile
+}</code></pre>
 <p>若按 K 维切分，每线程可独立读取 A、B 的部分，但多个线程会累加同一个 C tile，需要 reduction、锁或额外缓冲区；同步与额外写回会抵消收益。如何切分不能只看计算量是否均分，还要看哪些数据被共享、是否会争带宽、是否能复用共享 L3。</p>
 <p>线程数增加到某一点后，内存带宽先饱和，之后更多线程只是在竞争。此时 GFLOP/s 不再随线程数增长是正常现象，不是 OpenMP 写错。</p>
 <p>多核扩展的实测能看出明显的边际：同一微内核，1 线程约 54 GFLOP/s、12 线程约 592、24 线程约 969、48 线程约 1729，再到 96 线程反而降到约 707——更多线程不一定更快，超出一颗 socket 的合理并发后只增加调度和带宽争用。</p>
@@ -3565,10 +3562,9 @@ P\le\min(P_{\mathrm{peak}}, B_{\mathrm{memory}}\times I)
 <h2 id="numa-的测量与绑定">NUMA 的测量与绑定<a class="headerlink" href="#numa-的测量与绑定" title="Permanent link">&para;</a></h2>
 <p>双路服务器的每个 socket 邻近自己的 DRAM。若线程运行在 socket 0、数据页却首次触碰于 socket 1，就会发生 remote access。性能分析中可分别测试本地分配、本地访问和远端访问，观察延迟/带宽差异。</p>
 <p>常见策略是让每个线程初始化自己将处理的数组块；并在必要时将线程和内存绑定到同一 NUMA 节点。可以用：</p>
-<div class="language-bash highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><a href="#__codelineno-7-1"><span class="linenos" data-linenos="1 "></span></a>numactl<span class="w"> </span>--hardware
-<a id="__codelineno-7-2" name="__codelineno-7-2"></a><a href="#__codelineno-7-2"><span class="linenos" data-linenos="2 "></span></a>numactl<span class="w"> </span>--cpunodebind<span class="o">=</span><span class="m">0</span><span class="w"> </span>--membind<span class="o">=</span><span class="m">0</span><span class="w"> </span>./program
-<a id="__codelineno-7-3" name="__codelineno-7-3"></a><a href="#__codelineno-7-3"><span class="linenos" data-linenos="3 "></span></a>numastat<span class="w"> </span>-p<span class="w"> </span>PID
-</code></pre></div>
+<pre class="highlight"><code class="language-bash">numactl --hardware
+numactl --cpunodebind=0 --membind=0 ./program
+numastat -p PID</code></pre>
 <p>绑定不应变成默认迷信。若任务本身需要跨 socket 共享数据，或调度环境已做了合理绑定，手工绑定未必更快；仍需测量。</p>
 <p>实测把 24 个线程固定在 socket 0 后，访问本地内存约为 <code>42.7 GFLOP/s</code>、平均加载延迟约 <code>230</code> cycles；把内存强制分配在远端节点后，性能约为 <code>31.9 GFLOP/s</code>、延迟约 <code>335</code> cycles。数值随机器改变，但本地性带来的方向性差异正是 NUMA 绑定要验证的东西。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0712p/numa-measurement.png"><img width="817" height="460" alt="同一程序固定 CPU 后，本地与远端 DRAM 的测量结果差异。" src="../assets/0712p/numa-measurement.preview.jpg" data-fullsrc="../assets/0712p/numa-measurement.png" /></a></p>
@@ -3973,6 +3969,16 @@ P\le\min(P_{\mathrm{peak}}, B_{\mathrm{memory}}\times I)
         <script src="../../../../theme/js/mathjax.js"></script>
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../../../theme/js/highlight.js"></script>
       
         <script src="../../../../theme/js/site.js"></script>
       
