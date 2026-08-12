@@ -176,8 +176,6 @@ public class Main {
 ```
 
 ```asm
-; x86 注释
-# rv
 global _start
 
 section .data
@@ -198,8 +196,6 @@ _start:
 ```
 
 ```asm
-# RISC-V 注释
-; x86
 .text
 .global _start
 
