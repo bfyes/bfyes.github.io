@@ -3252,27 +3252,27 @@
 <li>Baseline 纯 FP32、串行、单线程</li>
 </ul>
 <h2 id="优化记录">优化记录<a class="headerlink" href="#优化记录" title="Permanent link">&para;</a></h2>
-<p>淹没在知识的海洋里</p>
-<p>阅读一遍这个 Lab 的实验文档，让我有一种知识滑过大脑的感觉。这东西还是要结合实践，否则难以理解，于是我开始边做边学边问求着 AI 讲……</p>
+<p>(淹没在知识的海洋里)</p>
+<p>阅读一遍这个 Lab 的实验文档，我有一种知识滑过大脑的感觉。这东西还是要结合实践，否则难以理解，于是我开始边做边学边问求着 AI 讲……</p>
 <p><a class="glightbox" href="./lab2.assets/image-20260811014735558.png" data-type="image"><img width="2586" height="1866" src="./lab2.assets/image-20260811014735558.preview.jpg" data-fullsrc="./lab2.assets/image-20260811014735558.png" alt="image-20260811014735558" style="zoom:18%;"></a></p>
 <p>☝🏼🤓上手的第一件事当然是大搞 AVX，我以为弄两条并行化指令上去就能拿到个 60 分，事实证明我太天真了…… 60 分的标准也是需要大幅优化的。</p>
 <p>什么 你问我为什么上文不用 AMX🤔 因为我最开始的那一天不知道怎么开。中间由于一次崩溃我丢失了工作区之前的聊天记录，抱着尝试的心态我打算复现一下 #UD：</p>
 <p><a class="glightbox" href="./lab2.assets/image-20260811153632452.png" data-type="image"><img width="916" height="768" src="./lab2.assets/image-20260811153632452.preview.jpg" data-fullsrc="./lab2.assets/image-20260811153632452.png" alt="image-20260811153632452" style="zoom:40%;"></a></p>
-<p>好的明显可见这个糖 DeepSeek 很"给力"，直接复现了。（没绷住）（ds 依旧执着地表示不可以，gpt 在这个领域还是强一些）</p>
+<p>好的明显可见 DeepSeek 很“给力”，直接复现了。（没绷住）（ds 依旧执着地表示不可以）</p>
 <p>当然解决办法很简单，<code>syscall(SYS_arch_prctl, ARCH_REQ_XCOMP_PERM, XFEATURE_XTILEDATA);</code>，在程序内部申请权限就好了（毕竟一个核心只有一个 AMX 计算单元，系统需要确保不产生竞争）<a class="glightbox" href="./lab2.assets/image-20260811154038148.png" data-type="image"><img width="212" height="64" src="./lab2.assets/image-20260811154038148.preview.jpg" data-fullsrc="./lab2.assets/image-20260811154038148.png" alt="image-20260811154038148" style="zoom:50%;"></a></p>
-<p>AMX 相较于 AVX 的好处就是吞吐量更大，这一点在 S2 ~ S4 很有好处。这里就遇到了第二个坑，在 S1 中使用AMX居然更慢。。反而 AVX-512 VNNI 更快一些。[VNNI 254ns vs AMX 781ns]</p>
+<p>AMX 相较于 AVX 的好处就是吞吐量更大，这一点在 S2 ~ S4 很有好处。这里就遇到了第二个坑，在 S1 中使用AMX居然更慢。。反倒是 AVX-512 VNNI 更快一些。[VNNI 254ns vs AMX 781ns]</p>
 <ol>
 <li>AMX tile 16行起步，S1 中单 token 只能利用 1/16 的算力；</li>
 <li>AMX 有更大的搬入搬出等固定开销</li>
 </ol>
 <p>这个到后来才发现，难怪之前如何优化都没发在这个测试点及格。</p>
 <p>接着就是漫长的优化，见<strong>3. 附录</strong>，我问 AI 各种愚蠢问题（包括但不限于："你觉得还有空间吗""能不能提高opt时候的主频""他们怎么在不跳算的前提下满分的"），然后被稳稳接住，换做是人早就❌崩溃了。</p>
-<p>其中值得一提的是 <strong>3.2.3 routed slot FP16</strong> 输出，这项优化给 S3 和 S4 带来明显正收益，缓存减半/搬运减半，仅用一点点误差作为代价。但是，同时在 S2 的尝试中，这个手段没有明显变化，说明 S2 hotspot 不在这里，这就有点黑盒测试的感觉了，让人很有挫败感，这就要提到下文的 VTune Profiler 工具了。</p>
+<p>其中值得一提的是 <strong>3.2.3 routed slot FP16</strong> 输出，这项优化给 S3 和 S4 带来明显正收益，缓存减半/搬运减半，仅用一点点误差作为代价。但是，在 S2 的尝试中，这个手段没有明显变化，说明 S2 hotspot 不在这里，这就有点黑盒测试的感觉了，让人很有挫败感，这就要提到下文的 VTune Profiler 工具了。</p>
 <p>正如课件所说，向量化之后，"<span style="text-decoration:underline; color:#FF0000;">可读性喂了狗！</span>"。我对这种代码的阅读和修改目前很大程度依赖 AI，我想应该在接下来的实验中逐渐减少这种依赖（少不到哪去。。）</p>
 <p>还值得一提的是 <strong>3.2.4 并行计算排序所需数值</strong>，给 S4 带来明显受益，将 512 次 FP32 点积每 token 变成 BF16 AMX + 3 次 FP32 点积每 token。</p>
 <p>这里也走了不少弯路，比如 S3：</p>
 <p><a class="glightbox" href="./lab2.assets/image-20260811161858449.png" data-type="image"><img width="880" height="1176" src="./lab2.assets/image-20260811161858449.preview.jpg" data-fullsrc="./lab2.assets/image-20260811161858449.png" alt="image-20260811161858449" style="zoom:30%;"></a></p>
-<p>还比如 S1，我曾执意地想吃满所有的核心，但是将任务拆散到核心这件事本身耗费时间。最终只用5线程，分别负责并行时的1个 shared 和4个 private。实际上，真正的优化在于减少访存，消除<strong>落栈</strong>，尽量在寄存器中直接算（<strong>3.2.2 内联汇编</strong>/寄存器融合），顺带批评一下这个输入法<a class="glightbox" href="./lab2.assets/image-20260811162257182.png" data-type="image"><img width="218" height="138" src="./lab2.assets/image-20260811162257182.preview.jpg" data-fullsrc="./lab2.assets/image-20260811162257182.png" alt="image-20260811162257182" style="zoom:50%;"></a></p>
+<p>还比如 S1，我曾执意地想吃满所有的核心，但是将任务拆散到各核心这件事本身耗费时间。最终只用5线程，分别负责并行时的1个 shared 和4个 private。实际上，真正的优化在于减少访存，消除<strong>落栈</strong>，尽量在寄存器中直接算（<strong>3.2.2 内联汇编</strong>/寄存器融合），顺带批评一下这个输入法<a class="glightbox" href="./lab2.assets/image-20260811162257182.png" data-type="image"><img width="218" height="138" src="./lab2.assets/image-20260811162257182.preview.jpg" data-fullsrc="./lab2.assets/image-20260811162257182.png" alt="image-20260811162257182" style="zoom:50%;"></a></p>
 <p>先写这么多，优化过程本身是略枯燥的，但是做完之后会对这些知识有更深刻的理解。后面的实验我会补上测试中间数据的截图<span style="color:#606060; background:#E0E0E0;">（这次真是没经验，再复现需要之前的代码，我commit的次数太少了，找不回</span></p>
 <p>（而且原始的终端输出好多都被压缩掉了<a class="glightbox" href="./lab2.assets/image-20260811173810276.png" data-type="image"><img width="252" height="72" src="./lab2.assets/image-20260811173810276.preview.jpg" data-fullsrc="./lab2.assets/image-20260811173810276.png" alt="image-20260811173810276" style="zoom:50%;"></a></p>
 <h2 id="附录">附录<a class="headerlink" href="#附录" title="Permanent link">&para;</a></h2>
@@ -3525,7 +3525,7 @@
 <li>每专家权重字节数 = 3DF = 3×256×128 = 98.3 KB；</li>
 <li>全部激活的专家 FFN 共读权重 = 128×5×98.3 KB ≈ 62.9 MB；</li>
 <li>总乘加 = 128×5×3DF ≈ 62.9 M MAC；</li>
-<li>每个专家权重被读遍数，按激活次数复读，共约 37.6 遍（= 128×5/17）；</li>
+<li>每个专家权重被重复读取的次数，按激活次数复读，共约 37.6 遍（= 128×5/17）；</li>
 <li>算术强度 = 62.9M / 62.9MB ≈ 1 MAC/byte 访存瓶颈。</li>
 </ul>
 </li>
@@ -3538,7 +3538,7 @@
 </ul>
 </li>
 <li>
-<p>分组让同一专家的权重被其名下多个 token 复用，权重读量从每个 token 读一遍降到每个专家读一遍，带宽需求摊薄约 37 倍，把访存瓶颈换成 AMX/cache 的计算瓶颈。</p>
+<p>分组让同一专家的权重被其名下多个 token 复用，权重读量从每个 token 读一遍降到每个专家读一遍，带宽需求降低约 37 倍，把访存瓶颈换成 AMX/cache 的计算瓶颈。</p>
 </li>
 </ul>
 </li>
