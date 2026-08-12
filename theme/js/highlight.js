@@ -58,9 +58,18 @@
     if (code.dataset.bfyesGutter === "1") return;
     var pre = code.parentElement;
     if (!pre) return;
-    var lineCount = code.textContent.split("\n").length;
+    var source = code.textContent;
+    var lineCount = source.endsWith("\n") ? source.split("\n").length - 1 : source.split("\n").length;
     var gutter = document.createElement("div");
     gutter.className = "bfy-gutter";
+    // Safari can round the line boxes of sibling flex items differently. Derive
+    // the height from the code content's final layout instead of an em value.
+    var computed = getComputedStyle(code);
+    var verticalPadding = parseFloat(computed.paddingTop) + parseFloat(computed.paddingBottom);
+    var lineHeight = (code.getBoundingClientRect().height - verticalPadding) / lineCount;
+    if (Number.isFinite(lineHeight)) {
+      gutter.style.setProperty("--bfy-code-line-height", lineHeight + "px");
+    }
     for (var i = 1; i <= lineCount; i++) {
       var s = document.createElement("span");
       s.className = "bfy-ln";
