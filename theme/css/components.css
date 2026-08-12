@@ -789,6 +789,7 @@ body.bfyes-home-page .md-content__inner {
    span，因此绝不破坏高亮。行号样式对齐线上正式版：灰字、等宽、右对齐、
    右侧分隔竖线、不可选中。 */
 .md-typeset :is(pre.highlight, pre[class*="language-"]) {
+  --bfy-code-scrollbar-offset: 0.4rem;
   display: flex;
   align-items: stretch;
   overflow: hidden;           /* 外框不滚，防止 gutter 与 code 双滚动 */
@@ -799,7 +800,8 @@ body.bfyes-home-page .md-content__inner {
   display: block;
   line-height: 1.45;          /* 明确锁定，与行号列使用同一行盒高度 */
   overflow-x: auto;           /* 代码超长时在 code 内部横向滚动，gutter 固定不动 */
-  padding-bottom: 1rem;       /* 给覆盖式横向滚动条留位，避免遮住最后一行 */
+  padding-bottom: var(--bfy-code-scrollbar-offset); /* 给滚动条上移留位 */
+  margin-bottom: calc(-1 * var(--bfy-code-scrollbar-offset)); /* 不撑高外层代码块 */
 }
 .md-typeset .bfy-gutter {
   flex: 0 0 auto;
@@ -809,7 +811,6 @@ body.bfyes-home-page .md-content__inner {
   user-select: none;
   box-sizing: border-box;
   padding-right: 0.8em;
-  padding-bottom: 1rem;       /* 与代码区的滚动条预留同步，保持行号逐行对齐 */
   border-right: 1px solid var(--md-default-fg-color--lightest);
   margin-right: 1em;
   color: var(--md-default-fg-color--lighter);  /* 淡化行号，降低存在感 */
