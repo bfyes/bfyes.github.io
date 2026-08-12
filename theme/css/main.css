@@ -69,7 +69,7 @@
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .cpf {
   color: #0a3069;
 }
-/* 函数名 / 内置命令 / 标签 / 属性 —— 紫 */
+/* 函数名 / 内置命令 / 标签 / 属性 —— GitHub entity 紫 */
 [data-md-color-scheme="default"] .md-typeset .highlight .nf,
 [data-md-color-scheme="default"] .md-typeset .highlight .fm,
 [data-md-color-scheme="default"] .md-typeset .highlight .nb,
@@ -80,7 +80,17 @@
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nb,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nl,
 [data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .na {
-  color: #6639ba;
+  color: #8250df;
+}
+/* 普通标识符（变量名、对象名等），如 age、name、buf。 */
+[data-md-color-scheme="default"] .md-typeset .highlight .n,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .n {
+  color: #0350ae;
+}
+/* Python/Java 导入模块（.nn），如 os、typing、java.util.List：使用正文色。 */
+[data-md-color-scheme="default"] .md-typeset .highlight .nn,
+[data-md-color-scheme="default"] .md-typeset .highlighttable .highlight .nn {
+  color: #1f2328;
 }
 /* 字符串 —— 深蓝 */
 [data-md-color-scheme="default"] .md-typeset .highlight .s,
@@ -286,7 +296,11 @@
 [data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .n {
   color: #f0f6fc;
 }
-
+/* Python/Java 导入模块（.nn）在暗色模式使用正文亮色。 */
+[data-md-color-scheme="slate"] .md-typeset .highlight .nn,
+[data-md-color-scheme="slate"] .md-typeset .highlighttable .highlight .nn {
+  color: #f0f6fc;
+}
 /* ---- 汇编语言专用覆盖 ----
    Pygments 的 ASM lexer 把指令（mov/int/ret）和伪指令（global/section）
    都标记为 nf（函数名），把标签/符号（_start/.text）标记为 no（常量）。
@@ -298,9 +312,45 @@
 [data-md-color-scheme="default"] .language-asm.highlight .nf {
   color: #cf222e;
 }
+[data-md-color-scheme="default"] .language-asm .highlight a:has(> .linenos) + .nf,
+[data-md-color-scheme="default"] .language-asm.highlight a:has(> .linenos) + .nf {
+  color: #0350ae;
+}
+[data-md-color-scheme="default"] .language-asm .highlight .w + .nf,
+[data-md-color-scheme="default"] .language-asm.highlight .w + .nf {
+  color: #cf222e;
+}
+[data-md-color-scheme="default"] .language-asm .highlight .nl,
+[data-md-color-scheme="default"] .language-asm.highlight .nl,
+[data-md-color-scheme="default"] .language-asm .highlight .no,
+[data-md-color-scheme="default"] .language-asm.highlight .no {
+  color: #6639ba;
+}
 [data-md-color-scheme="slate"] .language-asm .highlight .nf,
 [data-md-color-scheme="slate"] .language-asm.highlight .nf {
   color: #ff7b72;
+}
+[data-md-color-scheme="slate"] .language-asm .highlight a:has(> .linenos) + .nf,
+[data-md-color-scheme="slate"] .language-asm.highlight a:has(> .linenos) + .nf {
+  color: #79c0ff;
+}
+[data-md-color-scheme="slate"] .language-asm .highlight .w + .nf,
+[data-md-color-scheme="slate"] .language-asm.highlight .w + .nf {
+  color: #ff7b72;
+}
+[data-md-color-scheme="slate"] .language-asm .highlight .nl,
+[data-md-color-scheme="slate"] .language-asm.highlight .nl,
+[data-md-color-scheme="slate"] .language-asm .highlight .no,
+[data-md-color-scheme="slate"] .language-asm.highlight .no {
+  color: #d2a8ff;
+}
+
+/* C/C++ 代码中的普通标识符（如 name、age）—— 浅蓝 */
+[data-md-color-scheme="slate"] .language-c .highlight .n,
+[data-md-color-scheme="slate"] .language-c.highlight .n,
+[data-md-color-scheme="slate"] .language-cpp .highlight .n,
+[data-md-color-scheme="slate"] .language-cpp.highlight .n {
+  color: #79c0ff;
 }
 
 /* ============================================================================
