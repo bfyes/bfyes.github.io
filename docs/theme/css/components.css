@@ -1531,6 +1531,11 @@ body.bfyes-home-page .md-content__inner {
     grid-template-columns: 1fr;
   }
 
+  /* 手机端宽度不够用，去掉正文左右留白以充分利用空间 */
+  .md-content__inner {
+    padding-inline: 0;
+  }
+
   .home-section__head {
     align-items: flex-start;
     flex-direction: column;
