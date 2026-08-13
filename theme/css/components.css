@@ -19,9 +19,8 @@
    08. 响应式与动画收尾
        首页移动端布局、彩虹背景降级、keyframes
 
-   这些组件依赖 Material for MkDocs 的 --md-* 变量以及正文观感层 main.css。
-   加载顺序：main.css（正文观感层）→ components.css（组件覆盖层）。
-   与 github-markdown-css（sindresorhus）观感结合。
+   可调参数见 variables.css（加载于本文件之前）。
+   加载顺序：variables.css → main.css → components.css。
    ============================================================================ */
 
 /* ============================================================================
@@ -43,7 +42,7 @@
   content: counter(section-counter);
   color: var(--fgColor-default);
   font-weight: 700;
-  margin-right: 0.6em;   /* 编号与标题文字之间留出明显间隙 */
+  margin-right: 0.6em;
 }
 .md-content__inner h3 {
   counter-increment: subsection-counter;
@@ -137,7 +136,7 @@
   background-color: transparent !important;
   border: 1px solid var(--borderColor-muted);
   border: 1px solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   box-shadow: none;
   font-size: 13.6px;
   overflow: hidden;
@@ -316,8 +315,8 @@
   border: 1px solid var(--home-border);
   border-radius: 8px;
   background: var(--home-panel);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
 }
 
 .ghc-loading,
@@ -428,7 +427,7 @@
 .ContributionCalendar-day {
   box-sizing: border-box;
   border: 0.5px solid;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   outline: none;
   transition: opacity 0.12s ease;
 }
@@ -537,7 +536,7 @@
 /* ---- 左上角 BillFeng Logo ---- */
 .bf-logo {
   display: block;
-  height: 1.45rem;   /* Material 默认 logo 约 1.2rem，放大一档 */
+  height: 1.45rem;
   width: auto;
 }
 .bf-logo__text {
@@ -610,18 +609,9 @@
 /*
    SVG stroke-dasharray 实现真正虚线，不是 gradient 色块。
    正文页只保留很轻的边缘纹理，避免干扰阅读。
+   --page-grid / --grid-clear-half / --grid-fade 由 variables.css 提供。
 */
-[data-md-color-scheme="default"] body {
-  --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
-}
-
-[data-md-color-scheme="slate"] body {
-  --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
-}
-
 body::before {
-  --grid-clear-half: 22rem;
-  --grid-fade: 20rem;
   content: "";
   position: fixed;
   inset: 0;
@@ -662,7 +652,7 @@ body.rainbow-active::before {
 
 /* 正文左右保留固定留白，避免贴住内容区边缘。 */
 .md-content__inner {
-  padding-inline: 1rem;
+  padding-inline: var(--content-padding-inline);
 }
 
 /* 主页外层已经按 65rem 对齐，不再额外扣除正文内边距。 */
@@ -673,19 +663,25 @@ body.home-active .md-content__inner {
 /* 亮色条件下显式保证正文白色背景覆盖（防止半透明/网格透出） */
 [data-md-color-scheme="default"] .md-content,
 [data-md-color-scheme="default"] .md-typeset {
-  background-color: #ffffff;
+  background-color: var(--content-bg);
+}
+
+/* 首页模式下正文区域透明，让面板毛玻璃生效 */
+body.home-active .md-content,
+body.home-active .md-typeset {
+  background-color: transparent !important;
 }
 
 /* 顶部导航栏毛玻璃效果（与首页面板统一基准颜色和透明度） */
 .md-header,
 .md-tabs {
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: var(--header-bg);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
 }
 [data-md-color-scheme="slate"] .md-header,
 [data-md-color-scheme="slate"] .md-tabs {
-  background-color: rgba(13, 17, 23, 0.8) !important;
+  background-color: var(--header-bg) !important;
 }
 
 .md-header {
@@ -702,32 +698,22 @@ body.home-active .md-content__inner {
 }
 
 /* ---- 导航选中态 ---- */
-[data-md-color-scheme="default"] {
-  --active-nav-bg: #f5fbff;
-  --active-nav-border: #0969da;
-}
-
-[data-md-color-scheme="slate"] {
-  --active-nav-bg: color-mix(in srgb, var(--md-accent-fg-color) 8%, var(--md-default-bg-color));
-  --active-nav-border: #4493f8;
-}
-
 .md-sidebar--primary .md-nav__link--active,
 .md-sidebar--primary .md-nav__item--active > .md-nav__container {
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   background-color: var(--active-nav-bg);
-  box-shadow: inset 0 0 0 1px var(--active-nav-border);
-  color: var(--md-accent-fg-color);
+  color: var(--md-default-fg-color);
+  font-weight: 600;
 }
 
 .md-sidebar--primary .md-nav__item--active > .md-nav__link--active {
   background-color: var(--active-nav-bg);
+  color: var(--md-default-fg-color);
+  font-weight: 600;
 }
 
 .md-sidebar--primary .md-nav__item--active > .md-nav__container > .md-nav__link {
   background-color: transparent;
-  box-shadow: none;
-  color: inherit;
 }
 
 /* ---- 右侧目录阅读进度 ---- */
@@ -754,29 +740,21 @@ body.home-active .md-content__inner {
 
 /* 页面整体加宽 */
 .md-grid {
-  max-width: 65rem;
+  max-width: var(--page-max-width);
 }
 
 /* ---- 滚动条 ----
    目录、右侧 TOC 与代码块共用低对比度的半透明灰色滚动条。代码区额外留出
    底部空间，避免横向滚动条覆盖最后一行代码（特别是在使用覆盖式滚动条时）。 */
-:root {
-  --scrollbar-thumb-thumb: rgba(107, 114, 128, 0.42);
-  --scrollbar-thumb-thumb-hover: rgba(75, 85, 99, 0.58);
-}
-[data-md-color-scheme="slate"] {
-  --scrollbar-thumb-thumb: rgba(156, 163, 175, 0.38);
-  --scrollbar-thumb-thumb-hover: rgba(209, 213, 219, 0.52);
-}
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner),
 .md-typeset :is(pre.highlight, pre[class*="language-"]) code {
   scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb-thumb) transparent;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar,
 .md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-height);
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-track,
 .md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-track {
@@ -784,24 +762,24 @@ body.home-active .md-content__inner {
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-thumb,
 .md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb-thumb);
+  background-color: var(--scrollbar-thumb);
   border: 2px solid transparent;
   border-radius: 999px;
   background-clip: padding-box;
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-thumb:hover,
 .md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-thumb:hover {
-  background-color: var(--scrollbar-thumb-thumb-hover);
+  background-color: var(--scrollbar-thumb-hover);
 }
 /* Material 在侧栏悬停/聚焦时会改回主题强调色；这里保持灰色。 */
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within) {
-  scrollbar-color: var(--scrollbar-thumb-thumb) transparent;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within)::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb-thumb);
+  background-color: var(--scrollbar-thumb);
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within)::-webkit-scrollbar-thumb:hover {
-  background-color: var(--scrollbar-thumb-thumb-hover);
+  background-color: var(--scrollbar-thumb-hover);
 }
 
 /* ---- highlight.js 运行时行号（不破坏高亮） ----
@@ -810,19 +788,18 @@ body.home-active .md-content__inner {
    span，因此绝不破坏高亮。行号样式对齐线上正式版：灰字、等宽、右对齐、
    右侧分隔竖线、不可选中。 */
 .md-typeset :is(pre.highlight, pre[class*="language-"]) {
-  --code-scrollbar-offset: 0.4rem;
   display: flex;
   align-items: stretch;
-  overflow: hidden;           /* 外框不滚，防止 gutter 与 code 双滚动 */
+  overflow: hidden;
 }
 .md-typeset :is(pre.highlight, pre[class*="language-"]) code {
   flex: 1 1 auto;
   min-width: 0;
   display: block;
-  line-height: 1.45;          /* 明确锁定，与行号列使用同一行盒高度 */
-  overflow-x: auto;           /* 代码超长时在 code 内部横向滚动，gutter 固定不动 */
-  padding-bottom: var(--code-scrollbar-offset); /* 给滚动条上移留位 */
-  margin-bottom: calc(-1 * var(--code-scrollbar-offset)); /* 不撑高外层代码块 */
+  line-height: 1.45;
+  overflow-x: auto;
+  padding-bottom: var(--code-scrollbar-offset);
+  margin-bottom: calc(-1 * var(--code-scrollbar-offset));
 }
 .md-typeset .code-gutter {
   flex: 0 0 auto;
@@ -834,16 +811,16 @@ body.home-active .md-content__inner {
   padding-right: 0.8em;
   border-right: 1px solid var(--md-default-fg-color--lightest);
   margin-right: 1em;
-  color: var(--md-default-fg-color--lighter);  /* 淡化行号，降低存在感 */
-  font-family: inherit;           /* 继承等宽代码字体 */
+  color: var(--md-default-fg-color--lighter);
+  font-family: inherit;
   font-variant-numeric: tabular-nums;
   line-height: 1.45;
   white-space: nowrap;
 }
 .md-typeset .code-gutter .code-ln {
   display: block;
-  height: var(--code-line-height, 1.45em);
-  line-height: var(--code-line-height, 1.45);
+  height: var(--code-line-height);
+  line-height: var(--code-line-height);
 }
 @media screen and (max-width: 44.984375em) {
   .md-typeset .code-gutter {
@@ -882,10 +859,10 @@ body.home-active .md-content__inner {
 /* ---- 查看器外壳 ---- */
 .pdf-viewer {
   position: relative;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--md-code-bg-color, #f5f5f5);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-sm);
   font-family: inherit;
   margin: 1em 0;
 }
@@ -943,7 +920,7 @@ body.home-active .md-content__inner {
   width: 32px;
   height: 32px;
   flex: 0 0 auto;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   color: var(--md-default-fg-color--light, #888);
   transition: color 0.15s, background 0.15s;
 }
@@ -1003,8 +980,8 @@ body.home-active .md-content__inner {
 .pdf-viewer-page-wrap {
   width: min(100%, 54rem);
   margin: 0 auto 12px;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.16);
+  background: var(--pdf-page-bg);
+  box-shadow: var(--shadow-sm);
 }
 
 .pdf-viewer-page-wrap:last-child {
@@ -1054,7 +1031,7 @@ body.home-active .md-content__inner {
   min-height: 2rem;
   padding: 0 0.75rem;
   border: 1px solid var(--md-accent-fg-color);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   background: var(--active-nav-bg, #f5fbff);
   color: var(--md-accent-fg-color);
   font-size: 0.78rem;
@@ -1078,7 +1055,6 @@ body.home-active .md-content__inner {
   z-index: 2;
   transition: opacity 0.4s ease;
   padding: 24px;
-  /* 受外壳 min-height 约束，不会撑满屏幕 */
 }
 
 .pdf-loader-dot {
@@ -1096,12 +1072,8 @@ body.home-active .md-content__inner {
 }
 
 @keyframes pdf-loader-blink {
-  0%, 49.999% {
-    opacity: 1;
-  }
-  50%, 100% {
-    opacity: 0;
-  }
+  0%, 49.999% { opacity: 1; }
+  50%, 100% { opacity: 0; }
 }
 
 /* ---- 进度条 ---- */
@@ -1118,7 +1090,7 @@ body.home-active .md-content__inner {
   width: min(320px, 80%);
   height: 6px;
   background: var(--md-default-fg-color--lightest, #e0e0e0);
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
@@ -1126,7 +1098,7 @@ body.home-active .md-content__inner {
   height: 100%;
   width: 0%;
   background: var(--md-accent-fg-color, #4051b5);
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   transition: width 0.15s linear;
 }
 
@@ -1146,7 +1118,7 @@ body.home-active .md-content__inner {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  color: #e53e3e;
+  color: var(--error-color);
   font-size: 0.9rem;
   background: var(--md-default-bg-color, #fff);
   z-index: 3;
@@ -1199,12 +1171,6 @@ body.home-active .md-content__inner {
    ============================================================================ */
 
 .rainbow-page {
-  --rainbow-red: rgba(255, 92, 122, 0.2);
-  --rainbow-orange: rgba(255, 190, 86, 0.2);
-  --rainbow-green: rgba(77, 220, 138, 0.18);
-  --rainbow-cyan: rgba(58, 213, 230, 0.18);
-  --rainbow-blue: rgba(91, 156, 255, 0.18);
-  --rainbow-violet: rgba(174, 111, 255, 0.18);
   position: relative;
   min-height: 100vh;
   isolation: isolate;
@@ -1312,10 +1278,8 @@ body.rainbow-active .md-sidebar__inner {
    ============================================================================ */
 
 .home-page {
-  --home-border: #ccd6d8;
   --home-muted: var(--md-default-fg-color--light);
   --home-softer: var(--md-default-fg-color--lighter);
-  --home-panel: rgba(255, 255, 255, 0.4);
   margin-top: 0.4rem;
 }
 
@@ -1352,7 +1316,6 @@ body.rainbow-active .md-sidebar__inner {
   font-size: 0.92rem;
   font-weight: 800;
   line-height: 1.25;
-  /* 取消 GitHub 观感 h2 下划线：小节标题自带容器分隔线，避免双线 */
   border-bottom: none;
   padding-bottom: 0;
 }
@@ -1361,15 +1324,15 @@ body.rainbow-active .md-sidebar__inner {
   content: none;
 }
 
-.home-card--study { --home-accent: #0969da; }
-.home-card--tools { --home-accent: #bc4c00; }
-.home-card--diary { --home-accent: #8250df; }
-.home-card--games { --home-accent: #1a7f37; }
+.home-card--study { --home-accent: var(--accent-study); }
+.home-card--tools { --home-accent: var(--accent-tools); }
+.home-card--diary { --home-accent: var(--accent-diary); }
+.home-card--games { --home-accent: var(--accent-games); }
 
-[data-md-color-scheme="slate"] .home-card--study { --home-accent: #79c0ff; }
-[data-md-color-scheme="slate"] .home-card--tools { --home-accent: #ffa657; }
-[data-md-color-scheme="slate"] .home-card--diary { --home-accent: #d2a8ff; }
-[data-md-color-scheme="slate"] .home-card--games { --home-accent: #7ee787; }
+[data-md-color-scheme="slate"] .home-card--study { --home-accent: var(--accent-study); }
+[data-md-color-scheme="slate"] .home-card--tools { --home-accent: var(--accent-tools); }
+[data-md-color-scheme="slate"] .home-card--diary { --home-accent: var(--accent-diary); }
+[data-md-color-scheme="slate"] .home-card--games { --home-accent: var(--accent-games); }
 
 /* 终端分类超链接（直接复用正文链接观感，不做成按钮） */
 .home-terminal-keys {
@@ -1404,8 +1367,8 @@ body.rainbow-active .md-sidebar__inner {
   gap: 0.8rem;
   padding: 0.64rem 0.8rem;
   background: var(--home-panel);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
 }
 
 .home-log + .home-log {
@@ -1438,18 +1401,18 @@ body.rainbow-active .md-sidebar__inner {
   min-height: 5.2rem;
   padding: 0.65rem;
   border: 1px solid var(--home-border);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   background: var(--home-panel);
   color: var(--md-default-fg-color) !important;
   font-size: 0.72rem;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
   transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
 }
 
 .home-friend:hover {
   border-color: var(--md-accent-fg-color);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
+  box-shadow: var(--shadow-lg);
   transform: translateY(-1px);
 }
 
@@ -1464,9 +1427,8 @@ body.rainbow-active .md-sidebar__inner {
   height: 2.75rem;
   border: 1px solid var(--home-border);
   border-radius: 50%;
-  color: #1a7f37;
-  background: rgba(45, 164, 78, 0.1);
-  background: color-mix(in srgb, #2da44e 10%, transparent);
+  color: var(--avatar-color);
+  background: var(--avatar-bg);
   font-size: 0.66rem;
   font-weight: 900;
 }
@@ -1480,9 +1442,8 @@ body.rainbow-active .md-sidebar__inner {
 }
 
 [data-md-color-scheme="slate"] .home-friend__avatar {
-  color: #7ee787;
-  background: rgba(126, 231, 135, 0.12);
-  background: color-mix(in srgb, #7ee787 12%, transparent);
+  color: var(--avatar-color);
+  background: var(--avatar-bg);
 }
 
 .home-friend strong {
@@ -1519,10 +1480,10 @@ body.rainbow-active .md-sidebar__inner {
   margin: 0;
   overflow: hidden;
   border: 1px solid var(--home-border);
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
 }
 
 .home-terminal__bar {
@@ -1541,9 +1502,9 @@ body.rainbow-active .md-sidebar__inner {
   border-radius: 50%;
 }
 
-.home-terminal__dot--red { background: #ff5f57; }
-.home-terminal__dot--yellow { background: #ffbd2e; }
-.home-terminal__dot--green { background: #28c840; }
+.home-terminal__dot--red { background: var(--terminal-dot-red); }
+.home-terminal__dot--yellow { background: var(--terminal-dot-yellow); }
+.home-terminal__dot--green { background: var(--terminal-dot-green); }
 
 .home-terminal__title {
   margin-left: 0.35rem;
@@ -1589,11 +1550,11 @@ body.rainbow-active .md-sidebar__inner {
 }
 
 .typed-text--host {
-  color: #2da44e;
+  color: var(--terminal-host-color);
 }
 
 .typed-text--prompt {
-  color: #0969da;
+  color: var(--terminal-prompt-color);
 }
 
 /* ---- 打字机光标 ---- */
@@ -1604,41 +1565,40 @@ body.rainbow-active .md-sidebar__inner {
     "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
   font-size: inherit;
   color: var(--md-typeset-color);
-  /* animation: blink 0.9s step-end infinite; */
 }
 
 [data-md-color-scheme="default"] .typed-text--command,
 [data-md-color-scheme="default"] .typed-text--separator,
 [data-md-color-scheme="default"] .home-terminal__line--user .typed-text,
 [data-md-color-scheme="default"] .home-terminal__line--flag .typed-text {
-  color: #111111;
+  color: var(--terminal-command-color);
 }
 
 [data-md-color-scheme="default"] .typed-cursor,
 [data-md-color-scheme="default"] .typed-text .typed-cursor,
 [data-md-color-scheme="default"] .typed-cursor-standalone {
-  color: #111111;
+  color: var(--terminal-cursor-color);
 }
 
 [data-md-color-scheme="slate"] .typed-text--host {
-  color: #7ee787;
+  color: var(--terminal-host-color);
 }
 
 [data-md-color-scheme="slate"] .typed-text--prompt {
-  color: #79c0ff;
+  color: var(--terminal-prompt-color);
 }
 
 [data-md-color-scheme="slate"] .typed-text--command,
 [data-md-color-scheme="slate"] .typed-text--separator,
 [data-md-color-scheme="slate"] .home-terminal__line--user .typed-text,
 [data-md-color-scheme="slate"] .home-terminal__line--flag .typed-text {
-  color: #ffffff;
+  color: var(--terminal-command-color);
 }
 
 [data-md-color-scheme="slate"] .typed-cursor,
 [data-md-color-scheme="slate"] .typed-text .typed-cursor,
 [data-md-color-scheme="slate"] .typed-cursor-standalone {
-  color: #fff;
+  color: var(--terminal-cursor-color);
 }
 
 [data-md-color-scheme="default"] .home-terminal {
@@ -1655,7 +1615,7 @@ body.rainbow-active .md-sidebar__inner {
 
 [data-md-color-scheme="slate"] .home-terminal {
   background: var(--home-panel);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+  box-shadow: var(--terminal-shadow);
 }
 
 [data-md-color-scheme="slate"] .home-terminal__bar {
@@ -1664,20 +1624,6 @@ body.rainbow-active .md-sidebar__inner {
 
 [data-md-color-scheme="slate"] .home-terminal__screen {
   background: transparent;
-}
-
-[data-md-color-scheme="slate"] .home-page {
-  --home-panel: rgba(1, 4, 9, 0.4);
-  --home-border: #383e42;
-}
-
-[data-md-color-scheme="slate"] .rainbow-page {
-  --rainbow-red: rgba(255, 123, 146, 0.2);
-  --rainbow-orange: rgba(255, 201, 107, 0.2);
-  --rainbow-green: rgba(126, 231, 161, 0.18);
-  --rainbow-cyan: rgba(94, 234, 255, 0.18);
-  --rainbow-blue: rgba(147, 197, 253, 0.2);
-  --rainbow-violet: rgba(216, 180, 254, 0.18);
 }
 
 /* ============================================================================
@@ -1690,7 +1636,6 @@ body.rainbow-active .md-sidebar__inner {
    ============================================================================ */
 
 @media screen and (max-width: 44.984375em) {
-  /* 移动端宽度有限，不显示左侧 permalink，也不保留左侧间距。 */
   .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
     display: none;
   }
@@ -1699,13 +1644,10 @@ body.rainbow-active .md-sidebar__inner {
     grid-template-columns: 1fr;
   }
 
-  /* 手机端宽度不够用，去掉正文左右留白以充分利用空间 */
   .md-content__inner {
     padding-inline: 0;
   }
 
-  /* 代码块与正文同宽：去掉 Material 的负 margin（避免 pre 撑出比正文宽），
-     让 pre 留在正文容器内与其左右对齐；超长时在 code 内横向滑动。 */
   .md-typeset pre.highlight,
   .md-typeset pre[class*="language-"] {
     margin-inline: 0;
