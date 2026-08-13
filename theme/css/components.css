@@ -305,9 +305,11 @@
 .ghc-loading,
 .ghc-error,
 .ghc-shell {
-  border: 1px solid var(--md-default-fg-color--lightest);
-  border-radius: 6px;
-  background: var(--md-default-bg-color);
+  border: 1px solid var(--home-border);
+  border-radius: 8px;
+  background: var(--home-panel);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .ghc-loading,
@@ -658,10 +660,12 @@ body.bfyes-home-page .md-content__inner {
   background-color: #ffffff;
 }
 
-/* 顶部导航栏遮盖网格 */
+/* 顶部导航栏毛玻璃效果 */
 .md-header,
 .md-tabs {
-  background-color: var(--md-default-bg-color);
+  background-color: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .md-header {
@@ -1267,7 +1271,7 @@ body.bfyes-home-page .md-content__inner {
    ============================================================================ */
 
 .home-page {
-  --home-border: rgba(127, 127, 127, 0.24);
+  --home-border: #ccd6d8;
   --home-muted: var(--md-default-fg-color--light);
   --home-softer: var(--md-default-fg-color--lighter);
   --home-panel: rgba(255, 255, 255, 0.84);
@@ -1361,7 +1365,8 @@ body.bfyes-home-page .md-content__inner {
   gap: 0.8rem;
   padding: 0.64rem 0.8rem;
   background: var(--home-panel);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .home-log + .home-log {
@@ -1398,7 +1403,8 @@ body.bfyes-home-page .md-content__inner {
   background: var(--home-panel);
   color: var(--md-default-fg-color) !important;
   font-size: 0.72rem;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
 }
 
@@ -1469,10 +1475,11 @@ body.bfyes-home-page .md-content__inner {
 .home-terminal {
   margin: 0;
   overflow: hidden;
-  border: 1px solid rgba(127, 127, 127, 0.28);
+  border: 1px solid var(--home-border);
   border-radius: 8px;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
-  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .home-terminal__bar {
@@ -1481,7 +1488,7 @@ body.bfyes-home-page .md-content__inner {
   gap: 0.45rem;
   min-height: 2.1rem;
   padding: 0 0.75rem;
-  border-bottom: 1px solid rgba(127, 127, 127, 0.18);
+  border-bottom: 1px solid var(--home-border);
 }
 
 .home-terminal__dot {
@@ -1505,7 +1512,8 @@ body.bfyes-home-page .md-content__inner {
 
 .home-terminal__screen {
   position: relative;
-  padding: 1rem 1.05rem 1.1rem;
+  min-height: 10rem;
+  padding: 0.6rem 0.9rem 0.7rem;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
   font-size: 13.6px;
@@ -1603,23 +1611,22 @@ body.bfyes-home-page .md-content__inner {
 }
 
 [data-md-color-scheme="slate"] .home-terminal {
-  background: rgba(18, 20, 23, 0.94);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+  background: var(--home-panel);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
 }
 
 [data-md-color-scheme="slate"] .home-terminal__bar {
-  background: rgba(28, 32, 38, 0.94);
+  background: transparent;
 }
 
 [data-md-color-scheme="slate"] .home-terminal__screen {
-  background: rgba(16, 19, 23, 0.94);
+  background: transparent;
 }
 
 [data-md-color-scheme="slate"] .home-page {
-  --home-panel: rgba(17, 24, 39, 0.24);
-  --home-panel: color-mix(in srgb, var(--md-default-bg-color) 76%, #111827 24%);
-  --home-border: rgba(255, 255, 255, 0.14);
-  --home-card-bg: rgba(18, 24, 34, 0.54);
+  --home-panel: rgba(1, 4, 9, 0.4);
+  --home-border: #383e42;
+  --home-card-bg: color-mix(in srgb, var(--md-default-bg-color) 76%, #111827 24%);
 }
 
 [data-md-color-scheme="slate"] .rainbow-page {
