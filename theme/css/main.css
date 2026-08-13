@@ -74,8 +74,9 @@ body {
   background-color: #0d1117 !important;
 }
 /* 暗色模式：sidebar / content / footer / nav-title 保持不透明暗色背景
-   仅桌面端生效；移动端 drawer 由 Material 主题自行管理，保持透明。 */
-@media screen and (min-width: 44.984375em) {
+   仅桌面端 sidebar 展开时生效（≥76.1875em，Material 主题的 sidebar 折叠断点）；
+   移动端 drawer 由 Material 主题自行管理，保持透明。 */
+@media screen and (min-width: 76.1875em) {
   [data-md-color-scheme="slate"] .md-sidebar__inner,
   [data-md-color-scheme="slate"] .md-content,
   [data-md-color-scheme="slate"] .md-footer,

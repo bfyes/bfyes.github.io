@@ -12,6 +12,9 @@
   --page-max-width: 65rem;
   --content-padding-inline: 1rem;
 
+  /* === 响应式断点（移动端 ≤ 此值，桌面端 > 此值） === */
+  --mobile-breakpoint: 44.984375em;
+
   /* === 毛玻璃 === */
   --blur-radius: 12px;
 
@@ -53,6 +56,15 @@
 
   /* === PDF 页面背景 === */
   --pdf-page-bg: #fff;
+
+  /* === 移动端 === */
+  --mobile-content-padding: 0;
+  --mobile-code-gutter-padding-right: 0.5em;
+  --mobile-code-gutter-margin-right: 0.6em;
+  --mobile-terminal-font-size: 14px;
+  --mobile-terminal-padding: 0.85rem 0.9rem 0.95rem;
+  --mobile-log-gap: 0.25rem;
+  --mobile-section-head-gap: 0.25rem;
 }
 
 /* ---- 亮色模式（default） ---- */
