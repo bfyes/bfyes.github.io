@@ -62,12 +62,18 @@ body {
   font-feature-settings: normal !important;
 }
 
-/* 暗色模式：全局背景统一为 #0d1117（GitHub 暗色基准），消除 0b0c0f 色差 */
+/* 暗色模式：全局背景统一为 #0d1117（GitHub 暗色基准） */
 [data-md-color-scheme="slate"] body {
   background-color: #0d1117 !important;
 }
+/* 顶部导航栏：半透明 + 毛玻璃 */
 [data-md-color-scheme="slate"] .md-header,
-[data-md-color-scheme="slate"] .md-tabs,
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: rgba(13, 17, 23, 0.72) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+/* 其余区域保持不透明暗色背景 */
 [data-md-color-scheme="slate"] .md-sidebar__inner,
 [data-md-color-scheme="slate"] .md-content,
 [data-md-color-scheme="slate"] .md-footer,
