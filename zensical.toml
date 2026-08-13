@@ -105,6 +105,7 @@ nav = [
 ]
 
 extra_css = [
+    "theme/css/variables.css",
     "theme/css/main.css",
     "theme/css/components.css",
 ]

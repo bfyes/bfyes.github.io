@@ -15,9 +15,10 @@
    06. 代码块与代码相关 UI
        代码块、行号（.code-gutter）、复制提示、行内代码
 
-   由原 main.css 拆分重构，并结合 sindresorhus/github-markdown-css 观感：
-   https://github.com/sindresorhus/github-markdown-css
+   可调参数见 variables.css（加载于本文件之前）。
    站点自定义 UI 组件已拆至 components.css（加载于其后）。
+   结合 sindresorhus/github-markdown-css 观感：
+   https://github.com/sindresorhus/github-markdown-css
    ============================================================================ */
 
 /* ============================================================================
@@ -179,15 +180,12 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
    ============================================================================ */
 .md-typeset {
   font-size: 16px;
-  /* 覆盖 Material 正文文字颜色变量为 GitHub 前景色（亮色 #1f2328 深黑、
-     暗色 #f0f6fc 近白），使正文比 Material 默认的 rgba(0,0,0,0.87) 更黑、更贴近 GitHub */
   --md-typeset-color: var(--fgColor-default);
   color: var(--fgColor-default);
   background-color: var(--bgColor-default);
   font-weight: var(--base-text-weight-normal, 400);
   line-height: 1.5;
   word-wrap: break-word;
-  /* 对齐 GitHub：取消 Material 的负字间距和连字特性 */
   letter-spacing: normal;
   font-feature-settings: normal;
   -webkit-font-smoothing: auto;
@@ -311,7 +309,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 .md-typeset table:not(.ContributionCalendar-grid) td {
   padding: 6px 13px;
   border: 1px solid var(--borderColor-default);
-  overflow-wrap: anywhere;   /* 长内容断行，避免撑破 max-width */
+  overflow-wrap: anywhere;
 }
 .md-typeset table:not(.ContributionCalendar-grid) tr {
   background-color: var(--bgColor-default);
@@ -403,9 +401,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   margin-bottom: var(--base-size-16, 1rem);
   padding: var(--base-size-16, 1rem);
   overflow: auto;
-  /* 对齐 github-markdown-css：pre 实际字号 = 85% × 16px 正文 = 13.6px。
-     用固定值而非 85%，避免 pre 嵌套在 Material 的 details/admonition
-     （字号被缩小）时相对再缩而失真。 */
   font-size: 13.6px;
   line-height: 1.45;
   color: var(--fgColor-default);
@@ -414,11 +409,8 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 .md-typeset pre > code {
   font-size: inherit;
   line-height: 1.6;
-  /* 覆盖 Material 给 code 的浅色（#36464e），让代码块默认文字用 GitHub 深黑 */
   color: var(--fgColor-default);
 }
-/* GitHub 风格：代码块不描边。行号已由 highlight.js 的独立 gutter 列渲染
-   （圆角由 components.css 统一置 0，这里不再写 border-radius）。 */
 .md-typeset .highlight pre {
   border: 0;
   padding: var(--base-size-16, 16px);
@@ -497,7 +489,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   margin-bottom: var(--base-size-16, 1rem);
   letter-spacing: normal;
 }
-/* 引用内首尾元素去掉多余外边距 */
 .md-typeset blockquote > :first-child {
   margin-top: 0;
 }
