@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  window.bfyes = window.bfyes || {};
+  window.site = window.site || {};
 
   // Home typewriter
   var typewriterTimers = [];
@@ -329,8 +329,8 @@
     }
 
     function bindTerminalKeys() {
-      if (document.__bfyesKeysBound) return;
-      document.__bfyesKeysBound = true;
+      if (document.__keysBound) return;
+      document.__keysBound = true;
       document.addEventListener("click", function (e) {
         var link = e.target && e.target.closest ? e.target.closest(".home-terminal-link") : null;
         if (!link) return;
@@ -376,5 +376,5 @@
     start();
   }
 
-  window.bfyes.onPageReady(startHomeTypewriter);
+  window.site.onPageReady(startHomeTypewriter);
 })();

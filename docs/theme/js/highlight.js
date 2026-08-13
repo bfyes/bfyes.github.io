@@ -4,7 +4,7 @@
  * 背景：全局改用 highlight.js 取代 Pygments 构建时高亮，分词语义与 GitHub/VS Code
  * 一致（asm 的 mov 等助记符归到 keyword），用官方 github 明暗两套配色复刻 GitHub 观感。
  *
- * - theme 切换：复用 theme-sync.js 暴露的 window.bfyes.theme，切换 github / github-dark。
+ * - theme 切换：复用 theme-sync.js 暴露的 window.site.theme，切换 github / github-dark。
  * - 页面导航：订阅 document$，在每次（含 instant 无刷新）渲染完成后重新高亮。
  * - 行号：轻量实现——高亮后把每个 <code> 按换行拆成 <span class="bfy-line"> 块，
  *   行号用 CSS counter 渲染（::before），不拆表格、不污染复制文本。
@@ -15,7 +15,7 @@
   var hljsLib = window.hljs;
   if (!hljsLib) return;
 
-  var STYLE_ID = "bfyes-hljs-theme";
+  var STYLE_ID = "hljs-theme";
   var DARK_URL = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
   var LIGHT_URL = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
 
@@ -48,7 +48,7 @@
     root = root || document;
     var blocks = root.querySelectorAll("pre code[class*='language-'], pre code.highlight");
     blocks.forEach(function (el) {
-      if (el.dataset.bfyesHljs === "1") return; // 已高亮则跳过，避免 instant 导航重复
+      if (el.dataset.hljsDone === "1") return; // 已高亮则跳过，避免 instant 导航重复
       // 汇编语言重映射：pymdownx 的 ```asm 生成 language-asm，
       // 而 hljs 里 x86 汇编注册名是 x86asm（Intel 语法）。
       if (el.classList && el.classList.contains("language-asm")) {
@@ -56,51 +56,51 @@
         el.classList.add("language-x86asm");
       }
       hljsLib.highlightElement(el);
-      el.dataset.bfyesHljs = "1";
+      el.dataset.hljsDone = "1";
       addGutter(el); // 不破坏高亮：在 <code> 旁加独立行号列，绝不改动 code 内部
     });
   }
 
   /**
-   * 在 code 前插入独立的行号列 .bfy-gutter（与 code 用 flex 并排）。
+   * 在 code 前插入独立的行号列 .code-gutter（与 code 用 flex 并排）。
    * 完全不修改 code 内部的 hljs span，因此绝不破坏高亮。
    */
   function addGutter(code) {
-    if (code.dataset.bfyesGutter === "1") return;
+    if (code.dataset.gutterDone === "1") return;
     var pre = code.parentElement;
     if (!pre) return;
     var source = code.textContent;
     var lineCount = source.endsWith("\n") ? source.split("\n").length - 1 : source.split("\n").length;
     var gutter = document.createElement("div");
-    gutter.className = "bfy-gutter";
+    gutter.className = "code-gutter";
     // Safari can round the line boxes of sibling flex items differently. Derive
     // the height from the code content's final layout instead of an em value.
     var computed = getComputedStyle(code);
     var verticalPadding = parseFloat(computed.paddingTop) + parseFloat(computed.paddingBottom);
     var lineHeight = (code.getBoundingClientRect().height - verticalPadding) / lineCount;
     if (Number.isFinite(lineHeight)) {
-      gutter.style.setProperty("--bfy-code-line-height", lineHeight + "px");
+      gutter.style.setProperty("--code-line-height", lineHeight + "px");
     }
     for (var i = 1; i <= lineCount; i++) {
       var s = document.createElement("span");
-      s.className = "bfy-ln";
+      s.className = "code-ln";
       s.textContent = String(i);
       gutter.appendChild(s);
     }
     pre.insertBefore(gutter, code);
-    code.dataset.bfyesGutter = "1";
+    code.dataset.gutterDone = "1";
   }
 
   function currentMode() {
-    if (window.bfyes && window.bfyes.theme && window.bfyes.theme.mode) {
-      return window.bfyes.theme.mode; // 'light' | 'dark'
+    if (window.site && window.site.theme && window.site.theme.mode) {
+      return window.site.theme.mode; // 'light' | 'dark'
     }
     return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   }
 
   // 主题切换：复用 theme-sync.js 的 subscribe（立即回调一次当前 mode）
-  if (window.bfyes && window.bfyes.theme && window.bfyes.theme.subscribe) {
-    window.bfyes.theme.subscribe(applyTheme);
+  if (window.site && window.site.theme && window.site.theme.subscribe) {
+    window.site.theme.subscribe(applyTheme);
   }
 
   // 与 MathJax 一样，document$ 同时覆盖首次页面完成与 instant 无刷新导航。

@@ -26,36 +26,40 @@
 
 /* ============================================================================
    01. Markdown 扩展组件
+   ----------------------------------------------------------------------------
+   标题自动编号（section-counter / subsection-counter / subsubsection-counter），
+   GitHub 风格 permalink 书签（SVG 背景图，悬停显示），
+   Tabbed 折叠组件间距修复，admonition/details 提示块（透明背景 + 渐变标题栏）。
    ============================================================================ */
 
 /* ---- 标题编号与 GitHub 风格 permalink ----
    使用站点专用 counter 名称，避免和主题或第三方组件的 counter 冲突。 */
-.md-content__inner { counter-reset: bfyes-section; }
+.md-content__inner { counter-reset: section-counter; }
 .md-content__inner h2 {
-  counter-increment: bfyes-section;
-  counter-reset: bfyes-subsection;
+  counter-increment: section-counter;
+  counter-reset: subsection-counter;
 }
 .md-content__inner h2::before {
-  content: counter(bfyes-section);
+  content: counter(section-counter);
   color: var(--fgColor-default);
   font-weight: 700;
   margin-right: 0.6em;   /* 编号与标题文字之间留出明显间隙 */
 }
 .md-content__inner h3 {
-  counter-increment: bfyes-subsection;
-  counter-reset: bfyes-subsubsection;
+  counter-increment: subsection-counter;
+  counter-reset: subsubsection-counter;
 }
 .md-content__inner h3::before {
-  content: counter(bfyes-section) "." counter(bfyes-subsection);
+  content: counter(section-counter) "." counter(subsection-counter);
   color: var(--fgColor-default);
   font-weight: 700;
   margin-right: 0.6em;
 }
 .md-content__inner h4 {
-  counter-increment: bfyes-subsubsection;
+  counter-increment: subsubsection-counter;
 }
 .md-content__inner h4::before {
-  content: counter(bfyes-section) "." counter(bfyes-subsection) "." counter(bfyes-subsubsection);
+  content: counter(section-counter) "." counter(subsection-counter) "." counter(subsubsection-counter);
   color: var(--fgColor-default);
   font-weight: 700;
   margin-right: 0.6em;
@@ -127,12 +131,12 @@
    标题保留类型色，正文区域透明，贴近 Material 默认文档页的提示块风格。 */
 .md-typeset .admonition,
 .md-typeset details {
-  --bfyes-admonition-color: #2563eb;
-  --bfyes-admonition-accent: #06b6d4;
-  --bfyes-admonition-spectrum: #22c55e;
+  --admonition-color: #2563eb;
+  --admonition-accent: #06b6d4;
+  --admonition-spectrum: #22c55e;
   background-color: transparent !important;
   border: 1px solid var(--borderColor-muted);
-  border: 1px solid color-mix(in srgb, var(--bfyes-admonition-color) 36%, var(--borderColor-muted));
+  border: 1px solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
   border-radius: 6px;
   box-shadow: none;
   font-size: 13.6px;
@@ -141,75 +145,75 @@
 }
 .md-typeset .admonition.note,
 .md-typeset details.note {
-  --bfyes-admonition-color: #2563eb;
-  --bfyes-admonition-accent: #06b6d4;
-  --bfyes-admonition-spectrum: #22c55e;
+  --admonition-color: #2563eb;
+  --admonition-accent: #06b6d4;
+  --admonition-spectrum: #22c55e;
 }
 .md-typeset .admonition.abstract,
 .md-typeset details.abstract {
-  --bfyes-admonition-color: #7c3aed;
-  --bfyes-admonition-accent: #2563eb;
-  --bfyes-admonition-spectrum: #06b6d4;
+  --admonition-color: #7c3aed;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
 }
 .md-typeset .admonition.info,
 .md-typeset details.info {
-  --bfyes-admonition-color: #2563eb;
-  --bfyes-admonition-accent: #06b6d4;
-  --bfyes-admonition-spectrum: #22c55e;
+  --admonition-color: #2563eb;
+  --admonition-accent: #06b6d4;
+  --admonition-spectrum: #22c55e;
 }
 .md-typeset .admonition.tip,
 .md-typeset details.tip {
-  --bfyes-admonition-color: #06b6d4;
-  --bfyes-admonition-accent: #22c55e;
-  --bfyes-admonition-spectrum: #facc15;
+  --admonition-color: #06b6d4;
+  --admonition-accent: #22c55e;
+  --admonition-spectrum: #facc15;
 }
 .md-typeset .admonition.success,
 .md-typeset details.success {
-  --bfyes-admonition-color: #16a34a;
-  --bfyes-admonition-accent: #eab308;
-  --bfyes-admonition-spectrum: #f97316;
+  --admonition-color: #16a34a;
+  --admonition-accent: #eab308;
+  --admonition-spectrum: #f97316;
 }
 .md-typeset .admonition.question,
 .md-typeset details.question {
-  --bfyes-admonition-color: #7c3aed;
-  --bfyes-admonition-accent: #2563eb;
-  --bfyes-admonition-spectrum: #06b6d4;
+  --admonition-color: #7c3aed;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
 }
 .md-typeset .admonition.warning,
 .md-typeset details.warning {
-  --bfyes-admonition-color: #eab308;
-  --bfyes-admonition-accent: #f97316;
-  --bfyes-admonition-spectrum: #dc2626;
+  --admonition-color: #eab308;
+  --admonition-accent: #f97316;
+  --admonition-spectrum: #dc2626;
 }
 .md-typeset .admonition.failure,
 .md-typeset details.failure {
-  --bfyes-admonition-color: #dc2626;
-  --bfyes-admonition-accent: #d946ef;
-  --bfyes-admonition-spectrum: #7c3aed;
+  --admonition-color: #dc2626;
+  --admonition-accent: #d946ef;
+  --admonition-spectrum: #7c3aed;
 }
 .md-typeset .admonition.danger,
 .md-typeset details.danger {
-  --bfyes-admonition-color: #b91c1c;
-  --bfyes-admonition-accent: #f97316;
-  --bfyes-admonition-spectrum: #dc2626;
+  --admonition-color: #b91c1c;
+  --admonition-accent: #f97316;
+  --admonition-spectrum: #dc2626;
 }
 .md-typeset .admonition.bug,
 .md-typeset details.bug {
-  --bfyes-admonition-color: #d946ef;
-  --bfyes-admonition-accent: #7c3aed;
-  --bfyes-admonition-spectrum: #2563eb;
+  --admonition-color: #d946ef;
+  --admonition-accent: #7c3aed;
+  --admonition-spectrum: #2563eb;
 }
 .md-typeset .admonition.example,
 .md-typeset details.example {
-  --bfyes-admonition-color: #7c3aed;
-  --bfyes-admonition-accent: #2563eb;
-  --bfyes-admonition-spectrum: #06b6d4;
+  --admonition-color: #7c3aed;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
 }
 .md-typeset .admonition.quote,
 .md-typeset details.quote {
-  --bfyes-admonition-color: #475569;
-  --bfyes-admonition-accent: #2563eb;
-  --bfyes-admonition-spectrum: #06b6d4;
+  --admonition-color: #475569;
+  --admonition-accent: #2563eb;
+  --admonition-spectrum: #06b6d4;
 }
 .md-typeset .admonition-title,
 .md-typeset summary {
@@ -220,14 +224,14 @@
   background:
     linear-gradient(
       105deg,
-      color-mix(in srgb, var(--bfyes-admonition-color) 12%, transparent),
-      color-mix(in srgb, var(--bfyes-admonition-color) 11%, transparent) 50%,
-      color-mix(in srgb, var(--bfyes-admonition-accent) 10%, transparent) 70%,
-      color-mix(in srgb, var(--bfyes-admonition-spectrum) 7%, transparent) 86%,
+      color-mix(in srgb, var(--admonition-color) 12%, transparent),
+      color-mix(in srgb, var(--admonition-color) 11%, transparent) 50%,
+      color-mix(in srgb, var(--admonition-accent) 10%, transparent) 70%,
+      color-mix(in srgb, var(--admonition-spectrum) 7%, transparent) 86%,
       transparent
     );
   border-bottom: 1px solid var(--borderColor-muted);
-  border-bottom: 1px solid color-mix(in srgb, var(--bfyes-admonition-color) 28%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--admonition-color) 28%, transparent);
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   color: var(--fgColor-default);
@@ -247,13 +251,13 @@
 }
 .md-typeset .admonition-title::before,
 .md-typeset summary::before {
-  background-color: var(--bfyes-admonition-color) !important;
+  background-color: var(--admonition-color) !important;
   top: 50%;
   transform: translateY(-50%);
 }
 .md-typeset .admonition-title::after,
 .md-typeset summary::after {
-  color: var(--bfyes-admonition-color) !important;
+  color: var(--admonition-color) !important;
 }
 [dir="ltr"] .md-typeset .admonition-title::before,
 [dir="ltr"] .md-typeset summary::before {
@@ -291,6 +295,10 @@
 
 /* ============================================================================
    02. GitHub 贡献图
+   ----------------------------------------------------------------------------
+   .ghc-* / .ContributionCalendar-* 静态贡献日历组件。
+   数据由 theme/js/site-github.js 从 theme/data/contributions.json 读取并渲染。
+   亮/暗模式各有 5 级颜色（data-level="0"~"4"），与 GitHub 官方配色一致。
    ============================================================================ */
 
 .github-calendar-wrap {
@@ -516,6 +524,14 @@
 
 /* ============================================================================
    03. 站点框架组件
+   ----------------------------------------------------------------------------
+   左上角 Logo、页面信息（更新时间 / 字数 / 星标），
+   底层虚线网格背景（SVG stroke-dasharray + mask 视差），
+   正文区域 .md-content（z-index: 1 遮盖网格），
+   顶部导航栏毛玻璃效果，导航选中态，右侧 TOC 阅读进度，
+   页面整体宽度 .md-grid（max-width: 65rem），
+   滚动条样式（sidebar + 代码块共用半透明灰色），
+   highlight.js 行号列 .code-gutter（flex 并排，不破坏高亮）。
    ============================================================================ */
 
 /* ---- 左上角 BillFeng Logo ---- */
@@ -596,43 +612,43 @@
    正文页只保留很轻的边缘纹理，避免干扰阅读。
 */
 [data-md-color-scheme="default"] body {
-  --bfyes-page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
+  --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
 }
 
 [data-md-color-scheme="slate"] body {
-  --bfyes-page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
+  --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
 }
 
 body::before {
-  --bfyes-grid-clear-half: 22rem;
-  --bfyes-grid-fade: 20rem;
+  --grid-clear-half: 22rem;
+  --grid-fade: 20rem;
   content: "";
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: var(--bfyes-page-grid);
-  background-position: 0 var(--bfyes-grid-y, 0);
+  background-image: var(--page-grid);
+  background-position: 0 var(--grid-y, 0);
   background-size: 80px 80px;
   opacity: 1;
   mask-image: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 1) calc(50% - var(--bfyes-grid-clear-half) - var(--bfyes-grid-fade)),
-    transparent calc(50% - var(--bfyes-grid-clear-half)),
-    transparent calc(50% + var(--bfyes-grid-clear-half)),
-    rgba(0, 0, 0, 1) calc(50% + var(--bfyes-grid-clear-half) + var(--bfyes-grid-fade))
+    rgba(0, 0, 0, 1) calc(50% - var(--grid-clear-half) - var(--grid-fade)),
+    transparent calc(50% - var(--grid-clear-half)),
+    transparent calc(50% + var(--grid-clear-half)),
+    rgba(0, 0, 0, 1) calc(50% + var(--grid-clear-half) + var(--grid-fade))
   );
   -webkit-mask-image: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 1) calc(50% - var(--bfyes-grid-clear-half) - var(--bfyes-grid-fade)),
-    transparent calc(50% - var(--bfyes-grid-clear-half)),
-    transparent calc(50% + var(--bfyes-grid-clear-half)),
-    rgba(0, 0, 0, 1) calc(50% + var(--bfyes-grid-clear-half) + var(--bfyes-grid-fade))
+    rgba(0, 0, 0, 1) calc(50% - var(--grid-clear-half) - var(--grid-fade)),
+    transparent calc(50% - var(--grid-clear-half)),
+    transparent calc(50% + var(--grid-clear-half)),
+    rgba(0, 0, 0, 1) calc(50% + var(--grid-clear-half) + var(--grid-fade))
   );
 }
 
-body.bfyes-home-page::before,
-body.bfyes-rainbow-page::before {
+body.home-active::before,
+body.rainbow-active::before {
   content: none;
 }
 
@@ -650,7 +666,7 @@ body.bfyes-rainbow-page::before {
 }
 
 /* 主页外层已经按 65rem 对齐，不再额外扣除正文内边距。 */
-body.bfyes-home-page .md-content__inner {
+body.home-active .md-content__inner {
   padding-inline: 0;
 }
 
@@ -660,12 +676,16 @@ body.bfyes-home-page .md-content__inner {
   background-color: #ffffff;
 }
 
-/* 顶部导航栏毛玻璃效果 */
+/* 顶部导航栏毛玻璃效果（与首页面板统一基准颜色和透明度） */
 .md-header,
 .md-tabs {
-  background-color: rgba(255, 255, 255, 0.72);
+  background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: rgba(13, 17, 23, 0.8) !important;
 }
 
 .md-header {
@@ -683,31 +703,28 @@ body.bfyes-home-page .md-content__inner {
 
 /* ---- 导航选中态 ---- */
 [data-md-color-scheme="default"] {
-  --bfyes-active-nav-bg: #f5fbff;
-  --bfyes-active-nav-border: #0969da;
+  --active-nav-bg: #f5fbff;
+  --active-nav-border: #0969da;
 }
 
 [data-md-color-scheme="slate"] {
-  --bfyes-active-nav-bg: color-mix(in srgb, var(--md-accent-fg-color) 8%, var(--md-default-bg-color));
-  --bfyes-active-nav-border: #4493f8;
+  --active-nav-bg: color-mix(in srgb, var(--md-accent-fg-color) 8%, var(--md-default-bg-color));
+  --active-nav-border: #4493f8;
 }
 
 .md-sidebar--primary .md-nav__link--active,
 .md-sidebar--primary .md-nav__item--active > .md-nav__container {
   border-radius: 6px;
-  background: var(--bfyes-active-nav-bg);
-  background-color: var(--bfyes-active-nav-bg);
-  box-shadow: inset 0 0 0 1px var(--bfyes-active-nav-border);
+  background-color: var(--active-nav-bg);
+  box-shadow: inset 0 0 0 1px var(--active-nav-border);
   color: var(--md-accent-fg-color);
 }
 
 .md-sidebar--primary .md-nav__item--active > .md-nav__link--active {
-  background: var(--bfyes-active-nav-bg);
-  background-color: var(--bfyes-active-nav-bg);
+  background-color: var(--active-nav-bg);
 }
 
 .md-sidebar--primary .md-nav__item--active > .md-nav__container > .md-nav__link {
-  background: transparent;
   background-color: transparent;
   box-shadow: none;
   color: inherit;
@@ -744,17 +761,17 @@ body.bfyes-home-page .md-content__inner {
    目录、右侧 TOC 与代码块共用低对比度的半透明灰色滚动条。代码区额外留出
    底部空间，避免横向滚动条覆盖最后一行代码（特别是在使用覆盖式滚动条时）。 */
 :root {
-  --bfy-scrollbar-thumb: rgba(107, 114, 128, 0.42);
-  --bfy-scrollbar-thumb-hover: rgba(75, 85, 99, 0.58);
+  --scrollbar-thumb-thumb: rgba(107, 114, 128, 0.42);
+  --scrollbar-thumb-thumb-hover: rgba(75, 85, 99, 0.58);
 }
 [data-md-color-scheme="slate"] {
-  --bfy-scrollbar-thumb: rgba(156, 163, 175, 0.38);
-  --bfy-scrollbar-thumb-hover: rgba(209, 213, 219, 0.52);
+  --scrollbar-thumb-thumb: rgba(156, 163, 175, 0.38);
+  --scrollbar-thumb-thumb-hover: rgba(209, 213, 219, 0.52);
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner),
 .md-typeset :is(pre.highlight, pre[class*="language-"]) code {
   scrollbar-width: thin;
-  scrollbar-color: var(--bfy-scrollbar-thumb) transparent;
+  scrollbar-color: var(--scrollbar-thumb-thumb) transparent;
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar,
 .md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar {
@@ -767,33 +784,33 @@ body.bfyes-home-page .md-content__inner {
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-thumb,
 .md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-thumb {
-  background-color: var(--bfy-scrollbar-thumb);
+  background-color: var(--scrollbar-thumb-thumb);
   border: 2px solid transparent;
   border-radius: 999px;
   background-clip: padding-box;
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-thumb:hover,
 .md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-thumb:hover {
-  background-color: var(--bfy-scrollbar-thumb-hover);
+  background-color: var(--scrollbar-thumb-thumb-hover);
 }
 /* Material 在侧栏悬停/聚焦时会改回主题强调色；这里保持灰色。 */
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within) {
-  scrollbar-color: var(--bfy-scrollbar-thumb) transparent;
+  scrollbar-color: var(--scrollbar-thumb-thumb) transparent;
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within)::-webkit-scrollbar-thumb {
-  background-color: var(--bfy-scrollbar-thumb);
+  background-color: var(--scrollbar-thumb-thumb);
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within)::-webkit-scrollbar-thumb:hover {
-  background-color: var(--bfy-scrollbar-thumb-hover);
+  background-color: var(--scrollbar-thumb-thumb-hover);
 }
 
 /* ---- highlight.js 运行时行号（不破坏高亮） ----
    每个 <code> 由 theme/js/highlight.js 在 <pre> 内 <code> 前插入独立的
-   .bfy-gutter 行号列，与 <code> 用 flex 并排。不修改 <code> 内部的高亮
+   .code-gutter 行号列，与 <code> 用 flex 并排。不修改 <code> 内部的高亮
    span，因此绝不破坏高亮。行号样式对齐线上正式版：灰字、等宽、右对齐、
    右侧分隔竖线、不可选中。 */
 .md-typeset :is(pre.highlight, pre[class*="language-"]) {
-  --bfy-code-scrollbar-offset: 0.4rem;
+  --code-scrollbar-offset: 0.4rem;
   display: flex;
   align-items: stretch;
   overflow: hidden;           /* 外框不滚，防止 gutter 与 code 双滚动 */
@@ -804,10 +821,10 @@ body.bfyes-home-page .md-content__inner {
   display: block;
   line-height: 1.45;          /* 明确锁定，与行号列使用同一行盒高度 */
   overflow-x: auto;           /* 代码超长时在 code 内部横向滚动，gutter 固定不动 */
-  padding-bottom: var(--bfy-code-scrollbar-offset); /* 给滚动条上移留位 */
-  margin-bottom: calc(-1 * var(--bfy-code-scrollbar-offset)); /* 不撑高外层代码块 */
+  padding-bottom: var(--code-scrollbar-offset); /* 给滚动条上移留位 */
+  margin-bottom: calc(-1 * var(--code-scrollbar-offset)); /* 不撑高外层代码块 */
 }
-.md-typeset .bfy-gutter {
+.md-typeset .code-gutter {
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
@@ -823,13 +840,13 @@ body.bfyes-home-page .md-content__inner {
   line-height: 1.45;
   white-space: nowrap;
 }
-.md-typeset .bfy-gutter .bfy-ln {
+.md-typeset .code-gutter .code-ln {
   display: block;
-  height: var(--bfy-code-line-height, 1.45em);
-  line-height: var(--bfy-code-line-height, 1.45);
+  height: var(--code-line-height, 1.45em);
+  line-height: var(--code-line-height, 1.45);
 }
 @media screen and (max-width: 44.984375em) {
-  .md-typeset .bfy-gutter {
+  .md-typeset .code-gutter {
     padding-right: 0.5em;
     margin-right: 0.6em;
   }
@@ -856,6 +873,10 @@ body.bfyes-home-page .md-content__inner {
 
 /* ============================================================================
    04. PDF 阅读器
+   ----------------------------------------------------------------------------
+   .pdf-viewer-* / 下载进度 + 原生 PDF 查看器 + iOS/iPadOS 画布降级。
+   工具栏 sticky 置顶，加载覆盖层带进度条和百分比，
+   暗色模式背景跟随 --md-default-bg-color / --md-code-bg-color。
    ============================================================================ */
 
 /* ---- 查看器外壳 ---- */
@@ -1034,7 +1055,7 @@ body.bfyes-home-page .md-content__inner {
   padding: 0 0.75rem;
   border: 1px solid var(--md-accent-fg-color);
   border-radius: 6px;
-  background: var(--bfyes-active-nav-bg, #f5fbff);
+  background: var(--active-nav-bg, #f5fbff);
   color: var(--md-accent-fg-color);
   font-size: 0.78rem;
   font-weight: 600;
@@ -1164,6 +1185,17 @@ body.bfyes-home-page .md-content__inner {
 
 /* ============================================================================
    05. 彩虹背景
+   ----------------------------------------------------------------------------
+   z 轴体系（从底到顶）：
+     z-index: -1   彩虹色斑（.rainbow-page::before/after, .rainbow-backdrop）
+                  position: fixed，铺满视口，在 .rainbow-page 层叠上下文内最底
+     z-index: 0    网格（body::before），仅在非彩虹页显示
+     auto          sidebar / .md-content（正常文档流）
+                  彩虹模式下 sidebar 背景设为 transparent（见下方规则）让彩虹透出；
+                  网格模式下 sidebar 保持不透明背景，网格被遮挡
+     z-index: 1    .md-content（position: relative），正文区域
+     z-index: 90   .md-tabs
+     z-index: 100  .md-header
    ============================================================================ */
 
 .rainbow-page {
@@ -1176,6 +1208,11 @@ body.bfyes-home-page .md-content__inner {
   position: relative;
   min-height: 100vh;
   isolation: isolate;
+}
+
+/* 彩虹模式下侧边栏背景透明，让彩虹透出 */
+body.rainbow-active .md-sidebar__inner {
+  background-color: transparent !important;
 }
 
 .rainbow-page::before,
@@ -1268,15 +1305,17 @@ body.bfyes-home-page .md-content__inner {
 
 /* ============================================================================
    06. 首页
+   ----------------------------------------------------------------------------
+   .home-* 首页分区、卡片、日志、友链、活动区。
+   面板用半透明背景 + backdrop-filter 毛玻璃，暗色模式面板透明度更低。
+   友链卡片悬停上浮 + 边框高亮，头像圆形裁剪。
    ============================================================================ */
 
 .home-page {
   --home-border: #ccd6d8;
   --home-muted: var(--md-default-fg-color--light);
   --home-softer: var(--md-default-fg-color--lighter);
-  --home-panel: rgba(255, 255, 255, 0.84);
-  --home-panel: color-mix(in srgb, var(--md-default-bg-color) 84%, #ffffff 16%);
-  --home-card-bg: rgba(255, 255, 255, 0.58);
+  --home-panel: rgba(255, 255, 255, 0.4);
   margin-top: 0.4rem;
 }
 
@@ -1470,6 +1509,10 @@ body.bfyes-home-page .md-content__inner {
 
 /* ============================================================================
    07. 首页终端
+   ----------------------------------------------------------------------------
+   .home-terminal-* / .typed-* 打字机组件。
+   终端窗口三色圆点 + 等宽字体屏幕，打字机效果由 theme/js/site-terminal.js 驱动。
+   亮色模式半透明浅灰背景，暗色模式跟随面板背景。
    ============================================================================ */
 
 .home-terminal {
@@ -1599,15 +1642,15 @@ body.bfyes-home-page .md-content__inner {
 }
 
 [data-md-color-scheme="default"] .home-terminal {
-  background: rgba(245, 245, 247, 0.94);
+  background: var(--home-panel);
 }
 
 [data-md-color-scheme="default"] .home-terminal__bar {
-  background: rgba(235, 235, 238, 0.94);
+  background: transparent;
 }
 
 [data-md-color-scheme="default"] .home-terminal__screen {
-  background: rgba(250, 250, 252, 0.94);
+  background: transparent;
 }
 
 [data-md-color-scheme="slate"] .home-terminal {
@@ -1626,7 +1669,6 @@ body.bfyes-home-page .md-content__inner {
 [data-md-color-scheme="slate"] .home-page {
   --home-panel: rgba(1, 4, 9, 0.4);
   --home-border: #383e42;
-  --home-card-bg: color-mix(in srgb, var(--md-default-bg-color) 76%, #111827 24%);
 }
 
 [data-md-color-scheme="slate"] .rainbow-page {
@@ -1640,6 +1682,11 @@ body.bfyes-home-page .md-content__inner {
 
 /* ============================================================================
    08. 响应式与动画收尾
+   ----------------------------------------------------------------------------
+   移动端布局（≤44.98rem）：隐藏 permalink、单列友链、去掉正文留白、
+   代码块横向滚动、终端字号调整。
+   prefers-reduced-motion: 彩虹动画停用。
+   keyframes: 彩虹色斑漂移动画（aurora / band-pass / beam-b / beam-c）。
    ============================================================================ */
 
 @media screen and (max-width: 44.984375em) {

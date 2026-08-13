@@ -92,7 +92,7 @@
     }
 
     function renderLastUpdated() {
-      var meta = window.__BFYES_PAGE_META__ || {};
+      var meta = window.__PAGE_META__ || {};
       var candidates = pageMetaCandidates();
       var data = null;
 
@@ -134,8 +134,8 @@
       setTimeout(renderPageInfo, 200);
     }
 
-    if (!window.__bfyesPageInfoReady) {
-      window.__bfyesPageInfoReady = true;
+    if (!window.__pageInfoReady) {
+      window.__pageInfoReady = true;
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", scheduleRenderPageInfo);
       } else {

@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  window.bfyes = window.bfyes || {};
-  var htmlEl = window.bfyes.htmlEl;
+  window.site = window.site || {};
+  var htmlEl = window.site.htmlEl;
   var activePdfViewers = [];
   var PDF_LOADING_NOTE = "可能较慢，必要时可开启代理";
   var PDF_SCRIPT_BASE = "https://unpkg.com/pdfjs-dist@4.0.379/build/";
@@ -396,5 +396,5 @@
     }
   }
 
-  window.bfyes.onPageReady(scanAndLoadPdfs);
+  window.site.onPageReady(scanAndLoadPdfs);
 })();
