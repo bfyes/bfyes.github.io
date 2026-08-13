@@ -514,12 +514,7 @@
   border: 0;
 }
 
-@media screen and (max-width: 44rem) {
-  .ghc-footer {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
+/* 贡献图 footer 在移动端改为纵向排列（见 08. 响应式） */
 
 /* ============================================================================
    03. 站点框架组件
@@ -684,14 +679,6 @@ body.home-active .md-typeset {
   background-color: var(--header-bg) !important;
 }
 
-.md-header {
-  z-index: 100;
-}
-
-.md-tabs {
-  z-index: 90;
-}
-
 /* 导航标签列表左侧增加内边距，与正文左侧对齐 */
 .md-tabs__list {
   padding-left: 0rem;
@@ -822,12 +809,7 @@ body.home-active .md-typeset {
   height: var(--code-line-height);
   line-height: var(--code-line-height);
 }
-@media screen and (max-width: 44.984375em) {
-  .md-typeset .code-gutter {
-    padding-right: 0.5em;
-    margin-right: 0.6em;
-  }
-}
+/* 代码行号列在移动端缩小间距（见 08. 响应式） */
 
 /* ---- highlight.js 与 Material 布局兼容 ----
    github.min.css 会给 .hljs 加自身背景与 padding，导致与 Material 的
@@ -1176,9 +1158,11 @@ body.home-active .md-typeset {
   isolation: isolate;
 }
 
-/* 彩虹模式下侧边栏背景透明，让彩虹透出 */
-body.rainbow-active .md-sidebar__inner {
-  background-color: transparent !important;
+/* 彩虹模式下侧边栏背景透明，让彩虹透出（仅桌面端 sidebar 展开时） */
+@media screen and (min-width: 76.1875em) {
+  body.rainbow-active .md-sidebar__inner {
+    background-color: transparent !important;
+  }
 }
 
 .rainbow-page::before,
@@ -1629,13 +1613,14 @@ body.rainbow-active .md-sidebar__inner {
 /* ============================================================================
    08. 响应式与动画收尾
    ----------------------------------------------------------------------------
-   移动端布局（≤44.98rem）：隐藏 permalink、单列友链、去掉正文留白、
-   代码块横向滚动、终端字号调整。
+   移动端布局（≤44.984375em）：隐藏 permalink、单列友链、去掉正文留白、
+   代码块横向滚动、行号列缩小间距、贡献图 footer 纵向、终端字号调整。
    prefers-reduced-motion: 彩虹动画停用。
    keyframes: 彩虹色斑漂移动画（aurora / band-pass / beam-b / beam-c）。
    ============================================================================ */
 
 @media screen and (max-width: 44.984375em) {
+  /* 移动端宽度有限，不显示左侧 permalink，也不保留左侧间距。 */
   .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
     display: none;
   }
@@ -1644,10 +1629,13 @@ body.rainbow-active .md-sidebar__inner {
     grid-template-columns: 1fr;
   }
 
+  /* 手机端宽度不够用，去掉正文左右留白以充分利用空间 */
   .md-content__inner {
-    padding-inline: 0;
+    padding-inline: var(--mobile-content-padding);
   }
 
+  /* 代码块与正文同宽：去掉 Material 的负 margin（避免 pre 撑出比正文宽），
+     让 pre 留在正文容器内与其左右对齐；超长时在 code 内横向滑动。 */
   .md-typeset pre.highlight,
   .md-typeset pre[class*="language-"] {
     margin-inline: 0;
@@ -1656,20 +1644,32 @@ body.rainbow-active .md-sidebar__inner {
     -webkit-overflow-scrolling: touch;
   }
 
+  /* 代码行号列缩小间距 */
+  .md-typeset .code-gutter {
+    padding-right: var(--mobile-code-gutter-padding-right);
+    margin-right: var(--mobile-code-gutter-margin-right);
+  }
+
+  /* 贡献图 footer 纵向排列 */
+  .ghc-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
   .home-section__head {
     align-items: flex-start;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: var(--mobile-section-head-gap);
   }
 
   .home-log {
     grid-template-columns: 1fr;
-    gap: 0.25rem;
+    gap: var(--mobile-log-gap);
   }
 
   .home-terminal__screen {
-    padding: 0.85rem 0.9rem 0.95rem;
-    font-size: 14px;
+    padding: var(--mobile-terminal-padding);
+    font-size: var(--mobile-terminal-font-size);
   }
 }
 
