@@ -684,14 +684,6 @@ body.home-active .md-typeset {
   background-color: var(--header-bg) !important;
 }
 
-.md-header {
-  z-index: 100;
-}
-
-.md-tabs {
-  z-index: 90;
-}
-
 /* 导航标签列表左侧增加内边距，与正文左侧对齐 */
 .md-tabs__list {
   padding-left: 0rem;
