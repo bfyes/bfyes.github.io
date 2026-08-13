@@ -89,7 +89,7 @@
         }
         document.documentElement.setAttribute("data-md-color-scheme", scheme);
         var hljsTheme = document.createElement("link");
-        hljsTheme.id = "bfyes-hljs-theme";
+        hljsTheme.id = "hljs-theme";
         hljsTheme.rel = "stylesheet";
         hljsTheme.href = scheme === "slate"
           ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
@@ -3559,7 +3559,7 @@ if (i &lt; N &amp;&amp; j &lt; N) {
     }
 
     function renderLastUpdated() {
-      var meta = window.__BFYES_PAGE_META__ || {};
+      var meta = window.__PAGE_META__ || {};
       var candidates = pageMetaCandidates();
       var data = null;
 
@@ -3601,8 +3601,8 @@ if (i &lt; N &amp;&amp; j &lt; N) {
       setTimeout(renderPageInfo, 200);
     }
 
-    if (!window.__bfyesPageInfoReady) {
-      window.__bfyesPageInfoReady = true;
+    if (!window.__pageInfoReady) {
+      window.__pageInfoReady = true;
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", scheduleRenderPageInfo);
       } else {
@@ -3624,11 +3624,11 @@ if (i &lt; N &amp;&amp; j &lt; N) {
 <script>
   // 让 giscus 首次加载和后续切换都跟随站点主题。
   (function () {
-    var SCRIPT_ID = "bfyes-giscus-client";
+    var SCRIPT_ID = "giscus-client";
     var FRAME_SEL = "iframe.giscus-frame";
 
     function currentMode() {
-      if (window.bfyes && window.bfyes.theme) return window.bfyes.theme.mode;
+      if (window.site && window.site.theme) return window.site.theme.mode;
       var htmlScheme = document.documentElement.getAttribute("data-md-color-scheme");
       var bodyScheme = document.body && document.body.getAttribute("data-md-color-scheme");
       return (htmlScheme || bodyScheme) === "slate" ? "dark" : "light";
@@ -3682,8 +3682,8 @@ if (i &lt; N &amp;&amp; j &lt; N) {
     }
 
     function bindThemeChanges() {
-      if (window.bfyes && window.bfyes.theme) {
-        window.bfyes.theme.subscribe(sync);
+      if (window.site && window.site.theme) {
+        window.site.theme.subscribe(sync);
         return;
       }
       if (typeof MutationObserver === "undefined") return;
@@ -3697,8 +3697,8 @@ if (i &lt; N &amp;&amp; j &lt; N) {
     // giscus 可能还来不及注册 message 监听而丢弃消息——这是"要刷新才同步"的根因。
     // 所以除了 DOM 出现时同步一次，还要在 iframe 真正 load 完成后按当前主题再补发一次。
     function watchFrame(iframe) {
-      if (iframe && !iframe.__bfyesThemeWatched) {
-        iframe.__bfyesThemeWatched = true;
+      if (iframe && !iframe.__themeWatched) {
+        iframe.__themeWatched = true;
         iframe.addEventListener("load", function () { sync(); });
         // 兜底：load 事件有时早已触发，用超时再补一次。
         setTimeout(function () { sync(); }, 1000);

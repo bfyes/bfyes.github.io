@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  // 核心：页面生命周期与共享工具。各功能模块通过 window.bfyes.onPageReady 注册。
-  window.bfyes = window.bfyes || {};
+  // 核心：页面生命周期与共享工具。各功能模块通过 window.site.onPageReady 注册。
+  window.site = window.site || {};
 
   function pageRoot() {
     return document.querySelector(".md-content__inner") || document.querySelector(".md-content") || document.body;
@@ -24,8 +24,8 @@
   // 点击标题书签后，浏览器可能保留链接焦点，使书签一直显示。
   // 失焦不影响锚点跳转；键盘 Tab 导航产生的 focus-visible 仍由 CSS 保留。
   function installHeaderlinkFocusFix() {
-    if (document.documentElement.dataset.bfyesHeaderlinkFocusFix) return;
-    document.documentElement.dataset.bfyesHeaderlinkFocusFix = "1";
+    if (document.documentElement.dataset.headerlinkFocusFix) return;
+    document.documentElement.dataset.headerlinkFocusFix = "1";
     document.addEventListener("click", function (event) {
       var link = event.target && event.target.closest
         ? event.target.closest(".headerlink")
@@ -81,8 +81,8 @@
     return node;
   }
 
-  window.bfyes.onPageReady = onPageReady;
-  window.bfyes.htmlEl = htmlEl;
+  window.site.onPageReady = onPageReady;
+  window.site.htmlEl = htmlEl;
 
   installHeaderlinkFocusFix();
   initPageLifecycle();

@@ -13,12 +13,11 @@
    05. GitHub 式正文排版
        .md-typeset 内标题、列表、表格、引用、链接、脚注等
    06. 代码块与代码相关 UI
-       代码块、行号（.bfy-gutter）、复制提示、行内代码
+       代码块、行号（.code-gutter）、复制提示、行内代码
 
    由原 main.css 拆分重构，并结合 sindresorhus/github-markdown-css 观感：
    https://github.com/sindresorhus/github-markdown-css
    站点自定义 UI 组件已拆至 components.css（加载于其后）。
-   原文件备份于 css/old_main.css.bak。
    ============================================================================ */
 
 /* ============================================================================
@@ -28,8 +27,15 @@
 
 /* 代码语法高亮已切换到 highlight.js（运行时，见 theme/js/highlight.js 与 zensical.toml），
    Pygments token 配色规则已移除。GitHub 配色由 highlight.js 的 github/github-dark 主题提供。 */
+
 /* ============================================================================
    03. 字体栈与站点基础
+   ----------------------------------------------------------------------------
+   导航标题用衬线，正文用 github-markdown-css 风格系统无衬线栈。
+   搜索面板在 Shadow DOM 中，通过 --md-text-font-family 变量穿透。
+   暗色模式全局背景统一 #0d1117（GitHub 暗色基准），
+   sidebar/content/footer/nav-title 保持不透明暗色背景。
+   等宽字体统一用于代码 / 键盘 / 终端。
    ============================================================================ */
 
 /* 顶部导航标题：衬线字体 */
@@ -66,14 +72,7 @@ body {
 [data-md-color-scheme="slate"] body {
   background-color: #0d1117 !important;
 }
-/* 顶部导航栏：半透明 + 毛玻璃 */
-[data-md-color-scheme="slate"] .md-header,
-[data-md-color-scheme="slate"] .md-tabs {
-  background-color: rgba(13, 17, 23, 0.72) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-}
-/* 其余区域保持不透明暗色背景 */
+/* 暗色模式：sidebar / content / footer / nav-title 保持不透明暗色背景 */
 [data-md-color-scheme="slate"] .md-sidebar__inner,
 [data-md-color-scheme="slate"] .md-content,
 [data-md-color-scheme="slate"] .md-footer,
@@ -90,7 +89,8 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 /* ============================================================================
    04. GitHub 主题变量
    ----------------------------------------------------------------------------
-   Material 主题色变量作用域到当前色彩方案；GitHub markdown 兼容变量作用域到 .md-typeset。
+   Material 主题色变量作用域到当前色彩方案；
+   GitHub markdown 兼容变量作用域到 .md-typeset。
    变量含义与 github-markdown-css 一致；通过 [data-md-color-scheme] 切换明暗。
    ============================================================================ */
 [data-md-color-scheme="default"] {
@@ -175,6 +175,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
    作用域到 .md-typeset，覆盖 Material 默认。
    正文字号对齐 GitHub 基准 16px，行高 1.5，间距变量 --base-size-* 同为 16px 系，
    使观感与 github-markdown-css 完全一致（不受站点 root 20px 放大影响）。
+   子段：标题 → 列表 → 表格 → 引用 → 分隔线 → 强调/删除线/上下标 → 键盘 → 链接
    ============================================================================ */
 .md-typeset {
   font-size: 16px;
@@ -389,6 +390,11 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 
 /* ============================================================================
    06. 代码块与代码相关 UI
+   ----------------------------------------------------------------------------
+   代码块对齐 github-markdown-css：13.6px 字号、GitHub 背景色、不描边。
+   行号由 highlight.js 运行时插入 .code-gutter 列（布局见 components.css）。
+   行内代码用 GitHub 风格浅底色胶囊。复制提示只保留文字。
+   行间距统一块级元素底边距为 1rem，嵌套列表保持 0。
    ============================================================================ */
 
 /* ---- 代码块（GitHub 风格 + 站点行号特性） ---- */

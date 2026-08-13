@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  window.bfyes = window.bfyes || {};
-  var htmlEl = window.bfyes.htmlEl;
+  window.site = window.site || {};
+  var htmlEl = window.site.htmlEl;
 
   var CONTRIBUTIONS_URL = "theme/data/contributions.json";
   var WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -242,5 +242,5 @@
       });
   }
 
-  window.bfyes.onPageReady(initGithubCalendar);
+  window.site.onPageReady(initGithubCalendar);
 })();
