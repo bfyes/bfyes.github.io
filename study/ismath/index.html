@@ -5389,7 +5389,7 @@ P[Y\le X] &amp;= \int_{-1}^0\int_{y^2}^1 \frac{5}{4}x\,\mathrm{d}x\,\mathrm{d}y 
       script.setAttribute("data-input-position", "bottom");
       script.setAttribute("data-theme", themeFor(currentMode()));
       script.setAttribute("data-lang", "zh-CN");
-      document.currentScript.parentNode.appendChild(script);
+      document.querySelector(".giscus").appendChild(script);
     }
 
     function bindThemeChanges() {
@@ -5435,15 +5435,22 @@ P[Y\le X] &amp;= \int_{-1}^0\int_{y^2}^1 \frac{5}{4}x\,\mathrm{d}x\,\mathrm{d}y 
       setTimeout(function () { obs.disconnect(); }, 8000);
     }
 
-    loadGiscus();
-    bindThemeChanges();
-    syncWhenFrameReady();
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", sync);
-    } else {
-      sync();
+    // 等页面完全准备好（DOM + 主题 + 布局）后再加载 Giscus，
+    // 避免 instant navigation 时容器宽度未确定导致 iframe 太窄。
+    function whenReady(fn) {
+      if (document.readyState === "complete") {
+        setTimeout(fn, 0);
+      } else {
+        window.addEventListener("load", fn);
+      }
     }
+
+    whenReady(function () {
+      loadGiscus();
+      bindThemeChanges();
+      syncWhenFrameReady();
+      sync();
+    });
   })();
 </script>
 
