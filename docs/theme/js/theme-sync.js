@@ -10,7 +10,7 @@
  * 但 giscus 用的是 data-theme="preferred_color_scheme"，只读一次系统偏好，
  * 切换站点主题后无法收到通知——这就是评论区明暗不同步、刷新也没用的根因。
  *
- * 本脚本对外暴露一个稳定的同步 API（见 window.bfyes.theme），供 site.js、
+ * 本脚本对外暴露一个稳定的同步 API（见 window.site.theme），供 site.js、
  * comments.html(giscus) 等订阅「当前主题」与「主题变更」。判定逻辑与
  * overrides/main.html 完全一致：(prefers-color-scheme) 时跟随系统，否则用已保存的 scheme。
  */
@@ -107,8 +107,8 @@
     observe();
   }
 
-  window.bfyes = window.bfyes || {};
-  window.bfyes.theme = {
+  window.site = window.site || {};
+  window.site.theme = {
     /** 'light' | 'dark' */
     get mode() { return currentMode(); },
     get scheme() { return resolveScheme(); },

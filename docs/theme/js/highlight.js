@@ -19,19 +19,6 @@
   var DARK_URL = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
   var LIGHT_URL = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
 
-  /** 预加载非当前主题的 CSS（用 preload 不阻塞渲染，切换时零延迟）。 */
-  function preloadAlternate(mode) {
-    var altUrl = mode === "dark" ? LIGHT_URL : DARK_URL;
-    var preloadId = "hljs-theme-preload";
-    if (document.getElementById(preloadId)) return;
-    var preload = document.createElement("link");
-    preload.id = preloadId;
-    preload.rel = "preload";
-    preload.as = "style";
-    preload.href = altUrl;
-    document.head.appendChild(preload);
-  }
-
   /** 根据 currentMode('light'/'dark') 应用对应 github 主题样式表。 */
   function applyTheme(mode) {
     var link = document.getElementById(STYLE_ID);
@@ -43,7 +30,6 @@
     }
     var url = mode === "dark" ? DARK_URL : LIGHT_URL;
     if (link.href !== url) link.href = url;
-    preloadAlternate(mode);
     return link;
   }
 
@@ -53,12 +39,7 @@
       callback();
       return;
     }
-    // CSS 没加载完，等 load 事件；如果 preload 已完成 load 不会再来，
-    // 用 document.fonts.ready 兜底（字体加载完时 CSS 一定也好了）
     link.addEventListener("load", callback, { once: true });
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(callback);
-    }
   }
 
   /** 高亮当前根内的所有代码块。 */

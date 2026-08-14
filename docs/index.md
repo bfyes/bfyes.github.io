@@ -44,22 +44,30 @@ body.bfyes-home-page .md-grid {
     </div>
     <div class="home-log-list">
       <div class="home-log">
+        <span class="home-log__date">2026.08.14</span>
+        <span>1. 更改 giscus 评论区加载机制。 2. 重构部分 css。 3. 修复已知问题。
+        </span>
+        <span class="home-log__date">2026.08.13</span>
+        <span>1. 公式渲染器 MathJax 升级。 2. 外观若干调整。 3. 移动端若干适配。
+        </span>
+      </div>
+      <div class="home-log">
         <span class="home-log__date">2026.08.12</span>
         <span>HPC lab2 主线任务报告。
         </span>
       </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.08</span>
-        <span>HPC 课堂笔记初步整理 (AIGC 0.98)。修复首页终端跳转路径叠加导致的 404。
+        <span>HPC 课堂笔记 (AIGC 0.98)。修复跳转路径叠加。
         </span>
       </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.06</span>
-        <span>CTF 报告部分暂时完结。HPC 课堂笔记初步整理 (AIGC 1.00)。</span>
+        <span>CTF 报告完结。</span>
       </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.04</span>
-        <span>没忍住又在折腾没用的东西，复刻 Github 的主题。大幅修改/拆分 css 文件，调教 AI 已红温，浪费了大量金钱最终没得到理想效果。最终由万能的 gpt 5.5 完成。</span>
+        <span>没忍住又在折腾没用的东西，复刻 Github 的主题。大幅修改/拆分 css 文件，最终由万能的 gpt 5.5 完成。</span>
       </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.01</span>

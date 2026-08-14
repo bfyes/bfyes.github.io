@@ -16,8 +16,8 @@ nav = [
         { "汇编语言设计与调试" = "study/asm.md" },
         { "计算机系统Ⅰ" = [
             "study/sys1/index.md",
-            { "lab0: 数字电路仿真" = "study/sys1/lab0/index.md" },
-            { "lab1: 八选一多路选择器" = "study/sys1/lab1/index.md" },
+            { "lab0: 环境准备" = "study/sys1/lab0/index.md" },
+            { "lab1: MUX/七段数码管" = "study/sys1/lab1/index.md" },
             { "lab2: 64位全加减法器" = "study/sys1/lab2/index.md" },
             { "lab3: 时序电路/FSM" = "study/sys1/lab3/index.md" },
             { "lab4: 卷积模块" = "study/sys1/lab4/index.md" },
@@ -105,6 +105,7 @@ nav = [
 ]
 
 extra_css = [
+    "theme/css/variables.css",
     "theme/css/main.css",
     "theme/css/components.css",
 ]
@@ -113,6 +114,14 @@ extra_javascript = [
     "theme/js/theme-sync.js",
     "theme/js/mathjax.js",
     "https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js",
+    # highlight.js 运行时语法高亮（用法与 MathJax 相同：直接引 CDN + theme/js/highlight.js 控制渲染）
+    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
+    # 不在 common 子集里、需单独加载的语言（均为 IIFE 自注册到 hljs）：
+    #   x86asm 汇编、cmake、http
+    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js",
+    "theme/js/highlight.js",
     "theme/js/site.js",
     "theme/js/site-home.js",
     "theme/js/site-terminal.js",
@@ -139,7 +148,6 @@ features = [
     "navigation.instant",
     "navigation.instant.prefetch",
     "navigation.instant.progress",
-    "navigation.path",
     "navigation.tabs",
     "navigation.top",
     "navigation.tracking",
@@ -173,6 +181,7 @@ toggle.name = "根据系统模式切换主题"
 [project.markdown_extensions.attr_list]
 [project.markdown_extensions.def_list]
 [project.markdown_extensions.md_in_html]
+[project.markdown_extensions.sane_lists]
 [project.markdown_extensions.tables]
 [project.markdown_extensions.pymdownx.tilde]
 smart_delete = false
@@ -192,10 +201,9 @@ emoji_generator = "zensical.extensions.emoji.to_svg"
 emoji_index = "zensical.extensions.emoji.twemoji"
 
 [project.markdown_extensions.pymdownx.highlight]
-anchor_linenums = true
+use_pygments = false
+# pygments_lang_class 仍用于给 <code> 加 language-xxx class，供 highlight.js 识别语言
 pygments_lang_class = true
-linenums = true
-linenums_style = "pymdownx-inline"
 
 [project.markdown_extensions.pymdownx.inlinehilite]
 [project.markdown_extensions.pymdownx.keys]

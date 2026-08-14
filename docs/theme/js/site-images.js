@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  window.bfyes = window.bfyes || {};
+  window.site = window.site || {};
 
   function previewUrl(src) {
     return src.replace(/\.(png|jpe?g)(\?|#|$)/i, ".preview.jpg$2");
@@ -44,8 +44,8 @@
     }
   }
 
-  window.bfyes.previewUrl = previewUrl;
-  window.bfyes.upgradeImages = upgradeImages;
+  window.site.previewUrl = previewUrl;
+  window.site.upgradeImages = upgradeImages;
 
-  window.bfyes.onPageReady(upgradeImages);
+  window.site.onPageReady(upgradeImages);
 })();
