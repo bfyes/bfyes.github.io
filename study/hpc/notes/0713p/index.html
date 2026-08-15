@@ -64,7 +64,9 @@
     
       <link rel="stylesheet" href="../../../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../../../theme/css/components.css">
+      <link rel="stylesheet" href="../../../../theme/css/theme.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/home.css">
     
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
@@ -73,8 +75,6 @@
     
     
   
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -3380,9 +3380,9 @@
 
 
 
-<h1 id="07-13-下午cuda-编程基础">07-13 下午：CUDA 编程基础<a class="headerlink" href="#07-13-下午cuda-编程基础" title="Permanent link">&para;</a></h1>
+<h1 id="07-13-下午cuda-编程基础">07-13 下午：CUDA 编程基础<a class="headerlink" href="#07-13-下午cuda-编程基础" title="Permanent link"></a></h1>
 <p>CUDA 把 CPU 称为 host，把 NVIDIA GPU 称为 device。host 负责组织数据和发射 kernel；device 上有大量线程执行同一段 kernel 代码。写 CUDA 的关键在于把问题拆成大量相似工作，让线程、数据和内存层级相匹配，而不是简单地把普通 C 循环搬到 GPU。</p>
-<h2 id="cuda-程序流程">CUDA 程序流程<a class="headerlink" href="#cuda-程序流程" title="Permanent link">&para;</a></h2>
+<h2 id="cuda-程序流程">CUDA 程序流程<a class="headerlink" href="#cuda-程序流程" title="Permanent link"></a></h2>
 <p>最小流程是：host 分配显存，把输入从主存复制到显存，发射 kernel，等待必要的同步，再把结果复制回主存并释放资源。</p>
 <pre class="highlight"><code class="language-cpp">float *d_x = nullptr, *d_y = nullptr;
 cudaMalloc(&amp;d_x, n * sizeof(float));
@@ -3400,7 +3400,7 @@ cudaFree(d_y);</code></pre>
 <p>host-device 拷贝走 PCIe/NVLink 等链路，代价通常远高于一次普通函数调用。若一个计算链由许多 kernel 组成，尽量让中间结果留在 GPU；每一步都复制回 CPU，往往会把 GPU 算力完全淹没在传输时间里。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/cuda-program-flow.jpg"><img width="1280" height="720" alt="课件给出一个完整的 vector add CUDA 程序：cudaMalloc 分配、cudaMemcpy 上传、kernel&lt;&lt;&lt;...&gt;&gt;&gt; 发射、cudaDeviceSynchronize 与回拷、cudaFree 释放，完整走一遍 host-device 生命周期。" src="../assets/0713p/cuda-program-flow.preview.jpg" data-fullsrc="../assets/0713p/cuda-program-flow.jpg" /></a></p>
 <p><em>图：CUDA 的最小流程——分配、上传、launch、同步/回拷、释放；中间结果应尽量留在 device。</em></p>
-<h2 id="gridblock-与-thread">Grid、Block 与 Thread<a class="headerlink" href="#gridblock-与-thread" title="Permanent link">&para;</a></h2>
+<h2 id="gridblock-与-thread">Grid、Block 与 Thread<a class="headerlink" href="#gridblock-与-thread" title="Permanent link"></a></h2>
 <p><code>__global__</code> 标记一个由 host 发射、在 GPU 上执行的 kernel。线程组织成 block，block 组织成 grid。三种内建索引给出线程位置：<code>threadIdx</code> 是 block 内坐标，<code>blockIdx</code> 是 block 坐标，<code>blockDim</code> 是 block 尺寸。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/hardware-vs-cuda-model.jpg"><img width="1280" height="720" alt="课件把硬件架构（SM、Streaming Multiprocessor、CUDA Core）与 CUDA 编程模型（Grid、Block、Thread）并列对照，说明硬件单元与逻辑层级不是一一对应的同一套东西。" src="../assets/0713p/hardware-vs-cuda-model.preview.jpg" data-fullsrc="../assets/0713p/hardware-vs-cuda-model.jpg" /></a></p>
 <p><em>图：SM 是硬件里的执行单元，Grid/Block/Thread 是程序里的逻辑组织；前者由硬件调度，后者由程序员用索引描述。</em></p>
@@ -3420,7 +3420,7 @@ cudaFree(d_y);</code></pre>
 <p>这样可以让 block 数按 SM 数量和每个 SM 的并发能力选择，而不是盲目创建极多 block。它还便于调试：把 grid 和 block 暂时设为 1，代码仍按同一索引逻辑串行覆盖全部元素。矩阵、张量的二维或三维情形也是同一原则，先确定一个线程或一个 tile 对应哪块输出，再写出到输入的索引关系。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/cuda-thread-mapping.png"><img width="991" height="482" alt="课件以矩阵相加为例，将二维 block/thread 坐标对应到输出矩阵的位置。" src="../assets/0713a/cuda-thread-mapping.preview.jpg" data-fullsrc="../assets/0713a/cuda-thread-mapping.png" /></a></p>
 <p><em>图：线程索引首先是一种数据划分方式，边界 block 必须保留范围检查。</em></p>
-<h2 id="sm-与-warp-执行">SM 与 Warp 执行<a class="headerlink" href="#sm-与-warp-执行" title="Permanent link">&para;</a></h2>
+<h2 id="sm-与-warp-执行">SM 与 Warp 执行<a class="headerlink" href="#sm-与-warp-执行" title="Permanent link"></a></h2>
 <p>GPU 由多个 SM（Streaming Multiprocessor）组成。block 被调度到某个 SM；同一 block 内线程可以协作。硬件实际以 32 个线程为一组的 warp 发射指令。一个 warp 的所有线程执行同一条指令，但每个 lane 使用不同数据（遇到分支发散时才分路径执行）。</p>
 <pre class="highlight"><code class="language-text">grid
  └── block 0, block 1, ...
@@ -3431,7 +3431,7 @@ cudaFree(d_y);</code></pre>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/warp-divergence.jpg"><img width="1280" height="720" alt="warp 遇到不同分支时，硬件先执行 path A（屏蔽另一半），再执行 path B，有效并行度下降。" src="../assets/0713p/warp-divergence.preview.jpg" data-fullsrc="../assets/0713p/warp-divergence.jpg" /></a></p>
 <p><em>图：<code>if (threadIdx.x &lt; 16) path_A(); else path_B();</code> 会让同一 warp 分两次跑，两边各只利用一半 lane。</em></p>
 <p>block 是可协作的边界。不同 block 的执行顺序不保证，也不能在普通 kernel 内做全局 barrier；若需要全局同步，通常拆成两个 kernel，或使用专门的协作组机制并满足其启动条件。</p>
-<h2 id="gpu-内存层级">GPU 内存层级<a class="headerlink" href="#gpu-内存层级" title="Permanent link">&para;</a></h2>
+<h2 id="gpu-内存层级">GPU 内存层级<a class="headerlink" href="#gpu-内存层级" title="Permanent link"></a></h2>
 <p>每种内存决定了可见范围、容量和速度：</p>
 <table>
 <thead>
@@ -3472,7 +3472,7 @@ tile[threadIdx.x] = x[global_i];
 __syncthreads();
 // 现在可安全读取同一 block 中其他线程写入的 tile</code></pre>
 <p><code>__syncthreads()</code> 必须由 block 中所有尚存活线程以一致方式到达；把它放在仅部分线程会进入的条件分支中，可能死锁。</p>
-<h2 id="合并访问和-bank-conflict">合并访问和 bank conflict<a class="headerlink" href="#合并访问和-bank-conflict" title="Permanent link">&para;</a></h2>
+<h2 id="合并访问和-bank-conflict">合并访问和 bank conflict<a class="headerlink" href="#合并访问和-bank-conflict" title="Permanent link"></a></h2>
 <p>global memory 的带宽很高，但前提是一个 warp 的线程访问规则地址。若 thread 0、1、2... 分别访问连续元素，硬件可把请求合并为少量内存事务，称为 coalesced access。若每个线程相隔很远、随机跳跃，事务数量增多，有效带宽下降。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/memory-coalescing.jpg"><img width="1280" height="720" alt="合并访问让一个 warp 的一次地址请求落进少量内存事务；strided 访问则拆成多个事务。" src="../assets/0713p/memory-coalescing.preview.jpg" data-fullsrc="../assets/0713p/memory-coalescing.jpg" /></a></p>
 <p><em>图：连续元素可被合并成极少的 32B sector 事务；一个 warp 跨大步长跳转时，会变成多个事务、搬更多无用字节。让 warp 内线程访问连续地址，是合并访问的核心。</em></p>
@@ -3487,7 +3487,7 @@ float x = input[row * width + col];</code></pre>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/smem-xor-swizzle.png"><img width="1280" height="720" alt="课件对比未 swizzle 与 128B XOR swizzle 两种布局：前者整行落到同一组 bank 上、触发 8-way conflict，后者把请求展开到全部 32 个 bank。" src="../assets/0713p/smem-xor-swizzle.preview.jpg" data-fullsrc="../assets/0713p/smem-xor-swizzle.png" /></a></p>
 <p><em>图：bank 编号由地址与行号异或得到后，同一 warp 的访问从 8 个 round 的冲突降到 1 个 round；代价只是多一条地址异或。</em></p>
 <p>swizzle 常用在 Tensor Core 的 shared memory tile 布局上，配合 TMA 等硬件搬运让数据以兼容格式落位。它不是银弹：只有在 profiler 证实 warp 因 bank 冲突停顿、且访存模式规则时才值得尝试；随机访问没有稳定模式可重新映射，压不住。</p>
-<h2 id="矩阵乘法与-tiling">矩阵乘法与 Tiling<a class="headerlink" href="#矩阵乘法与-tiling" title="Permanent link">&para;</a></h2>
+<h2 id="矩阵乘法与-tiling">矩阵乘法与 Tiling<a class="headerlink" href="#矩阵乘法与-tiling" title="Permanent link"></a></h2>
 <p>朴素矩阵乘法中，每个线程算一个 <code>C[row, col]</code>：</p>
 <div class="arithmatex">\[
 C_{row,col}=\sum_kA_{row,k}B_{k,col}
@@ -3505,7 +3505,7 @@ C_{row,col}=\sum_kA_{row,k}B_{k,col}
     __syncthreads()
 store(C_tile)</code></pre>
 <p>两次同步分别保护 tile 已全部装完和旧 tile 已无人使用这两个状态。若某些线程因为边界条件提前返回，其他线程再到达 <code>__syncthreads()</code> 就可能挂住；边界线程应参与同步，只把无效 load 填为零、无效 store 跳过。小矩阵时也要防止 block 太大：很多线程没有足够工作，会把启动和同步成本放大。</p>
-<h2 id="tensor-core-与矩阵乘加">Tensor Core 与矩阵乘加<a class="headerlink" href="#tensor-core-与矩阵乘加" title="Permanent link">&para;</a></h2>
+<h2 id="tensor-core-与矩阵乘加">Tensor Core 与矩阵乘加<a class="headerlink" href="#tensor-core-与矩阵乘加" title="Permanent link"></a></h2>
 <p>Tensor Core 面向小矩阵乘加，例如 <span class="arithmatex">\(D=A\times B+C\)</span>。它能以低精度输入（FP16、BF16、TF32、INT8 等，取决于架构）实现很高吞吐。WMMA、CUTLASS 和 cuBLAS 等接口把这类能力封装起来。</p>
 <p>使用 Tensor Core 不只是把普通 <code>float</code> 改成低精度：矩阵形状、对齐、布局和精度累加方式都有要求。深度学习常允许输入低精度、累加用更高精度；科学计算能否接受相应误差，必须由算法需求决定。先用 cuBLAS/cuBLASLt 或框架高层算子，只有需要专门 kernel 时再考虑 WMMA/CUTLASS。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/tensor-core-mma.jpg"><img width="1280" height="720" alt="Volta/Ampere 的 MMA 指令由一个 warp 协作完成一个小矩阵乘加；图中展示了矩阵元素如何分散在 32 个 lane 的寄存器 fragment 中。" src="../assets/0713p/tensor-core-mma.preview.jpg" data-fullsrc="../assets/0713p/tensor-core-mma.jpg" /></a></p>
@@ -3530,7 +3530,7 @@ store(C_tile)</code></pre>
 <p class="admonition-title">fragment 不是普通数组</p>
 <p>WMMA/CUTLASS 的 fragment 元素布局由架构和指令形状定义。不能假定 <code>frag[i]</code> 对应逻辑矩阵的第 <code>i</code> 个元素，也不能把它当作通用的行主序 tile 传给任意代码。需要逐元素后处理时，应使用相应接口或让库负责映射。</p>
 </div>
-<h2 id="kernel-启动stream-与异步">Kernel 启动、Stream 与异步<a class="headerlink" href="#kernel-启动stream-与异步" title="Permanent link">&para;</a></h2>
+<h2 id="kernel-启动stream-与异步">Kernel 启动、Stream 与异步<a class="headerlink" href="#kernel-启动stream-与异步" title="Permanent link"></a></h2>
 <p><code>kernel&lt;&lt;&lt;...&gt;&gt;&gt;()</code> 对 host 通常是异步的：CPU 发射后可继续做别的工作。普通计时若只包住发射语句，测到的只是启动开销，不是 GPU 执行时间。应使用 CUDA event，或在调试时显式同步：</p>
 <pre class="highlight"><code class="language-cpp">kernel&lt;&lt;&lt;blocks, threads&gt;&gt;&gt;(...);
 cudaError_t err = cudaGetLastError();
@@ -3539,34 +3539,34 @@ cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 
 <p>stream 是 GPU 的工作队列。不同 stream 中、没有依赖的传输和 kernel 有机会重叠；同一 stream 内保持顺序。真正的 overlap 需要硬件支持、足够独立的工作和正确的 pinned memory/事件依赖，不能只因为创建了多个 stream 就自动发生。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/cuda-runtime-async.jpg"><img width="1280" height="720" alt="课件展示 CUDA Runtime API 的执行路径：cudaMalloc/cudaMemcpy/kernel launch/cudaDeviceSynchronize/cudaFree 把 host、device 与异步 kernel 串成一条流水；kernel launch 默认异步，只有在同步或回拷边界才真正等待 GPU。" src="../assets/0713p/cuda-runtime-async.preview.jpg" data-fullsrc="../assets/0713p/cuda-runtime-async.jpg" /></a></p>
 <p><em>图：拷贝阻塞、上传/回拷会等待，kernel launch 默认异步；CPU 提交工作后继续运行，直到同步点才等待 GPU 完成。</em></p>
-<h3 id="数据传输与算子融合">数据传输与算子融合<a class="headerlink" href="#数据传输与算子融合" title="Permanent link">&para;</a></h3>
+<h3 id="数据传输与算子融合">数据传输与算子融合<a class="headerlink" href="#数据传输与算子融合" title="Permanent link"></a></h3>
 <p>把一个公式拆成许多小 kernel 很直观，例如先算线性层、再单独加 bias、再单独激活、再写出临时张量。但每个 kernel 都要从 global memory 读输入、写中间结果，后一个 kernel 又立刻把它读回来。若这些步骤之间没有其他使用者，把它们融合进同一 kernel，往往能省下多次显存往返和 launch 开销。</p>
 <p>融合也有边界。kernel 太大可能让寄存器数量上升、occupancy 下降，代码可维护性和数值检查也会变差；而 cuBLAS、cuDNN、FlashAttention 等库可能已经把常见模式做得很强。合理的顺序是先用 profiler 看中间张量搬运和小 kernel 是否真的占时，再比较框架已有的 fused 实现、库调用与自定义 kernel。不能因为少启动几个 kernel 听起来合理，就跳过测量。</p>
 <p>对推理或训练的一个连续阶段，尽量把输入一次送到 GPU，让中间激活、KV cache 或工作 buffer 留在 device，最后再取回真正需要的结果。CPU 仍负责准备请求、提交工作和处理不规则控制；把能够连续执行的规则数据流切成频繁的 host-device 往返，通常会得不偿失。</p>
-<h2 id="cuda-正确性与性能工程">CUDA 正确性与性能工程<a class="headerlink" href="#cuda-正确性与性能工程" title="Permanent link">&para;</a></h2>
+<h2 id="cuda-正确性与性能工程">CUDA 正确性与性能工程<a class="headerlink" href="#cuda-正确性与性能工程" title="Permanent link"></a></h2>
 <p>每个 kernel launch 后至少检查 <code>cudaGetLastError()</code>；需要定位异步错误时调用 <code>cudaDeviceSynchronize()</code>。用小尺寸输入与 CPU 参考实现逐元素比较，先证明结果正确，再测大规模性能。越界、未初始化、竞争和错误同步常常在大规模才表现为随机错误。</p>
 <p>Nsight Systems 适合看 CPU、GPU、传输和 stream 的时间线；Nsight Compute 适合看某个 kernel 的访存、占用率、warp 效率和指令吞吐。所谓 occupancy 是一个 SM 上活跃 warp 相对可支持上限的比例；它有助于隐藏延迟，但不是越高越好。一个寄存器更多、occupancy 较低却减少访存的 kernel，可能实际更快。</p>
 <p>读取 profiler 时可以按这个顺序问：global load/store 是否接近可用带宽，warp 是否因分支或内存等待停顿，寄存器和 shared memory 是否限制了并发 block，Tensor Core 或普通算术单元是否真的忙。指标之间会互相牵制。为了提高 occupancy 强行减少寄存器，可能把局部变量 spill 到 local memory；为了扩大 tile 增加 shared memory，又可能让每个 SM 只能驻留一个 block。最终仍以同一输入上的正确结果和运行时间决定保留哪版。</p>
-<h3 id="kernel-索引与边界掩码">Kernel 索引与边界掩码<a class="headerlink" href="#kernel-索引与边界掩码" title="Permanent link">&para;</a></h3>
+<h3 id="kernel-索引与边界掩码">Kernel 索引与边界掩码<a class="headerlink" href="#kernel-索引与边界掩码" title="Permanent link"></a></h3>
 <p>CUDA 的线程索引应从问题中的一个输出元素推导，而不是从开多少线程去猜。对一维 <code>y[i]=f(x[i])</code>，常见映射为 <code>i=blockIdx.x*blockDim.x+threadIdx.x</code>；grid 往上取整，因而最后一个 block 往往包含超出 <code>n</code> 的线程。边界判断必须在访问前完成：</p>
 <pre class="highlight"><code class="language-cpp">__global__ void saxpy(int n, float a, const float* x, float* y) {
   int i = blockIdx.x * blockDim.x + threadIdx.x;
   if (i &lt; n) y[i] = fmaf(a, x[i], y[i]);
 }</code></pre>
 <p>这里 <code>fmaf</code> 以一次舍入完成乘加；是否与 CPU 的标量结果逐位一致取决于编译选项和归约顺序。二维矩阵则要明确行主序中的 <code>row</code>、<code>col</code> 以及 leading dimension，错误地把 <code>row*cols+col</code> 写成 <code>col*rows+row</code> 可能在方阵测试中潜伏，到非方阵才暴露。</p>
-<h3 id="shared-memory-的同步范围">Shared memory 的同步范围<a class="headerlink" href="#shared-memory-的同步范围" title="Permanent link">&para;</a></h3>
+<h3 id="shared-memory-的同步范围">Shared memory 的同步范围<a class="headerlink" href="#shared-memory-的同步范围" title="Permanent link"></a></h3>
 <p>一个 tiled GEMM block 把 A、B 的小片搬入 shared memory 后，所有线程都要读取其他线程写入的数据。因此 load 后的 <code>__syncthreads()</code> 是正确性边界：它保证同一 block 的线程都完成该阶段；累加完、准备覆盖 shared tile 前又需要一次 barrier。它不能同步不同 block，跨 block 的归约必须拆成多个 kernel、使用 cooperative launch 的受限机制，或把局部结果交给后续阶段。</p>
 <p>shared memory 的 bank conflict 与错误同步不同。多个线程访问不同 bank 可并行；若同一 warp 的不同地址映射到同一 bank，访问被串行化。矩阵转置常在 shared tile 的一维加一列 padding，改变列访问的 bank 映射；这只在 profiler 证实冲突时值得采用，padding 也会增加 shared memory 占用并可能降低 occupancy。</p>
-<h3 id="stream事件与资源生命周期">Stream、事件与资源生命周期<a class="headerlink" href="#stream事件与资源生命周期" title="Permanent link">&para;</a></h3>
+<h3 id="stream事件与资源生命周期">Stream、事件与资源生命周期<a class="headerlink" href="#stream事件与资源生命周期" title="Permanent link"></a></h3>
 <p>同一 CUDA stream 中的操作按提交顺序执行，不同 stream 只有在没有显式依赖时才可能重叠。<code>cudaMemcpyAsync</code> 的源、目的缓冲区在 copy 完成前不能释放或覆盖；host 侧要真正异步，通常还需要 pinned memory。用 event 记录一个 stream 中的起止点可量 kernel/拷贝的 device 时间，<code>cudaDeviceSynchronize()</code> 则会等待设备上全部先前工作，适合定位错误却会在无意中抹去可重叠性。</p>
 <p>Nsight Systems 用时间线回答 kernel、memcpy 与 CPU 是否重叠，Nsight Compute 再回答某个 kernel 是受 DRAM、指令、occupancy 还是访存合并限制。二者的顺序不能颠倒：端到端时间被一个同步点或数据传输主导时，先把注意力放在单个 kernel 的 Tensor Core 利用率上不会改变总耗时。</p>
-<h3 id="gemm-的寄存器-tile">GEMM 的寄存器 tile<a class="headerlink" href="#gemm-的寄存器-tile" title="Permanent link">&para;</a></h3>
+<h3 id="gemm-的寄存器-tile">GEMM 的寄存器 tile<a class="headerlink" href="#gemm-的寄存器-tile" title="Permanent link"></a></h3>
 <p>朴素 GEMM 让一个线程计算一个 <code>C[row,col]</code>，会反复从 global memory 读取同一行 A 和同一列 B。shared-memory tiling 已使 block 内线程复用输入；继续让每个线程持有一个小的 <code>TM × TN</code> 输出 tile，可令 A/B 的一次加载贡献给更多 FMA。累加器放在寄存器中，直到 K 维循环结束才写回 C，这就是高性能 GEMM 中数据在更近层级停得更久的具体含义。</p>
 <p>tile 变大并不单调有利。每个线程的 accumulator 增多会提高寄存器压力，寄存器不够会 spill 到 local memory（物理上通常仍是 global memory），并降低可驻留 warp 数。A/B tile 变大又会增加 shared memory，可能压低 occupancy。可实现的设计通常先选择匹配 Tensor Core 或向量指令的 K 维粒度，再用 profiler 检查带宽、寄存器和 SM 活跃度，而不是从理论复用率直接断言最快参数。</p>
-<h3 id="错误传播与确定性">错误传播与确定性<a class="headerlink" href="#错误传播与确定性" title="Permanent link">&para;</a></h3>
+<h3 id="错误传播与确定性">错误传播与确定性<a class="headerlink" href="#错误传播与确定性" title="Permanent link"></a></h3>
 <p>CUDA API 许多调用只是把工作排入队列，非法访存经常在后续同步、下一次 API 调用甚至程序结束时才报告。定位时可在可疑 kernel 后临时加入 <code>cudaGetLastError()</code> 和同步，再用 Compute Sanitizer 检查越界、未初始化和 race；确认后移除不必要同步恢复真实性能。编译 debug 版本时保留符号和较低优化，性能版本再单独测量，不能拿调试模式速度评价 kernel。</p>
 <p>并行归约的输出顺序、Tensor Core 的低精度乘加和不同 GPU 架构都可能改变最后若干位。验证应包含小尺寸可人工检查的案例、非方阵/非整除边界、随机输入和与参考实现的误差界；还应测量多次运行是否稳定。只在 <code>n</code> 恰为 block size 倍数、矩阵恰为方阵的输入上通过，不能说明 indexing 和 mask 已正确。</p>
-<h2 id="triton-与高层-kernel-工具">Triton 与高层 Kernel 工具<a class="headerlink" href="#triton-与高层-kernel-工具" title="Permanent link">&para;</a></h2>
+<h2 id="triton-与高层-kernel-工具">Triton 与高层 Kernel 工具<a class="headerlink" href="#triton-与高层-kernel-工具" title="Permanent link"></a></h2>
 <p>Triton 允许用 Python 风格的语言表达 GPU kernel。程序员关注 block/tile、张量索引和数据布局，再由编译器生成低层代码。它不消除 CUDA 的基本规律：程序实例如何分工、global memory 是否合并、数据是否在更近层级复用、资源是否过量，仍然决定性能。</p>
 <p>对于标准矩阵乘法、卷积、attention 等，框架和库已经高度优化。手写 kernel 的合理场景是算子融合、特殊形状、特殊数据布局或 profiler 证明的热点。否则最可靠的优化是减少不必要的数据搬运并调用正确的库。</p>
 <p>prefill 一次处理整段 prompt，序列维度提供了并行空间；某些状态更新却仍沿 token 有因果依赖，不能把所有位置当作独立元素。课后的 GDN（Gated DeltaNet 一类）prefill 就同时面对这两种约束，常见的优化手段都围绕如何在不破坏依赖的前提下把 sequence 也并行起来：</p>
@@ -3968,7 +3968,7 @@ cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 
       
         <script src="../../../../theme/js/mathjax.js"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
       

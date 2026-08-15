@@ -1,0 +1,776 @@
+/* ============================================================================
+   home.css —— 主页定制层（仅主页生效）
+   ----------------------------------------------------------------------------
+   主页专属组件，移除本文件不影响其余页面的正常显示。
+
+   目录
+   01. GitHub 贡献图
+       .ghc-* / .ContributionCalendar-* 静态贡献日历、
+       数据由 theme/js/site-github.js 从 theme/data/contributions.json 读取、
+       亮/暗模式各 5 级颜色(data-level="0"~"4")、
+       加载/错误/正常三态、概览面板、图例、无障碍(.sr-only)
+   02. 彩虹背景
+       .rainbow-page / .rainbow-backdrop 氛围背景、
+       z 轴体系(-1 彩虹 / 0 网格 / 1 正文 / 90 tabs / 100 header)、
+       4 组色斑(local-aurora / band-pass / beam-b / beam-c)、
+       blur + saturate 滤镜、alternate 动画、
+       prefers-reduced-motion 降级
+   03. 首页分区
+       .home-page 容器、.home-hero / .home-section 分区、
+       .home-section__head 标题栏(下划线)、.home-section__title(JetBrains Mono)、
+       4 分类强调色(study/tools/diary/games)、
+       .home-terminal-keys 终端分类链接、
+       .home-log-list / .home-log 更新日志(日期 + 内容网格)、
+       .home-link-grid / .home-friend 友链卡片(auto-fit 网格 + 头像 + hover 上浮)
+   04. 首页终端
+       .home-terminal 终端窗口(三色圆点 + 等宽屏幕)、
+       .typed-text / .typed-cursor 打字机效果(由 site-terminal.js 驱动)、
+       host/prompt/command/cursor 四色文字、亮/暗模式背景
+   05. 响应式（主页移动端适配）与动画
+       ≤44.984375em：友链单列、贡献图 footer 纵向、
+       标题栏纵向、日志单列、终端字号缩小、
+       prefers-reduced-motion 彩虹动画停用、
+       keyframes: rainbow-local-aurora / rainbow-band-pass / rainbow-beam-b / rainbow-beam-c
+
+   可调参数见 variables.css（加载于本文件之前）。
+   加载顺序：variables.css → main.css → theme.css → home.css。
+   ============================================================================ */
+
+/* ============================================================================
+   01. GitHub 贡献图
+   ----------------------------------------------------------------------------
+   .ghc-* / .ContributionCalendar-* 静态贡献日历组件。
+   数据由 theme/js/site-github.js 从 theme/data/contributions.json 读取并渲染。
+   亮/暗模式各有 5 级颜色（data-level="0"~"4"），与 GitHub 官方配色一致。
+   ============================================================================ */
+
+.github-calendar-wrap {
+  max-width: 760px;
+  margin: 1rem auto 0;
+}
+
+.github-calendar-wrap:not([data-ghc-state="loading"]) .ghc-loading {
+  display: none;
+}
+
+.ghc-loading,
+.ghc-error,
+.ghc-shell {
+  border: 1px solid var(--home-border);
+  border-radius: var(--radius-lg);
+  background: var(--home-panel);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+}
+
+.ghc-loading,
+.ghc-error {
+  padding: 1.4rem 0.75rem;
+  text-align: center;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.75rem;
+}
+
+.ghc-error {
+  color: var(--md-primary-fg-color, #b42318);
+}
+
+.ghc-shell {
+  overflow: hidden;
+  font-family: "Inter", "Noto Sans SC", sans-serif;
+}
+
+.ghc-header {
+  padding: 0.85rem 1rem 0.25rem;
+}
+
+.md-typeset .ghc-title {
+  margin: 0;
+  color: var(--md-default-fg-color);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.md-content__inner .ghc-title::before,
+.md-content__inner .ghc-overview-title::before {
+  content: none;
+}
+
+.ghc-calendar-scroller {
+  display: flex;
+  justify-content: center;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.45rem 1rem 0.6rem;
+}
+
+.ContributionCalendar-grid {
+  border-collapse: separate;
+  border-spacing: 3px;
+  overflow: hidden;
+  position: relative;
+  table-layout: fixed;
+}
+
+.ghc-weekday-col {
+  width: 28px;
+}
+
+.ghc-week-col {
+  width: 10px;
+}
+
+.ContributionCalendar-grid tr {
+  height: 10px;
+}
+
+.ContributionCalendar-grid thead tr {
+  height: 13px;
+}
+
+.ContributionCalendar-label {
+  width: 10px;
+  min-width: 10px;
+  padding: 0;
+  color: var(--md-default-fg-color--light);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  text-align: left;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.ghc-corner,
+.ghc-day-label {
+  width: 28px;
+  min-width: 28px;
+}
+
+.ghc-day-label {
+  position: relative;
+}
+
+.ghc-day-label span:not(.sr-only) {
+  position: absolute;
+  bottom: -3px;
+}
+
+.ContributionCalendar-day,
+.ghc-empty-day {
+  width: 10px;
+  min-width: 10px;
+  height: 10px;
+  padding: 0;
+}
+
+.ContributionCalendar-day {
+  box-sizing: border-box;
+  border: 0.5px solid;
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: opacity 0.12s ease;
+}
+
+.ContributionCalendar-day:hover,
+.ContributionCalendar-day:focus {
+  opacity: 0.7;
+}
+
+.ContributionCalendar-day:focus {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 1px;
+}
+
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: rgb(240, 242, 245); border-color: #E4E8EB; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: rgb(172, 238, 187); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: rgb(75, 193, 107); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: rgb(44, 164, 79); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: rgb(16, 99, 41); border-color: transparent; }
+
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="0"] {
+  background-color: #161b22; border-color: #1c2330;
+}
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #0e4429; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #006d32; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #26a641; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #39d353; border-color: transparent; }
+
+.ghc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 1rem 0.8rem;
+  color: var(--md-default-fg-color--light);
+  font-size: 12px;
+}
+
+.ghc-help {
+  color: var(--md-default-fg-color--light) !important;
+}
+
+.ghc-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+  white-space: nowrap;
+}
+
+.ghc-legend-day {
+  display: inline-block;
+}
+
+.ghc-overview {
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  padding: 0.85rem 1rem 1rem;
+}
+
+.md-typeset .ghc-overview-title {
+  margin: 0 0 0.35rem;
+  color: var(--md-default-fg-color);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.md-typeset .ghc-overview-text,
+.md-typeset .ghc-overview-meta {
+  margin: 0.15rem 0;
+  color: var(--md-default-fg-color--light);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================================
+   02. 彩虹背景
+   ----------------------------------------------------------------------------
+   z 轴体系（从底到顶）：
+     z-index: -1   彩虹色斑（.rainbow-page::before/after, .rainbow-backdrop）
+     z-index: 0    网格（body::before），仅在非彩虹页显示
+     auto          sidebar / .md-content（正常文档流）
+     z-index: 1    .md-content（position: relative），正文区域
+     z-index: 90   .md-tabs
+     z-index: 100  .md-header
+   ============================================================================ */
+
+.rainbow-page {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+body.rainbow-active .md-sidebar__inner {
+  background-color: transparent !important;
+}
+
+.rainbow-page::before,
+.rainbow-page::after,
+.rainbow-backdrop::before,
+.rainbow-backdrop::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0);
+}
+
+.rainbow-page::before {
+  top: -7rem;
+  right: auto;
+  bottom: auto;
+  left: -10rem;
+  width: min(58vw, 38rem);
+  height: 24rem;
+  background:
+    radial-gradient(circle at 24% 46%, var(--rainbow-red), transparent 8rem),
+    radial-gradient(circle at 48% 32%, var(--rainbow-orange), transparent 9rem),
+    radial-gradient(circle at 68% 56%, var(--rainbow-green), transparent 10rem);
+  filter: blur(24px) saturate(1.25);
+  opacity: 0.34;
+  animation: rainbow-local-aurora 18s ease-in-out infinite alternate;
+}
+
+.rainbow-page::after {
+  top: 35rem;
+  right: auto;
+  bottom: auto;
+  left: 18vw;
+  width: min(30vw, 20rem);
+  height: 12rem;
+  background:
+    radial-gradient(circle at 40% 36%, var(--rainbow-violet), transparent 7rem),
+    radial-gradient(circle at 68% 62%, var(--rainbow-red), transparent 8rem);
+  filter: blur(28px) saturate(1.25);
+  opacity: 0.16;
+  animation: rainbow-beam-c 27s ease-in-out infinite alternate;
+}
+
+.rainbow-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.rainbow-backdrop::before,
+.rainbow-backdrop::after {
+  z-index: 0;
+}
+
+.rainbow-backdrop::before {
+  top: 3.6rem;
+  right: 4vw;
+  bottom: auto;
+  left: auto;
+  width: min(38vw, 26rem);
+  height: 18rem;
+  background:
+    radial-gradient(circle at 35% 38%, var(--rainbow-cyan), transparent 8rem),
+    radial-gradient(circle at 64% 54%, var(--rainbow-blue), transparent 10rem),
+    radial-gradient(circle at 50% 72%, var(--rainbow-violet), transparent 8rem);
+  filter: blur(26px) saturate(1.2);
+  opacity: 0.28;
+  animation: rainbow-band-pass 16s ease-in-out infinite alternate;
+}
+
+.rainbow-backdrop::after {
+  top: 20rem;
+  right: 7vw;
+  bottom: auto;
+  left: auto;
+  width: min(30vw, 20rem);
+  height: 12rem;
+  background:
+    radial-gradient(circle at 35% 35%, var(--rainbow-orange), transparent 7rem),
+    radial-gradient(circle at 42% 40%, var(--rainbow-green), transparent 7rem),
+    radial-gradient(circle at 68% 62%, var(--rainbow-cyan), transparent 8rem),
+    radial-gradient(circle at 72% 58%, var(--rainbow-blue), transparent 8rem);
+  filter: blur(28px) saturate(1.25);
+  opacity: 0.2;
+  animation: rainbow-beam-b 23s ease-in-out infinite alternate;
+}
+
+/* ============================================================================
+   03. 首页分区
+   ----------------------------------------------------------------------------
+   .home-* 首页分区、卡片、日志、友链、活动区。
+   面板用半透明背景 + backdrop-filter 毛玻璃，暗色模式面板透明度更低。
+   ============================================================================ */
+
+.home-page {
+  --home-muted: var(--md-default-fg-color--light);
+  --home-softer: var(--md-default-fg-color--lighter);
+  margin-top: 0.4rem;
+}
+
+.home-page a {
+  text-decoration: none;
+}
+
+.home-hero {
+  margin: 1rem 0 1.6rem;
+}
+
+.home-section {
+  margin: 1.8rem 0;
+}
+
+.home-section__head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--home-border);
+  padding-bottom: 0.45rem;
+}
+
+.md-typeset .home-section__title {
+  margin: 0;
+  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.25;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.md-content__inner .home-section__title::before {
+  content: none;
+}
+
+.home-card--study { --home-accent: var(--accent-study); }
+.home-card--tools { --home-accent: var(--accent-tools); }
+.home-card--diary { --home-accent: var(--accent-diary); }
+.home-card--games { --home-accent: var(--accent-games); }
+
+[data-md-color-scheme="slate"] .home-card--study { --home-accent: var(--accent-study); }
+[data-md-color-scheme="slate"] .home-card--tools { --home-accent: var(--accent-tools); }
+[data-md-color-scheme="slate"] .home-card--diary { --home-accent: var(--accent-diary); }
+[data-md-color-scheme="slate"] .home-card--games { --home-accent: var(--accent-games); }
+
+.home-terminal-keys {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0 0.6rem;
+}
+
+.home-terminal-link {
+  color: var(--fgColor-accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.home-terminal-link:hover,
+.home-terminal-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.home-log-list {
+  display: grid;
+  border: 1px solid var(--home-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
+.home-log {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.64rem 0.8rem;
+  background: var(--home-panel);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+}
+
+.home-log + .home-log {
+  border-top: 1px solid var(--home-border);
+}
+
+.home-log__date {
+  color: var(--home-softer);
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.home-log span:last-child {
+  color: var(--home-muted);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.home-link-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.65rem;
+}
+
+.home-friend {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  gap: 0.2rem 0.55rem;
+  align-items: center;
+  min-height: 5.2rem;
+  padding: 0.65rem;
+  border: 1px solid var(--home-border);
+  border-radius: var(--radius-lg);
+  background: var(--home-panel);
+  color: var(--md-default-fg-color) !important;
+  font-size: 0.72rem;
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+  transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.home-friend:hover {
+  border-color: var(--md-accent-fg-color);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+}
+
+.home-friend__avatar {
+  grid-row: span 3;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--home-border);
+  border-radius: 50%;
+  color: var(--avatar-color);
+  background: var(--avatar-bg);
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.home-friend__avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+[data-md-color-scheme="slate"] .home-friend__avatar {
+  color: var(--avatar-color);
+  background: var(--avatar-bg);
+}
+
+.home-friend strong {
+  font-size: 0.74rem;
+  line-height: 1.2;
+}
+
+.home-friend__handle,
+.home-friend__meta {
+  overflow: hidden;
+  color: var(--home-muted);
+  font-size: 0.62rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-section--activity .github-calendar-wrap {
+  margin: 0;
+}
+
+/* ============================================================================
+   04. 首页终端
+   ----------------------------------------------------------------------------
+   .home-terminal-* / .typed-* 打字机组件。
+   终端窗口三色圆点 + 等宽字体屏幕，打字机效果由 theme/js/site-terminal.js 驱动。
+   ============================================================================ */
+
+.home-terminal {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--home-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+}
+
+.home-terminal__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.1rem;
+  padding: 0 0.75rem;
+  border-bottom: 1px solid var(--home-border);
+}
+
+.home-terminal__dot {
+  width: 0.68rem;
+  height: 0.68rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+}
+
+.home-terminal__dot--red { background: var(--terminal-dot-red); }
+.home-terminal__dot--yellow { background: var(--terminal-dot-yellow); }
+.home-terminal__dot--green { background: var(--terminal-dot-green); }
+
+.home-terminal__title {
+  margin-left: 0.35rem;
+  color: var(--md-default-fg-color--light);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-size: 13.6px;
+}
+
+.home-terminal__screen {
+  position: relative;
+  min-height: 10rem;
+  padding: 0.6rem 0.9rem 0.7rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-size: 13.6px;
+  line-height: 1.45;
+}
+
+.home-terminal__line {
+  min-height: 1.45em;
+  overflow-wrap: anywhere;
+}
+
+.home-terminal__line--output .typed-text {
+  color: var(--md-default-fg-color);
+}
+
+.terminal-hidden-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+.typed-text {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+}
+
+.typed-text--host {
+  color: var(--terminal-host-color);
+}
+
+.typed-text--prompt {
+  color: var(--terminal-prompt-color);
+}
+
+.typed-cursor,
+.typed-text .typed-cursor,
+.typed-cursor-standalone {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-size: inherit;
+  color: var(--md-typeset-color);
+}
+
+[data-md-color-scheme="default"] .typed-text--command,
+[data-md-color-scheme="default"] .typed-text--separator,
+[data-md-color-scheme="default"] .home-terminal__line--user .typed-text,
+[data-md-color-scheme="default"] .home-terminal__line--flag .typed-text {
+  color: var(--terminal-command-color);
+}
+
+[data-md-color-scheme="default"] .typed-cursor,
+[data-md-color-scheme="default"] .typed-text .typed-cursor,
+[data-md-color-scheme="default"] .typed-cursor-standalone {
+  color: var(--terminal-cursor-color);
+}
+
+[data-md-color-scheme="slate"] .typed-text--host {
+  color: var(--terminal-host-color);
+}
+
+[data-md-color-scheme="slate"] .typed-text--prompt {
+  color: var(--terminal-prompt-color);
+}
+
+[data-md-color-scheme="slate"] .typed-text--command,
+[data-md-color-scheme="slate"] .typed-text--separator,
+[data-md-color-scheme="slate"] .home-terminal__line--user .typed-text,
+[data-md-color-scheme="slate"] .home-terminal__line--flag .typed-text {
+  color: var(--terminal-command-color);
+}
+
+[data-md-color-scheme="slate"] .typed-cursor,
+[data-md-color-scheme="slate"] .typed-text .typed-cursor,
+[data-md-color-scheme="slate"] .typed-cursor-standalone {
+  color: var(--terminal-cursor-color);
+}
+
+[data-md-color-scheme="default"] .home-terminal {
+  background: var(--home-panel);
+}
+
+[data-md-color-scheme="default"] .home-terminal__bar {
+  background: transparent;
+}
+
+[data-md-color-scheme="default"] .home-terminal__screen {
+  background: transparent;
+}
+
+[data-md-color-scheme="slate"] .home-terminal {
+  background: var(--home-panel);
+  box-shadow: var(--terminal-shadow);
+}
+
+[data-md-color-scheme="slate"] .home-terminal__bar {
+  background: transparent;
+}
+
+[data-md-color-scheme="slate"] .home-terminal__screen {
+  background: transparent;
+}
+
+/* ============================================================================
+   05. 响应式（主页移动端适配）与动画
+   ============================================================================ */
+
+@media screen and (max-width: 44.984375em) {
+  .home-link-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ghc-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .home-section__head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--mobile-section-head-gap);
+  }
+
+  .home-log {
+    grid-template-columns: 1fr;
+    gap: var(--mobile-log-gap);
+  }
+
+  .home-terminal__screen {
+    padding: var(--mobile-terminal-padding);
+    font-size: var(--mobile-terminal-font-size);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rainbow-page::before,
+  .rainbow-page::after,
+  .rainbow-backdrop::before,
+  .rainbow-backdrop::after {
+    animation: none;
+  }
+}
+
+@keyframes rainbow-local-aurora {
+  0% { transform: translate3d(-0.8rem, -0.4rem, 0) scale(0.98); opacity: 0.28; }
+  100% { transform: translate3d(2rem, 1rem, 0) scale(1.06); opacity: 0.42; }
+}
+
+@keyframes rainbow-band-pass {
+  0% { transform: translate3d(-1.2rem, -0.7rem, 0) scale(0.96); opacity: 0.2; }
+  100% { transform: translate3d(1.6rem, 0.9rem, 0) scale(1.05); opacity: 0.34; }
+}
+
+@keyframes rainbow-beam-b {
+  0% { transform: translate3d(1rem, -0.8rem, 0) scale(1); opacity: 0.14; }
+  100% { transform: translate3d(-1.6rem, 1rem, 0) scale(1.1); opacity: 0.26; }
+}
+
+@keyframes rainbow-beam-c {
+  0% { transform: translate3d(-0.8rem, -0.2rem, 0) scale(0.96); opacity: 0.12; }
+  100% { transform: translate3d(1.2rem, 1.2rem, 0) scale(1.08); opacity: 0.24; }
+}

@@ -64,7 +64,9 @@
     
       <link rel="stylesheet" href="../../../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../../../theme/css/components.css">
+      <link rel="stylesheet" href="../../../../theme/css/theme.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/home.css">
     
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
@@ -73,8 +75,6 @@
     
     
   
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -3414,16 +3414,16 @@
 
 
 
-<h1 id="07-17-下午强化学习多智能体与具身智能">07-17 下午：强化学习、多智能体与具身智能<a class="headerlink" href="#07-17-下午强化学习多智能体与具身智能" title="Permanent link">&para;</a></h1>
+<h1 id="07-17-下午强化学习多智能体与具身智能">07-17 下午：强化学习、多智能体与具身智能<a class="headerlink" href="#07-17-下午强化学习多智能体与具身智能" title="Permanent link"></a></h1>
 <p>强化学习处理带反馈的连续决策。监督学习的样本通常直接给出输入与正确输出；强化学习里的动作会改变之后遇到的状态，奖励也可能隔很多步才出现。智能体要在已知的好做法与未试过的路径之间分配尝试。课上由此讨论多智能体、历史经验、模型方法和机器人任务。</p>
-<h2 id="强化学习的基本问题">强化学习的基本问题<a class="headerlink" href="#强化学习的基本问题" title="Permanent link">&para;</a></h2>
-<h3 id="从历史上看强化学习">从历史上看强化学习<a class="headerlink" href="#从历史上看强化学习" title="Permanent link">&para;</a></h3>
+<h2 id="强化学习的基本问题">强化学习的基本问题<a class="headerlink" href="#强化学习的基本问题" title="Permanent link"></a></h2>
+<h3 id="从历史上看强化学习">从历史上看强化学习<a class="headerlink" href="#从历史上看强化学习" title="Permanent link"></a></h3>
 <p>这门课上来先讲了一段历史。强化学习今天又热起来，和它过去几次起伏的样子很有关联。早期工作可以追溯到 1970 年代，最有名的研究组是 Sutton 在加拿大阿尔伯塔的团队；Sutton 与导师两人因长期推动强化学习，获得了 2024 年的图灵奖。很多今天还在用的概念，包括策略梯度、时间差分，都源自这个脉络。</p>
 <p>Sutton 有一个常被引用的说法，叫"苦涩的教训"。大意是：过去设计智能模型，通常是研究人员根据领域知识手工设计，得到的模型往往只针对专门任务、通用性不好；但长期看，如果让算法利用源源不断的算力去枚举、搜索、反复采样，找到的解会比靠人拍脑袋设计的更好。核心就一句——相信算力，算力足够时一切都能找出来。</p>
 <p>Sutton 拿奖后的一次演讲标题叫 "Bigger is the Experience"，直译是"越大越丰富"，也可以理解成"欢迎来到经验的时代"。背景是：2022 年大语言模型起来之后，公开的互联网数据被认为已经快用完了。再往下走，就要靠强化学习来合成新数据。强化学习的智能体要跟环境不断交互才能产生新数据，这种交互产生的数据被称作经验。要从经验中学习，才有可能让智能的层次再往上抬。</p>
 <p>AlphaGo 其实在 2016 年就火过一次。当时 DeepMind 的程序跟李世石下了四盘棋，把李世石下哭了；后来又找柯洁下，同样赢下。在那类棋类游戏上，机器的智能已经超过了人类顶尖选手。但 AlphaGo 之后强化学习又沉寂了一段时间，主要原因在于它跟训练环境是强绑定的：围棋环境里产生的数据，学到的策略往往用不到自动驾驶上，反过来也是。它不依赖某个领域的数据，却依赖某个环境，很难直接泛化。</p>
 <p>大语言模型改变了这一点。Chinchilla/GPT 把海量文本都吃进去，看起来什么都能做；但监督学习（模仿已有数据）得到的模型，无法在已有数据之上再进一步提升。想再进一步，就要把模型放进反馈信号明确的环境里用强化学习继续训练。现在很多编程模型（例如带 agent 的工具）都是强化学习训练出来的，因为代码写完拿去编译、跑测试，对错非常明确；数学这类反馈清楚的领域也落地很快。反馈信号越明确，强化学习越容易学到更强的能力。</p>
-<h3 id="强化学习问题定义">强化学习问题定义<a class="headerlink" href="#强化学习问题定义" title="Permanent link">&para;</a></h3>
+<h3 id="强化学习问题定义">强化学习问题定义<a class="headerlink" href="#强化学习问题定义" title="Permanent link"></a></h3>
 <p>在时刻 <span class="arithmatex">\(t\)</span>，智能体观察到状态或观测 <span class="arithmatex">\(s_t\)</span>，按策略选择动作 <span class="arithmatex">\(a_t\)</span>；环境响应为下一个状态 <span class="arithmatex">\(s_{t+1}\)</span>，并给出奖励 <span class="arithmatex">\(r_{t+1}\)</span>。连续记录下来就是一条轨迹：</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717p/agent-environment-loop.jpg"><img width="1280" height="720" alt="课件用一张图概括强化学习的循环：智能体与环境反复交互、获得奖励，目标是学习到能最大化累计奖励的策略。" src="../assets/0717p/agent-environment-loop.preview.jpg" data-fullsrc="../assets/0717p/agent-environment-loop.jpg" /></a></p>
 <p><em>图：agent 选动作、环境返回下一个状态与奖励，构成训练数据；强化学习的循环本质就是这个观察—行动—获奖励的过程。</em></p>
@@ -3480,7 +3480,7 @@ p(s_{t+1},r_{t+1}\mid s_t,a_t).
 <summary>折扣因子改变了什么</summary>
 <p>两条路径的即时奖励分别为 1 和 0；后一条在 10 步后额外得到 100。若 <span class="arithmatex">\(\gamma=0.9\)</span>，远期回报折为约 34.9，后一条仍优；若 <span class="arithmatex">\(\gamma=0.5\)</span>，只剩约 0.098，策略会偏向即时奖励。折扣同时表达任务偏好，并控制无限期回报的数值尺度。</p>
 </details>
-<h3 id="价值函数">价值函数<a class="headerlink" href="#价值函数" title="Permanent link">&para;</a></h3>
+<h3 id="价值函数">价值函数<a class="headerlink" href="#价值函数" title="Permanent link"></a></h3>
 <p>策略价值函数 <span class="arithmatex">\(V^\pi(s)\)</span> 表示从状态 <span class="arithmatex">\(s\)</span> 出发、之后按策略 <span class="arithmatex">\(\pi\)</span> 行动能得到的期望回报。动作价值函数 <span class="arithmatex">\(Q^\pi(s,a)\)</span> 则把当前动作也固定下来：先做 <span class="arithmatex">\(a\)</span>，再按 <span class="arithmatex">\(\pi\)</span> 行动。选择动作时，若有了 <span class="arithmatex">\(Q\)</span>，可以偏向值更大的动作。</p>
 <p>贝尔曼关系把长期回报拆成一步奖励与后续价值：</p>
 <div class="arithmatex">\[
@@ -3488,7 +3488,7 @@ Q^\pi(s_t,a_t)=\mathbb{E}[r_{t+1}+\gamma V^\pi(s_{t+1})].
 \]</div>
 <p>贝尔曼关系提供了可递推估计的目标。值函数近似、策略梯度、actor-critic 等方法分别用不同参数化和更新方式处理它。</p>
 <p>真实任务常把状态、动作和策略交给神经网络表示。网络带来表达能力，也带来不稳定性：采样数据相关、奖励有噪声、目标随着策略更新不断变化。强化学习曲线波动大并不只是实现粗糙，问题本身就包含探索和自举造成的不稳定来源。</p>
-<h3 id="蒙特卡洛时间差分与-lambda">蒙特卡洛、时间差分与 <span class="arithmatex">\(\lambda\)</span><a class="headerlink" href="#蒙特卡洛时间差分与-lambda" title="Permanent link">&para;</a></h3>
+<h3 id="蒙特卡洛时间差分与-lambda">蒙特卡洛、时间差分与 <span class="arithmatex">\(\lambda\)</span><a class="headerlink" href="#蒙特卡洛时间差分与-lambda" title="Permanent link"></a></h3>
 <p>一条轨迹结束后，可以直接把实际得到的 <span class="arithmatex">\(G_t\)</span> 当作状态或状态动作对的学习目标。这是蒙特卡洛（MC）思想。它不需要估计下一状态价值，但必须等到后续回报出现；长任务中方差也可能很大。</p>
 <p>时间差分（TD）不必等整条轨迹结束。最简单的一步 TD target 是：</p>
 <div class="arithmatex">\[
@@ -3498,14 +3498,14 @@ y_t=r_{t+1}+\gamma V(s_{t+1}),
 <p>TD(<span class="arithmatex">\(\lambda\)</span>) 在 MC 与一步 TD 之间插值。较小的 <span class="arithmatex">\(\lambda\)</span> 更接近短步自举，更新快但目标偏差更多；较大的 <span class="arithmatex">\(\lambda\)</span> 利用更长的真实轨迹，接近 MC，方差也更大。课上强调，固定选一个 <span class="arithmatex">\(\lambda\)</span> 往往很敏感：环境、策略阶段和数据分布变化后，同一个超参数未必仍合适。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717p/adaptive-td-lambda.jpg"><img width="1280" height="720" alt="课件给出基于异/同策略样本分布密度的自适应 TD(λ) 思路：不把 \(\lambda\) 固定，而按样本来自当前策略还是历史策略来调节计算 target 的权重。" src="../assets/0717p/adaptive-td-lambda.preview.jpg" data-fullsrc="../assets/0717p/adaptive-td-lambda.jpg" /></a></p>
 <p><em>图：TD(λ) 的 λ 不必写死；可根据样本是否贴近当前策略动态选择更像 MC 还是更像一步 TD，正是课上研究的方向。</em></p>
-<h3 id="bellman-目标与终止状态">Bellman 目标与终止状态<a class="headerlink" href="#bellman-目标与终止状态" title="Permanent link">&para;</a></h3>
+<h3 id="bellman-目标与终止状态">Bellman 目标与终止状态<a class="headerlink" href="#bellman-目标与终止状态" title="Permanent link"></a></h3>
 <p>价值学习的样本不是独立标签。一步 TD 的目标为</p>
 <div class="arithmatex">\[
 y_t=r_t+\gamma(1-d_t)\max_a Q_{\bar\theta}(s_{t+1},a),
 \]</div>
 <p>其中 <code>d_t</code> 表示真正终止；终止后不应再 bootstrap。很多环境还会因时间上限截断 episode，截断是否等价于终止取决于任务定义：若只是收集器强制停止而理论 MDP 仍有后继状态，把它当终止会引入价值偏差。经验回放至少应保存 observation、action、reward、next observation、terminated/truncated 与必要的 mask，不能只存状态转移四元组而丢掉边界语义。</p>
 <p>target network <span class="arithmatex">\(\bar\theta\)</span> 的作用是让 bootstrap 目标在一段时间内较稳定。若每一步都用正在更新的 <span class="arithmatex">\(\theta\)</span> 同时定义预测和目标，误差会追逐自身变化，容易发散；定期硬更新或指数滑动平均更新 target 都是在控制这个反馈。Double DQN 把动作选择交给 online 网络、动作评估交给 target 网络，缓解 <code>max</code> 对噪声的系统性高估。</p>
-<h3 id="on-policy-与-off-policy">On-policy 与 Off-policy<a class="headerlink" href="#on-policy-与-off-policy" title="Permanent link">&para;</a></h3>
+<h3 id="on-policy-与-off-policy">On-policy 与 Off-policy<a class="headerlink" href="#on-policy-与-off-policy" title="Permanent link"></a></h3>
 <p>行为策略 <span class="arithmatex">\(\mu\)</span> 负责采集轨迹，目标策略 <span class="arithmatex">\(\pi\)</span> 是希望学习或评估的策略。两者相同就是 on-policy；不同则是 off-policy。on-policy 方法通常要求数据接近当前策略，例如一轮更新后再用新策略采样。它概念直接，但旧数据很快不能反复使用。</p>
 <p>off-policy 方法允许利用历史 replay buffer 中的数据。DQN 一类方法把大量过去轨迹放进 buffer，随机抽取 mini-batch，降低相邻样本的相关性并提高样本复用率。问题在于旧数据来自不同策略，分布与当前策略不一致；重要性采样可用概率比修正这种差异，但权重过大时又会带来高方差。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717p/experience-replay-buffer.jpg"><img width="1280" height="720" alt="课件强调从经验中学习：智能体与环境交互得到的历史经验会存进经验回放缓存，训练时再从中采样决策。" src="../assets/0717p/experience-replay-buffer.preview.jpg" data-fullsrc="../assets/0717p/experience-replay-buffer.jpg" /></a></p>
@@ -3513,15 +3513,15 @@ y_t=r_t+\gamma(1-d_t)\max_a Q_{\bar\theta}(s_{t+1},a),
 <p><a class="glightbox" data-type="image" href="../assets/0717p/offpolicy-distribution-shift.jpg"><img width="1280" height="720" alt="课件说明离策略（off-policy）强化学习不稳定的原因：行为策略（旧）与当前策略（新）的分布差异，会让采样到的数据与当前所学目标错位。" src="../assets/0717p/offpolicy-distribution-shift.preview.jpg" data-fullsrc="../assets/0717p/offpolicy-distribution-shift.jpg" /></a></p>
 <p><em>图：旧策略采样的数据分布与当前策略不同，是 off-policy 训练不稳定的根源；重要性采样只是修正手段之一。</em></p>
 <p>课上的一个研究思路是把当前策略采集的数据与历史 off-policy 数据分开管理，再按数据分布和训练阶段调节 TD(<span class="arithmatex">\(\lambda\)</span>) 的权重。新策略附近的数据贴近当前决策，历史数据可能保留了难得的成功轨迹；两类样本需要承担不同作用。</p>
-<h2 id="数据复用探索与多智能体">数据复用、探索与多智能体<a class="headerlink" href="#数据复用探索与多智能体" title="Permanent link">&para;</a></h2>
-<h3 id="多智能体强化学习">多智能体强化学习<a class="headerlink" href="#多智能体强化学习" title="Permanent link">&para;</a></h3>
+<h2 id="数据复用探索与多智能体">数据复用、探索与多智能体<a class="headerlink" href="#数据复用探索与多智能体" title="Permanent link"></a></h2>
+<h3 id="多智能体强化学习">多智能体强化学习<a class="headerlink" href="#多智能体强化学习" title="Permanent link"></a></h3>
 <p>多智能体强化学习（MARL）中，多个 agent 同时观察、行动和学习。每个 agent 的动作都会改变其他 agent 看到的环境，所以单个 agent 所面对的环境会随其他策略更新而变化，非平稳性比单智能体更明显。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717p/marl-training-loop.jpg"><img width="1280" height="720" alt="课件用观测、状态、奖励和模型更新画出传统多智能体强化学习训练循环。" src="../assets/0717p/marl-training-loop.preview.jpg" data-fullsrc="../assets/0717p/marl-training-loop.jpg" /></a></p>
 <p><em>图：多个智能体从环境收集观测和奖励，再用轨迹更新策略。</em></p>
 <p>合作任务常采用 CTDE（centralized training, decentralized execution）：训练时可使用全局状态、所有 agent 的动作或联合价值函数；执行时，每个 agent 只用自己允许获得的局部观测独立行动。这样训练阶段能减少价值估计歧义，部署时又不要求实时汇集所有信息。</p>
 <p>QMIX 是课上提到的一个值分解方法。每个 agent 先有局部 <span class="arithmatex">\(Q_i\)</span>，再由 mixing network 合成为全局 <span class="arithmatex">\(Q_{tot}\)</span>，并约束全局值对各局部值单调。于是选择各 agent 局部最优动作时，与联合 <span class="arithmatex">\(Q_{tot}\)</span> 的贪心选择能够保持一致。它适合合作且可做这种单调分解的任务，不意味着任何多智能体博弈都能被简单拆成若干独立 Q 函数。</p>
 <p>CTDE 的具体实现还要处理参数共享和训练吞吐。共享参数能提高样本效率，却要求智能体的观测/动作空间兼容，并常需 agent id 或位置编码防止完全对称的策略塌缩。Isaac Gym 等工具可在 GPU 上并行许多环境，但每一步仍包含物理计算、policy inference、状态重置、reward 计算和把 batch 交给学习器。profile 时应分别量环境 step、rollout 传输、前后向和优化器；只把环境数量翻倍，可能先撞到显存、物理 kernel 或 policy batch 的瓶颈。</p>
-<h3 id="探索与经验复用">探索与经验复用<a class="headerlink" href="#探索与经验复用" title="Permanent link">&para;</a></h3>
+<h3 id="探索与经验复用">探索与经验复用<a class="headerlink" href="#探索与经验复用" title="Permanent link"></a></h3>
 <p>稀疏奖励环境中，智能体可能在很长时间内看不到成功反馈。有一个直线方向被墙挡住的例子：反复从起点沿同一方向探索，只会反复撞墙；一条绕开的成功路径却值得被反复利用。探索的重点在于把罕见、有信息量的经验保留下来，而不是一味增加随机动作数量。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717p/epsilon-greedy-exploration.jpg"><img width="1280" height="720" alt="课件讲 ε-greedy 探索：以概率 ε 随机选动作而非总是贪心，是探索与利用之间最常用的折中。" src="../assets/0717p/epsilon-greedy-exploration.preview.jpg" data-fullsrc="../assets/0717p/epsilon-greedy-exploration.jpg" /></a></p>
 <p><em>图：ε-greedy 用一个小概率随机探索、其余按当前最优行动；探索噪声过大或过小都会影响学到什么。</em></p>
@@ -3529,13 +3529,13 @@ y_t=r_t+\gamma(1-d_t)\max_a Q_{\bar\theta}(s_{t+1},a),
 <p><a class="glightbox" data-type="image" href="../assets/0717p/template-q-learning.jpg"><img width="1280" height="720" alt="把历史上成功的轨迹当作模板，与当前状态匹配时引导策略，偏离时退回普通强化学习。" src="../assets/0717p/template-q-learning.preview.jpg" data-fullsrc="../assets/0717p/template-q-learning.jpg" /></a></p>
 <p><em>图：模板保存罕见的成功经验，用于指导到当前状态的行动倾向；是否采用模板由状态匹配或价值比较决定。</em></p>
 <p>蒙特卡洛树搜索（MCTS）提供另一种在当前状态附近多看几步的方式。它反复执行选择、扩展、评估和回传：从根节点按选择公式走到叶子，扩展可行动作，使用 rollout 或价值网络评估叶子，再把回报更新到祖先节点。选择公式会兼顾平均价值与访问次数较少的分支，因此同时利用和探索。它在围棋等可模拟环境中很强，但每一步都展开搜索的代价也很高。</p>
-<h2 id="策略表示规划与优化">策略表示、规划与优化<a class="headerlink" href="#策略表示规划与优化" title="Permanent link">&para;</a></h2>
-<h3 id="神经策略与行为树">神经策略与行为树<a class="headerlink" href="#神经策略与行为树" title="Permanent link">&para;</a></h3>
+<h2 id="策略表示规划与优化">策略表示、规划与优化<a class="headerlink" href="#策略表示规划与优化" title="Permanent link"></a></h2>
+<h3 id="神经策略与行为树">神经策略与行为树<a class="headerlink" href="#神经策略与行为树" title="Permanent link"></a></h3>
 <p>深度 RL 策略可以直接把观测映射为动作，却往往难解释、迁移不稳定，需要大量交互数据。一种方向是用大模型生成的行为树或决策树作为元策略。</p>
 <p>行为树将任务写成条件、动作以及顺序/选择/并行等控制节点。例如若手边有物体则抓取、否则先移动到目标附近这样的表述，比一个连续网络输出更容易检查和修改。大模型可以根据任务描述、环境接口和失败记录生成或修改树；RL 则可用于调树中的参数、优先级或局部动作。行为树负责可检查的高层流程，连续控制仍交给合适的低层策略。语言模型可参与生成或修改树，但不直接取代底层控制器。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717p/behavior-tree-policy.jpg"><img width="1280" height="720" alt="行为树把任务写成条件、动作和分支控制节点，比连续网络输出更易检查与修改。" src="../assets/0717p/behavior-tree-policy.preview.jpg" data-fullsrc="../assets/0717p/behavior-tree-policy.jpg" /></a></p>
 <p><em>图：行为树由顺序/选择/并行等控制节点组织条件与动作；大模型可生成或修改树，低层连续控制仍由策略完成。</em></p>
-<h3 id="基于模型的方法">基于模型的方法<a class="headerlink" href="#基于模型的方法" title="Permanent link">&para;</a></h3>
+<h3 id="基于模型的方法">基于模型的方法<a class="headerlink" href="#基于模型的方法" title="Permanent link"></a></h3>
 <p>无模型强化学习直接学习策略或价值，不显式学习环境如何变化。基于模型的强化学习（model-based RL）还学习或使用一个动力学模型：给定状态和动作，预测下一状态、奖励或观测。这样可在模型里滚动多步，比较候选动作，减少真实环境中的试错。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717p/model-based-rl-why.jpg"><img width="1280" height="720" alt="课件说明为什么需要基于模型的强化学习：无模型深度强化学习样本效率很低，结合一个环境模型可以减少真实环境中的试错。" src="../assets/0717p/model-based-rl-why.preview.jpg" data-fullsrc="../assets/0717p/model-based-rl-why.jpg" /></a></p>
 <p><em>图：在低成本的世界模型里多滚动几步做规划，能减少真实环境中的交互样本，正是 model-based 的动机。</em></p>
@@ -3543,23 +3543,23 @@ y_t=r_t+\gamma(1-d_t)\max_a Q_{\bar\theta}(s_{t+1},a),
 <p><em>图：model-based RL 在学策略之外增加用模型规划；两者结合以提高样本效率和探索质量。</em></p>
 <p>模型不准时会出现 model bias：规划过程利用了模型的系统性误差，真实执行反而失败。可用不确定性估计、短视规划、真实数据校正或模型集成减轻，但不能消除模拟器与现实不同的问题。课程中 PaMoRL 等研究关注如何从历史样本构造可用模型并和策略学习结合，目的仍是提高样本效率和探索质量。</p>
 <p>历史经验样本还能以接力的方式降低多智能体训练的早期困难。多智能体强化学习起步阶段 Q 值远未收敛，每一步的自举误差很大，且会沿决策树向根节点回传，让早期决策尤其不可信。一种研究思路是先不急着跑 RL：把经验缓存里的历史轨迹整理成轨迹树，先用有监督的行为克隆把怎么做学出来，决策时先用这个监督策略；等它稳定后，再让基线多智能体强化学习算法接力细化。这样把高噪声的自举阶段交给监督学习，收敛后再交给 RL，本质上是能确定的部分先学、不确定的部分再强化这样的分工。</p>
-<h3 id="策略梯度的采样路径">策略梯度的采样路径<a class="headerlink" href="#策略梯度的采样路径" title="Permanent link">&para;</a></h3>
+<h3 id="策略梯度的采样路径">策略梯度的采样路径<a class="headerlink" href="#策略梯度的采样路径" title="Permanent link"></a></h3>
 <p>随机策略 <span class="arithmatex">\(\pi_\theta(a\mid s)\)</span> 的目标梯度可写为</p>
 <div class="arithmatex">\[
 \nabla J(\theta)=\mathbb E[\nabla_\theta\log\pi_\theta(a_t\mid s_t)\,A_t].
 \]</div>
 <p>优势 <span class="arithmatex">\(A_t\)</span> 表示这个动作比状态基线好多少；减去只依赖状态的 baseline 不改变期望梯度，却能显著减小方差。actor-critic 用 value 网络估计 baseline，GAE 用带参数 <span class="arithmatex">\(\lambda\)</span> 的多步 TD 残差在偏差与方差间折中。这里的 rollout 是训练数据生成过程，动作、log probability、value、reward 和 done 必须来自同一个策略版本；把不同版本轨迹混入 on-policy 更新会破坏目标分布。</p>
-<h3 id="ppo-的近端更新">PPO 的近端更新<a class="headerlink" href="#ppo-的近端更新" title="Permanent link">&para;</a></h3>
+<h3 id="ppo-的近端更新">PPO 的近端更新<a class="headerlink" href="#ppo-的近端更新" title="Permanent link"></a></h3>
 <p>PPO 在采样策略 <span class="arithmatex">\(\pi_{old}\)</span> 产生的 rollout 上多轮更新新策略，使用概率比值</p>
 <div class="arithmatex">\[
 r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{old}(a_t\mid s_t)}
 \]</div>
 <p>并把目标中的 <span class="arithmatex">\(r_t A_t\)</span> 裁剪到 <span class="arithmatex">\([1-\epsilon,1+\epsilon]\)</span> 附近。裁剪并不保证严格的信赖域，却阻止一次 mini-batch 更新把已采样动作的概率推得过远。实现中必须保存采样时的 old log-prob；重新用当前网络计算后再当作 old 值，会使比值恒为 1，训练表面运行而没有正确约束。</p>
 <p>rollout buffer 还要保留连续的时间维度，因为 GAE 要从 episode 末尾向前递推 TD 残差。拼接多个环境时，done mask 要在各环境各自的终点截断递推；把一个环境终点的 value 泄漏到另一个环境开头，是批处理维度处理错误，不是算法随机性。优势常在一个 batch 内标准化以改善优化尺度，但 reward 的物理含义和终止奖励仍应在标准化前检查。</p>
-<h3 id="奖励观测与部署偏移">奖励、观测与部署偏移<a class="headerlink" href="#奖励观测与部署偏移" title="Permanent link">&para;</a></h3>
+<h3 id="奖励观测与部署偏移">奖励、观测与部署偏移<a class="headerlink" href="#奖励观测与部署偏移" title="Permanent link"></a></h3>
 <p>强化学习优化的是实现给出的 reward，不是人心中未写出的任务。奖励中某项权重大、某个失败状态遗漏惩罚、终止条件可以被钻空子，策略就可能学到看似怪异却能提高回报的行为。调试应同时记录分项 reward、成功率、episode 长度、动作幅度和关键状态，而不是只看总回报曲线。总回报上升而真实任务失败，通常需要回到环境语义和观测/动作变换检查。</p>
 <p>仿真到真实设备还存在观测延迟、摩擦、传感器噪声和执行器饱和的偏移。domain randomization 在训练时随机这些参数，目的是让策略学到对变化更稳健的控制规律；随机范围若脱离真实设备，可能让训练任务不必要地困难。部署前需要在受限动作、急停和日志条件下逐步验证，不能把仿真中的高回报直接当作实机安全保证。</p>
-<h2 id="具身智能">具身智能<a class="headerlink" href="#具身智能" title="Permanent link">&para;</a></h2>
+<h2 id="具身智能">具身智能<a class="headerlink" href="#具身智能" title="Permanent link"></a></h2>
 <p>机器人是强化学习很自然的应用，但真实机器人采样慢、硬件会磨损、失败可能危险。训练常先在模拟器进行大规模并行交互，再把策略迁移到真实设备。模拟器里可随机化质量、摩擦、光照、传感器噪声和初始位置，减小策略对某一个理想环境参数的依赖。这叫 domain randomization。</p>
 <p>Isaac Gym 的价值在于把物理仿真也放到 GPU 上，一次可并行推进许多环境。若只有一个环境，数百万步交互可能耗时很久；成千上万个并行环境可显著提高采样吞吐。不过并行环境的初始状态、随机种子和数据同步仍要认真处理，否则得到的只是高度相似的大量轨迹。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717p/isaac-gym.jpg"><img width="1280" height="720" alt="Isaac Gym 在 GPU 上并行推进许多物理环境，显著提高采样吞吐。" src="../assets/0717p/isaac-gym.preview.jpg" data-fullsrc="../assets/0717p/isaac-gym.jpg" /></a></p>
@@ -3962,7 +3962,7 @@ r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{old}(a_t\mid s_t)}
       
         <script src="../../../../theme/js/mathjax.js"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
       

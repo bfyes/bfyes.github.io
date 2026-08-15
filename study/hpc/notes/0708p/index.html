@@ -64,7 +64,9 @@
     
       <link rel="stylesheet" href="../../../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../../../theme/css/components.css">
+      <link rel="stylesheet" href="../../../../theme/css/theme.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/home.css">
     
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
@@ -73,8 +75,6 @@
     
     
   
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -3348,9 +3348,9 @@
 
 
 
-<h1 id="07-08-下午hpc-中的计算机系统-ii">07-08 下午：HPC 中的计算机系统 II<a class="headerlink" href="#07-08-下午hpc-中的计算机系统-ii" title="Permanent link">&para;</a></h1>
+<h1 id="07-08-下午hpc-中的计算机系统-ii">07-08 下午：HPC 中的计算机系统 II<a class="headerlink" href="#07-08-下午hpc-中的计算机系统-ii" title="Permanent link"></a></h1>
 <p>计算节点、网络和存储共同构成一个程序的运行路径。峰值算力只描述其中一段；一次迭代可能停在 DRAM、网络启动、并行文件系统元数据或全局同步上。性能数字离开问题规模和计时边界没有解释力。</p>
-<h2 id="hpc-系统与工作负载">HPC 系统与工作负载<a class="headerlink" href="#hpc-系统与工作负载" title="Permanent link">&para;</a></h2>
+<h2 id="hpc-系统与工作负载">HPC 系统与工作负载<a class="headerlink" href="#hpc-系统与工作负载" title="Permanent link"></a></h2>
 <p>高性能计算的问题并不只是代码执行速度。典型任务同时有大规模计算、大规模数据和多节点协作：数值模拟需要反复更新网格；气候、材料、生物信息任务需要保存或读取海量数据；机器学习训练需要在大量 GPU 间交换梯度或激活。</p>
 <p>超算系统通常由计算节点、存储节点、管理节点和互连网络组成。节点内部可有 CPU、GPU、内存和本地盘；节点之间通过以太网、InfiniBand、RoCE/RDMA 等网络通信。一个任务若频繁交换小消息，网络延迟很重要；若读写巨大张量或检查点，网络/存储带宽更重要。</p>
 <details class="note" open="open">
@@ -3364,7 +3364,7 @@
 <p>HPC 集群与通用分布式数据系统都由许多机器和网络组成，关注点却常不同。科学计算倾向让计算节点对规则数值核做紧密同步，低延迟互连十分重要；MapReduce 一类系统更强调把任务移到数据附近、容错和海量数据吞吐。现实系统会交叉使用这些思想，不能只看有没有很多节点判断它属于哪一类。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0708p/hpc-distributed-cluster.jpg"><img width="1280" height="720" alt="HPC 集群与 MapReduce 集群都连接计算和存储节点，但任务组织与数据路径不同。" src="../assets/0708p/hpc-distributed-cluster.preview.jpg" data-fullsrc="../assets/0708p/hpc-distributed-cluster.jpg" /></a></p>
 <p><em>图：HPC 常围绕紧耦合并行计算组织高速互连，数据分析系统更常围绕分布式存储切分任务；图展示的是典型侧重，不是互斥分类。</em></p>
-<h2 id="峰值性能与基准测试">峰值性能与基准测试<a class="headerlink" href="#峰值性能与基准测试" title="Permanent link">&para;</a></h2>
+<h2 id="峰值性能与基准测试">峰值性能与基准测试<a class="headerlink" href="#峰值性能与基准测试" title="Permanent link"></a></h2>
 <p>浮点性能常以 FLOPS 表示，每秒执行的浮点运算次数。若一个处理器有若干核心，每核每周期能发射若干条 FMA（fused multiply-add，乘加）指令，每条又有多个 SIMD lane，则理论峰值大致是：</p>
 <div class="arithmatex">\[
 \text{peak FLOPS} = \text{cores}\times\text{frequency}\times\text{operations/cycle/core}
@@ -3398,14 +3398,14 @@
 <p>需要同时问清精度（FP64、TF32、INT8）、它是理论 peak 还是基准实测、问题是稠密还是稀疏、使用了多少节点，以及是否把通信和 I/O 排除在计时外。缺少其中任一项，更高的数字都无法直接推导出自己的程序会更快。</p>
 </details>
 <p>基准还有一个常见误区：它给出的往往是最佳配置下的大规模结果。小规模问题可能装不满设备；节点数增加后，通信与同步比例也会变。因此比较算法或系统时，至少说明问题规模、数据类型、节点数、每节点进程/线程数和计时边界。把初始化、文件读入、通信和核心计算混在一个数字里，结论很难解释。</p>
-<h2 id="计算内存网络与-io-瓶颈">计算、内存、网络与 I/O 瓶颈<a class="headerlink" href="#计算内存网络与-io-瓶颈" title="Permanent link">&para;</a></h2>
+<h2 id="计算内存网络与-io-瓶颈">计算、内存、网络与 I/O 瓶颈<a class="headerlink" href="#计算内存网络与-io-瓶颈" title="Permanent link"></a></h2>
 <p>性能常由最慢的资源决定。矩阵乘法做很多乘加、能复用数据，可能接近计算上限；逐元素扫描大数组，每读取少量数据只做一次加法，常受 DRAM 带宽限制；分布式稀疏算法则可能受网络延迟限制。</p>
 <p>用 Roofline 的语言，运算强度为：</p>
 <div class="arithmatex">\[
 I=\frac{\text{floating-point operations}}{\text{bytes moved}}
 \]</div>
 <p>可达性能不超过计算峰值和 <code>内存带宽 × I</code> 的较小值。这个公式用来决定优化方向：若已被带宽限制，就应减少搬运、提高复用；若计算单元没有吃满，才考虑向量化、并行和更高效的算子。</p>
-<h3 id="延迟与带宽">延迟与带宽<a class="headerlink" href="#延迟与带宽" title="Permanent link">&para;</a></h3>
+<h3 id="延迟与带宽">延迟与带宽<a class="headerlink" href="#延迟与带宽" title="Permanent link"></a></h3>
 <p>传一条消息的时间可粗略写成</p>
 <div class="arithmatex">\[
 T\approx\alpha+\frac{n}{B},
@@ -3449,10 +3449,10 @@ T\approx\alpha+\frac{n}{B},
 <summary>阿姆达尔定律怎样限制强扩展</summary>
 <p>假设一次运行有 5% 的时间无法并行，其余部分完全均分。即使用 64 个 worker，理想加速也只有 <span class="arithmatex">\(1/(0.05+0.95/64)\approx15.4\)</span>，并行效率约 24%。若把不可并行部分降到 1%，同样 64 个 worker 的上限才提高到约 39.3。优化全局串行步骤，常比继续增加 worker 更有效。</p>
 </details>
-<h2 id="作业调度与资源形状">作业调度与资源形状<a class="headerlink" href="#作业调度与资源形状" title="Permanent link">&para;</a></h2>
+<h2 id="作业调度与资源形状">作业调度与资源形状<a class="headerlink" href="#作业调度与资源形状" title="Permanent link"></a></h2>
 <p>共享超算不会让所有用户直接登录同一节点无限制运行。调度器依据作业脚本申请的节点数、核数、内存、GPU、时限和队列策略选择资源，分配后再启动进程。申请 4 个节点与在一个节点上启动 4 个进程是不同资源形状：前者引入节点间网络，后者主要竞争同一节点内存带宽。实验报告至少应保存节点列表、每节点 rank 数、线程数、绑定策略和 GPU 可见编号，否则同一命令在不同排程下的结果没有可比性。</p>
 <p>walltime 也是算法约束。作业若超过申请时限可能被终止，长模拟需要把检查点写在可恢复的边界；时限申请过长又可能影响排队。交互节点适合编译、调试和小规模试验，正式性能数字应在获得明确资源配额的计算节点上采集，避免他人负载和登录限制混进数据。</p>
-<h2 id="超算的软件栈">超算的软件栈<a class="headerlink" href="#超算的软件栈" title="Permanent link">&para;</a></h2>
+<h2 id="超算的软件栈">超算的软件栈<a class="headerlink" href="#超算的软件栈" title="Permanent link"></a></h2>
 <p>一个 HPC 应用从上到下大致经过：</p>
 <pre class="highlight"><code class="language-text">应用：模拟程序、训练程序、脚本
 并行/数学库：MPI、OpenMP、BLAS、FFT、GPU runtime
@@ -3460,7 +3460,7 @@ T\approx\alpha+\frac{n}{B},
 操作系统和驱动：文件系统、网络、GPU 驱动
 硬件：CPU、GPU、DRAM、SSD、NIC、交换机</code></pre>
 <p>上层应尽可能调用成熟库。例如 <code>dgemm</code>、FFT 或 GPU 框架里的矩阵乘法早就针对缓存、SIMD、线程和设备做了多年调优，调用它们是把这些积累复用起来。需要排错时，也应先定位层次：是算法有问题、库没有正确加载、MPI 通信异常、文件系统慢，还是节点资源没有申请到。</p>
-<h2 id="存储系统文件不是总在本地磁盘上">存储系统：文件不是总在本地磁盘上<a class="headerlink" href="#存储系统文件不是总在本地磁盘上" title="Permanent link">&para;</a></h2>
+<h2 id="存储系统文件不是总在本地磁盘上">存储系统：文件不是总在本地磁盘上<a class="headerlink" href="#存储系统文件不是总在本地磁盘上" title="Permanent link"></a></h2>
 <p>HPC 常使用并行文件系统。它把数据分布在多个存储服务上，对计算节点提供一个统一目录树；多个进程可并行读写同一个大文件。这样能提供很高总带宽，但元数据、网络和服务器仍是共享资源。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0708p/parallel-io-stack.jpg"><img width="1280" height="720" alt="课件将应用到存储硬件之间分成高层 I/O 库、I/O 中间件、转发层和并行文件系统。" src="../assets/0708p/parallel-io-stack.preview.jpg" data-fullsrc="../assets/0708p/parallel-io-stack.jpg" /></a></p>
 <p><em>图：HDF5、Parallel NetCDF、ADIOS 等库负责数据结构与可移植性，MPI-IO 组织多进程访问，并行文件系统再把逻辑文件映射到实际存储服务。每层都可能改变请求的大小、顺序和并发度。</em></p>
@@ -3477,13 +3477,13 @@ T\approx\alpha+\frac{n}{B},
 <li>检查点是为了故障恢复，写得过于频繁会让 I/O 吞掉计算时间，太少又增加故障损失。</li>
 </ul>
 <p>存储缓存的核心是把远处慢设备的数据暂存在近处快设备。它只在数据有复用、容量足够且一致性允许时有效；缓存不是无限大，也不是免费的。</p>
-<h3 id="检查点策略">检查点策略<a class="headerlink" href="#检查点策略" title="Permanent link">&para;</a></h3>
+<h3 id="检查点策略">检查点策略<a class="headerlink" href="#检查点策略" title="Permanent link"></a></h3>
 <p>长作业可能因节点故障、维护或时间限制中断。检查点把可恢复状态写到可靠存储，降低重算风险；写得太频繁会反复打断计算并挤占并行文件系统，写得太少则可能在失败后丢失很长一段工作。一次检查点的代价不只取决于数据量，还取决于所有 rank 是否同时突发写入、文件如何分块、元数据操作有多少，以及存储系统是否正被其他作业使用。</p>
 <p>常见做法包括每个 rank 写独立文件、集中写入共享文件、分层先写本地盘再异步汇聚到并行文件系统。没有哪一种天然最好。关键是让恢复时能明确知道每一块状态对应哪个 rank/时间点，并在实际集群上测量写入和恢复时间。</p>
 <p>并行文件系统通常把一个大文件条带化到多个对象存储目标（OST）或等价服务上。条带大小和条带数决定连续区段落在哪些服务上：单个顺序 reader 可能不需要很宽的条带，而许多 rank 读取不同大区段时，合理条带可提升总吞吐。小文件风暴更棘手，因为每个 <code>open</code>、目录查找和创建都要访问元数据服务；把一百万个小样本直接散落在共享目录，常会先压垮元数据服务，而不是数据带宽。</p>
 <p>计时 I/O 时要说明是否调用了 <code>fsync</code>、是否只计入进程把数据交给 page cache 的时间、是否包含最终落盘和全体 rank 的 barrier。否则一次看似很快的 <code>write</code> 可能只是把工作延后给内核。对检查点而言，正确性还包括原子性：写入中断后，恢复程序不能把半个新文件误认为完整检查点；常见做法是写临时名、完成并校验后再原子重命名，同时保存版本号和每个分块的元数据。</p>
 <p>这里也要提一下持久内存（persistent memory）。普通 DRAM 断电后内容消失，SSD 则持久但访问接口和延迟不同。介于两者之间的非易失性内存曾被用于探索更大容量或更快恢复的层次；对程序员而言，关键仍是分清数据是否需要跨进程/断电保留，不能把能持久误解为速度等同于 DRAM。</p>
-<h2 id="指令集编译器与微架构">指令集、编译器与微架构<a class="headerlink" href="#指令集编译器与微架构" title="Permanent link">&para;</a></h2>
+<h2 id="指令集编译器与微架构">指令集、编译器与微架构<a class="headerlink" href="#指令集编译器与微架构" title="Permanent link"></a></h2>
 <p>ISA（Instruction Set Architecture）是软件与处理器之间的约定：指令的形式、寄存器集合、内存模型和异常的语义如何定义。x86-64、ARM、RISC-V 都是 ISA；同一 ISA 下可以有许多不同微架构。编译器根据 ISA 生成指令，处理器的微架构决定这些指令怎样被流水化、乱序执行、预测分支和访问缓存。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0708p/isa-vs-microarchitecture.jpg"><img width="1280" height="720" alt="课件把 ISA 与微架构分开：ISA 是软件能看到的规格，微架构是实现——同一 ISA 可有多种性能不同的实现。" src="../assets/0708p/isa-vs-microarchitecture.preview.jpg" data-fullsrc="../assets/0708p/isa-vs-microarchitecture.jpg" /></a></p>
 <p><em>图：ISA 是契约、微架构是产品；理解这个区分，才不会被同一指令集就该同样快误导。</em></p>
@@ -3538,7 +3538,7 @@ T\approx\alpha+\frac{n}{B},
 <p>同样是对数组中不小于 <code>128</code> 的元素求和，若数组先排序，条件分支会集中地为真或为假，预测器更容易猜中；随机排列时，预测错误造成的流水线清空会使时间出现数倍差异。这个例子说明数据分布会改变处理器实际看到的指令流，也解释了额外排序为什么常常得不偿失。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0708p/branch-prediction.jpg"><img width="1280" height="720" alt="排序前后相同循环可能因为分支可预测性不同而出现显著性能差异。" src="../assets/0708p/branch-prediction.preview.jpg" data-fullsrc="../assets/0708p/branch-prediction.jpg" /></a></p>
 <p><em>图：排序让相同判断连续为真或连续为假，预测器更容易复用历史；随机输入使分支结果频繁变化。</em></p>
-<h2 id="内存层级与虚拟内存">内存层级与虚拟内存<a class="headerlink" href="#内存层级与虚拟内存" title="Permanent link">&para;</a></h2>
+<h2 id="内存层级与虚拟内存">内存层级与虚拟内存<a class="headerlink" href="#内存层级与虚拟内存" title="Permanent link"></a></h2>
 <p>“内存 32 GB”和“硬盘 1 TB”不是同一类资源。DRAM 是运行时主要工作区；SSD/HDD 是持久存储。CPU 还在 DRAM 前放置多级 cache，利用时间/空间局部性减少等待。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0708p/memory-hierarchy-fast-cheap.jpg"><img width="1280" height="720" alt="课件画出 Memory Hierarchy：寄存器/cache 快而小贵，DRAM 中等，SSD/磁盘慢而大便宜，形成明显的速度—容量梯度。" src="../assets/0708p/memory-hierarchy-fast-cheap.preview.jpg" data-fullsrc="../assets/0708p/memory-hierarchy-fast-cheap.jpg" /></a></p>
 <p><em>图：存储层级的本质是在“快小贵”与“慢大便宜”间取舍；理解才能判断某个数据应停在哪一层。</em></p>
@@ -3554,7 +3554,7 @@ T\approx\alpha+\frac{n}{B},
 <p><a class="glightbox" data-type="image" href="../assets/0708p/cache-staging-area.jpg"><img width="1280" height="720" alt="课件把 cache 定义为一个更小、更快的存储设备，作为计算的临时驿站（staging area），保存最近的数据以加速重复访问。" src="../assets/0708p/cache-staging-area.preview.jpg" data-fullsrc="../assets/0708p/cache-staging-area.jpg" /></a></p>
 <p><em>图：cache 是 CPU 与主存之间的临时缓冲区；命中省去去 DRAM，miss 才付出完整代价。</em></p>
 <p>大而随机的工作集会同时伤害 cache 和 TLB。顺序访问、分块处理和控制工作集大小，常常比在某一条算术指令上微调更有用。</p>
-<h3 id="cache-地址映射">Cache 地址映射<a class="headerlink" href="#cache-地址映射" title="Permanent link">&para;</a></h3>
+<h3 id="cache-地址映射">Cache 地址映射<a class="headerlink" href="#cache-地址映射" title="Permanent link"></a></h3>
 <p>一个物理地址进入 cache 时，可粗略拆成 <code>tag | set index | block offset</code>。offset 选择 cache line 内的字节，set index 选择候选集合，tag 用来确认该槽位保存的是否正是目标内存块。若一个 set 有 <span class="arithmatex">\(W\)</span> 个 way，它最多同时保留 <span class="arithmatex">\(W\)</span> 条映射到该 set 的 line。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0708p/cache-address-mapping.jpg"><img width="1280" height="720" alt="组相联 cache 用地址中的 set 位定位一组，再比较各 way 的 tag。" src="../assets/0708p/cache-address-mapping.preview.jpg" data-fullsrc="../assets/0708p/cache-address-mapping.jpg" /></a></p>
 <p><em>图：命中需要 valid bit 有效且 tag 匹配；dirty bit 表示写回式 cache 中该 line 已修改，替换前需要写回下一层。</em></p>
@@ -3570,10 +3570,10 @@ T\approx\alpha+\frac{n}{B},
 <p><em>图：私有 cache 提供低延迟，共享 L3 便于跨核数据与容量复用；核心之间写同一 cache line 时仍需一致性协议协调。图中容量对应特定 Xeon，不能当成所有机器的固定配置。</em></p>
 <p><a class="glightbox" data-type="image" href="../assets/0708p/msi-cacheline-protocol.jpg"><img width="1280" height="720" alt="课件用 MSI 协议说明缓存一致性的基础：每条 cache line 维护 Modified/Shared/Invalid 状态，核心写共享 line 时让其它副本失效。" src="../assets/0708p/msi-cacheline-protocol.preview.jpg" data-fullsrc="../assets/0708p/msi-cacheline-protocol.jpg" /></a></p>
 <p><em>图：MSI/MESI 之类协议保证一个核心写入后，其它核心不会长期读到旧值；这也是 false sharing 代价的物理来源。</em></p>
-<h3 id="内存分配与数据位置">内存分配与数据位置<a class="headerlink" href="#内存分配与数据位置" title="Permanent link">&para;</a></h3>
+<h3 id="内存分配与数据位置">内存分配与数据位置<a class="headerlink" href="#内存分配与数据位置" title="Permanent link"></a></h3>
 <p>进程请求一块堆内存时，<code>malloc</code> 先由用户态分配器管理小块；必要时再通过 <code>brk</code> 或 <code>mmap</code> 向内核取得更多虚拟地址范围。真正的物理页可能在第一次读写时才分配。对单线程小程序，这些细节通常无需干预；对大数组、多线程初始化和 NUMA 机器，初始化路径会决定页面最终靠近哪个 socket。</p>
 <p>数组的连续布局也并不等于所有访问都连续。以行主序 C/C++ 数组为例，固定行、沿列递增通常连续；固定列、沿行递增会跨较大的地址步长。数据结构若由大量指针串接，遍历时还会失去空间局部性。把热点字段整理为连续数组，或采用 AoS/SoA 中适合访问模式的一种，往往比替换一个更快的算术操作更有影响。</p>
-<h2 id="多核线程和同步">多核、线程和同步<a class="headerlink" href="#多核线程和同步" title="Permanent link">&para;</a></h2>
+<h2 id="多核线程和同步">多核、线程和同步<a class="headerlink" href="#多核线程和同步" title="Permanent link"></a></h2>
 <p>多核把单机性能从单核频率竞争转向并行协作。不同线程处理独立数据时可以接近线性加速；若它们频繁写同一份状态、被锁串行化、或争夺内存带宽，加速会迅速下降。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0708p/processes-vs-threads.jpg"><img width="1280" height="720" alt="课件对比进程与线程的相似与差异：线程共享地址空间、更轻，进程相互隔离但通信需要显式机制。" src="../assets/0708p/processes-vs-threads.preview.jpg" data-fullsrc="../assets/0708p/processes-vs-threads.jpg" /></a></p>
 <p><em>图：进程与线程共享各自有状态这个相似点，区别集中在是否共享地址空间、通信与故障代价。</em></p>
@@ -3586,7 +3586,7 @@ T\approx\alpha+\frac{n}{B},
 S(p)=\frac{1}{s+(1-s)/p}.
 \]</div>
 <p>这个式子提醒人优先找关键路径。一次全局 barrier、串行 I/O、主线程初始化或锁竞争都可能成为 <span class="arithmatex">\(s\)</span>；在把线程数从 32 加到 64 之前，先测量这些部分通常更有效。</p>
-<h2 id="性能分析流程">性能分析流程<a class="headerlink" href="#性能分析流程" title="Permanent link">&para;</a></h2>
+<h2 id="性能分析流程">性能分析流程<a class="headerlink" href="#性能分析流程" title="Permanent link"></a></h2>
 <p>假设一个多节点程序 CPU 利用率不高、运行缓慢。不能直接增加线程。</p>
 <ol>
 <li>用 profiler 看时间在计算、文件读写还是 MPI 等待；</li>
@@ -3983,7 +3983,7 @@ S(p)=\frac{1}{s+(1-s)/p}.
       
         <script src="../../../../theme/js/mathjax.js"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
       

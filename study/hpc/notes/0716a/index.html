@@ -64,7 +64,9 @@
     
       <link rel="stylesheet" href="../../../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../../../theme/css/components.css">
+      <link rel="stylesheet" href="../../../../theme/css/theme.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/home.css">
     
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
@@ -73,8 +75,6 @@
     
     
   
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -3404,9 +3404,9 @@
 
 
 
-<h1 id="07-16-上午机器学习基础">07-16 上午：机器学习基础<a class="headerlink" href="#07-16-上午机器学习基础" title="Permanent link">&para;</a></h1>
+<h1 id="07-16-上午机器学习基础">07-16 上午：机器学习基础<a class="headerlink" href="#07-16-上午机器学习基础" title="Permanent link"></a></h1>
 <p>给定一批带答案的历史数据，监督学习要构造一个能处理新输入的函数。房价、气温、购买意愿和图像类别的任务形式不同，数据、目标函数、训练和独立评估的边界却相同。这个边界决定后面交叉熵、梯度、神经网络和语言模型的每个公式怎样解释。</p>
-<h2 id="人工智能范式">人工智能范式<a class="headerlink" href="#人工智能范式" title="Permanent link">&para;</a></h2>
+<h2 id="人工智能范式">人工智能范式<a class="headerlink" href="#人工智能范式" title="Permanent link"></a></h2>
 <p>课上从图灵测试和 1956 年达特茅斯会议讲起。早期研究者关心的是怎样让机器表现出推理、学习和决策能力，而不只是会做算术。沿着这个问题，人工智能形成过三种很有代表性的思路。</p>
 <table>
 <thead>
@@ -3437,14 +3437,14 @@
 <p>工程系统常混合这些路线：大模型可以调用规则工具，强化学习也可以用神经网络表示策略。</p>
 <p>深度学习近年的扩展依赖算法、数据、GPU 和工程工具同时成熟。模型规模增大后，数据重复、显存、通信和推理延迟都会成为系统约束。</p>
 <p>机器学习属于连接主义最常用的技术路径之一，但不能把两者划等号。机器学习包括线性模型、树模型、核方法和神经网络；神经网络只是其中一类模型。先掌握这一节的基本闭环，后面看到多层网络或 Transformer 时才不会把它们看成凭空出现的黑箱。</p>
-<h2 id="监督学习模型">监督学习模型<a class="headerlink" href="#监督学习模型" title="Permanent link">&para;</a></h2>
+<h2 id="监督学习模型">监督学习模型<a class="headerlink" href="#监督学习模型" title="Permanent link"></a></h2>
 <p>给定输入特征 <span class="arithmatex">\(x\)</span> 和期望输出 <span class="arithmatex">\(y\)</span>，模型 <span class="arithmatex">\(f(x;\theta)\)</span> 用参数 <span class="arithmatex">\(\theta\)</span> 产生预测 <span class="arithmatex">\(\hat y\)</span>。训练通过调整参数，让模型在没有见过的新样本上仍能给出有用的预测，而不是把样本原封不动记下来。</p>
 <p>一个问题至少需要说明三件事：输入是什么、输出是什么、怎样判定预测好坏。房价预测中，面积、位置等可作输入，房价是连续输出；垃圾邮件识别中，邮件内容是输入，类别是离散输出。前者是回归，后者是分类。</p>
 <p>用前两天的温度预测明天温度。把两个温度直接平均，是人先写好的规则；把前两天温度分别乘以待学习的系数 <span class="arithmatex">\(A,B\)</span>，再除以待学习的尺度 <span class="arithmatex">\(C\)</span>，则把哪些历史量更重要交给数据决定。这个小例子已经包含了建模的要害：输入的选择带有人的判断，参数由训练得到，输出是否可信还要由独立数据检验。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0716a/ml-modeling.jpg"><img width="1280" height="720" alt="课件用天气预测说明建模：选择输入与输出，并写出一个从输入到预测值的函数关系。" src="../assets/0716a/ml-modeling.preview.jpg" data-fullsrc="../assets/0716a/ml-modeling.jpg" /></a></p>
 <p><em>图：建模先定义输入、输出和参数化函数；训练数据负责估计参数，不能替代任务定义。</em></p>
 <p>模型复杂度要和问题匹配。若输入与输出关系近似线性，堆叠很深的网络只会增加训练成本和过拟合机会；若数据明显弯曲、分段或带有交互关系，一条直线又会留下系统性误差。数据质量、标签定义和评价指标往往比换一个更大模型更早决定结论是否可信。</p>
-<h2 id="数据集划分">数据集划分<a class="headerlink" href="#数据集划分" title="Permanent link">&para;</a></h2>
+<h2 id="数据集划分">数据集划分<a class="headerlink" href="#数据集划分" title="Permanent link"></a></h2>
 <p>课程把数据分成训练集、验证集、测试集和应用数据：</p>
 <ul>
 <li>训练集用于拟合模型参数；</li>
@@ -3456,18 +3456,18 @@
 <p><a class="glightbox" data-type="image" href="../assets/0716a/ml-core-elements.jpg"><img width="1280" height="720" alt="课件给出机器学习核心要素：训练、验证、测试与应用数据四类，以及模型训练在其中的位置。" src="../assets/0716a/ml-core-elements.preview.jpg" data-fullsrc="../assets/0716a/ml-core-elements.jpg" /></a></p>
 <p><em>图：四类数据各司其职；训练集拟合参数、验证集调超参数、测试集只做最后评估、应用数据是部署时真正面临的新输入。</em></p>
 <p>形式上，一个监督学习数据集可写为 <span class="arithmatex">\(D=\{(x_1,y_1),\ldots,(x_n,y_n)\}\)</span>。每个 <span class="arithmatex">\(x_i\)</span> 是一行输入特征，<span class="arithmatex">\(y_i\)</span> 是它的标签。训练集通常占较大部分，因为参数需要足够多的样本来估计；验证集和测试集的比例并没有放之四海皆准的答案。课件给出 60%--80%、10%--20%、10%--20% 的常见范围。数据量很小的时候，硬切出很大的测试集会让训练更不稳定，后面要用交叉验证缓解这种问题。</p>
-<h3 id="数据泄露">数据泄露<a class="headerlink" href="#数据泄露" title="Permanent link">&para;</a></h3>
+<h3 id="数据泄露">数据泄露<a class="headerlink" href="#数据泄露" title="Permanent link"></a></h3>
 <p>训练/测试的样本即使文件名不同，也可能高度相关。例如同一个人的多张相似照片、一段时间序列切出的相邻窗口、同一病人的多次记录，不能随意随机分到两边。模型在训练时已经看过非常接近的信息，测试分数就不代表面对真正新对象的能力。</p>
 <p>划分时要保证独立性，并使训练和应用的分布尽量一致。按人、按设备、按时间或按场景分组，有时比简单随机切分更合理。所谓数据泄露，不只是把标签列放进特征，也包括这种不应跨集合的关联。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0716a/data-split-cautions.jpg"><img width="1280" height="720" alt="课件强调数据划分的注意事项：划分不仅要随机，更要保证训练与应用分布一致、避免跨集合的相关造成数据泄露。" src="../assets/0716a/data-split-cautions.preview.jpg" data-fullsrc="../assets/0716a/data-split-cautions.jpg" /></a></p>
 <p><em>图：划分单位应服从真实部署的新样本；按人、按时间或按场景分组常比简单随机更合理。</em></p>
 <p>一个例子用同一人的不同照片来说明这一点。若训练集中已经有某人的多张正面照，测试集中再放同一个人换角度的照片，模型可能靠背景、脸部细节或拍摄条件取得很高分，实际却没有学会识别新的人。医学数据常要按患者分组，传感器数据常要按设备或采集批次分组，时间序列则通常用过去训练、未来测试。划分单位应当服从部署时真正面对的新样本是什么。</p>
-<h3 id="留出法与交叉验证">留出法与交叉验证<a class="headerlink" href="#留出法与交叉验证" title="Permanent link">&para;</a></h3>
+<h3 id="留出法与交叉验证">留出法与交叉验证<a class="headerlink" href="#留出法与交叉验证" title="Permanent link"></a></h3>
 <p>数据足够多时，可留出一部分，例如 80% 训练、20% 测试，再从训练部分划出验证集。数据很少时，单次划分的偶然性很大，可用 <span class="arithmatex">\(K\)</span> 折交叉验证：分成 <span class="arithmatex">\(K\)</span> 份，每次用一份验证/测试、其余训练，最后平均多个结果。</p>
 <p>交叉验证能更充分利用小数据集，但成本是训练 <span class="arithmatex">\(K\)</span> 次。无论采用哪种方法，最后仍应保留一份完全不参与调参的测试数据，作为最终报告依据。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0716a/holdout-cross-validation.jpg"><img width="1280" height="720" alt="留出法把训练部分继续分出验证集；交叉验证轮流使用各折验证，测试集始终留在最后。" src="../assets/0716a/holdout-cross-validation.preview.jpg" data-fullsrc="../assets/0716a/holdout-cross-validation.jpg" /></a></p>
 <p><em>图：交叉验证反复轮换训练/验证折，用于减小小数据集单次划分的偶然性；最终测试集仍不参与调参。</em></p>
-<h2 id="回归">回归<a class="headerlink" href="#回归" title="Permanent link">&para;</a></h2>
+<h2 id="回归">回归<a class="headerlink" href="#回归" title="Permanent link"></a></h2>
 <p>最简单的一元线性回归写成：</p>
 <div class="arithmatex">\[
 \hat y=wx+b
@@ -3492,7 +3492,7 @@
 <p>异常值会显著拉动最小二乘拟合的直线。因此应先追问异常点是录入错误、测量噪声、少见但真实的对象，还是任务本来就应覆盖的情形；不能只为了让图更好看而删除它。不同结论会导致不同的数据清洗或鲁棒回归选择。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0716a/linear-regression-outlier.jpg"><img width="1280" height="720" alt="课件以线性回归能解决所有问题么？为引，展示异常值对拟合直线的拉动，说明线性模型有其适用范围。" src="../assets/0716a/linear-regression-outlier.preview.jpg" data-fullsrc="../assets/0716a/linear-regression-outlier.jpg" /></a></p>
 <p><em>图：少数远离主体的异常点会明显改变最小二乘直线；处理前先判断它的来源，再决定清洗还是用鲁棒方法。</em></p>
-<h2 id="分类与概率输出">分类与概率输出<a class="headerlink" href="#分类与概率输出" title="Permanent link">&para;</a></h2>
+<h2 id="分类与概率输出">分类与概率输出<a class="headerlink" href="#分类与概率输出" title="Permanent link"></a></h2>
 <p>二分类常从线性得分开始：<span class="arithmatex">\(z=w^Tx+b\)</span>。但 <span class="arithmatex">\(z\)</span> 可取任意实数，不能直接当概率，因此用 sigmoid 映射：</p>
 <div class="arithmatex">\[
 \sigma(z)=\frac{1}{1+e^{-z}},\qquad p(y=1\mid x)=\sigma(z)
@@ -3505,7 +3505,7 @@
 <p>以购买意愿为例，年龄和收入可以组成特征 <span class="arithmatex">\(x=(x_1,x_2)\)</span>，模型计算 <span class="arithmatex">\(z=\theta_0+\theta_1x_1+\theta_2x_2\)</span>，再得到 <span class="arithmatex">\(p=\sigma(z)\)</span>。若业务把 0.5 作为阈值，<span class="arithmatex">\(p\ge0.5\)</span> 判为购买。这个阈值只是一种决策规则，不是概率模型自己决定的。医疗筛查常希望少漏掉阳性样本，会把阈值降低；人工复核昂贵或误报代价很高时，阈值又可能提高。调阈值时必须在验证集上观察精确率、召回率等指标，不能只盯总体准确率。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0716a/logistic-purchase-data.jpg"><img width="1280" height="720" alt="课件的逻辑回归实战数据：用年龄、收入等特征预测购买意愿，这正是线性得分 → sigmoid → 阈值决策的现实例子。" src="../assets/0716a/logistic-purchase-data.preview.jpg" data-fullsrc="../assets/0716a/logistic-purchase-data.jpg" /></a></p>
 <p><em>图：真实表格数据进入逻辑回归的形态——一批特征（年龄、收入）对应一个二分类标签（购买意愿）。</em></p>
-<h3 id="决策边界">决策边界<a class="headerlink" href="#决策边界" title="Permanent link">&para;</a></h3>
+<h3 id="决策边界">决策边界<a class="headerlink" href="#决策边界" title="Permanent link"></a></h3>
 <p>对于两个特征，<span class="arithmatex">\(z=\theta_0+\theta_1x_1+\theta_2x_2=0\)</span> 在平面上是一条直线。sigmoid 在 <span class="arithmatex">\(z=0\)</span> 时恰好输出 0.5，所以这条直线就是阈值为 0.5 时的决策边界。边界一侧的点概率大于 0.5，另一侧小于 0.5。特征更多时，人无法把边界画出来，但几何含义不变：线性组合把输入空间划成两个半空间。</p>
 <p>这也说明逻辑回归能够解决的范围。它的输入到概率的关系是 S 形的，决策边界对原始特征却仍是线性的。若两类样本像同心圆一样交错，单条直线分不开，可以加入 <span class="arithmatex">\(x_1^2,x_2^2,x_1x_2\)</span> 等特征，或者改用更复杂的模型。模型名称里带线性并不代表只能处理直线外观的数据；决定边界形状的是送入模型的特征空间。</p>
 <p>分类数据还要检查标签是否可信。购买意愿按点击、加购还是成交定义，会得到不同任务；人工标注不一致会形成噪声。类别极不均衡时，准确率可能掩盖问题，应结合精确率 <span class="arithmatex">\(TP/(TP+FP)\)</span>、召回率 <span class="arithmatex">\(TP/(TP+FN)\)</span> 和错误代价选择阈值。阈值越高，误报通常越少，漏报也可能更多。</p>
@@ -3520,7 +3520,7 @@ p_k=\frac{e^{z_k}}{\sum_j e^{z_j}}
 \frac{e^{z_k-\max_jz_j}}{\sum_j e^{z_j-\max_jz_j}}.
 \]</div>
 <p>分子分母同时乘以同一常数不会改变结果，却能避免 <span class="arithmatex">\(e^{z_k}\)</span> 因为 <span class="arithmatex">\(z_k\)</span> 很大而溢出。这个小技巧说明，公式成立和程序稳定运行之间还有一道工程关卡。深度学习框架常把 softmax 与交叉熵合成一个稳定算子，避免先得到接近零的概率、再单独取对数。</p>
-<h2 id="交叉熵与-nll">交叉熵与 NLL<a class="headerlink" href="#交叉熵与-nll" title="Permanent link">&para;</a></h2>
+<h2 id="交叉熵与-nll">交叉熵与 NLL<a class="headerlink" href="#交叉熵与-nll" title="Permanent link"></a></h2>
 <p>逻辑回归不常用 MSE，而常用二元交叉熵：</p>
 <div class="arithmatex">\[
 L=-[y\log p+(1-y)\log(1-p)]
@@ -3537,7 +3537,7 @@ L=-[y\log p+(1-y)\log(1-p)]
 <p>关键在 <strong>one-hot 编码</strong>，它表示只有目标位置是 1、其余都是 0 的一种向量形式。比如词表里 <code>cat</code> 是第 3 个词，那么下一个词是 cat 这个标签的 one-hot 向量在第 3 位是 1、其它位全是 0。</p>
 <p>于是词表大小可以是数万，某个位置真实标签为 <code>cat</code> 时，one-hot 标签在 <code>cat</code> 位置为 1、其余位置为 0；交叉熵相乘后也只留下 <code>-log p(cat)</code>。模型给 <code>cat</code> 的概率从 0.1 提高到 0.5，损失从约 2.30 降到约 0.69，因此它直接惩罚真实下一个 token 概率太低。</p>
 </details>
-<h2 id="梯度下降">梯度下降<a class="headerlink" href="#梯度下降" title="Permanent link">&para;</a></h2>
+<h2 id="梯度下降">梯度下降<a class="headerlink" href="#梯度下降" title="Permanent link"></a></h2>
 <p>损失是参数的函数。梯度 <span class="arithmatex">\(\nabla_\theta L\)</span> 指向当前位置上升最快的方向，因此沿反方向更新：</p>
 <div class="arithmatex">\[
 \theta\leftarrow\theta-\eta\nabla_\theta L
@@ -3546,7 +3546,7 @@ L=-[y\log p+(1-y)\log(1-p)]
 <p>实际训练会先初始化参数，再重复计算当前 batch 的损失和梯度，按学习率更新，直到达到预定轮数或验证指标不再改善。这里的收敛只是一个停止准则：梯度很小、参数变化很小，或验证集表现已不再提高。对深度网络而言，找到一个足够好的点通常比证明找到了全局最小值更重要。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0716a/gradient-descent-steps.jpg"><img width="1280" height="720" alt="课件列出梯度下降的步骤：先初始化一组参数，计算损失对参数的偏导（梯度），再沿负梯度方向更新，重复直到收敛。" src="../assets/0716a/gradient-descent-steps.preview.jpg" data-fullsrc="../assets/0716a/gradient-descent-steps.jpg" /></a></p>
 <p><em>图：梯度下降是初始化 → 算梯度 → 沿负梯度更新 → 重复的迭代，学习率决定每一步走多远。</em></p>
-<h3 id="线性回归的梯度">线性回归的梯度<a class="headerlink" href="#线性回归的梯度" title="Permanent link">&para;</a></h3>
+<h3 id="线性回归的梯度">线性回归的梯度<a class="headerlink" href="#线性回归的梯度" title="Permanent link"></a></h3>
 <p>一元线性回归的预测是 <span class="arithmatex">\(\hat y_i=wx_i+b\)</span>，均方误差是各样本残差平方的平均。对 <span class="arithmatex">\(w,b\)</span> 求导可得：</p>
 <div class="arithmatex">\[
 \frac{\partial L}{\partial w}=\frac{2}{n}\sum_{i=1}^n(\hat y_i-y_i)x_i,
@@ -3560,7 +3560,7 @@ L=-[y\log p+(1-y)\log(1-p)]
 <p><em>图：分清谁由训练决定、谁由人来定，是用好验证集、避免把测试集当验证集的前提。</em></p>
 <p>这一区别很容易混淆。在线性回归 <span class="arithmatex">\(\hat y=wx+b\)</span> 中，<span class="arithmatex">\(w,b\)</span> 是参数，会随着训练数据自动变化；学习率、训练多少轮、使用多大的 batch 是超参数，训练程序不会凭空知道该取什么值。实践中常在验证集上比较几组超参数，确定方案后才在测试集上报告一次结果。反复看测试集再决定学习率，等于把测试集也变成了验证集。</p>
 <p>batch 大小会同时影响显存、吞吐和梯度噪声；训练记录应保存数据版本、随机种子、模型、学习率计划和评估代码。训练损失下降而验证指标不动时，不应继续把它当作进步。</p>
-<h2 id="过拟合与欠拟合">过拟合与欠拟合<a class="headerlink" href="#过拟合与欠拟合" title="Permanent link">&para;</a></h2>
+<h2 id="过拟合与欠拟合">过拟合与欠拟合<a class="headerlink" href="#过拟合与欠拟合" title="Permanent link"></a></h2>
 <p>训练集损失持续下降，不代表模型在新数据上更好。若训练集越来越好、验证集先好后坏，模型开始记住训练样本的偶然细节，这就是过拟合。若训练和验证都不好，则可能是欠拟合：模型表达能力不足、特征不足、训练不够或优化失败。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0716a/overfitting-curves.jpg"><img width="1280" height="720" alt="训练曲线揭示两种不同现象：训练损失继续下降而验证损失回升，是过拟合的典型信号；两边都差则更接近欠拟合。" src="../assets/0716a/overfitting-curves.preview.jpg" data-fullsrc="../assets/0716a/overfitting-curves.jpg" /></a></p>
 <p><em>图：训练曲线回答拟合程度，验证曲线回答泛化；两者分离的位置可用于 early stopping。</em></p>
@@ -3570,7 +3570,7 @@ L=-[y\log p+(1-y)\log(1-p)]
 L_{\text{total}}=L_{\text{data}}+\lambda\lVert w\rVert_2^2.
 \]</div>
 <p>它在贴合训练数据之外，对过大的权重另加代价。<span class="arithmatex">\(\lambda\)</span> 太小作用不明显，太大又可能把真正需要的关系压平，所以它本身也是要在验证集上选择的超参数。L1 正则使用权重绝对值和，常会得到更多接近零的权重。两者都只能在数据和任务定义合理的前提下发挥作用。</p>
-<h2 id="神经网络与-transformer">神经网络与 Transformer<a class="headerlink" href="#神经网络与-transformer" title="Permanent link">&para;</a></h2>
+<h2 id="神经网络与-transformer">神经网络与 Transformer<a class="headerlink" href="#神经网络与-transformer" title="Permanent link"></a></h2>
 <p>神经网络把线性变换和非线性激活多层组合，能表达更复杂的输入输出关系；反向传播高效计算各层参数的梯度。Transformer 通过注意力机制处理序列关系，成为现代大语言模型等系统的基础结构。它们并没有改变本节的基本闭环：仍需训练/验证/测试划分，仍需定义损失，仍需优化参数并检查泛化。</p>
 <p>可以把一层神经网络看成 <span class="arithmatex">\(h=\phi(Wx+b)\)</span>：<span class="arithmatex">\(W x+b\)</span> 和线性回归一样先做加权组合，<span class="arithmatex">\(\phi\)</span> 再提供非线性。层层组合后，模型可以表达弯曲的边界和层次化特征。反向传播只是利用链式法则，把最终损失对各层参数的影响从输出端高效地传回去；梯度下降依然是那个更新规则。</p>
 <p>从线性模型过渡到神经网络时，最该抓住的是<strong>组合</strong>。若连续堆叠多层线性变换，中间没有激活函数，整体仍可合并为一次线性变换，表达能力并没有本质增加。ReLU、sigmoid、tanh 等激活函数在层间引入非线性，网络才可以把简单的线性切分组合成更复杂的函数。隐藏层中的数值通常没有一个固定的人类语义，它们是为降低损失而形成的中间表示。</p>
@@ -3581,7 +3581,7 @@ L_{\text{total}}=L_{\text{data}}+\lambda\lVert w\rVert_2^2.
 <p>反向传播在代码中通常由自动微分系统完成，但理解计算图仍很有用。每个张量操作都会记录它如何由前面的张量得到；调用反向传播时，框架按依赖的反方向累积梯度；优化器读取这些梯度更新参数。由于梯度会累积，实际训练循环中需要在每个 step 前清零；由于评估不需要梯度，应切换到推理模式、关闭梯度记录，以节约显存并避免某些层的行为差异。</p>
 <p>Transformer 也没有跳出这条线。文本先被切成 token 并编码为编号；模型查表后把每个 token 变成一行长度为 <span class="arithmatex">\(d\)</span> 的数。若一次输入有 <span class="arithmatex">\(T\)</span> 个 token，最常见的表示就是一个 <span class="arithmatex">\(T\times d\)</span> 的矩阵 <span class="arithmatex">\(X\)</span>。第 <span class="arithmatex">\(t\)</span> 行 <span class="arithmatex">\(x_t\)</span> 不需要被解释成某个固定的人类概念，它是这个位置在当前层携带的隐藏状态。后面的计算就是反复读入、更新和写出这些行。</p>
 <p>attention 让一个位置根据其他位置的表示更新自己，随后经过前馈网络和多层堆叠；训练语言模型时，目标仍是预测正确的下一个 token，常用损失仍是交叉熵。参数更多、数据更多、训练硬件更强，并不能掩盖基础问题。一个测试集泄露、指标不匹配或数据分布漂移的问题，不会因为模型更大而消失。</p>
-<h3 id="attention-与-ffn">Attention 与 FFN<a class="headerlink" href="#attention-与-ffn" title="Permanent link">&para;</a></h3>
+<h3 id="attention-与-ffn">Attention 与 FFN<a class="headerlink" href="#attention-与-ffn" title="Permanent link"></a></h3>
 <p>Transformer block 可以先拆成 attention 和 FFN（feed-forward network）。attention 处理这个 token 应从哪些位置取信息；FFN 不在这一步混合不同 token，它对每一行隐藏向量各自做一次更宽的非线性变换。忽略归一化和残差连接时，一个普通 FFN 常写成</p>
 <div class="arithmatex">\[
 H=\phi(XW_{\mathrm{up}}+b_{\mathrm{up}}),\qquad
@@ -3595,7 +3595,7 @@ H_{tj}=\sum_{i=0}^{d-1}X_{ti}(W_{\mathrm{up}})_{ij}.
 <p>它把第 <span class="arithmatex">\(t\)</span> 行输入的所有特征按权重混合起来。把多个 token 同时放进 <span class="arithmatex">\(X\)</span>，就是矩阵乘法而不是许多孤立的标量计算，SIMD、AMX、GPU Tensor Core 和矩阵库优化的对象正是这种成块的矩阵乘。矩阵的行对应 token，列对应特征或中间维度。读模型代码时先把张量形状写下来，很多看似复杂的 <code>reshape</code>、<code>transpose</code> 和 batch 维度才有落脚处。</p>
 <p>MoE 是 FFN 的一种变体：每行不再通过同一个 FFN，而是由 router 选择少数几个 expert FFN，再按权重合并结果。它仍建立在每个 token 是一行向量、FFN 是规则矩阵计算之上；token 按 expert 分组后会形成数据重排、通信和负载均衡问题。</p>
 <p>注意力可以先理解为按内容取信息。一个 token 的 query 与其它位置的 key 比较得到权重，再对对应 value 加权求和。这样同一个词在不同上下文中可以关注不同位置。自回归语言模型使用因果 mask，保证当前位置只能查看自己和前面的 token，不能偷看后面的正确答案。大规模执行时，矩阵计算、KV cache 和设备间通信共同决定吞吐。</p>
-<h3 id="qkv-与注意力矩阵">Q、K、V 与注意力矩阵<a class="headerlink" href="#qkv-与注意力矩阵" title="Permanent link">&para;</a></h3>
+<h3 id="qkv-与注意力矩阵">Q、K、V 与注意力矩阵<a class="headerlink" href="#qkv-与注意力矩阵" title="Permanent link"></a></h3>
 <p>设输入隐藏状态为 <span class="arithmatex">\(X\in\mathbb{R}^{T\times d}\)</span>，一层 attention 先用三组权重做线性投影：</p>
 <div class="arithmatex">\[
 Q=XW_Q,\qquad K=XW_K,\qquad V=XW_V.
@@ -3612,7 +3612,7 @@ A=\frac{QK^T}{\sqrt{d_h}}.
 <p>因此第 <span class="arithmatex">\(t\)</span> 行输出是所有 value 的加权和，权重由第 <span class="arithmatex">\(t\)</span> 个 token 与各位置 key 的匹配程度决定。若序列长为 <span class="arithmatex">\(T\)</span>，显式的 <span class="arithmatex">\(A\)</span> 有 <span class="arithmatex">\(T^2\)</span> 个元素。这是长上下文为什么既有大量计算，也有显存和访存压力的起点。</p>
 <p>自回归模型不允许第 <span class="arithmatex">\(t\)</span> 个位置读到未来 token。实现时会在 softmax 前给右上三角的非法位置加上一个非常小的值，等价于 <span class="arithmatex">\(-\infty\)</span>；softmax 后这些位置的权重为 0。mask 不是训练时附加的装饰，它保证预测下一个 token 这件事没有偷看答案。推理时新的 token 本来就还没生成，因果性自然保留。</p>
 <p>多头注意力把 hidden dimension 切成若干 head，每个 head 使用自己的 <span class="arithmatex">\(W_Q,W_K,W_V\)</span>。不同 head 可以学到不同的关联模式，随后把各 head 的输出拼接并再做一次投影。代码里常见的 <code>reshape</code>、<code>transpose</code> 往往只是在整理 <code>[batch, sequence, heads, head_dim]</code> 的维度顺序；读这类代码时，先标出哪一维是 sequence，哪一维是 head，远比盯着函数名有效。</p>
-<h3 id="残差归一化与一个-block-的数据流">残差、归一化与一个 Block 的数据流<a class="headerlink" href="#残差归一化与一个-block-的数据流" title="Permanent link">&para;</a></h3>
+<h3 id="残差归一化与一个-block-的数据流">残差、归一化与一个 Block 的数据流<a class="headerlink" href="#残差归一化与一个-block-的数据流" title="Permanent link"></a></h3>
 <p>attention 和 FFN 都不会直接覆盖原输入。常见 block 把子层输出加回输入，形成残差连接：</p>
 <div class="arithmatex">\[
 X' = X + \operatorname{Attention}(\operatorname{Norm}(X)),
@@ -4040,7 +4040,7 @@ Y = X' + \operatorname{FFN}(\operatorname{Norm}(X')).
       
         <script src="../../../../theme/js/mathjax.js"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
       

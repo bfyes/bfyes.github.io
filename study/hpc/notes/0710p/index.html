@@ -64,7 +64,9 @@
     
       <link rel="stylesheet" href="../../../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../../../theme/css/components.css">
+      <link rel="stylesheet" href="../../../../theme/css/theme.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/home.css">
     
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
@@ -73,8 +75,6 @@
     
     
   
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -3626,7 +3626,7 @@
 
 
 
-<h1 id="07-10-下午向量化并行计算基础">07-10 下午：向量化并行计算基础<a class="headerlink" href="#07-10-下午向量化并行计算基础" title="Permanent link">&para;</a></h1>
+<h1 id="07-10-下午向量化并行计算基础">07-10 下午：向量化并行计算基础<a class="headerlink" href="#07-10-下午向量化并行计算基础" title="Permanent link"></a></h1>
 <p>同一段数组计算可能停在 Python 解释器、标量指令、cache miss，或不规则的数据依赖上。SIMD 只处理其中许多相同、独立元素操作的一段；进入 intrinsic 之前，先让循环边界、别名关系和数据布局足够明确。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/vector-simd.png"><img width="2000" height="1125" alt="一条 SIMD 指令在多个 lane 上完成相同运算" src="../assets/0710p/vector-simd.preview.jpg" data-fullsrc="../assets/0710p/vector-simd.png" /></a></p>
 <p><em>图：标量指令一次处理一个元素，SIMD 指令把同一种运算分发到多个 lane。lane 数由寄存器宽度和元素类型共同决定。</em></p>
@@ -3635,7 +3635,7 @@
 <p>之所以叫<strong>向量化</strong>，是因为把一批连续的元素抽象成一个整体来处理，就像把一堆标量从视觉上竖成一列、排成一串，数学和硬件里都习惯把这串数叫<strong>向量（vector）</strong>。于是把一整串数一次处理，就叫向量化。这里的向量指一串同类型数据，和上一章讲数学向量是同一层意思；两者的共同点都是把一组数当作一个单元，整体参与同一运算。</p>
 <p>它和把代码写得像 NumPy 那样逐行简洁是两个不同层面的事——向量化指的是最终被硬件以整串方式执行，具体是否真的发生，要看编译器、指令集和数据是否连续。</p>
 </details>
-<h2 id="标量循环与批量计算">标量循环与批量计算<a class="headerlink" href="#标量循环与批量计算" title="Permanent link">&para;</a></h2>
+<h2 id="标量循环与批量计算">标量循环与批量计算<a class="headerlink" href="#标量循环与批量计算" title="Permanent link"></a></h2>
 <p>设有两个长度为 <code>n</code> 的向量，需要计算逐元素和：</p>
 <div class="arithmatex">\[
 c_i=a_i+b_i,\qquad 0\le i&lt;n
@@ -3653,7 +3653,7 @@ c_i=a_i+b_i,\qquad 0\le i&lt;n
 <p><a class="glightbox" data-type="image" href="../assets/0710p/simd-gpu-hierarchy.jpg"><img width="1448" height="1086" alt="课件展示标量、向量指令、GPU 与向量处理单元在硬件中的层级：同一段代码可以落在 SIMD 指令，也可以落到 GPU 或专用向量单元。" src="../assets/0710p/simd-gpu-hierarchy.preview.jpg" data-fullsrc="../assets/0710p/simd-gpu-hierarchy.jpg" /></a></p>
 <p><em>图：向量化的逻辑可以由不同硬件执行；SIMD、GPU 与向量处理单元是同一思想的几种落地方式。</em></p>
 <p>两者有关，但不是同义词。NumPy 代码快，可能因为避开了 Python 解释器循环、调用了 C/BLAS 库、用了 SIMD，或三者兼有。不要把使用 NumPy 机械地等同于一定使用 AVX。</p>
-<h2 id="数据依赖">数据依赖<a class="headerlink" href="#数据依赖" title="Permanent link">&para;</a></h2>
+<h2 id="数据依赖">数据依赖<a class="headerlink" href="#数据依赖" title="Permanent link"></a></h2>
 <p>向量化的关键要看不同迭代之间是否互相需要结果，而不是循环的语法。下面这个循环的每次迭代只读 <code>a[i]</code>、<code>b[i]</code>，只写 <code>c[i]</code>，所以它是典型的数据并行：</p>
 <pre class="highlight"><code class="language-cpp">for (int i = 0; i &lt; n; ++i) {
     c[i] = 2.0f * a[i] + b[i];
@@ -3673,7 +3673,7 @@ for (int i = 0; i &lt; n; ++i) {
 <summary>为什么前缀和不能只把循环改成 AVX</summary>
 <p><code>a[i] += a[i-1]</code> 中第 8 个元素需要第 7 个元素的最终值。把八个元素装进一个向量后，这个依赖仍在向量内部。并行 scan 会先在各块内求局部前缀，再扫描各块总和，最后把前缀偏移加回各块；它是另一种算法，而非一条更宽的加法指令。</p>
 </details>
-<h3 id="循环并行性的条件">循环并行性的条件<a class="headerlink" href="#循环并行性的条件" title="Permanent link">&para;</a></h3>
+<h3 id="循环并行性的条件">循环并行性的条件<a class="headerlink" href="#循环并行性的条件" title="Permanent link"></a></h3>
 <p>下列四个问题</p>
 <ol>
 <li>第 <code>i</code> 轮会读取第 <code>i-1</code> 轮刚写的值吗？</li>
@@ -3682,7 +3682,7 @@ for (int i = 0; i &lt; n; ++i) {
 <li>即使算术独立，数据是否以规则、连续的方式存放？</li>
 </ol>
 <p>前两项为“是”时，先处理依赖或共享写；第四项为“否”时，即便能够向量化，内存访问也可能让收益很小。</p>
-<h3 id="循环融合拆分与数据布局">循环融合、拆分与数据布局<a class="headerlink" href="#循环融合拆分与数据布局" title="Permanent link">&para;</a></h3>
+<h3 id="循环融合拆分与数据布局">循环融合、拆分与数据布局<a class="headerlink" href="#循环融合拆分与数据布局" title="Permanent link"></a></h3>
 <p>同样的数学式可以写成很不一样的循环。考虑</p>
 <pre class="highlight"><code class="language-cpp">for (int i = 0; i &lt; n; ++i) tmp[i] = a[i] * b[i];
 for (int i = 0; i &lt; n; ++i) out[i] = tmp[i] + c[i];</code></pre>
@@ -3695,7 +3695,7 @@ for (int i = 0; i &lt; n; ++i) sum += p[i].x;</code></pre>
 <p>把热点字段分开保存（SoA）后，<code>x[i]</code> 连续，SIMD load 和 cache line 都不会携带无关字段：</p>
 <pre class="highlight"><code class="language-cpp">struct Particles { float x[n], y[n], z[n], mass[n]; };</code></pre>
 <p>AoS 并非总错。一次总要同时读取一个粒子的全部字段时，它反而方便。布局应服从最内层循环实际读取的字段，而不是服从数据结构看上去是否面向对象。</p>
-<h2 id="numpy-与数组编程">NumPy 与数组编程<a class="headerlink" href="#numpy-与数组编程" title="Permanent link">&para;</a></h2>
+<h2 id="numpy-与数组编程">NumPy 与数组编程<a class="headerlink" href="#numpy-与数组编程" title="Permanent link"></a></h2>
 <p>Python 的 <code>for</code> 循环每一轮都要处理对象、类型和解释器调度，对大数组很不划算。NumPy 的 <code>ndarray</code> 把同类型元素连续存储，并把循环放在编译后的底层实现中。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/numpy-not-vectorization.png"><img width="1728" height="972" alt="课件提醒：NumPy 本身不是向量化这个概念，它只是提供数组、矩阵和批量运算的接口；我们用 NumPy 要做的是把数据整理成能用向量化接口的样子。" src="../assets/0710p/numpy-not-vectorization.preview.jpg" data-fullsrc="../assets/0710p/numpy-not-vectorization.png" /></a></p>
 <p><em>图：NumPy 提供的是批量运算接口；是否真正用上 SIMD，取决于底层库与数据布局，而不是调用 <code>np.*</code> 本身。</em></p>
@@ -3711,7 +3711,7 @@ assert np.all(c == 4 * a)</code></pre>
 <p>这里 <code>2 * a + b</code> 的每个位置相互独立。它不仅更短，也给底层实现留下了使用连续循环、SIMD 与多线程库的空间。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/numpy-matrix-sum.jpg"><img width="737" height="356" alt="课件用三层循环的 matrix_sum 与 NumPy 写法对照：手工 for 循环逐元素相加，而数组接口一次表达整个矩阵相加。" src="../assets/0710p/numpy-matrix-sum.preview.jpg" data-fullsrc="../assets/0710p/numpy-matrix-sum.jpg" /></a></p>
 <p><em>图：两段代码做同一件事——逐元素矩阵相加；用 NumPy 接口写出的形式更容易被底层的批量循环和 SIMD 加速。</em></p>
-<h3 id="广播与数组形状">广播与数组形状<a class="headerlink" href="#广播与数组形状" title="Permanent link">&para;</a></h3>
+<h3 id="广播与数组形状">广播与数组形状<a class="headerlink" href="#广播与数组形状" title="Permanent link"></a></h3>
 <p>NumPy 经常不需要显式复制数据。若 <code>x</code> 的形状是 <code>(m, n)</code>，<code>bias</code> 的形状是 <code>(n,)</code>，<code>x + bias</code> 会把同一条 <code>bias</code> 逻辑上应用于每一行。这叫广播（broadcasting）。</p>
 <pre class="highlight"><code class="language-python">x = np.array([[1., 2., 3.], [4., 5., 6.]])
 bias = np.array([10., 20., 30.])
@@ -3720,7 +3720,7 @@ print(x + bias)
 <p><a class="glightbox" data-type="image" href="../assets/0710p/numpy-arange-reshape.jpg"><img width="474" height="304" alt="课件通过 np.arange(...).reshape(...) 演示数组的形状：一维连续数据可以按行/列重排成不同 view，广播与切片都建立在这个形状概念上。" src="../assets/0710p/numpy-arange-reshape.preview.jpg" data-fullsrc="../assets/0710p/numpy-arange-reshape.jpg" /></a></p>
 <p><em>图：<code>reshape</code> 只改变形状解释，不复制元素；后续广播、切片和矩阵乘法都依赖对形状的正确理解。</em></p>
 <p>广播很方便，但要先确认 shape。<code>(m, 1)</code> 和 <code>(m,)</code> 在 NumPy 中含义不同；不确定时打印 <code>array.shape</code>，而不是凭感觉猜结果。</p>
-<h3 id="切片二维邻居求和">切片：二维邻居求和<a class="headerlink" href="#切片二维邻居求和" title="Permanent link">&para;</a></h3>
+<h3 id="切片二维邻居求和">切片：二维邻居求和<a class="headerlink" href="#切片二维邻居求和" title="Permanent link"></a></h3>
 <p>每个格子的新值等于原值加右上和右下邻居；最右列没有邻居，按 0 处理。朴素实现会有边界判断：</p>
 <pre class="highlight"><code class="language-python">def slow(a: np.ndarray) -&gt; np.ndarray:
     rows, cols = a.shape
@@ -3740,7 +3740,7 @@ print(x + bias)
 a = np.arange(9).reshape(3, 3)
 assert np.array_equal(slow(a), vectorized(a))</code></pre>
 <p>这里并没有神奇地消除计算，我们只是把边界问题转成一次规则的 padding，把两重循环转成三个规则的切片。向量化的价值在于改变数据的表示，让计算形状变规则。</p>
-<h3 id="矩阵乘法与-blas">矩阵乘法与 BLAS<a class="headerlink" href="#矩阵乘法与-blas" title="Permanent link">&para;</a></h3>
+<h3 id="矩阵乘法与-blas">矩阵乘法与 BLAS<a class="headerlink" href="#矩阵乘法与-blas" title="Permanent link"></a></h3>
 <p>若 <span class="arithmatex">\(A\in\mathbb{R}^{N\times K}\)</span>、<span class="arithmatex">\(B\in\mathbb{R}^{K\times M}\)</span>，结果为：</p>
 <div class="arithmatex">\[
 C_{ij}=\sum_{k=0}^{K-1}A_{ik}B_{kj}
@@ -3755,7 +3755,7 @@ np.testing.assert_allclose(C, np.dot(A, B))</code></pre>
 <p class="admonition-title">数组表达式也可能制造临时数组</p>
 <p><code>y = a * b + c * d</code> 可能需要中间数组。对极大数组，这会增加内存流量和峰值内存。先用 <code>timeit</code>/profiler 验证；必要时用 <code>out=</code>、就地操作、NumExpr 或融合后的 kernel，而不是凭空假设少一行代码一定更快。</p>
 </div>
-<h2 id="simd-指令与向量寄存器">SIMD 指令与向量寄存器<a class="headerlink" href="#simd-指令与向量寄存器" title="Permanent link">&para;</a></h2>
+<h2 id="simd-指令与向量寄存器">SIMD 指令与向量寄存器<a class="headerlink" href="#simd-指令与向量寄存器" title="Permanent link"></a></h2>
 <p>SIMD 是 Single Instruction, Multiple Data。一条指令携带一个操作码，例如 packed add；向量寄存器中有多个 lane；所有有效 lane 同时做相同动作。以 256 位寄存器为例，它可装 8 个 <code>float</code> 或 4 个 <code>double</code>。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/simd-definition.png"><img width="1728" height="972" alt="课件对 SIMD 的定义：Single Instruction Multiple Data，单指令多数据流；在 x86 上通常与 AVX 等指令集联系在一起，由一条指令同时操作多个数据单元。" src="../assets/0710p/simd-definition.preview.jpg" data-fullsrc="../assets/0710p/simd-definition.png" /></a></p>
 <p><em>图：SIMD 指一条指令同时作用于多个数据元素；x86 的实现集中在 AVX 这类指令集。</em></p>
@@ -3818,7 +3818,7 @@ __m256:  [c0 c1 c2 c3 c4 c5 c6 c7]</code></pre>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/arm-vector-extensions.jpg"><img width="1013" height="519" alt="课件展示 Arm 架构的持续演进：ARM 侧也有 SIMD（NEON）与更富集的向量扩展，SVE 更强调可变向量长度。" src="../assets/0710p/arm-vector-extensions.preview.jpg" data-fullsrc="../assets/0710p/arm-vector-extensions.jpg" /></a></p>
 <p><em>图：Arm 同样在持续加入向量指令；理解 SIMD 时，x86 与 Arm 只是同一思想的两种实现。</em></p>
 <p>更宽的寄存器需要更多电路、供电和散热，还可能让 CPU 降频；内存带宽也可能先到极限。指令集版本只能说明有哪些工具，不能单独推出程序会快多少。</p>
-<h3 id="加速比的限制">加速比的限制<a class="headerlink" href="#加速比的限制" title="Permanent link">&para;</a></h3>
+<h3 id="加速比的限制">加速比的限制<a class="headerlink" href="#加速比的限制" title="Permanent link"></a></h3>
 <p>假设 AVX2 一次可处理 8 个 <code>float</code>，这只意味着计算指令的工作量有机会缩小约 8 倍。总时间还包括：</p>
 <ul>
 <li>从缓存或 DRAM 加载 <code>a</code>、<code>b</code>；</li>
@@ -3832,7 +3832,7 @@ __m256:  [c0 c1 c2 c3 c4 c5 c6 c7]</code></pre>
 <p>更宽的向量寄存器也不是无条件更好。AVX2 一条指令处理 256 位，AVX-512 处理 512 位；但向量单元、寄存器文件、供电和内存带宽都不是无限的。某些处理器在高强度 AVX-512 下会降频，若程序本来受内存限制，翻倍的算术 lane 也没有足够数据可吃。这就是为什么不一直加宽的背景。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/avx512-width-limit.jpg"><img width="1728" height="972" alt="向量宽度并非越长越好：处理 512 位需要更宽的运算单元，代价是面积、成本与发热。" src="../assets/0710p/avx512-width-limit.preview.jpg" data-fullsrc="../assets/0710p/avx512-width-limit.jpg" /></a></p>
 <p><em>图：课件把为什么不再更长作为问题提出：一条指令覆盖更多数据，意味着指令侧面积成本与发热上升。AVX-512 曾因过热降频而出现表现不如 AVX2 的反常现象，因此更宽的指令集不等于更快。</em></p>
-<h3 id="点积归约与-fma">点积、归约与 FMA<a class="headerlink" href="#点积归约与-fma" title="Permanent link">&para;</a></h3>
+<h3 id="点积归约与-fma">点积、归约与 FMA<a class="headerlink" href="#点积归约与-fma" title="Permanent link"></a></h3>
 <p>逐元素计算最容易向量化；归约多了一层麻烦。点积</p>
 <div class="arithmatex">\[
 s=\sum_{i=0}^{n-1}a_i b_i
@@ -3848,11 +3848,11 @@ float sum = horizontal_add(acc);
 for (int i = n / 8 * 8; i &lt; n; ++i) sum += a[i] * b[i];</code></pre>
 <p><code>horizontal_add</code> 把 8 个 lane 合并为一个标量。它不是主循环中的热点，因而放在循环末尾即可。与标量顺序逐项相加相比，向量归约改变了加法顺序；浮点加法不满足严格结合律，所以最后几位可能不同。测试应使用误差阈值，而不是对浮点结果逐位比较。</p>
 <p>FMA（fused multiply-add）把 <span class="arithmatex">\(a\times b+c\)</span> 作为一次舍入的运算执行，既减少指令，也常带来更好的数值行为。编译器能否使用 FMA 与目标 CPU、编译选项和浮点语义有关。需要可复现实验结果时，应记录是否启用了 <code>-ffast-math</code>；它可能允许更激进的重排，速度提高的同时也可能改变误差分布。</p>
-<h2 id="自动向量化">自动向量化<a class="headerlink" href="#自动向量化" title="Permanent link">&para;</a></h2>
+<h2 id="自动向量化">自动向量化<a class="headerlink" href="#自动向量化" title="Permanent link"></a></h2>
 <p>对于规则 C/C++ 循环，先写清楚、正确、连续的数据访问，再打开优化。以 Clang 为例：</p>
 <pre class="highlight"><code class="language-bash">clang++ -O3 -march=native -Rpass=loop-vectorize saxpy.cpp -o saxpy</code></pre>
 <p><code>-O3</code> 开启较激进优化；<code>-Rpass=loop-vectorize</code> 给出成功向量化的报告。GCC 可用 <code>-fopt-info-vec</code> 观察类似信息。报告是排查线索，不是性能证明，仍要实际计时。</p>
-<h3 id="读懂向量化报告">读懂向量化报告<a class="headerlink" href="#读懂向量化报告" title="Permanent link">&para;</a></h3>
+<h3 id="读懂向量化报告">读懂向量化报告<a class="headerlink" href="#读懂向量化报告" title="Permanent link"></a></h3>
 <p>报告常见的两种信息分别是已向量化和无法向量化。后者比前者更有价值，因为它指出编译器缺少什么证明。例如：</p>
 <pre class="highlight"><code class="language-text">remark: loop not vectorized: unsafe dependent memory operations
 remark: loop not vectorized: value that could not be identified as reduction</code></pre>
@@ -3865,13 +3865,13 @@ remark: loop not vectorized: value that could not be identified as reduction</co
     }
 }</code></pre>
 <p>这里 <code>__restrict</code> 的意思是调用者承诺 <code>x</code> 和 <code>y</code> 所指的可访问区域不重叠。若承诺不成立，程序行为会不正确；因此只有在接口语义确实保证不重叠时才写它。编译器不敢向量化时，常见原因正是它无法证明指针不别名、循环有跨迭代依赖，或者分支和边界太复杂。</p>
-<h3 id="尾部元素与掩码">尾部元素与掩码<a class="headerlink" href="#尾部元素与掩码" title="Permanent link">&para;</a></h3>
+<h3 id="尾部元素与掩码">尾部元素与掩码<a class="headerlink" href="#尾部元素与掩码" title="Permanent link"></a></h3>
 <p>假设向量宽度为 8、<code>n=18</code>，前两次处理 16 个元素，最后 2 个怎么办？最直观的办法是向量主循环后补一个标量尾循环。AVX-512 和 SVE 支持 mask/predicate，让无效 lane 不读写；SVE 的 <code>svwhilelt</code> 按还有多少元素构造谓词，所以同一份代码能适应不同硬件向量长度。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/avx-mask-256bit.jpg"><img width="2000" height="454" alt="课件展示 256 位 YMM 寄存器上的 masked 操作：用 mask 标记哪些 lane 有效，无效 lane 不被读写，从而一次性处理不整除的尾部。" src="../assets/0710p/avx-mask-256bit.preview.jpg" data-fullsrc="../assets/0710p/avx-mask-256bit.jpg" /></a></p>
 <p><em>图：masked operation 用一位标志描述每个 lane 是否参与，是 AVX-512 处理尾部与条件执行的基础，和 SVE 的谓词是同一思想。</em></p>
 <p>尾处理并不难，真正的难点是确保没有越界读取、没有漏算，也没有为了处理尾部把主循环搞得分支很多。</p>
 <p>写或读 intrinsic 时还应留意四类实际问题：数据是否按所需边界对齐、循环长度是否正好是 lane 数的倍数、循环控制的分支是否已经吃掉收益、寄存器是否因临时变量过多而 spill。它们解释了为什么一段看上去每次算八个数目的代码，可能并不比编译器生成的版本快。</p>
-<h2 id="simd-intrinsic">SIMD intrinsic<a class="headerlink" href="#simd-intrinsic" title="Permanent link">&para;</a></h2>
+<h2 id="simd-intrinsic">SIMD intrinsic<a class="headerlink" href="#simd-intrinsic" title="Permanent link"></a></h2>
 <p>Intrinsic 是 C/C++ 函数形式的指令接口。下面示例给 8 个 32 位整数逐元素相加：</p>
 <pre class="highlight"><code class="language-cpp">#include &lt;immintrin.h&gt;
 
@@ -3886,7 +3886,7 @@ __m256i add8(const int* a, const int* b) {
 <p>上例只演示概念，不能直接当成完整数组函数：还需循环、尾部处理、输出存储、对齐/别名约束和目标机器检测。多数简单循环中，编译器已经能生成接近的代码；手写只在确认自动向量化无法表达关键结构、且 profiler 证明该处是热点时才值得。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/simd-pitfalls.png"><img width="1728" height="972" alt="课件列出常见问题：内存对齐、循环边界不确定、循环分支开销掩盖 SIMD 收益、寄存器数量超限，通常是手写 intrinsic 时最常踩的坑。" src="../assets/0710p/simd-pitfalls.preview.jpg" data-fullsrc="../assets/0710p/simd-pitfalls.png" /></a></p>
 <p><em>图：对齐、尾边界、分支开销与寄存器溢出，解释了为什么逐元素代码可能并不比编译器向量化版本快。</em></p>
-<h2 id="矩阵乘法与缓存分块">矩阵乘法与缓存分块<a class="headerlink" href="#矩阵乘法与缓存分块" title="Permanent link">&para;</a></h2>
+<h2 id="矩阵乘法与缓存分块">矩阵乘法与缓存分块<a class="headerlink" href="#矩阵乘法与缓存分块" title="Permanent link"></a></h2>
 <p>朴素矩阵乘法若按不合适的循环顺序访问 B，可能每次内层迭代都把新的 cache line 从内存搬入，缓存几乎没有复用。优化的第一步通常是<strong>分块（tiling/blocking）</strong>：把 <code>A</code>、<code>B</code>、<code>C</code> 切成能放进缓存的小块，在块内完成更多乘加。</p>
 <pre class="highlight"><code class="language-cpp">for (int ii = 0; ii &lt; N; ii += BS)
   for (int kk = 0; kk &lt; N; kk += BS)
@@ -3899,7 +3899,7 @@ __m256i add8(const int* a, const int* b) {
 <p>AVX-512 VNNI、AMX 与 ARM SME 面向更专门的低精度/矩阵乘加场景，本质仍是相同的数据流：<strong>load tile，计算 tile，store tile</strong>。只有确认数据类型、矩阵形状和硬件支持后，才进入这一步。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/arm-sme-tile.jpg"><img width="1906" height="1132" alt="课件画出 ARM SME 的 tile 与 SMOPA（外积累加）指令：A/B 矩阵以 ZA 寄存器的 tile 形式参与，一次完成整块矩阵乘加。" src="../assets/0710p/arm-sme-tile.preview.jpg" data-fullsrc="../assets/0710p/arm-sme-tile.jpg" /></a></p>
 <p><em>图：ARM SME 用 ZA 寄存器里的二维 tile 表达矩阵乘加，和 AMX、Tensor Core 的 load tile—算 tile—store tile 是同一数据流思想。</em></p>
-<h3 id="低精度矩阵乘法字节数累加精度和数据布局">低精度矩阵乘法：字节数、累加精度和数据布局<a class="headerlink" href="#低精度矩阵乘法字节数累加精度和数据布局" title="Permanent link">&para;</a></h3>
+<h3 id="低精度矩阵乘法字节数累加精度和数据布局">低精度矩阵乘法：字节数、累加精度和数据布局<a class="headerlink" href="#低精度矩阵乘法字节数累加精度和数据布局" title="Permanent link"></a></h3>
 <p>深度学习和一些数值核会把权重或输入从 <code>float32</code> 转成更低精度格式。W8A8 是一个常见记法：weight 和 activation 都用 8 位整数保存。它先把浮点数 <span class="arithmatex">\(x\)</span> 按 scale <span class="arithmatex">\(s\)</span> 映射为整数 <span class="arithmatex">\(q\)</span>：</p>
 <div class="arithmatex">\[
 q=\operatorname{clip}\left(\operatorname{round}\left(\frac{x}{s}\right),-128,127\right),
@@ -3912,7 +3912,7 @@ Y_{ij}\approx s_{x,i}\,s_{w,j}\,A_{ij}.
 \]</div>
 <p>也就是说，低精度的关键并不是把结果也粗暴地截成 8 位。输入和权重以小格式搬运，乘加以足够宽的格式积累，最后再根据激活和权重的 scale 恢复近似的数值范围。scale 可以按整张张量、每一列或更小的 block 设置；粒度越细，通常越能适应不同范围的数，代价是需要保存和读取更多元数据。</p>
 <p>这与向量化直接相连。低精度会减少内存流量，也可能让 CPU 的 VNNI/AMX 或 GPU 的矩阵单元一次完成更多乘加；但它只有在数据连续、tile 大小合适、量化和反量化没有盖过计算收益时才会变快。遇到 MoE 这类每个 expert 收到的小 batch，还要比较先按 expert 重排再做一批 GEMM 的收益是否足以覆盖重排成本。阅读 W8A8 实现时可沿这条链检查：量化发生在哪一步，累加器是什么类型，scale 的形状是什么，哪段循环真正进入矩阵核。</p>
-<h3 id="vnniamx-与矩阵-tile">VNNI、AMX 与矩阵 Tile<a class="headerlink" href="#vnniamx-与矩阵-tile" title="Permanent link">&para;</a></h3>
+<h3 id="vnniamx-与矩阵-tile">VNNI、AMX 与矩阵 Tile<a class="headerlink" href="#vnniamx-与矩阵-tile" title="Permanent link"></a></h3>
 <p>AVX-512 VNNI 面向整数点积。它把多组小整数乘法及其累加压进一条指令，适合 <code>int8</code> 权重和激活的内层循环。程序员仍需要保证内存中的元素顺序与指令期待的打包方式一致；数据类型对了、布局不对，吞吐也上不去。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/avx512-vnni.jpg"><img width="1536" height="1024" alt="课件演示 AVX-512 VNNI 的 _mm512_dpbusd_epi32：一组 4 位/8 位输入与一个 32 位累加器，一个 lane 一次完成多项乘累加。" src="../assets/0710p/avx512-vnni.preview.jpg" data-fullsrc="../assets/0710p/avx512-vnni.jpg" /></a></p>
 <p><em>图：VNNI 把多个 int8 乘累加压进一条指令，是低精度矩阵内层循环能借用硬件加速的关键。</em></p>
@@ -3921,19 +3921,19 @@ Y_{ij}\approx s_{x,i}\,s_{w,j}\,A_{ij}.
 C_{m\times n}\mathrel{+}=A_{m\times k}B_{k\times n}.
 \]</div>
 <p>一次 tile 计算会沿 <span class="arithmatex">\(k\)</span> 维做大量点积，因此应让 <span class="arithmatex">\(A,B\)</span> 的 tile 在 cache 中复用。使用前需要配置 tile 的行数、列字节数和数据类型；配置与 load/store 也有成本。小得离谱的矩阵、频繁改变形状的调用，未必能摊薄这些成本。实际项目优先调用支持 AMX 的 BLAS 或 oneDNN，手写 tile 代码只适合确定的热点和受控形状。</p>
-<h3 id="固定宽度-avx-与可伸缩-sve">固定宽度 AVX 与可伸缩 SVE<a class="headerlink" href="#固定宽度-avx-与可伸缩-sve" title="Permanent link">&para;</a></h3>
+<h3 id="固定宽度-avx-与可伸缩-sve">固定宽度 AVX 与可伸缩 SVE<a class="headerlink" href="#固定宽度-avx-与可伸缩-sve" title="Permanent link"></a></h3>
 <p>AVX 的代码通常明确假设一次处理多少元素，例如 256 位寄存器中装 8 个 <code>float</code>。ARM SVE 则让向量长度由机器决定：循环每次前进 <code>svcntw()</code> 个 32 位元素，<code>svwhilelt_b32(i, n)</code> 生成谓词，标出最后一轮哪些 lane 仍有效。于是同一源代码可在不同 SVE 向量长度的实现上运行。</p>
 <p>这不是另一套更快的 AVX，而是另一种尾部与条件执行的编程模型。<code>_m</code>、<code>_z</code>、<code>_x</code> 后缀分别说明无效 lane 是保留旧值、写零还是不关心；在读写掩码代码前，必须先确认这种语义。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/sve-predicate.png"><img width="1728" height="972" alt="SVE 用谓词处理尾部和条件执行，循环步长由硬件的实际向量长度决定。" src="../assets/0710p/sve-predicate.preview.jpg" data-fullsrc="../assets/0710p/sve-predicate.png" /></a></p>
 <p><em>图：谓词标记有效 lane，使最后一次迭代无需越界读写；代码不把向量长度写死。</em></p>
-<h3 id="risc-v-向量扩展rvv">RISC-V 向量扩展（RVV）<a class="headerlink" href="#risc-v-向量扩展rvv" title="Permanent link">&para;</a></h3>
+<h3 id="risc-v-向量扩展rvv">RISC-V 向量扩展（RVV）<a class="headerlink" href="#risc-v-向量扩展rvv" title="Permanent link"></a></h3>
 <p>RISC-V 的向量扩展（RVV）同样是长度由机器决定的模型，但用一组更细的寄存器配置来描述一次算多少个元素。处理器有固定的向量寄存器位宽 <code>VLEN</code>（如 128 或 256 位）；一条指令到底用多宽的向量，由两个量共同决定：</p>
 <ul>
 <li><strong>SEW</strong>（selected element width）是每个元素的位宽，例如 <code>i8</code>/<code>fp32</code>；</li>
 <li><strong>LMUL</strong>（length multiplier）表示一条向量寄存器组合了几个寄存器，取值可为分数或整数（如 <span class="arithmatex">\(1/4,1,2,8\)</span>）。它让逻辑向量长度 <span class="arithmatex">\(=\mathrm{VLEN}\times\mathrm{LMUL}/\mathrm{SEW}\)</span>。</li>
 </ul>
 <p>程序通过 <code>vsetvl</code> 之类的指令把还剩下多少元素结合 SEW/LMUL，动态算出本次实际处理的元素数，因此同一份代码能适应不同 <code>VLEN</code>。课程后面在 SpaceMiT 这类 RISC-V CPU 上做向量化，用的正是 RVV 的 intrinsic（如 <code>vrsub</code>、<code>vle</code>、<code>vse</code> 系列）让循环一次处理多个元素；读懂 <code>vsetvl</code>、SEW/LMUL 这些配置，是读 RISC-V 向量代码的入口。它和 AVX 的关键区别在于：AVX 把宽度写死在指令集里，RVV/SVE 让宽度由硬件和运行时的 <code>vsetvl</code> 决定。</p>
-<h2 id="基准测试">基准测试<a class="headerlink" href="#基准测试" title="Permanent link">&para;</a></h2>
+<h2 id="基准测试">基准测试<a class="headerlink" href="#基准测试" title="Permanent link"></a></h2>
 <pre class="highlight"><code class="language-python">import time
 import numpy as np
 
@@ -3955,7 +3955,7 @@ assert np.array_equal(np.asarray(c_py), cn)
 print(f"Python: {t1 - t0:.3f}s")
 print(f"NumPy : {t3 - t2:.3f}s")</code></pre>
 <p>接着把 <code>an + bn</code> 改成 <code>an[::2] + bn[::2]</code>，比较连续访问与步长访问；再尝试矩阵 <code>@</code> 与三重 Python 循环。记录数组大小、dtype、CPU、线程设置和运行次数，否则数字无法解释。</p>
-<h3 id="结果验证与计时">结果验证与计时<a class="headerlink" href="#结果验证与计时" title="Permanent link">&para;</a></h3>
+<h3 id="结果验证与计时">结果验证与计时<a class="headerlink" href="#结果验证与计时" title="Permanent link"></a></h3>
 <p>优化前先保存一个小规模参考实现。每次修改后，先比输出，再测时间。对浮点数组可记录最大绝对误差和相对误差：</p>
 <div class="arithmatex">\[
 \max_i|y_i-y_i^{\mathrm{ref}}|,
@@ -3963,15 +3963,15 @@ print(f"NumPy : {t3 - t2:.3f}s")</code></pre>
 \max_i\frac{|y_i-y_i^{\mathrm{ref}}|}{\max(|y_i^{\mathrm{ref}}|,\epsilon)}.
 \]</div>
 <p>性能表则至少写明输入 shape、数据类型、编译选项、线程数、预热次数和统计量。把一次偶然的最短时间当结论没有意义；更可靠的是报告多次运行的中位数，并在异常波动时检查 CPU 降频、后台负载、NUMA 放置和内存分配。代码快了却把尾部漏算、把 <code>int32</code> 累加改成溢出的 <code>int8</code>，不算优化。</p>
-<h3 id="对齐与别名">对齐与别名<a class="headerlink" href="#对齐与别名" title="Permanent link">&para;</a></h3>
+<h3 id="对齐与别名">对齐与别名<a class="headerlink" href="#对齐与别名" title="Permanent link"></a></h3>
 <p>对齐影响的是一次向量加载能否自然落在所需边界。现代 x86 的非对齐 load 通常可用，却可能跨两个 cache line；在热点循环中仍值得让分配器和数据布局保持良好对齐。更常见的向量化障碍是别名：编译器看到 <code>void f(float *a, float *b)</code> 时，必须保守地考虑 <code>a</code> 和 <code>b</code> 指向重叠区域，写 <code>a[i]</code> 可能改变随后读到的 <code>b[i]</code>。只有调用者能保证两个区间不重叠时，C/C++ 才可以用 <code>restrict</code>（或编译器等价标注）交出这一事实；错误承诺会产生未定义行为，不能为了报告中出现 vectorized 而加入。</p>
-<h3 id="浮点归约与可重复性">浮点归约与可重复性<a class="headerlink" href="#浮点归约与可重复性" title="Permanent link">&para;</a></h3>
+<h3 id="浮点归约与可重复性">浮点归约与可重复性<a class="headerlink" href="#浮点归约与可重复性" title="Permanent link"></a></h3>
 <p>浮点加法不满足数学上的结合律。<code>(a+b)+c</code> 与 <code>a+(b+c)</code> 因舍入点不同可得到略有差异的结果；并行归约、向量树形归约和编译器的 reassociation 都会改变求和顺序。因而把标量版本和 AVX/OpenMP 版本用逐位相等比较，常会制造假错误。更合理的是为问题尺度和数据范围设定绝对/相对误差：</p>
 <div class="arithmatex">\[
 |x-y| \le \epsilon_{abs}+\epsilon_{rel}|y|.
 \]</div>
 <p>这不是放松正确性。若输出是概率、能量守恒量或迭代停止条件，还必须确认误差不会改变下游决策；若需要跨机器可重复，则要使用固定归约树、补偿求和或相应数值库。<code>-ffast-math</code> 允许更激进的重排，是否启用应由数值契约决定。</p>
-<h2 id="练习">练习<a class="headerlink" href="#练习" title="Permanent link">&para;</a></h2>
+<h2 id="练习">练习<a class="headerlink" href="#练习" title="Permanent link"></a></h2>
 <ol>
 <li>解释为什么 <code>out[i] = x[i] * 2</code> 容易向量化，而 <code>out[i] = out[i - 1] + x[i]</code> 不容易。</li>
 <li>用 <code>np.pad</code> 和切片实现任意二维数组的上下左右四邻居之和，并用小数组验证边界。</li>
@@ -4367,7 +4367,7 @@ print(f"NumPy : {t3 - t2:.3f}s")</code></pre>
       
         <script src="../../../../theme/js/mathjax.js"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
       

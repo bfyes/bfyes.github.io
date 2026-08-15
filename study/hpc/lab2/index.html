@@ -64,7 +64,9 @@
     
       <link rel="stylesheet" href="../../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../../theme/css/components.css">
+      <link rel="stylesheet" href="../../../theme/css/theme.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/home.css">
     
     <script>__md_scope=new URL("../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
@@ -73,8 +75,6 @@
     
     
   
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -3234,7 +3234,7 @@
 
 
 
-<h1 id="lab-2moe-的向量化计算">Lab 2：MoE 的向量化计算<a class="headerlink" href="#lab-2moe-的向量化计算" title="Permanent link">&para;</a></h1>
+<h1 id="lab-2moe-的向量化计算">Lab 2：MoE 的向量化计算<a class="headerlink" href="#lab-2moe-的向量化计算" title="Permanent link"></a></h1>
 <div class="admonition abstract">
 <p class="admonition-title">写在前面</p>
 <p><strong>实验平台：Intel Sapphire Rapids</strong>（x86，AVX-512，AMX）</p>
@@ -3249,7 +3249,7 @@
 <p><a class="glightbox" href="./lab2.assets/oj_variation.png" data-type="image"><img width="2502" height="963" src="./lab2.assets/oj_variation.preview.jpg" data-fullsrc="./lab2.assets/oj_variation.png" alt="OJ 多次样本的加速比波动" style="zoom: 25%;"></a></p>
 <hr />
 <p>哦对了，还有，这个测试平台好评！（这是 lab1 "进阶挑战"的终极实现了，我也想有朝一日做出/维护这样的平台，这一定很有成就感吧……）</p>
-<h3 id="一些尚未完善好的课程笔记">一些<span style="color:#808080; text-decoration:line-through; font-size:0.8em;">(尚未完善好的)</span>课程笔记<a class="headerlink" href="#一些尚未完善好的课程笔记" title="Permanent link">&para;</a></h3>
+<h3 id="一些尚未完善好的课程笔记">一些<span style="color:#808080; text-decoration:line-through; font-size:0.8em;">(尚未完善好的)</span>课程笔记<a class="headerlink" href="#一些尚未完善好的课程笔记" title="Permanent link"></a></h3>
 <ol>
 <li>点积、归约与 FMA：<a href="https://bfyes.github.io/study/hpc/notes/0710p/#点积归约与-fma">https://bfyes.github.io/study/hpc/notes/0710p/#点积归约与-fma</a></li>
 <li>AVX-512：<a href="https://bfyes.github.io/study/hpc/notes/0712p/#avx-512-微内核">https://bfyes.github.io/study/hpc/notes/0712p/#avx-512-微内核</a></li>
@@ -3257,12 +3257,12 @@
 <li>MoE：<a href="https://bfyes.github.io/study/hpc/notes/0717a/#moe-路由与执行">https://bfyes.github.io/study/hpc/notes/0717a/#moe-路由与执行</a></li>
 <li>OpenMP：<a href="https://bfyes.github.io/study/hpc/notes/0712a/#openmp-的-fork-join-模型">https://bfyes.github.io/study/hpc/notes/0712a/#openmp-的-fork-join-模型</a></li>
 </ol>
-<h2 id="baseline-的性能结果与瓶颈分析">baseline 的性能结果与瓶颈分析<a class="headerlink" href="#baseline-的性能结果与瓶颈分析" title="Permanent link">&para;</a></h2>
+<h2 id="baseline-的性能结果与瓶颈分析">baseline 的性能结果与瓶颈分析<a class="headerlink" href="#baseline-的性能结果与瓶颈分析" title="Permanent link"></a></h2>
 <ul>
 <li>Baseline 的访存模式好吗？不好，没有数据重排，权重元素在内存里彼此相隔很远，每条 cache line 只供一次乘法消费；权重在多次前向/多条 token 间没有复用。</li>
 <li>Baseline 纯 FP32、串行、单线程</li>
 </ul>
-<h2 id="优化记录">优化记录<a class="headerlink" href="#优化记录" title="Permanent link">&para;</a></h2>
+<h2 id="优化记录">优化记录<a class="headerlink" href="#优化记录" title="Permanent link"></a></h2>
 <p>(淹没在知识的海洋里)</p>
 <p>阅读一遍这个 Lab 的实验文档，我有一种知识滑过大脑的感觉。这东西还是要结合实践，否则难以理解，于是我开始边做边学边问求着 AI 讲……</p>
 <p><a class="glightbox" href="./lab2.assets/image-20260811014735558.png" data-type="image"><img width="2586" height="1866" src="./lab2.assets/image-20260811014735558.preview.jpg" data-fullsrc="./lab2.assets/image-20260811014735558.png" alt="image-20260811014735558" style="zoom:18%;"></a></p>
@@ -3286,8 +3286,8 @@
 <p>还比如 S1，我曾执意地想吃满所有的核心，但是将任务拆散到各核心这件事本身耗费时间。最终只用5线程，分别负责并行时的1个 shared 和4个 private。实际上，真正的优化在于减少访存，消除<strong>落栈</strong>，尽量在寄存器中直接算（<strong>3.2.2 内联汇编</strong>/寄存器融合），顺带批评一下这个输入法<a class="glightbox" href="./lab2.assets/image-20260811162257182.png" data-type="image"><img width="218" height="138" src="./lab2.assets/image-20260811162257182.preview.jpg" data-fullsrc="./lab2.assets/image-20260811162257182.png" alt="image-20260811162257182" style="zoom:50%;"></a></p>
 <p>先写这么多，优化过程本身是略枯燥的，但是做完之后会对这些知识有更深刻的理解。后面的实验我会补上测试中间数据的截图<span style="color:#606060; background:#E0E0E0;">（这次真是没经验，再复现需要之前的代码，我commit的次数太少了，找不回</span></p>
 <p>（而且原始的终端输出好多都被压缩掉了<a class="glightbox" href="./lab2.assets/image-20260811173810276.png" data-type="image"><img width="252" height="72" src="./lab2.assets/image-20260811173810276.preview.jpg" data-fullsrc="./lab2.assets/image-20260811173810276.png" alt="image-20260811173810276" style="zoom:50%;"></a></p>
-<h2 id="附录">附录<a class="headerlink" href="#附录" title="Permanent link">&para;</a></h2>
-<h3 id="优化基本思路">优化基本思路<a class="headerlink" href="#优化基本思路" title="Permanent link">&para;</a></h3>
+<h2 id="附录">附录<a class="headerlink" href="#附录" title="Permanent link"></a></h2>
+<h3 id="优化基本思路">优化基本思路<a class="headerlink" href="#优化基本思路" title="Permanent link"></a></h3>
 <p>我好像在磕磕碰碰好几天弄完之后才关注到 <strong>VTune Profiler</strong>。。。</p>
 <blockquote>
 <p>文档原文写到：有一个可解释的指标会给你在优化过程中较强的正反馈，同时也不会让你陷入对着代码穷举各种优化方式的那种"炼丹"的痛苦。哈哈，现在深有体会这些挫败感。我打算在写报告时候补上分析步骤吧（<span style="text-decoration:line-through;">只能假装分析了</span>，后面一定会利用好这个工具🧐）
@@ -3395,7 +3395,7 @@ static inline void quantize_token(xxx) {
 <summary>5. 针对 S1 ~ 4 情况优化</summary>
 <p>这部分优化体现在其他章节里。</p>
 </details>
-<h3 id="进阶优化思路">进阶优化思路<a class="headerlink" href="#进阶优化思路" title="Permanent link">&para;</a></h3>
+<h3 id="进阶优化思路">进阶优化思路<a class="headerlink" href="#进阶优化思路" title="Permanent link"></a></h3>
 <details class="tip">
 <summary>1. 多项式函数</summary>
 <p>看可支配的精度，简化一些函数（如用低阶多项式替代 exp）</p>
@@ -3459,7 +3459,7 @@ static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
 <p>实验记录</p>
 <p><a class="glightbox" href="./lab2.assets/experiment_summary.png" data-type="image"><img width="2321" height="808" src="./lab2.assets/experiment_summary.preview.jpg" data-fullsrc="./lab2.assets/experiment_summary.png" alt="实验记录全貌：结论分类与失败汇总" style="zoom:55%;"></a></p>
 </details>
-<h3 id="各场景优化策略汇总">各场景优化策略汇总<a class="headerlink" href="#各场景优化策略汇总" title="Permanent link">&para;</a></h3>
+<h3 id="各场景优化策略汇总">各场景优化策略汇总<a class="headerlink" href="#各场景优化策略汇总" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -3501,7 +3501,7 @@ static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
 </tr>
 </tbody>
 </table>
-<h3 id="vtune-profiler-分析">VTune Profiler 分析<a class="headerlink" href="#vtune-profiler-分析" title="Permanent link">&para;</a></h3>
+<h3 id="vtune-profiler-分析">VTune Profiler 分析<a class="headerlink" href="#vtune-profiler-分析" title="Permanent link"></a></h3>
 <blockquote>
 <p>HPC 计算节点：Intel Xeon Gold 5418Y, 2.0 GHz
 </p>
@@ -3515,7 +3515,7 @@ static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
 <li><strong>S3</strong>：<code>moe_forward_optimized._omp_fn.0</code> 占 74.9%，libgomp 20.0%，计算绝对主导。forward 只有几十微秒，一个额外 barrier 就吃掉想省的全部工作，这解释了并行分桶（慢 5%～7%）和双阶段 OpenMP 的失败。</li>
 <li><strong>S4</strong>：<code>moe_forward_optimized._omp_fn.0</code> 占 62.6%，libgomp 9.0%。<code>moe_forward_ref</code> 从 ref 的 66.8% 降到 opt 的 5.1%，BF16 AMX router 把 512 路标量点积换成批量矩阵乘，瓶颈消除。</li>
 </ul>
-<h2 id="思考题">思考题<a class="headerlink" href="#思考题" title="Permanent link">&para;</a></h2>
+<h2 id="思考题">思考题<a class="headerlink" href="#思考题" title="Permanent link"></a></h2>
 <ol>
 <li>
 <p>以场景 S3 为例，估算参考实现一次前向的 总访存量（专家权重被读了多少遍？）和总乘加次数，计算算术强度（MACs/byte）。按专家分组之后这两个数字分别变成多少？由此说明这个负载是访存瓶颈还是计算瓶颈，以及分组为什么能加速。</p>
@@ -3564,7 +3564,7 @@ static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
 </ul>
 </li>
 </ol>
-<h2 id="source-code">Source Code<a class="headerlink" href="#source-code" title="Permanent link">&para;</a></h2>
+<h2 id="source-code">Source Code<a class="headerlink" href="#source-code" title="Permanent link"></a></h2>
 <p>已提交在平台上。</p>
 
 
@@ -3953,7 +3953,7 @@ static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
       
         <script src="../../../theme/js/mathjax.js"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
       

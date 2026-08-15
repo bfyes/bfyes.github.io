@@ -64,7 +64,9 @@
     
       <link rel="stylesheet" href="../../../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../../../theme/css/components.css">
+      <link rel="stylesheet" href="../../../../theme/css/theme.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/home.css">
     
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
@@ -73,8 +75,6 @@
     
     
   
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -3292,9 +3292,9 @@
 
 
 
-<h1 id="07-12-下午性能分析技术基础profiling">07-12 下午：性能分析技术基础（Profiling）<a class="headerlink" href="#07-12-下午性能分析技术基础profiling" title="Permanent link">&para;</a></h1>
+<h1 id="07-12-下午性能分析技术基础profiling">07-12 下午：性能分析技术基础（Profiling）<a class="headerlink" href="#07-12-下午性能分析技术基础profiling" title="Permanent link"></a></h1>
 <p>性能工具给出的是迹象，不是结论。一个热点的高 cache miss、低 IPC 或长时间等待，必须回到循环访问、线程分工和数据位置解释；优化后的同一组测量再决定假设是否成立。</p>
-<h2 id="性能测量">性能测量<a class="headerlink" href="#性能测量" title="Permanent link">&para;</a></h2>
+<h2 id="性能测量">性能测量<a class="headerlink" href="#性能测量" title="Permanent link"></a></h2>
 <p>性能数据必须有问题定义。要比较两个版本，至少固定输入规模、数据类型、编译器和优化选项、线程数、CPU 绑核、NUMA 策略、是否包含初始化/I/O。首次运行可能受动态链接、页面分配、缓存预热影响，因此应多次测量，报告中位数/分布，而不是只挑一次最好结果。</p>
 <details class="note" open="open">
 <summary>运行时间的构成</summary>
@@ -3326,7 +3326,7 @@ double seconds = std::chrono::duration&lt;double&gt;(end - begin).count();</code
 </ul>
 <p>延迟由依赖链和串行等待决定，吞吐受并行宽度和资源上限决定。这里有一句很贴切的玩笑——“永远不要低估一辆装满磁带、在高速公路上狂奔的面包车的带宽”（Andrew Tanenbaum）🚐💨。它想说的是，一次运送大量数据时，总吞吐可以非常可观，但逐次往返的延迟依然糟糕。现实中 AWS Snowball、阿里云闪电立方这类“卡车搬迁数据”的服务，正是把这个思路用到了极致。</p>
 <p>so，高带宽不等于低延迟。小消息同步受延迟支配，大块搬运受带宽限制。</p>
-<h2 id="性能上限与-roofline">性能上限与 Roofline<a class="headerlink" href="#性能上限与-roofline" title="Permanent link">&para;</a></h2>
+<h2 id="性能上限与-roofline">性能上限与 Roofline<a class="headerlink" href="#性能上限与-roofline" title="Permanent link"></a></h2>
 <p>CPU 的计算峰值由核心数、频率、每周期可发射的向量 FMA 数量和向量宽度决定；内存系统则有单个 socket、全部 socket 和不同访问模式下的带宽上限。用 microbenchmark 测这些上限，比直接引用产品宣传页更可信。</p>
 <p>程序实际性能受两条上界限制：计算峰值和内存带宽。定义<strong>运算强度</strong>：</p>
 <div class="arithmatex">\[
@@ -3345,7 +3345,7 @@ P\le\min(P_{\mathrm{peak}}, B_{\mathrm{memory}}\times I)
 <p><em>图：同一台机器上，不同算子的性能上限由不同资源决定。</em></p>
 <p>以逐元素 <code>c[i] = a[i] + b[i]</code> 为例，<code>float</code> 数据每个元素至少读入 8 字节、写出 4 字节，只做一次加法，运算强度约为 <span class="arithmatex">\(1/12\)</span> FLOP/byte。即使 CPU 有很高的 FMA 峰值，这个循环也会很快碰到内存带宽屋顶。矩阵乘法则不同，一个读入 cache 的 A 或 B 元素会参与许多次乘加，随着 tile 增大，DRAM 上看到的字节数增长得远慢于 FLOP，点才可能向右移动。</p>
 <p>这也解释了同一段代码换更强 CPU 为何不一定快。如果新 CPU 的计算峰值翻倍、内存带宽几乎不变，带宽受限的点仍停在原来的斜线上；若优化把连续数组改成多次扫描，FLOP 数不变，字节数却增加，点会向左走。Roofline 不是在给程序贴标签，它要求每一次优化说清楚减少了什么搬运，或增加了哪一块数据的复用。</p>
-<h2 id="cpu-利用率与热点">CPU 利用率与热点<a class="headerlink" href="#cpu-利用率与热点" title="Permanent link">&para;</a></h2>
+<h2 id="cpu-利用率与热点">CPU 利用率与热点<a class="headerlink" href="#cpu-利用率与热点" title="Permanent link"></a></h2>
 <p>CPU 利用率低可能是 I/O、网络、锁、页面缺失或负载不均；CPU 利用率高也可能只是忙于做无用工作。需要同时看热点、调用栈和硬件计数器。</p>
 <p>Linux 上可先用：</p>
 <pre class="highlight"><code class="language-bash">perf stat ./matmul 4096
@@ -3395,7 +3395,7 @@ perf report</code></pre>
 <p><em>图：计数器先描述整段运行。只有把它与采样到的热点和源码访问模式对应，才能区分内存、分支、依赖或锁等待。</em></p>
 <p><a class="glightbox" data-type="image" href="../assets/0712p/perf-tools.png"><img width="817" height="460" alt="课件给出 perf 工具族的分工：perf stat 问硬件在做什么、perf record/report 找时间花在哪、perf top 看实时热点。" src="../assets/0712p/perf-tools.preview.jpg" data-fullsrc="../assets/0712p/perf-tools.png" /></a></p>
 <p><em>图：先 stat 看整体计数器，再 record+report 采样定位热点源码，最后 top 看实时分布——这是基本流程。</em></p>
-<h2 id="朴素矩阵乘法">朴素矩阵乘法<a class="headerlink" href="#朴素矩阵乘法" title="Permanent link">&para;</a></h2>
+<h2 id="朴素矩阵乘法">朴素矩阵乘法<a class="headerlink" href="#朴素矩阵乘法" title="Permanent link"></a></h2>
 <p>对行主序 C/C++ 数组，最直观的三重循环可能是：</p>
 <pre class="highlight"><code class="language-cpp">for (int i = 0; i &lt; n; ++i)
   for (int j = 0; j &lt; n; ++j)
@@ -3446,7 +3446,7 @@ perf report</code></pre>
 <a class="glightbox" data-type="image" href="../assets/0712p/cacheline-row-column-walk.png"><img width="908" height="511" alt="课件画出 Mem moves in 64-byte lines：行 walk 取一条 line 服务 8 次迭代，列 walk（跨 8KB 步长）每取一条 line 只用其中一个 double。" src="../assets/0712p/cacheline-row-column-walk.preview.jpg" data-fullsrc="../assets/0712p/cacheline-row-column-walk.png" /></a></p>
 <p><em>图：一次内存访问搬入 64B（8 个 double）；行方向能被整条 line 覆盖，列方向则每条 line 大多浪费。</em></p>
 <p>改动前后可以用 <code>perf stat</code> 直接对照。<code>naive(ijk)</code> 与 <code>ikj</code>（都是 <code>-O2</code>）指令数几乎相同（约 75 亿条），cycles 却从约 117 亿降到约 14 亿，IPC 从 <code>0.65</code> 升到 <code>5.37</code>，cache-references 也从约 9.7 亿降到约 1.4 亿。同样的指令、少得多的等待，就是访问模式改变带来的。</p>
-<h2 id="cache-blocking">Cache blocking<a class="headerlink" href="#cache-blocking" title="Permanent link">&para;</a></h2>
+<h2 id="cache-blocking">Cache blocking<a class="headerlink" href="#cache-blocking" title="Permanent link"></a></h2>
 <p>即使循环顺序改善，整个矩阵仍可能远大于 cache。<strong>分块（blocking）</strong>把矩阵切成 <code>BS×BS</code> 的 tile：一次只处理几个能放进 cache 的小块，在块内反复使用 A、B、C 数据。</p>
 <pre class="highlight"><code class="language-cpp">for (int ii = 0; ii &lt; n; ii += BS)
   for (int kk = 0; kk &lt; n; kk += BS)
@@ -3507,7 +3507,7 @@ perf report</code></pre>
 <summary>为什么先改布局是有因果关系的顺序</summary>
 <p>一条 AVX-512 指令能在一个周期做很多 FMA，但再宽的计算单元也要先把数据从 DRAM 一路搬到寄存器。若程序本身在每个内层迭代都跨大步长访问，访存路径先被浪费掉，给再多的算术 lane 也没有用。先改循环次序/分块，是让已搬上来的数据被尽量复用；只有这一步之后，自动向量化和手写微内核才有足够多的局部数据可算。这不是规定动作的先后顺序，而是瓶颈决定优化点的自然结果。</p>
 </details>
-<h2 id="自动向量化与查看生成代码">自动向量化与查看生成代码<a class="headerlink" href="#自动向量化与查看生成代码" title="Permanent link">&para;</a></h2>
+<h2 id="自动向量化与查看生成代码">自动向量化与查看生成代码<a class="headerlink" href="#自动向量化与查看生成代码" title="Permanent link"></a></h2>
 <p>当最内层循环连续、迭代独立、指针别名清楚时，编译器可把多个 <code>j</code> 合并成 SIMD 操作。对 Clang：</p>
 <pre class="highlight"><code class="language-bash">clang++ -O3 -march=native -Rpass=loop-vectorize matmul.cpp</code></pre>
 <p>关闭优化或向量化，再比较生成汇编和运行时间，可以看到优化是否真的发生。不要只因报告写 vectorized 就宣布成功：如果总程序仍被 DRAM 限制，向量化后的速度提升会受带宽约束。</p>
@@ -3551,12 +3551,12 @@ perf report</code></pre>
 <p>布局让 <code>0.52 → 3.66</code>，编译器自动向量化再让 <code>3.66 → 7.16</code>，多核并行最后拉到 160。这里布局带来的约 7× 比编译器带来的约 2× 大得多，所以优先级通常是布布局 → 并行 → 自动向量化 → 手写 intrinsic。</p>
 <p>自动向量化也有天花板。从端口依赖推算：内层每步要做 load B、load C、FMA、store C，若内存端口每周期约 3 个、FMA 有 2 个 port，则 FMA:mem 比例约为 <code>0.67</code>，一个周期做不满 1 条 FMA；即使换成更宽的向量，内存端口不够也加不出并行度。把一段 C 留在寄存器里，让每个字节喂给更多 FMA，才是把这个比例拉高、逼近单核屋顶的办法。</p>
 <p>进一步的寄存器分块会让多个结果累加器长期留在寄存器中，减少 load/store；同时要匹配 load 单元、store 单元和 FMA 单元的吞吐。寄存器过多会 spill 到内存，反而变慢。这里已经接近微内核优化，通常由 BLAS 库完成。</p>
-<h3 id="avx-512-微内核">AVX-512 微内核<a class="headerlink" href="#avx-512-微内核" title="Permanent link">&para;</a></h3>
+<h3 id="avx-512-微内核">AVX-512 微内核<a class="headerlink" href="#avx-512-微内核" title="Permanent link"></a></h3>
 <p><strong>微内核</strong>不是简单地把内层 <code>j</code> 循环换成一条 AVX 指令。示例让一组 ZMM 寄存器保存一个 <span class="arithmatex">\(4\times16\)</span> 的 C tile；每轮从 packed B 读两个向量，把 A 的若干标量广播后做 FMA。C 在寄存器里跨多次 K 维迭代累加，最后才写回内存，减少了反复读写 C 的成本。</p>
 <p>这解释了为什么手写 SIMD 需要理解 tile、packing 和寄存器预算，也解释了为什么简单场景优先调用 BLAS。微内核优化只应在 profiler 已证明 GEMM 是主要热点、库接口又无法满足布局或融合需求时才进入。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0712p/avx512-microkernel.png"><img width="817" height="460" alt="课件的 AVX-512 微内核：4×16 的 C tile 驻留在 8 个 ZMM 累加器中。" src="../assets/0712p/avx512-microkernel.preview.jpg" data-fullsrc="../assets/0712p/avx512-microkernel.png" /></a></p>
 <p><em>图：C 的小块留在寄存器中沿 K 维累加，packed B 连续加载，A 的标量广播到向量 lane；最后统一写回。</em></p>
-<h2 id="多线程与内存流量">多线程与内存流量<a class="headerlink" href="#多线程与内存流量" title="Permanent link">&para;</a></h2>
+<h2 id="多线程与内存流量">多线程与内存流量<a class="headerlink" href="#多线程与内存流量" title="Permanent link"></a></h2>
 <p>OpenMP 并行矩阵乘法时，若不同线程负责不同的 C tile，每个线程主要写自己的结果，正确性和缓存行为都较好：</p>
 <pre class="highlight"><code class="language-cpp">#pragma omp parallel for schedule(static)
 for (int ii = 0; ii &lt; n; ii += BS) {
@@ -3566,7 +3566,7 @@ for (int ii = 0; ii &lt; n; ii += BS) {
 <p>线程数增加到某一点后，内存带宽先饱和，之后更多线程只是在竞争。此时 GFLOP/s 不再随线程数增长是正常现象，不是 OpenMP 写错。</p>
 <p>多核扩展的实测能看出明显的边际：同一微内核，1 线程约 54 GFLOP/s、12 线程约 592、24 线程约 969、48 线程约 1729，再到 96 线程反而降到约 707——更多线程不一定更快，超出一颗 socket 的合理并发后只增加调度和带宽争用。</p>
 <p>线程多了还会暴露负载不均衡与同步等待。一个例子是把 3136 行切成 49 个行条块分给 48 个线程，总量看似整除不了，结果 47 个线程约 710 ms 就做完，剩下一个线程要同时做两块（约 1173 ms），其余线程在 barrier 上空等，整个机器约 39% 的时间闲置。把切分粒度细到按行之后，所有线程都约 710 ms 完成，闲置降到约 13%，墙钟时间从 1173 ms 降到 819 ms。这类问题用 wall-clock 看不出来——<code>perf</code>/VTune 看到的是时间片里大段 Inactive Sync Wait。有的实况里 32 线程的程序光是自旋等待就占了大半 CPU 时间，所以并行程序的 profiler 读数经常显示利用率并不像墙钟时间那么理想。</p>
-<h2 id="numa-的测量与绑定">NUMA 的测量与绑定<a class="headerlink" href="#numa-的测量与绑定" title="Permanent link">&para;</a></h2>
+<h2 id="numa-的测量与绑定">NUMA 的测量与绑定<a class="headerlink" href="#numa-的测量与绑定" title="Permanent link"></a></h2>
 <p>双路服务器的每个 socket 邻近自己的 DRAM。若线程运行在 socket 0、数据页却首次触碰于 socket 1，就会发生 remote access。性能分析中可分别测试本地分配、本地访问和远端访问，观察延迟/带宽差异。</p>
 <p>常见策略是让每个线程初始化自己将处理的数组块；并在必要时将线程和内存绑定到同一 NUMA 节点。可以用：</p>
 <pre class="highlight"><code class="language-bash">numactl --hardware
@@ -3580,17 +3580,17 @@ numastat -p PID</code></pre>
 <p class="admonition-title">NUMA 要分清三个位置</p>
 <p>测 NUMA 时要区分线程在哪个 socket、页面在哪个 socket、以及线程实际访问哪块页面。只把进程绑到 node 0、却由 node 1 的线程先初始化数组，仍可能得到远端页面。可先让每个线程并行初始化自己后续处理的块，再保持相同的线程划分进入主循环；改变一个条件后重跑，才能把差异归因于数据位置而不是随机波动。</p>
 </div>
-<h2 id="计时边界与统计量">计时边界与统计量<a class="headerlink" href="#计时边界与统计量" title="Permanent link">&para;</a></h2>
+<h2 id="计时边界与统计量">计时边界与统计量<a class="headerlink" href="#计时边界与统计量" title="Permanent link"></a></h2>
 <p>测量一个 kernel 时，计时器应夹住同一份工作：必要的预热之后开始计时，结束时确保 CPU 线程或 GPU stream 已完成，再读取时钟。把随机数据生成、首次页分配、JIT 编译或文件加载有选择地计入，会改变问题本身；报告必须写清边界。CPU 可用单调时钟，MPI 程序通常取所有 rank 中的最大耗时，因为作业完成由最慢 rank 决定；GPU 异步发射时应使用 CUDA event 或显式同步，不能只量 host 提交 kernel 的微小时间。</p>
 <p>单次运行容易受频率调节、后台负载、首次 cache cold start 和系统噪声影响。对相同输入运行多次，报告中位数或稳定区间，同时保存最小/最大值和线程绑定信息，才能判断一个 3% 的改动是否真实。优化中若校验被移出计时区，仍应在每次候选实现后运行；少做了计算得到的加速不是性能结果。</p>
-<h2 id="从事件到循环">从事件到循环<a class="headerlink" href="#从事件到循环" title="Permanent link">&para;</a></h2>
+<h2 id="从事件到循环">从事件到循环<a class="headerlink" href="#从事件到循环" title="Permanent link"></a></h2>
 <p><code>perf stat</code> 的 IPC 是 retired instructions / cycles，不是 CPU 利用率。IPC 低可能来自 cache miss、分支错误、数据依赖或前端取指受限；IPC 高也可能只是在高效执行不重要的初始化。cache-misses 需要和访问次数、cache line 大小、运行时间一起解释。把计数器与采样 profiler 的热点函数、源码行和汇编对应，才能提出可证伪的假设：例如热点在 <code>B[k*n+j]</code> 且 LLC miss 高，才有理由尝试转置或 packing；改完再测同一事件集和总时间。</p>
 <p>性能上限也可由实际字节流量反查。若一个 SAXPY 每元素读 <code>x</code>、读写 <code>y</code>，理想情况下约搬运 12 字节并做 2 FLOP，运算强度约为 <code>1/6 FLOP/byte</code>；在 200 GB/s 的有效带宽下，即使峰值算力是数 TFLOPS，Roofline 上限也只有约 33 GFLOPS。这个估算的价值在于排除不可能：当实测已接近该数，不应期待把 FMA 再调快十倍。</p>
 <p><code>perf</code>/VTune 用于热点和硬件事件；火焰图把调用栈占比可视化；trace/timeline 用于观察线程、MPI、GPU 和 I/O 的等待关系；微基准用于测机器上限；程序内计时用于标记算法阶段。一次优化只改一个假设，并保存版本、命令、输入、结果和正确性校验。</p>
 <p>性能优化的顺序可以概括为：先确认热点和上限；先改善算法与访问模式；再做 cache blocking；再启用编译器优化和向量化；再并行、绑核；最后才写针对某一指令集的微内核。这个顺序并非教条，但能避免把时间花在不影响总运行时间的细节上。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0712p/optimization-journey.png"><img width="817" height="460" alt="课件将一次 GEMM 优化的每一步放回同一张 Roofline 图：循环顺序、分块、自动向量化、微内核、多核并行和库调用各自解决不同瓶颈。" src="../assets/0712p/optimization-journey.preview.jpg" data-fullsrc="../assets/0712p/optimization-journey.png" /></a></p>
 <p><em>图：优化轨迹同时向右提高数据复用、向上提高吞吐；每一步应由前一版本的瓶颈证据驱动。</em></p>
-<h3 id="可复查的性能实验">可复查的性能实验<a class="headerlink" href="#可复查的性能实验" title="Permanent link">&para;</a></h3>
+<h3 id="可复查的性能实验">可复查的性能实验<a class="headerlink" href="#可复查的性能实验" title="Permanent link"></a></h3>
 <p>一个可信的 benchmark 至少有两条线。第一条是<strong>正确性线</strong>：在小尺寸上与朴素实现或高精度库结果比较，浮点计算要使用合理的绝对/相对误差阈值；优化重排了加法顺序时，末位差异未必是错误，但系统性的数量级偏差一定要先查。第二条是<strong>性能线</strong>：固定问题规模、编译选项、线程绑核和输入，预热后重复多次，再记录时间分布、吞吐和相应的 profiler 证据。</p>
 <p>尤其要分清一个 kernel 的快和程序整体的快。例如 MoE 的专家 GEMM 通过 packing 后可能更快，但 packing、路由索引、结果 scatter 和线程同步也要计入端到端时间；CUDA kernel 的 event 时间也不能代替包含 host-device 传输的服务延迟。局部微基准用于解释某个假设，端到端计时用于判断这项修改是否值得保留，两者缺一不可。</p>
 <p>端到端评测会把初始化、主程序、MPI、CUDA runtime 和必要同步放在同一计时范围内。CPU 侧可用 <code>perf</code> 观察完整 baseline，再分析热点 rank 和线程活动；GPU 侧的主机 profiler 只能显示调用栈与等待，具体 kernel 还要交给 Nsight Systems、Nsight Compute。单独一段循环或一个 kernel 的加速比不能替代完整正确性和端到端时间。</p>
@@ -3982,7 +3982,7 @@ numastat -p PID</code></pre>
       
         <script src="../../../../theme/js/mathjax.js"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
       

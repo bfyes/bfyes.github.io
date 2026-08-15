@@ -39,7 +39,12 @@
       callback();
       return;
     }
+    // CSS 没加载完，等 load 事件；如果 preload 已完成 load 不会再来，
+    // 用 document.fonts.ready 兜底（字体加载完时 CSS 一定也好了）
     link.addEventListener("load", callback, { once: true });
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(callback);
+    }
   }
 
   /** 高亮当前根内的所有代码块。 */

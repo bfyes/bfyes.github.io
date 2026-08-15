@@ -64,7 +64,9 @@
     
       <link rel="stylesheet" href="../../../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../../../theme/css/components.css">
+      <link rel="stylesheet" href="../../../../theme/css/theme.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/home.css">
     
     <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
@@ -73,8 +75,6 @@
     
     
   
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -3302,7 +3302,7 @@
 
 
 
-<h1 id="07-17-上午算法系统协同设计">07-17 上午：算法—系统协同设计<a class="headerlink" href="#07-17-上午算法系统协同设计" title="Permanent link">&para;</a></h1>
+<h1 id="07-17-上午算法系统协同设计">07-17 上午：算法—系统协同设计<a class="headerlink" href="#07-17-上午算法系统协同设计" title="Permanent link"></a></h1>
 <p>课程题目是 <em>Algorithm-Infra Co-Design for AGI</em>。这里的 <code>infra</code> 包括训练集群、kernel、并行策略、显存管理、编译器、推理引擎和服务调度。模型结构决定了通信量、KV cache 和访存量，系统与硬件的限制反过来又约束注意率、MoE、精度和上下文长度能怎么选。</p>
 <table>
 <thead>
@@ -3334,7 +3334,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="算法与系统协同设计">算法与系统协同设计<a class="headerlink" href="#算法与系统协同设计" title="Permanent link">&para;</a></h2>
+<h2 id="算法与系统协同设计">算法与系统协同设计<a class="headerlink" href="#算法与系统协同设计" title="Permanent link"></a></h2>
 <p>近十余年的模型发展是一脉相承的：CNN、Transformer、预训练、对话模型、多模态模型与 agent 并不是彼此替代的几条支线。新的阶段通常沿用前一阶段的表示、训练数据和基础设施，再把规模或任务边界推远一点。</p>
 <p>预训练带来的变化尤其大。模型不再只为某个固定数据集训练，而是用大量通用语料先得到一个基座模型，再通过指令数据、偏好数据、强化学习或工具交互适配任务。这样训练出来的模型覆盖面更广，但训练和服务成本也被放大到不能只靠多买几张卡解决。</p>
 <p>讲者把目前的工作分成两个容易割裂的社群：算法、数据和模型能力是一边，并行、编译、存储与运行时是另一边。实际方案常要同时改动两侧。GPU 矩阵单元偏好低精度时，量化误差需要重新评估；MoE 路由触发大量 All-to-All 时，expert placement 和通信路径就进入设计；KV cache 受限时，MQA、GQA 或 latent attention 会成为模型层面的选项。</p>
@@ -3342,7 +3342,7 @@
 <p><a class="glightbox" data-type="image" href="../assets/0717a/mlsys-compute-mem-comm-triangle.jpg"><img width="1280" height="720" alt="课件的 MLSys 三角：Compute、Memory、Communication 三者互相牵制，任何一方成为瓶颈都会进入系统设计的视野。" src="../assets/0717a/mlsys-compute-mem-comm-triangle.preview.jpg" data-fullsrc="../assets/0717a/mlsys-compute-mem-comm-triangle.jpg" /></a></p>
 <p><em>图：算力、显存与互连构成系统三角；协同设计是在三者之间找平衡，而不是只盯峰值算力。</em></p>
 <p>一个具体的判断方式是先问瓶颈落在哪里。训练时，参数状态可能放不进显存，activation 也可能更大；长上下文服务时，瓶颈常转向 KV cache 的容量与访存；MoE 则会把 token 路由和 All-to-All 通信推到前台。原因不同，优先动作也不同。将所有问题统称为显卡不够会掩盖真正的约束。</p>
-<h2 id="scaling-law-与数据">Scaling Law 与数据<a class="headerlink" href="#scaling-law-与数据" title="Permanent link">&para;</a></h2>
+<h2 id="scaling-law-与数据">Scaling Law 与数据<a class="headerlink" href="#scaling-law-与数据" title="Permanent link"></a></h2>
 <p>大模型能力提升可以分成预训练、后训练和测试时推理三个阶段。预训练常讨论 scaling law：在模型参数量、训练 token 数和训练计算量增加时，训练损失怎样下降。它给的是经验上的资源分配规律，不是保证能力线性增长的承诺。数据质量、重复率、模型结构和训练稳定性都会改变实际曲线。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717a/scaling-law-data-flywheel.jpg"><img width="1280" height="720" alt="课件说明 scaling law 与数据飞轮：更多算力与更好的数据可用性相互促进，形成持续改进的循环。" src="../assets/0717a/scaling-law-data-flywheel.preview.jpg" data-fullsrc="../assets/0717a/scaling-law-data-flywheel.jpg" /></a></p>
 <p><em>图：scaling 不只是模型更大，还包括数据、算力与评估之间的反馈循环（data flywheel）。</em></p>
@@ -3352,7 +3352,7 @@
 \]</div>
 <p>交叉熵只要求模型拟合训练分布，并不会直接告诉它哪一种回答对用户更有用。所以预训练之后还需要监督微调、偏好优化或强化学习。代码、数学、可执行工具等场景有一个特点：编译是否通过、测试是否通过、工具调用是否成功都是相对明确的反馈，这类反馈可以继续变成训练数据。</p>
 <p>测试时计算是另一条尺度轴。对同一个基座模型，系统可以让它生成更长的推理过程、并行采样多个候选、调用检索或工具、进行验证和反思。这样会提高单次请求的计算和延迟，是否划算要看任务是否能从额外搜索中稳定获益。不能把多想几步当成免费能力。</p>
-<h2 id="预训练状态与并行策略">预训练状态与并行策略<a class="headerlink" href="#预训练状态与并行策略" title="Permanent link">&para;</a></h2>
+<h2 id="预训练状态与并行策略">预训练状态与并行策略<a class="headerlink" href="#预训练状态与并行策略" title="Permanent link"></a></h2>
 <p>一次训练 step 至少包含前向、反向和优化器更新。显存里同时存在参数、梯度、优化器状态和激活。前向为了输出损失而保留部分 activation；反向需要它们求导；Adam 等优化器还会保存额外状态。对大模型而言，参数文件的大小只是这笔账的一部分。</p>
 <p>模型规模超出单卡后，训练框架通常混合多种并行维度：</p>
 <ul>
@@ -3373,7 +3373,7 @@
 <p><a class="glightbox" data-type="image" href="../assets/0717a/adamw-to-muon.png"><img width="1280" height="720" alt="课件对比 AdamW 与 Muon：AdamW 维护一阶/二阶动量，Muon 是面向矩阵的更新，宣称以约一半的训练 FLOPs 达到 AdamW 级 loss。" src="../assets/0717a/adamw-to-muon.preview.jpg" data-fullsrc="../assets/0717a/adamw-to-muon.png" /></a></p>
 <p><em>图：更好的优化器等同一笔免费算力——若新优化器在更少 step 里达到相同 loss，就直接省下整段训练时间。</em></p>
 <p>以 Muon 为代表的矩阵感知优化器利用参数是矩阵的结构做更新，在部分实验中明显降低达到目标 loss 所需的 FLOPs。它是否适用取决于模型与超参，不能想当然替换；但优化器质量确实是训练成本方程里的一个自由变量，和并行策略、精度选择一样值得在动手堆硬件前先尝试。实际判断仍靠同输入、同 loss 目标下的收敛曲线对比。</p>
-<h2 id="高效-attention-与内存访问">高效 Attention 与内存访问<a class="headerlink" href="#高效-attention-与内存访问" title="Permanent link">&para;</a></h2>
+<h2 id="高效-attention-与内存访问">高效 Attention 与内存访问<a class="headerlink" href="#高效-attention-与内存访问" title="Permanent link"></a></h2>
 <p>标准 attention 写为</p>
 <div class="arithmatex">\[
 \operatorname{Attention}(Q,K,V)=\operatorname{softmax}\left(\frac{QK^T}{\sqrt d}\right)V.
@@ -3389,7 +3389,7 @@
 <p>长上下文再继续增大时，context parallelism 会把 token 或 K/V 块分到多张 GPU。Ring Attention 让 K/V 块在设备间循环传递，每张卡依次处理自己的 Q 与到达的 K/V 块；这把单卡峰值内存降下来，但把问题变成计算与环形通信如何重叠。</p>
 <p>传输并不必等到所有计算结束。一个 K/V 块参与本轮 attention 后，可以在当前设备继续算后续 FFN 的同时送往下一张卡；另一侧也可以边接收边准备下一块。通信若能被这段计算遮住，端到端时间就不会简单等于计算时间加通信时间。实际能否重叠取决于块大小、网络带宽、kernel 排程和各阶段负载，写代码时仍要从 timeline 验证。</p>
 <p>线性 attention 和稀疏 attention 则试图改变随序列长度增长的代价。线性 attention 用特征映射近似或重写相似度，使某些计算可按结合律重排，避免显式构造全部 <span class="arithmatex">\(S\times S\)</span> 关系；因果场景中，它可维护随 token 更新的状态。代价是表示能力、训练稳定性和现有推理缓存机制都要重新评估。稀疏 attention 只让一个 query 关注部分 token，固定窗口、块稀疏和动态选 token 是常见做法；动态选择本身也会引入索引和不规则访存的成本。</p>
-<h2 id="moe-路由与执行">MoE 路由与执行<a class="headerlink" href="#moe-路由与执行" title="Permanent link">&para;</a></h2>
+<h2 id="moe-路由与执行">MoE 路由与执行<a class="headerlink" href="#moe-路由与执行" title="Permanent link"></a></h2>
 <p>Transformer block 里有 attention 和 FFN 两块主要计算。attention 让 token 之间交换信息；普通 FFN 则对每个 token 的隐藏向量单独做两次矩阵投影和一次激活。MoE 没有把整个 Transformer 换掉，它只是用很多个参数不同的 FFN 取代原来的一个 FFN。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717a/transformer-moe-architecture.jpg"><img width="1280" height="720" alt="课件将 Transformer block 中的 FFN 展开为 DeepSeekMoE：router 为每个 token 选出少数 routed experts，结果再合并回原 token。" src="../assets/0717a/transformer-moe-architecture.preview.jpg" data-fullsrc="../assets/0717a/transformer-moe-architecture.jpg" /></a></p>
 <p><em>图：MoE 位于原 FFN 的位置；真正要处理的是 token 到 expert 的不规则映射。</em></p>
@@ -3402,7 +3402,7 @@ y_t=\sum_{e\in\operatorname{topk}(x_tW_{\mathrm{router}})}g_{t,e}\,\operatorname
 <p>这里的 expert 不是人能直接命名的数学专家或代码专家。它们是同构、参数不同的神经网络分支，如何分工由训练得到。MoE 的容量因此可以很大，而单个 token 只激活少数专家，计算量不随总专家数线性增长。</p>
 <p>从系统角度看，困难不在这个公式本身。router 选出的 token 往往散落在 batch 的不同位置，而同一个 expert 的权重希望服务一小批连续 token。实现通常要先记录 <code>(token_id, expert_id, gate)</code>，按 expert 重排 token，完成专家内部的批量 GEMM，再按 <code>token_id</code> scatter 回输出。单机上这是索引、缓冲区和数据布局问题；多卡 expert parallel 中，它会进一步变成 All-to-All。若少数 expert 被频繁选中，计算和通信都会失衡，因此容量控制和负载均衡也进入训练设计。</p>
 <p>route、dispatch、专家矩阵乘法和 weighted merge 分别有自己的数据布局与计时边界。token 按 expert 重排后，矩阵单元才会看到足够规则的小批量；重排本身、索引和 scatter 也必须计入总时间。这里的性能判断依赖矩阵形状、低精度算术和内存访问，而不是只看某一条 GEMM 指令。</p>
-<h2 id="参数高效微调">参数高效微调<a class="headerlink" href="#参数高效微调" title="Permanent link">&para;</a></h2>
+<h2 id="参数高效微调">参数高效微调<a class="headerlink" href="#参数高效微调" title="Permanent link"></a></h2>
 <details class="note" open="open">
 <summary>什么是量化成低比特：用整数近似浮点权重</summary>
 <p>深度学习里的每个权重通常是一个 32 位浮点数（FP32），更常用 16 位（FP16/BF16）来省一半内存。<strong>量化</strong>更进一步：把权重用很少的比特（常见的 8 位 INT8 甚至 4 位 INT4）来近似表示。它的动机很直接——权重从 16 位降到 4 位，存储和搬迁量可以降到约四分之一，模型更容易装进显存，推理时也能少读数据。</p>
@@ -3419,7 +3419,7 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 <p><a class="glightbox" data-type="image" href="../assets/0717a/lora-low-rank-ba.jpg"><img width="1280" height="720" alt="课件直接给出 LoRA 的公式：冻结预训练权重 \(W_0\)，只学习一个低秩更新 \(\Delta W = BA\)，训练时只保存和更新小矩阵。" src="../assets/0717a/lora-low-rank-ba.preview.jpg" data-fullsrc="../assets/0717a/lora-low-rank-ba.jpg" /></a></p>
 <p><em>图：低秩分解 <span class="arithmatex">\(BA\)</span> 让可训练参数量大幅下降；部署时把 <span class="arithmatex">\(BA\)</span> 合并回 <span class="arithmatex">\(W_0\)</span> 或不保留 adapter 均可。</em></p>
 <p>Q-LoRA 再把冻结的基座量化到低比特，以更少显存加载大模型，同时让 LoRA 分支保持可训练精度。量化并不等于所有张量都直接截成相同格式。权重、激活、梯度和 KV cache 对误差的敏感度不同；缩放因子的粒度、异常值、累积精度和硬件指令都会影响最终效果。</p>
-<h2 id="kv-cache-与推理内存">KV Cache 与推理内存<a class="headerlink" href="#kv-cache-与推理内存" title="Permanent link">&para;</a></h2>
+<h2 id="kv-cache-与推理内存">KV Cache 与推理内存<a class="headerlink" href="#kv-cache-与推理内存" title="Permanent link"></a></h2>
 <p>自回归推理分为 prefill 和 decode。prefill 一次处理完整 prompt，计算所有输入 token 的 K/V 并建立 cache；decode 每步生成一个 token，要读取前文 cache、计算新 token 的 Q/K/V，再把新的 K/V 追加进去。</p>
 <p>设有 <span class="arithmatex">\(L\)</span> 层、<span class="arithmatex">\(H_{kv}\)</span> 个 KV head、每个 head 维度为 <span class="arithmatex">\(d\)</span>、上下文长度为 <span class="arithmatex">\(S\)</span>，单请求 KV cache 大小近似随</p>
 <div class="arithmatex">\[
@@ -3437,11 +3437,11 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 <p><a class="glightbox" data-type="image" href="../assets/0717a/mha-mqa-gqa-mla-comparison.png"><img width="1280" height="720" alt="课件给出 MHA、MQA、GQA 与 MLA 的对照：缓存大小、效果与显存占用各有倾斜，MLA 靠低秩压缩拿到接近 MQA 的缓存、接近 MHA 的效果。" src="../assets/0717a/mha-mqa-gqa-mla-comparison.preview.jpg" data-fullsrc="../assets/0717a/mha-mqa-gqa-mla-comparison.png" /></a></p>
 <p><em>图：MHA 效果最好但缓存最大，MQA 缓存最小但效果有损，GQA 是折中；MLA 把 K/V 压缩成共享潜变量，避开缓存小与效果好之间的两难。</em></p>
 <p>MLA（Multi-head Latent Attention）更进一步，不直接共享完整 K/V，而是把 KV 低秩联合压缩成一个较小的潜变量 <span class="arithmatex">\(c_t\)</span>，推理时只缓存这个潜向量，再在线还原。它的缓存量（如论文中 <span class="arithmatex">\(d_c+d_r\)</span>）与 head 数无关，却能保留接近 MHA 的表达能力。正因为 KV cache 是长上下文推理的显存与带宽瓶颈，压缩 KV 这件事既是模型架构选择，也是系统能在多长上下文、多大并发下运行的变量。</p>
-<h2 id="量化推理与服务调度">量化推理与服务调度<a class="headerlink" href="#量化推理与服务调度" title="Permanent link">&para;</a></h2>
+<h2 id="量化推理与服务调度">量化推理与服务调度<a class="headerlink" href="#量化推理与服务调度" title="Permanent link"></a></h2>
 <p>低比特权重减少容量和带宽压力，校准误差、反量化路径与服务调度决定这部分节省能否转化成端到端收益。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717a/quantization-mapping.jpg"><img width="1280" height="720" alt="课件说明神经网络量化的本质：把高精度权重与激活映射到更少的离散取值，用 scale 等参数近似还原。" src="../assets/0717a/quantization-mapping.preview.jpg" data-fullsrc="../assets/0717a/quantization-mapping.jpg" /></a></p>
 <p><em>图：量化的核心是把连续范围映射到有限格点；格点越粗，存储越省，误差越大。</em></p>
-<h3 id="量化误差与-gptq">量化误差与 GPTQ<a class="headerlink" href="#量化误差与-gptq" title="Permanent link">&para;</a></h3>
+<h3 id="量化误差与-gptq">量化误差与 GPTQ<a class="headerlink" href="#量化误差与-gptq" title="Permanent link"></a></h3>
 <p>权重量化并非只最小化 <code>\|W-\hat W\|</code>。线性层真正关心输出扰动 <code>X(W-\hat W)</code>；输入激活在某些方向幅度很大时，即使权重逐元素误差很小，输出也可能明显偏移。GPTQ 用校准样本的激活二阶信息近似这种敏感度，按列/组逐步量化并补偿尚未量化的权重误差。校准集不需要标签，却应覆盖实际 prompt 的激活分布；用完全无关的短文本校准，量化后的困惑度可能恶化。</p>
 <p>量化还有一个简单的基线：<strong>RTN（round-to-nearest）</strong>，把每个浮点权重直接四舍五入到最近的格点，不做校准、也不补偿误差。它快、可复现，常作为对比 GPTQ 的什么都没有做起点。对大的 4-bit 权重，RTN 通常会让 NLL 明显变差，因为单个权重误差受激活方向放大；GPTQ 的价值恰恰在于把这份误差按真实输入分布补偿掉。读 <code>quantize.py</code> 时先看它走的是 RTN 还是带校准的 GPTQ——两者的输出质量不可直接比较，速度也不一样。</p>
 <p>group-wise scale 是质量、元数据和 kernel 复杂度的折中。组越小，scale 更能贴合权重分布，但每组都要读取 scale/zero-point，量化元数据比例升高，fused kernel 的访存也更碎。对称 INT4 通常把 4-bit 值解释为有符号范围并使用一个 scale；非对称方案额外使用 zero-point。无论编码方式如何，反量化的语义都应写清：<code>w ≈ scale * (q - zero)</code>，以及 scale 按输出通道、输入组还是张量共享。</p>
@@ -3450,15 +3450,15 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 \mathrm{NLL}=-\sum_t\log p_\theta(x_t\mid x_{&lt;t}).
 \]</div>
 <p>比较 W4A16 与高精度模型时必须使用完全相同的 tokenizer、样本、mask 和 logit 处理；只比较生成文本的看起来像不像无法发现小而系统性的概率偏差。端到端计时也应说明 tokenizer、KV cache 预热与采样策略是否包含。</p>
-<h3 id="位宽缩放与累加路径">位宽、缩放与累加路径<a class="headerlink" href="#位宽缩放与累加路径" title="Permanent link">&para;</a></h3>
+<h3 id="位宽缩放与累加路径">位宽、缩放与累加路径<a class="headerlink" href="#位宽缩放与累加路径" title="Permanent link"></a></h3>
 <p>推理量化的直接收益是减少权重和激活的存储与搬运，并让硬件使用更高吞吐的低精度矩阵路径。低比特格式往往需要按 tensor、channel 或小 block 设置 scale；scale 的粒度越细，误差通常越小，但元数据和计算也更多。不能只看 4-bit 这个标签，还要看格式、缩放和校准方式。</p>
 <p>量化可粗略理解为把浮点值 <span class="arithmatex">\(x\)</span> 映射到整数或低位浮点表示 <span class="arithmatex">\(q\)</span>，运行时再借助 scale 还原近似值：<span class="arithmatex">\(x\approx s(q-z)\)</span>。<span class="arithmatex">\(s\)</span> 决定步长，<span class="arithmatex">\(z\)</span> 在非对称量化中处理零点。若整个张量只共用一个 scale，少数异常大值会浪费大部分可表示范围；按更小 block 设 scale 会改善误差，但会增加 scale 的读取和 kernel 处理。权重、激活和 KV cache 的数值分布不同，通常也不会使用完全相同的方案。</p>
 <p>量化还要区分训练和推理。推理时模型权重已经固定，常可先做校准再转换格式；训练中的权重与激活持续变化，低精度算子、梯度累积和主权重精度都要参与设计。低位宽的收益只有在硬件有相应矩阵指令、数据布局与 kernel 能把它用起来时才会兑现。文件体积缩小，不自动等于吞吐按同一比例提高。</p>
 <p>在 W8A8 这类路径中，权重和激活以 <code>int8</code> 保存，点积通常以更宽的 <code>int32</code> 累加，再依靠 scale 回到浮点范围。这样做减少了搬运字节数，也可能使用硬件的整数矩阵乘加单元；同时，scale、量化误差、tile 布局和较小的专家 batch 仍会决定实际速度。它和 MoE 的关系很直接：专家 FFN 是最重的规则计算部分，量化与矩阵 kernel 往往就落在那里，路由和合并则仍需单独处理。</p>
-<h3 id="融合反量化与-gemm">融合反量化与 GEMM<a class="headerlink" href="#融合反量化与-gemm" title="Permanent link">&para;</a></h3>
+<h3 id="融合反量化与-gemm">融合反量化与 GEMM<a class="headerlink" href="#融合反量化与-gemm" title="Permanent link"></a></h3>
 <p>W4A16 把权重压成 INT4，激活仍以 FP16/BF16 等较高精度参与计算。实际 kernel 通常按 group 保存 scale 和 zero point，把两个 INT4 值打包进一个字节；运行时再解包、转换到计算精度并乘上 scale。若先把所有权重反量化成 fp16 临时矩阵再调用 GEMM，就会额外写出并读回一个完整高精度权重张量。</p>
 <p>fused dequant-GEMM 在 tile 被搬入寄存器或 shared memory 时完成解包和缩放，让结果直接参与矩阵乘加，避免这个全局中间量。它仍受 tensor core 所需布局、tile 对齐、group 边界和 scale 加载影响；当 batch 很小或矩阵很窄，launch、访存和 reduction 开销可能盖过理论算力优势。看到实现中的 <code>pack</code>、<code>unpack</code>、<code>scales</code> 和 <code>group_size</code>，可以顺着检查数据在哪个维度分组、谁负责读 scale，以及反量化后的值是否离开计算单元。</p>
-<h3 id="端到端服务调度">端到端服务调度<a class="headerlink" href="#端到端服务调度" title="Permanent link">&para;</a></h3>
+<h3 id="端到端服务调度">端到端服务调度<a class="headerlink" href="#端到端服务调度" title="Permanent link"></a></h3>
 <p><a class="glightbox" data-type="image" href="../assets/0717a/fp4-inference.jpg"><img width="1280" height="720" alt="课件对比低精度格式的缩放粒度，并将它放在实际预训练和推理吞吐的语境中。" src="../assets/0717a/fp4-inference.preview.jpg" data-fullsrc="../assets/0717a/fp4-inference.jpg" /></a></p>
 <p><em>图：低比特格式除了位宽不同，缩放因子的粒度也不同。</em></p>
 <p>服务端要同时处理吞吐和延迟。continuous batching 允许请求在不同时间加入批次，提高设备利用率；prefill 与 decode 的资源特征不同，常被拆开调度；speculative decoding 用较小模型或草稿分支一次提出多个 token，再由目标模型验证，以额外计算换取更少的串行 decode 轮数。是否有效取决于接受率、模型大小和请求长度。</p>
@@ -3469,7 +3469,7 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 <p class="admonition-title">量化正确性不是能生成一句通顺文本</p>
 <p>输出文本受采样随机性影响，难以比较。固定 token 序列、tokenizer、mask 与 logit 处理后计算 NLL，才能判断误差来自量化还是输入前处理。融合 kernel 改了权重布局时，也要先确认 dequant 后的数值语义未变。</p>
 </div>
-<h2 id="agent-与-harness">Agent 与 Harness<a class="headerlink" href="#agent-与-harness" title="Permanent link">&para;</a></h2>
+<h2 id="agent-与-harness">Agent 与 Harness<a class="headerlink" href="#agent-与-harness" title="Permanent link"></a></h2>
 <p>上面讲的训练、推理、显存和调度，最终都要被一段干活的代码编排起来。课程把这类编排概括成一个公式：Agent = Model + Harness。</p>
 <ul>
 <li><strong>Model</strong> 是能理解与生成的神经网络，负责会说什么；</li>
@@ -3867,7 +3867,7 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
       
         <script src="../../../../theme/js/mathjax.js"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
       

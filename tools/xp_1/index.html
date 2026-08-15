@@ -60,7 +60,9 @@
     
       <link rel="stylesheet" href="../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../theme/css/components.css">
+      <link rel="stylesheet" href="../../theme/css/theme.css">
+    
+      <link rel="stylesheet" href="../../theme/css/home.css">
     
     <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
@@ -69,8 +71,6 @@
     
     
   
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -3066,11 +3066,11 @@
     
 
 
-<h1 id="xp-on-apple-silicon-mac">XP on Apple Silicon Mac<a class="headerlink" href="#xp-on-apple-silicon-mac" title="Permanent link">&para;</a></h1>
+<h1 id="xp-on-apple-silicon-mac">XP on Apple Silicon Mac<a class="headerlink" href="#xp-on-apple-silicon-mac" title="Permanent link"></a></h1>
 <blockquote>
 <p>本文为部署方法，配置记录详见原文[<a href="../xp/">点击跳转</a>]。</p>
 </blockquote>
-<h2 id="直接从utm文件夹部署">直接从<code>.utm</code>文件夹部署<a class="headerlink" href="#直接从utm文件夹部署" title="Permanent link">&para;</a></h2>
+<h2 id="直接从utm文件夹部署">直接从<code>.utm</code>文件夹部署<a class="headerlink" href="#直接从utm文件夹部署" title="Permanent link"></a></h2>
 <ol>
 <li>
 <p><strong>软件</strong>。关于 UTM 的下载，请访问 <a href="https://mac.getutm.app">https://mac.getutm.app</a>。  </p>
@@ -3082,11 +3082,11 @@
 <details class="tip">
 <summary>如果无法解压，请尝试以下步骤</summary>
 <p>可通过 7za 命令或部分解压软件 (BandiZip等) 解压</p>
-<h3 id="通过-7-zip-解压">通过 7-Zip 解压<a class="headerlink" href="#通过-7-zip-解压" title="Permanent link">&para;</a></h3>
-<h4 id="安装-7-zip-工具">安装 7-Zip 工具<a class="headerlink" href="#安装-7-zip-工具" title="Permanent link">&para;</a></h4>
+<h3 id="通过-7-zip-解压">通过 7-Zip 解压<a class="headerlink" href="#通过-7-zip-解压" title="Permanent link"></a></h3>
+<h4 id="安装-7-zip-工具">安装 7-Zip 工具<a class="headerlink" href="#安装-7-zip-工具" title="Permanent link"></a></h4>
 <p>在终端(terminal)中输入:</p>
 <pre class="highlight"><code class="language-bash">brew install p7zip</code></pre>
-<h4 id="指令示例">指令示例<a class="headerlink" href="#指令示例" title="Permanent link">&para;</a></h4>
+<h4 id="指令示例">指令示例<a class="headerlink" href="#指令示例" title="Permanent link"></a></h4>
 <pre class="highlight"><code class="language-bash">7za x test.7z # 解压
 # 详见“指令参考”</code></pre>
 <details class="info">
@@ -3104,11 +3104,11 @@ t : Test integrity of archive
 u : Update files to archive  
 x : eXtract files with full paths  </code></pre></p>
 </details>
-<h3 id="其他方案">其他方案<a class="headerlink" href="#其他方案" title="Permanent link">&para;</a></h3>
+<h3 id="其他方案">其他方案<a class="headerlink" href="#其他方案" title="Permanent link"></a></h3>
 <p>如果你的压缩软件（如BandiZip）支持 <code>XZ</code> 算法，也可以选用该算法进行压缩，效果与 7-Zip 一致。</p>
 </details>
-<h2 id="文件互传">文件互传<a class="headerlink" href="#文件互传" title="Permanent link">&para;</a></h2>
-<h3 id="macos-端配置">macOS 端配置<a class="headerlink" href="#macos-端配置" title="Permanent link">&para;</a></h3>
+<h2 id="文件互传">文件互传<a class="headerlink" href="#文件互传" title="Permanent link"></a></h2>
+<h3 id="macos-端配置">macOS 端配置<a class="headerlink" href="#macos-端配置" title="Permanent link"></a></h3>
 <ol>
 <li>
 <p>系统设置 → 通用 → 共享 → 开启「远程登录」</p>
@@ -3123,7 +3123,7 @@ x : eXtract files with full paths  </code></pre></p>
 <p>得到并记住该地址。(高亮部分)</p>
 </li>
 </ol>
-<h3 id="xp-端配置">XP 端配置<a class="headerlink" href="#xp-端配置" title="Permanent link">&para;</a></h3>
+<h3 id="xp-端配置">XP 端配置<a class="headerlink" href="#xp-端配置" title="Permanent link"></a></h3>
 <p>（Xftp 5）</p>
 <ol>
 <li>
@@ -3156,7 +3156,7 @@ x : eXtract files with full paths  </code></pre></p>
 <summary>如果 Mac 的共享文件夹乱码</summary>
 <p>若 Mac 的共享文件夹乱码，请点击Xftp5左上角<code>File</code> - <code>Properties</code> - <code>Options</code> - 勾选<code>Use UTF-8 encoding</code>。</p>
 </details>
-<h2 id="说明">说明<a class="headerlink" href="#说明" title="Permanent link">&para;</a></h2>
+<h2 id="说明">说明<a class="headerlink" href="#说明" title="Permanent link"></a></h2>
 <ul>
 <li>断网不影响使用 (仅在虚拟机与宿主网络互通时有效) ，仅依赖虚拟机内部局域网</li>
 <li>IP 地址固定，无需频繁修改配置</li>
@@ -3524,7 +3524,7 @@ int 21h</code></pre>
       
         <script src="../../theme/js/mathjax.js"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
       

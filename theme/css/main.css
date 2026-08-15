@@ -1,22 +1,28 @@
 /* ============================================================================
    main.css —— 正文观感层（GitHub markdown 风格）
    ----------------------------------------------------------------------------
+   覆盖 zensical/Material 默认排版，使正文观感与 github-markdown-css 一致。
+   正文字号 16px、行高 1.5、间距变量 --base-size-* 同为 16px 系。
+
    目录
    01. 字体资源
-       Google Fonts（文件首行 @import）
-   02. 代码语法高亮
-       highlight.js 运行时高亮（见 theme/js/highlight.js），GitHub 配色
-   03. 字体栈与站点基础
-       正文字体、导航字体、暗色全局背景、等宽字体
-   04. GitHub 主题变量
-       github-markdown-css 兼容变量，按主题切换明暗
-   05. GitHub 式正文排版
-       .md-typeset 内标题、列表、表格、引用、链接、脚注等
-   06. 代码块与代码相关 UI
-       代码块、行号（.code-gutter）、复制提示、行内代码
+       Google Fonts @import（Inter / JetBrains Mono / Noto Sans SC / Noto Serif SC）
+   02. 字体栈与站点基础
+       导航标题衬线、正文系统无衬线栈、搜索面板 Shadow DOM 变量穿透、
+       暗色全局背景 #0d1117、sidebar/content/footer 不透明暗色背景、等宽字体
+   03. GitHub 主题变量
+       fgColor / bgColor / borderColor / base-size 兼容变量，
+       按 [data-md-color-scheme] 切换明暗
+   04. GitHub 式正文排版
+       .md-typeset 字号/行高 → 标题(H1-H6) → 列表 → 表格 →
+       引用 → 分隔线 → 强调/删除线/上下标 → 键盘按键 → 链接
+   05. 代码块与代码相关 UI
+       代码块(GitHub 风格 13.6px) → 行内代码(胶囊) → 复制提示 →
+       标题内行内代码 → 统一块级底边距(p/列表/表格/引用/pre/details) →
+       blockquote 首尾子元素 margin 归零 → hljs 兼容 → 脚注
 
    可调参数见 variables.css（加载于本文件之前）。
-   站点自定义 UI 组件已拆至 components.css（加载于其后）。
+   通用组件覆盖见 theme.css，主页定制见 home.css（均加载于其后）。
    结合 sindresorhus/github-markdown-css 观感：
    https://github.com/sindresorhus/github-markdown-css
    ============================================================================ */
@@ -26,11 +32,11 @@
    ============================================================================ */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap");
 
-/* 代码语法高亮已切换到 highlight.js（运行时，见 theme/js/highlight.js 与 zensical.toml），
-   Pygments token 配色规则已移除。GitHub 配色由 highlight.js 的 github/github-dark 主题提供。 */
+/* 代码语法高亮由 highlight.js 运行时处理（见 theme/js/highlight.js 与 zensical.toml），
+   GitHub 配色由 CDN 的 github/github-dark 主题 CSS 提供，此处无需额外 CSS。 */
 
 /* ============================================================================
-   03. 字体栈与站点基础
+   02. 字体栈与站点基础
    ----------------------------------------------------------------------------
    导航标题用衬线，正文用 github-markdown-css 风格系统无衬线栈。
    搜索面板在 Shadow DOM 中，通过 --md-text-font-family 变量穿透。
@@ -88,7 +94,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* ============================================================================
-   04. GitHub 主题变量
+   03. GitHub 主题变量
    ----------------------------------------------------------------------------
    Material 主题色变量作用域到当前色彩方案；
    GitHub markdown 兼容变量作用域到 .md-typeset。
@@ -171,7 +177,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* ============================================================================
-   05. GitHub 式正文排版
+   04. GitHub 式正文排版
    ----------------------------------------------------------------------------
    作用域到 .md-typeset，覆盖 Material 默认。
    正文字号对齐 GitHub 基准 16px，行高 1.5，间距变量 --base-size-* 同为 16px 系，
@@ -233,30 +239,15 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   color: var(--fgColor-muted);
 }
 
-/* 标题自动编号：与标题同族无衬线、同字重、同色的轻微透明——编号安静地辅助标题 */
-.md-typeset h1::before,
-.md-typeset h2::before,
-.md-typeset h3::before,
-.md-typeset h4::before,
-.md-typeset h5::before,
-.md-typeset h6::before {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
-    "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Helvetica Neue",
-    Helvetica, Arial, sans-serif !important;
-  font-weight: 600 !important;
-  margin-right: 0.8em !important;
-  color: color-mix(in srgb, var(--fgColor-default) 70%, transparent) !important;
-}
-
 /* 列表：对齐 GitHub（padding-left: 2em，只取消 Material 的多余左缩进） */
-.md-typeset ul,
-.md-typeset ol {
-  margin-left: 0 !important;
+[dir="ltr"] .md-typeset ul,
+[dir="ltr"] .md-typeset ol {
+  margin-left: 0;
   padding-left: 2em;
 }
-.md-typeset ul li,
-.md-typeset ol li {
-  margin-left: 0 !important;
+[dir="ltr"] .md-typeset ul li,
+[dir="ltr"] .md-typeset ol li {
+  margin-left: 0;
 }
 .md-typeset ol > li {
   padding-left: 0.15em;
@@ -387,7 +378,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* ============================================================================
-   06. 代码块与代码相关 UI
+   05. 代码块与代码相关 UI
    ----------------------------------------------------------------------------
    代码块对齐 github-markdown-css：13.6px 字号、GitHub 背景色、不描边。
    行号由 highlight.js 运行时插入 .code-gutter 列（布局见 components.css）。
@@ -446,10 +437,10 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* 复制成功提示：只保留文字，不要 Material 默认的彩色/灰色胶囊背景。 */
-.md-dialog {
+.md-typeset .md-dialog {
   padding: 0;
-  background: transparent !important;
-  box-shadow: none !important;
+  background: transparent;
+  box-shadow: none;
 }
 .md-dialog__inner {
   color: var(--fgColor-muted);
@@ -470,8 +461,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 /* ---- 行间距：GitHub 式统一块级元素底边距 ----
    放在各具体规则之后，覆盖上层块（p/列表/表格/引用/代码块等）底部为 1rem；
    嵌套列表（ul ul 等）因 specificity 更高仍保持 0，符合 GitHub 行为。
-   同时统一 Material 扩展组件（tabbed 折叠、admonition 提示框）的边距，
-   避免更新日志等区域的间距忽大忽小。 */
+   tabbed-set/admonition 边距见 theme.css（组件归一管理）。 */
 .md-typeset p,
 .md-typeset blockquote,
 .md-typeset ul,
@@ -479,18 +469,34 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 .md-typeset dl,
 .md-typeset table:not(.ContributionCalendar-grid),
 .md-typeset pre,
-.md-typeset details,
-.md-typeset .tabbed-set,
-.md-typeset .admonition {
+.md-typeset details {
   margin-top: 0;
   margin-bottom: var(--base-size-16, 1rem);
   letter-spacing: normal;
 }
+
 .md-typeset blockquote > :first-child {
   margin-top: 0;
 }
 .md-typeset blockquote > :last-child {
   margin-bottom: 0;
+}
+
+/* ---- highlight.js 与 Material 布局兼容 ----
+   github.min.css 会给 .hljs 加自身背景与 padding，导致与 Material 的
+   pre(内边距/背景) 叠加冲突。这里让 code 回归 Material 的裸排版，
+   仅保留 github 的 token 配色。 */
+.md-typeset pre .hljs {
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  line-height: 1.45;
+}
+
+.md-typeset .highlight,
+.md-typeset pre,
+.md-typeset pre>code {
+  border-radius: 0;
 }
 
 /* ---- 脚注（GitHub 观感补足） ---- */

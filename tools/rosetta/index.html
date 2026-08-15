@@ -64,7 +64,9 @@
     
       <link rel="stylesheet" href="../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../theme/css/components.css">
+      <link rel="stylesheet" href="../../theme/css/theme.css">
+    
+      <link rel="stylesheet" href="../../theme/css/home.css">
     
     <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
@@ -73,8 +75,6 @@
     
     
   
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -3488,16 +3488,16 @@
 
 
 
-<h1 id="利用-rosetta-在-m-系列-mac-上高效运行-x86-linux-应用的完整指南">利用 Rosetta 在 M 系列 Mac 上高效运行 x86 Linux 应用的完整指南<a class="headerlink" href="#利用-rosetta-在-m-系列-mac-上高效运行-x86-linux-应用的完整指南" title="Permanent link">&para;</a></h1>
+<h1 id="利用-rosetta-在-m-系列-mac-上高效运行-x86-linux-应用的完整指南">利用 Rosetta 在 M 系列 Mac 上高效运行 x86 Linux 应用的完整指南<a class="headerlink" href="#利用-rosetta-在-m-系列-mac-上高效运行-x86-linux-应用的完整指南" title="Permanent link"></a></h1>
 <blockquote>
 <p>原文链接 <a href="https://blog.csdn.net/weixin_29305313/article/details/159103754">https://blog.csdn.net/weixin_29305313/article/details/159103754</a></p>
 </blockquote>
-<h2 id="为什么需要-rosetta-在-m-系列-mac-上运行-x86-linux-应用">为什么需要 Rosetta 在 M 系列 Mac 上运行 x86 Linux 应用<a class="headerlink" href="#为什么需要-rosetta-在-m-系列-mac-上运行-x86-linux-应用" title="Permanent link">&para;</a></h2>
+<h2 id="为什么需要-rosetta-在-m-系列-mac-上运行-x86-linux-应用">为什么需要 Rosetta 在 M 系列 Mac 上运行 x86 Linux 应用<a class="headerlink" href="#为什么需要-rosetta-在-m-系列-mac-上运行-x86-linux-应用" title="Permanent link"></a></h2>
 <p>自从苹果推出搭载 M 系列芯片的 Mac 电脑后，很多开发者都面临一个现实问题：如何在 ARM 架构的 Mac 上运行传统的 x86 Linux 应用。M 系列芯片采用 ARM 架构，而大多数 Linux 应用都是为 x86 架构编译的，这就导致了兼容性问题。</p>
 <p>Rosetta 是苹果开发的动态二进制翻译器，最初是为了让 x86 架构的 Mac 应用能在 M 系列芯片上运行。后来苹果进一步扩展了它的能力，允许在 Linux 虚拟机中使用 Rosetta 来运行 x86 程序。这相当于在 ARM 架构的 Linux 系统中增加了一个“翻译层”，能够实时将 x86 指令转换为 ARM 指令。</p>
 <p>我实测下来，这种方式的性能损失比纯模拟要小得多。举个例子，通过 Rosetta 运行 x86 版本的 Neofetch，速度几乎和原生 ARM 版本相当。而如果使用 QEMU 等模拟器，性能可能会下降 50% 以上。</p>
-<h2 id="环境准备与工具选择">环境准备与工具选择<a class="headerlink" href="#环境准备与工具选择" title="Permanent link">&para;</a></h2>
-<h3 id="硬件和系统要求">硬件和系统要求<a class="headerlink" href="#硬件和系统要求" title="Permanent link">&para;</a></h3>
+<h2 id="环境准备与工具选择">环境准备与工具选择<a class="headerlink" href="#环境准备与工具选择" title="Permanent link"></a></h2>
+<h3 id="硬件和系统要求">硬件和系统要求<a class="headerlink" href="#硬件和系统要求" title="Permanent link"></a></h3>
 <p>要使用这个方案，你需要：</p>
 <ul>
 <li>搭载 M 系列芯片的 Mac 电脑（M1/M2/M3 等）</li>
@@ -3506,7 +3506,7 @@
 <li>足够的存储空间（建议预留 20GB 以上）</li>
 </ul>
 <p>我推荐使用 MacBook Pro 14 寸 M1 Pro 作为开发机，16GB 内存版本。实测下来，这个配置可以流畅运行 Ubuntu 虚拟机并转译多个 x86 应用。</p>
-<h3 id="虚拟化工具比较">虚拟化工具比较<a class="headerlink" href="#虚拟化工具比较" title="Permanent link">&para;</a></h3>
+<h3 id="虚拟化工具比较">虚拟化工具比较<a class="headerlink" href="#虚拟化工具比较" title="Permanent link"></a></h3>
 <p>目前主要有三种方案可以在 M 系列 Mac 上运行 Linux 虚拟机：</p>
 <ul>
 <li><strong>UTM</strong>：提供图形界面，适合新手</li>
@@ -3522,7 +3522,7 @@
 <blockquote>
 <p>本文主要讲解 UTM + Rosetta 方案，兼顾易用性和性能。</p>
 </blockquote>
-<h2 id="核心原理为什么是-utm--rosetta">核心原理：为什么是 UTM + Rosetta？<a class="headerlink" href="#核心原理为什么是-utm--rosetta" title="Permanent link">&para;</a></h2>
+<h2 id="核心原理为什么是-utm--rosetta">核心原理：为什么是 UTM + Rosetta？<a class="headerlink" href="#核心原理为什么是-utm--rosetta" title="Permanent link"></a></h2>
 <p>这套方案的核心优势，源于苹果自家技术的深度整合。</p>
 <p>首先，Apple Virtualization Framework 是基石。这是苹果为 Apple Silicon 芯片提供的原生虚拟化框架。相比传统的 QEMU 全系统模拟，它允许虚拟机以近乎裸机的性能访问 CPU 和内存资源。UTM 从某个版本开始，在创建 ARM Linux 虚拟机时，可以选择使用这个框架，从而获得极高的运行效率。</p>
 <p>其次，Rosetta 2 的角色发生了转变。我们都知道 Rosetta 2 能让 M 芯片 Mac 直接运行 x86_64 的 macOS 应用。但很多人不知道的是，从 macOS 13 开始，苹果允许在 ARM 架构的 Linux 虚拟机内部启用 Rosetta 2。这意味着，虚拟机本身是 ARM64 系统，但系统内可以安装一个特殊的“Rosetta 兼容层”。当你在虚拟机里尝试执行一个 x86_64 的 Linux 程序时，这个兼容层会动态地将 x86 指令转译为 ARM 指令。</p>
@@ -3535,14 +3535,14 @@
 <blockquote>
 <p>注意：确保你的 macOS 版本在 13（Ventura）或以上，这是该功能的最低系统要求。M1、M2、M3 系列芯片均支持。</p>
 </blockquote>
-<h2 id="五分钟极速配置从零创建-utm-虚拟机">五分钟极速配置：从零创建 UTM 虚拟机<a class="headerlink" href="#五分钟极速配置从零创建-utm-虚拟机" title="Permanent link">&para;</a></h2>
+<h2 id="五分钟极速配置从零创建-utm-虚拟机">五分钟极速配置：从零创建 UTM 虚拟机<a class="headerlink" href="#五分钟极速配置从零创建-utm-虚拟机" title="Permanent link"></a></h2>
 <p>下面我们以 Ubuntu 22.04 LTS 为例，展示最简化的配置流程。</p>
-<h3 id="第一步准备安装镜像">第一步：准备安装镜像<a class="headerlink" href="#第一步准备安装镜像" title="Permanent link">&para;</a></h3>
+<h3 id="第一步准备安装镜像">第一步：准备安装镜像<a class="headerlink" href="#第一步准备安装镜像" title="Permanent link"></a></h3>
 <p>你需要下载的是 ARM64 架构的 Ubuntu 服务器版镜像。记住，虚拟机本身是 ARM 系统。不要下错成 x86_64 的版本。</p>
 <pre class="highlight"><code class="language-bash"># 在Mac的终端里，使用wget下载（也可以浏览器直接下载）
 wget https://cdimage.ubuntu.com/releases/22.04/release/ubuntu-22.04.4-live-server-arm64.iso</code></pre>
 <p>我推荐使用服务器版（Server），因为它更轻量，没有图形桌面那些不必要的开销。后续所有操作我们都可以通过 SSH 连接进行，效率更高。</p>
-<h3 id="第二步安装并配置-utm">第二步：安装并配置 UTM<a class="headerlink" href="#第二步安装并配置-utm" title="Permanent link">&para;</a></h3>
+<h3 id="第二步安装并配置-utm">第二步：安装并配置 UTM<a class="headerlink" href="#第二步安装并配置-utm" title="Permanent link"></a></h3>
 <ul>
 <li>从 UTM 官网或 Mac App Store 下载并安装 UTM。</li>
 <li>打开 UTM，点击 “+” 号创建一个新虚拟机。</li>
@@ -3557,7 +3557,7 @@ wget https://cdimage.ubuntu.com/releases/22.04/release/ubuntu-22.04.4-live-serve
 <li>在网络设置中，确保 “启用网络” 已勾选，并选择 “共享网络”（NAT），这样虚拟机就能上网了。</li>
 <li>其他设置保持默认，点击 “保存”，给你的虚拟机起个名字，比如 “Ubuntu-ARM-Rosetta”。</li>
 </ul>
-<h3 id="第三步安装-ubuntu-系统">第三步：安装 Ubuntu 系统<a class="headerlink" href="#第三步安装-ubuntu-系统" title="Permanent link">&para;</a></h3>
+<h3 id="第三步安装-ubuntu-系统">第三步：安装 Ubuntu 系统<a class="headerlink" href="#第三步安装-ubuntu-系统" title="Permanent link"></a></h3>
 <ul>
 <li>启动虚拟机，它会从 ISO 镜像引导进入 Ubuntu 安装程序。</li>
 <li>跟随图形化安装步骤进行。语言、键盘布局按喜好选择。</li>
@@ -3569,7 +3569,7 @@ wget https://cdimage.ubuntu.com/releases/22.04/release/ubuntu-22.04.4-live-serve
 <li>重启前，回到 UTM 的虚拟机窗口，点击窗口上方工具栏的 “光盘” 图标，弹出安装 ISO。这样虚拟机才会从硬盘正常启动。</li>
 </ul>
 <p>至此，一个基础的、支持 Rosetta 的 ARM Ubuntu 虚拟机就创建好了。整个过程熟练的话，确实可以在五分钟内完成。</p>
-<h2 id="系统内部精调配置-rosetta-与增强体验">系统内部精调：配置 Rosetta 与增强体验<a class="headerlink" href="#系统内部精调配置-rosetta-与增强体验" title="Permanent link">&para;</a></h2>
+<h2 id="系统内部精调配置-rosetta-与增强体验">系统内部精调：配置 Rosetta 与增强体验<a class="headerlink" href="#系统内部精调配置-rosetta-与增强体验" title="Permanent link"></a></h2>
 <p>虚拟机启动并登录后，我们还需要在 Linux 内部进行一些配置，才能让 Rosetta 真正工作起来，并优化使用体验。</p>
 <p>首先，更新系统并安装必要组件：</p>
 <pre class="highlight"><code class="language-bash">sudo apt update &amp;&amp; sudo apt upgrade -y
@@ -3598,13 +3598,13 @@ sudo mount -t virtiofs rosetta /media/rosetta</code></pre>
 <p>这能提供剪贴板共享、更好的鼠标集成等功能。</p>
 <pre class="highlight"><code class="language-bash">sudo apt install spice-vdagent -y</code></pre>
 <p>安装后重启虚拟机生效。</p>
-<h2 id="实战检验编译与运行-x86-程序">实战检验：编译与运行 x86 程序<a class="headerlink" href="#实战检验编译与运行-x86-程序" title="Permanent link">&para;</a></h2>
+<h2 id="实战检验编译与运行-x86-程序">实战检验：编译与运行 x86 程序<a class="headerlink" href="#实战检验编译与运行-x86-程序" title="Permanent link"></a></h2>
 <p>配置好了，总得跑点东西试试。我们来实际编译并运行一个简单的 x86_64 C++ 程序。</p>
-<h3 id="第一步安装-x86_64-交叉编译工具链">第一步：安装 x86_64 交叉编译工具链<a class="headerlink" href="#第一步安装-x86_64-交叉编译工具链" title="Permanent link">&para;</a></h3>
+<h3 id="第一步安装-x86_64-交叉编译工具链">第一步：安装 x86_64 交叉编译工具链<a class="headerlink" href="#第一步安装-x86_64-交叉编译工具链" title="Permanent link"></a></h3>
 <p>虽然 Rosetta 能运行 x86 程序，但如果你需要在虚拟机内编译 x86 代码，就需要对应的工具链。</p>
 <pre class="highlight"><code class="language-bash">sudo apt install gcc-multilib-x86-64-linux-gnu g++-multilib-x86-64-linux-gnu -y</code></pre>
 <p>这个包组提供了能在 ARM 系统上生成 x86_64 代码的 GCC 和 G++。</p>
-<h3 id="第二步编写并编译一个测试程序">第二步：编写并编译一个测试程序<a class="headerlink" href="#第二步编写并编译一个测试程序" title="Permanent link">&para;</a></h3>
+<h3 id="第二步编写并编译一个测试程序">第二步：编写并编译一个测试程序<a class="headerlink" href="#第二步编写并编译一个测试程序" title="Permanent link"></a></h3>
 <p>用你喜欢的编辑器（如 nano 或 vim）创建一个文件 test.cpp：</p>
 <pre class="highlight"><code class="language-cpp">#include &lt;iostream&gt;
 int main() {
@@ -3614,7 +3614,7 @@ int main() {
 <p>使用刚安装的 x86_64 交叉编译器进行编译：</p>
 <pre class="highlight"><code class="language-bash">x86_64-linux-gnu-g++ -o test_x86 test.cpp</code></pre>
 <p>这会生成一个名为 test_x86 的 x86_64 架构可执行文件。</p>
-<h3 id="第三步通过-rosetta-运行">第三步：通过 Rosetta 运行<a class="headerlink" href="#第三步通过-rosetta-运行" title="Permanent link">&para;</a></h3>
+<h3 id="第三步通过-rosetta-运行">第三步：通过 Rosetta 运行<a class="headerlink" href="#第三步通过-rosetta-运行" title="Permanent link"></a></h3>
 <p>直接运行即可，系统会自动调用 Rosetta 转译器：</p>
 <pre class="highlight"><code class="language-bash">./test_x86</code></pre>
 <p>如果一切顺利，你将看到输出的欢迎信息。你可以用 file 命令验证其架构：</p>
@@ -3624,31 +3624,31 @@ int main() {
 <p>可能遇到的动态库问题：</p>
 <p>对于一些更复杂的、动态链接的 x86 程序，你可能会遇到缺少 libc 等动态库的错误。这是因为 ARM 系统里没有 x86 的动态库。解决方法通常是从一个 x86 Linux 系统（或 Docker 镜像）里复制对应的 .so 文件到虚拟机的某个目录（例如 /lib64），并确保路径正确。不过，对于很多基础程序，Rosetta 能处理得很好。</p>
 </blockquote>
-<h2 id="进阶技巧与避坑指南">进阶技巧与避坑指南<a class="headerlink" href="#进阶技巧与避坑指南" title="Permanent link">&para;</a></h2>
+<h2 id="进阶技巧与避坑指南">进阶技巧与避坑指南<a class="headerlink" href="#进阶技巧与避坑指南" title="Permanent link"></a></h2>
 <p>掌握了基本流程后，下面这些技巧能让你用得更舒服，并避开一些常见的“坑”。</p>
-<h3 id="高效连接使用-ssh-替代-utm-窗口">高效连接：使用 SSH 替代 UTM 窗口<a class="headerlink" href="#高效连接使用-ssh-替代-utm-窗口" title="Permanent link">&para;</a></h3>
+<h3 id="高效连接使用-ssh-替代-utm-窗口">高效连接：使用 SSH 替代 UTM 窗口<a class="headerlink" href="#高效连接使用-ssh-替代-utm-窗口" title="Permanent link"></a></h3>
 <p>UTM 的图形控制台有时反应较慢。既然安装了 OpenSSH，我们完全可以用 Mac 本地终端（如 iTerm2）通过 SSH 连接管理虚拟机，体验丝滑的终端操作。</p>
 <p>在 UTM 虚拟机启动后，查看其 IP 地址。可以在虚拟机内执行 <code>ip a</code> 命令，找到 eth0 或 ens 开头的网卡，查看 inet 地址。</p>
 <p>在 Mac 的终端里：</p>
 <pre class="highlight"><code class="language-bash">ssh your_username@&lt;虚拟机IP地址&gt;</code></pre>
 <p>输入密码即可连接。你还可以配置 SSH 密钥登录，彻底告别密码。</p>
-<h3 id="性能优化资源分配与源替换">性能优化：资源分配与源替换<a class="headerlink" href="#性能优化资源分配与源替换" title="Permanent link">&para;</a></h3>
+<h3 id="性能优化资源分配与源替换">性能优化：资源分配与源替换<a class="headerlink" href="#性能优化资源分配与源替换" title="Permanent link"></a></h3>
 <ul>
 <li><strong>CPU 与内存</strong>：不要过度分配。通常，分配给虚拟机的核心数不超过你 Mac 物理核心数的一半，内存不超过总内存的一半，能保证宿主系统和虚拟机都流畅运行。你可以在 UTM 的“设置”-&gt;“系统”里随时调整。</li>
 <li><strong>软件源</strong>：为了获得更快的软件下载速度，可以将 Ubuntu 的软件源替换为国内镜像，如清华源或阿里云源。编辑 <code>/etc/apt/sources.list</code> 文件进行替换。</li>
 </ul>
-<h3 id="常见问题排查">常见问题排查<a class="headerlink" href="#常见问题排查" title="Permanent link">&para;</a></h3>
+<h3 id="常见问题排查">常见问题排查<a class="headerlink" href="#常见问题排查" title="Permanent link"></a></h3>
 <ul>
 <li><strong>Rosetta 挂载失败</strong>：检查 UTM 虚拟机设置中“启用 Rosetta”是否勾选。确认 <code>/etc/fstab</code> 条目正确，且 <code>/media/rosetta</code> 目录存在。</li>
 <li><strong>x86 程序无法执行</strong>：运行 <code>cat /proc/sys/fs/binfmt_misc/rosetta</code> 确认 Rosetta 已启用且状态正常。检查程序是否真的是 x86_64 架构。尝试安装必要的 x86 兼容库（如 libc6:amd64，但需先 <code>sudo dpkg --add-architecture amd64</code>）。</li>
 <li><strong>网络不通</strong>：确保 UTM 网络设置是“共享网络”。在虚拟机内检查 <code>/etc/netplan</code> 的配置文件，UTM 新版可能会改变网络设备名（如从 enp0s9 变为 enp0s1），如果网络设备名不匹配会导致启动后无网络，需要手动修改 netplan 配置。</li>
 </ul>
-<h3 id="替代方案浅析lima">替代方案浅析：Lima<a class="headerlink" href="#替代方案浅析lima" title="Permanent link">&para;</a></h3>
+<h3 id="替代方案浅析lima">替代方案浅析：Lima<a class="headerlink" href="#替代方案浅析lima" title="Permanent link"></a></h3>
 <p>在搜索资料时，你肯定会看到 Lima 这个方案。它更像一个轻量级的虚拟机管理器，通过命令行快速创建和管理基于 Apple 虚拟化框架的 Linux VM，并且原生支持 Rosetta。对于喜欢命令行、追求极致简洁和自动化的开发者，Lima 是非常好的选择。它用一条命令就能启动一个预配置好的 Debian/Ubuntu VM：</p>
 <pre class="highlight"><code class="language-bash">brew install lima
 limactl start template://debian --rosetta --vm-type=vz</code></pre>
 <p>但对于大多数刚接触 Mac 虚拟化的用户，UTM 直观的图形界面和详细的设置选项，更能降低学习和排错的门槛。</p>
-<h2 id="总结">总结<a class="headerlink" href="#总结" title="Permanent link">&para;</a></h2>
+<h2 id="总结">总结<a class="headerlink" href="#总结" title="Permanent link"></a></h2>
 <p>从我的实际体验来看，这套 UTM+Rosetta 的方案稳定性相当不错。日常的开发编译、运行一些 x86 的测试工具链都没有问题。性能损耗感知很小，尤其是相比纯模拟的方案，简直是天壤之别。最大的好处是，它把复杂的技术封装成了简单的操作，让你能快速得到一个“全能”的 Linux 环境，把精力重新放回开发本身，而不是没完没了地折腾环境。</p>
 
 
@@ -4037,7 +4037,7 @@ limactl start template://debian --rosetta --vm-type=vz</code></pre>
       
         <script src="../../theme/js/mathjax.js"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
       

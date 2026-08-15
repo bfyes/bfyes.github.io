@@ -64,7 +64,9 @@
     
       <link rel="stylesheet" href="../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../theme/css/components.css">
+      <link rel="stylesheet" href="../../theme/css/theme.css">
+    
+      <link rel="stylesheet" href="../../theme/css/home.css">
     
     <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
     
@@ -73,8 +75,6 @@
     
     
   
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script>
     (function () {
       try {
@@ -3254,11 +3254,11 @@
 
 
 
-<h1 id="cs1024m1-汇编语言程序设计与调试">CS1024M1 《汇编语言程序设计与调试》<a class="headerlink" href="#cs1024m1-汇编语言程序设计与调试" title="Permanent link">&para;</a></h1>
-<h2 id="模拟题"><del>模拟题</del><a class="headerlink" href="#模拟题" title="Permanent link">&para;</a></h2>
+<h1 id="cs1024m1-汇编语言程序设计与调试">CS1024M1 《汇编语言程序设计与调试》<a class="headerlink" href="#cs1024m1-汇编语言程序设计与调试" title="Permanent link"></a></h1>
+<h2 id="模拟题"><del>模拟题</del><a class="headerlink" href="#模拟题" title="Permanent link"></a></h2>
 <p>听课+复习即可</p>
-<h2 id="附录部分复习方向">附录：部分复习方向<a class="headerlink" href="#附录部分复习方向" title="Permanent link">&para;</a></h2>
-<h3 id="三种调用">三种调用<a class="headerlink" href="#三种调用" title="Permanent link">&para;</a></h3>
+<h2 id="附录部分复习方向">附录：部分复习方向<a class="headerlink" href="#附录部分复习方向" title="Permanent link"></a></h2>
+<h3 id="三种调用">三种调用<a class="headerlink" href="#三种调用" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -3295,9 +3295,9 @@
 </tr>
 </tbody>
 </table>
-<h3 id="堆栈框架">堆栈框架<a class="headerlink" href="#堆栈框架" title="Permanent link">&para;</a></h3>
-<h3 id="中断向量与修改流程">中断向量与修改流程<a class="headerlink" href="#中断向量与修改流程" title="Permanent link">&para;</a></h3>
-<h3 id="dos-中断">DOS 中断<a class="headerlink" href="#dos-中断" title="Permanent link">&para;</a></h3>
+<h3 id="堆栈框架">堆栈框架<a class="headerlink" href="#堆栈框架" title="Permanent link"></a></h3>
+<h3 id="中断向量与修改流程">中断向量与修改流程<a class="headerlink" href="#中断向量与修改流程" title="Permanent link"></a></h3>
+<h3 id="dos-中断">DOS 中断<a class="headerlink" href="#dos-中断" title="Permanent link"></a></h3>
 <p><strong>int 21h：</strong></p>
 <table>
 <thead>
@@ -3339,8 +3339,8 @@
 <p><strong>int 01h：</strong> <code>______</code>（触发条件：<code>______</code> = 1，用途：<code>______</code>）</p>
 <p><strong>int 08h：</strong> <code>______</code>（触发频率约 <code>______</code> 次/秒，用途：<code>______</code>）</p>
 <p><strong>int 09h：</strong> <code>______</code>（触发时机：<code>______</code>，读取端口 <code>______</code>）</p>
-<h3 id="标志位">标志位<a class="headerlink" href="#标志位" title="Permanent link">&para;</a></h3>
-<h3 id="条件跳转">条件跳转<a class="headerlink" href="#条件跳转" title="Permanent link">&para;</a></h3>
+<h3 id="标志位">标志位<a class="headerlink" href="#标志位" title="Permanent link"></a></h3>
+<h3 id="条件跳转">条件跳转<a class="headerlink" href="#条件跳转" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -3382,7 +3382,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="字符串指令">字符串指令<a class="headerlink" href="#字符串指令" title="Permanent link">&para;</a></h3>
+<h3 id="字符串指令">字符串指令<a class="headerlink" href="#字符串指令" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -3422,8 +3422,8 @@
 <blockquote>
 <p>方向由 DF 控制：<code>cld</code>→<code>______</code>，<code>std</code>→<code>______</code>。</p>
 </blockquote>
-<h3 id="调试器">调试器<a class="headerlink" href="#调试器" title="Permanent link">&para;</a></h3>
-<h3 id="间接寻址缺省段址">间接寻址缺省段址<a class="headerlink" href="#间接寻址缺省段址" title="Permanent link">&para;</a></h3>
+<h3 id="调试器">调试器<a class="headerlink" href="#调试器" title="Permanent link"></a></h3>
+<h3 id="间接寻址缺省段址">间接寻址缺省段址<a class="headerlink" href="#间接寻址缺省段址" title="Permanent link"></a></h3>
 <table>
 <thead>
 <tr>
@@ -3837,7 +3837,7 @@
       
         <script src="../../theme/js/mathjax.js"></script>
       
-        <script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-mml-chtml.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
       
