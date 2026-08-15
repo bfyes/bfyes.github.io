@@ -436,10 +436,9 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   color: var(--fgColor-default);
 }
 
-/* 复制成功提示：只保留文字，不要 Material 默认的彩色/灰色胶囊背景。 */
-.md-typeset .md-dialog {
-  padding: 0;
-  background: transparent;
+/* 复制成功提示：去掉 Material 默认的彩色胶囊背景，只保留文字。 */
+[data-md-color-scheme] .md-dialog {
+  background-color: transparent;
   box-shadow: none;
 }
 .md-dialog__inner {
