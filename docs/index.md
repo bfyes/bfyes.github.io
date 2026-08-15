@@ -45,6 +45,10 @@ body.bfyes-home-page .md-grid {
     <div class="home-log-list">
       <div class="home-log">
         <span class="home-log__date">2026.08.14</span>
+        <span>1. 修复渲染问题。 2. 重构部分css。</span>
+      </div>
+      <div class="home-log">
+        <span class="home-log__date">2026.08.14</span>
         <span>1. 更改 giscus 评论区加载机制。 2. 重构部分 css。 3. 修复已知问题。</span>
       </div>
       <div class="home-log">
