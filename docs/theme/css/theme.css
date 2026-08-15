@@ -354,11 +354,22 @@
 }
 
 .page-updated-top__label {
-  width: 12.5em;
+  width: 5em;
   flex-shrink: 0;
 }
 
 .page-updated-top__time {
+  color: var(--md-default-fg-color--lighter);
+  font-variant-numeric: tabular-nums;
+}
+
+.page-updated-top__sep {
+  color: var(--md-default-fg-color--lightest);
+  margin: 0 0.3em;
+}
+
+.page-updated-top__words {
+  margin-left: auto;
   color: var(--md-default-fg-color--lighter);
   font-variant-numeric: tabular-nums;
 }
