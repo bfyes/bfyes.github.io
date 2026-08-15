@@ -19,6 +19,19 @@
   var DARK_URL = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
   var LIGHT_URL = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
 
+  /** 预加载非当前主题的 CSS（用 preload 不阻塞渲染，切换时零延迟）。 */
+  function preloadAlternate(mode) {
+    var altUrl = mode === "dark" ? LIGHT_URL : DARK_URL;
+    var preloadId = "hljs-theme-preload";
+    if (document.getElementById(preloadId)) return;
+    var preload = document.createElement("link");
+    preload.id = preloadId;
+    preload.rel = "preload";
+    preload.as = "style";
+    preload.href = altUrl;
+    document.head.appendChild(preload);
+  }
+
   /** 根据 currentMode('light'/'dark') 应用对应 github 主题样式表。 */
   function applyTheme(mode) {
     var link = document.getElementById(STYLE_ID);
@@ -30,6 +43,7 @@
     }
     var url = mode === "dark" ? DARK_URL : LIGHT_URL;
     if (link.href !== url) link.href = url;
+    preloadAlternate(mode);
     return link;
   }
 
