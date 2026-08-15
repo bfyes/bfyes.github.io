@@ -187,7 +187,9 @@ toggle.name = "根据系统模式切换主题"
 smart_delete = false
 
 [project.markdown_extensions.toc]
-permalink = true
+# 空字符串：仍生成空 <a class="headerlink"> 供 CSS 挂 SVG 图标，但无 ¶ 文本，
+# 因此 CSS 无需再用 text-indent:-9999px 隐藏符号。
+permalink = ""
 slugify = { object = "pymdownx.slugs.slugify", kwds = { case = "lower" } }
 
 [project.markdown_extensions.pymdownx.arithmatex]

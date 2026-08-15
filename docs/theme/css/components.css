@@ -65,7 +65,12 @@
 }
 
 /* permalink 保留生成器的 HTML 结构，由 CSS 移到标题左侧；SVG 作为背景图绘制，
-   因而不会与标题编号的 ::before 伪元素发生冲突。 */
+   因而不会与标题编号的 ::before 伪元素发生冲突。
+   opacity/transition/hover/focus 交互复用 zensical 自带规则（.md-typeset .headerlink），
+   此处只覆盖定位与图标，以及 :target 行为（zensical 默认显示，此处改为隐藏）。 */
+.md-typeset :is(h1, h2, h3, h4, h5, h6) {
+  position: relative;
+}
 .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
   position: absolute;
   left: -40px;
@@ -76,44 +81,28 @@
   width: 28px;
   height: 1.25em;
   margin: 0;
-  color: #1f2328;
   font-size: inherit;
   line-height: 1;
-  text-decoration: none;
-  text-indent: -9999px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%231f2328' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='currentColor' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 16px 16px;
-  opacity: 0;
-  transition: color 120ms ease, opacity 120ms ease;
 }
-.md-typeset :is(h1, h2, h3, h4, h5, h6) {
-  position: relative;
-}
-.md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:hover,
-.md-typeset :is(h1, h2, h3, h4, h5, h6):hover > .headerlink {
-  color: #1f2328;
-  opacity: 1;
-}
-.md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:focus:not(:focus-visible) {
-  opacity: 0;
-  outline: none;
-}
-.md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:focus-visible {
-  opacity: 1;
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink,
-[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:hover {
-  color: #f0f6fc;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23f0f6fc' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
+[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='currentColor' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
 }
 
-/* URL 带标题锚点时，仅在目标书签未被操作时隐藏；悬停或键盘聚焦仍可显示。 */
-.md-typeset :is(h1, h2, h3, h4, h5, h6):target:not(:hover) > .headerlink:not(:hover):not(:focus-visible) {
+/* URL 带标题锚点时，仅在目标书签未被操作时隐藏；悬停或键盘聚焦仍可显示。
+   zensical 默认 :target 显示，此处覆盖为隐藏。 */
+.md-typeset :is(h1, h2, h3, h4, h5, h6):target:not(:hover) > .headerlink:not(:hover):not(:focus) {
   opacity: 0;
+}
+
+/* 提示块（admonition/details）有 overflow:hidden，内部标题的左侧 headerlink
+   会被裁掉。提示块内的标题是上下文附属内容，直接隐藏 headerlink。 */
+.md-typeset .admonition :is(h1, h2, h3, h4, h5, h6) > .headerlink,
+.md-typeset details :is(h1, h2, h3, h4, h5, h6) > .headerlink {
+  display: none;
 }
 
 /* ---- Tabbed 折叠组件（=== "日期" 等）间距 ----
