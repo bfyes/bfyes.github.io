@@ -378,7 +378,6 @@ body.rainbow-active .md-sidebar__inner {
 .home-page {
   --home-muted: var(--md-default-fg-color--light);
   --home-softer: var(--md-default-fg-color--lighter);
-  margin-top: 0.4rem;
 }
 
 .home-page a {
