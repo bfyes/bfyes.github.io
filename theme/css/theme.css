@@ -434,10 +434,25 @@ body.rainbow-active::before {
   z-index: 1;
 }
 
-/* ---- 编辑按钮：确保在标题之上 ---- */
+/* ---- 编辑按钮：确保在标题之上（Safari 兼容） ---- */
 .md-content__button {
   position: relative;
-  z-index: 2;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+/* H1 标题不拦截编辑按钮的点击 */
+.md-typeset h1 {
+  pointer-events: none;
+}
+.md-typeset h1 > * {
+  pointer-events: auto;
+}
+
+/* 主页 .home-page wrapper 有 position:relative 创建层叠上下文，
+   把 H1 提到按钮之上。降低 wrapper 的 z-index 让按钮可见。 */
+.home-page {
+  z-index: 0;
 }
 
 .md-content__inner {
