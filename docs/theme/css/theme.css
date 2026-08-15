@@ -96,8 +96,10 @@
   background-repeat: no-repeat;
   background-size: 16px 16px;
 }
-[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='currentColor' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
+[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink,
+[data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:hover {
+  color: #f0f6fc;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23f0f6fc' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
 }
 
 /* :target 行为：zensical 默认显示，此处覆盖为隐藏（仅悬停/聚焦时显示）。 */
@@ -430,6 +432,27 @@ body.rainbow-active::before {
   box-shadow: none;
   position: relative;
   z-index: 1;
+}
+
+/* ---- 编辑按钮：确保在标题之上（Safari 兼容） ---- */
+.md-content__button {
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+/* H1 标题不拦截编辑按钮的点击 */
+.md-typeset h1 {
+  pointer-events: none;
+}
+.md-typeset h1 > * {
+  pointer-events: auto;
+}
+
+/* 主页 .home-page wrapper 有 position:relative 创建层叠上下文，
+   把 H1 提到按钮之上。降低 wrapper 的 z-index 让按钮可见。 */
+.home-page {
+  z-index: 0;
 }
 
 .md-content__inner {
@@ -907,3 +930,16 @@ body.home-active .md-typeset {
     margin-right: var(--mobile-code-gutter-margin-right);
   }
 }
+
+/* 07. 淡入动画 */
+@keyframes fade-in { from { opacity: 0.05; } to { opacity: 1; } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(0.3rem); } to { opacity: 1; transform: translateY(0); } }
+.md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1.5s ease-out both; }
+.md-sidebar--secondary .md-nav__item { animation: slide-up 0.4s ease both; animation-delay: calc(var(--nav-index, 0) * 40ms); }
+.md-sidebar--secondary .md-nav__item:nth-child(1) { --nav-index: 0; } .md-sidebar--secondary .md-nav__item:nth-child(2) { --nav-index: 1; } .md-sidebar--secondary .md-nav__item:nth-child(3) { --nav-index: 2; } .md-sidebar--secondary .md-nav__item:nth-child(4) { --nav-index: 3; } .md-sidebar--secondary .md-nav__item:nth-child(5) { --nav-index: 4; }
+.md-sidebar--secondary .md-nav__item:nth-child(6) { --nav-index: 5; } .md-sidebar--secondary .md-nav__item:nth-child(7) { --nav-index: 6; } .md-sidebar--secondary .md-nav__item:nth-child(8) { --nav-index: 7; } .md-sidebar--secondary .md-nav__item:nth-child(9) { --nav-index: 8; } .md-sidebar--secondary .md-nav__item:nth-child(10) { --nav-index: 9; }
+.md-sidebar--secondary .md-nav__item:nth-child(11) { --nav-index: 10; } .md-sidebar--secondary .md-nav__item:nth-child(12) { --nav-index: 11; } .md-sidebar--secondary .md-nav__item:nth-child(13) { --nav-index: 12; } .md-sidebar--secondary .md-nav__item:nth-child(14) { --nav-index: 13; } .md-sidebar--secondary .md-nav__item:nth-child(15) { --nav-index: 14; }
+.md-sidebar--secondary .md-nav__item:nth-child(16) { --nav-index: 15; } .md-sidebar--secondary .md-nav__item:nth-child(17) { --nav-index: 16; } .md-sidebar--secondary .md-nav__item:nth-child(18) { --nav-index: 17; } .md-sidebar--secondary .md-nav__item:nth-child(19) { --nav-index: 18; } .md-sidebar--secondary .md-nav__item:nth-child(20) { --nav-index: 19; }
+.md-sidebar--secondary .md-nav__item:nth-child(21) { --nav-index: 20; } .md-sidebar--secondary .md-nav__item:nth-child(22) { --nav-index: 21; } .md-sidebar--secondary .md-nav__item:nth-child(23) { --nav-index: 22; } .md-sidebar--secondary .md-nav__item:nth-child(24) { --nav-index: 23; } .md-sidebar--secondary .md-nav__item:nth-child(25) { --nav-index: 24; }
+.md-sidebar--secondary .md-nav__item:nth-child(26) { --nav-index: 25; } .md-sidebar--secondary .md-nav__item:nth-child(27) { --nav-index: 26; } .md-sidebar--secondary .md-nav__item:nth-child(28) { --nav-index: 27; } .md-sidebar--secondary .md-nav__item:nth-child(29) { --nav-index: 28; } .md-sidebar--secondary .md-nav__item:nth-child(30) { --nav-index: 29; }
+@media (prefers-reduced-motion: reduce) { .md-content__inner, .md-sidebar--secondary .md-nav__item { animation: none; } }
