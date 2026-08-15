@@ -911,12 +911,14 @@ body.home-active .md-typeset {
 }
 
 /* 07. 淡入动画 */
-@keyframes fade-in { from { opacity: 0.2; } to { opacity: 1; } }
+@keyframes fade-in { from { opacity: 0.05; } to { opacity: 1; } }
 @keyframes slide-up { from { opacity: 0; transform: translateY(0.3rem); } to { opacity: 1; transform: translateY(0); } }
-.md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 0.8s ease-out both; }
+.md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1.5s ease-out both; }
 .md-sidebar--secondary .md-nav__item { animation: slide-up 0.4s ease both; animation-delay: calc(var(--nav-index, 0) * 40ms); }
 .md-sidebar--secondary .md-nav__item:nth-child(1) { --nav-index: 0; } .md-sidebar--secondary .md-nav__item:nth-child(2) { --nav-index: 1; } .md-sidebar--secondary .md-nav__item:nth-child(3) { --nav-index: 2; } .md-sidebar--secondary .md-nav__item:nth-child(4) { --nav-index: 3; } .md-sidebar--secondary .md-nav__item:nth-child(5) { --nav-index: 4; }
 .md-sidebar--secondary .md-nav__item:nth-child(6) { --nav-index: 5; } .md-sidebar--secondary .md-nav__item:nth-child(7) { --nav-index: 6; } .md-sidebar--secondary .md-nav__item:nth-child(8) { --nav-index: 7; } .md-sidebar--secondary .md-nav__item:nth-child(9) { --nav-index: 8; } .md-sidebar--secondary .md-nav__item:nth-child(10) { --nav-index: 9; }
 .md-sidebar--secondary .md-nav__item:nth-child(11) { --nav-index: 10; } .md-sidebar--secondary .md-nav__item:nth-child(12) { --nav-index: 11; } .md-sidebar--secondary .md-nav__item:nth-child(13) { --nav-index: 12; } .md-sidebar--secondary .md-nav__item:nth-child(14) { --nav-index: 13; } .md-sidebar--secondary .md-nav__item:nth-child(15) { --nav-index: 14; }
 .md-sidebar--secondary .md-nav__item:nth-child(16) { --nav-index: 15; } .md-sidebar--secondary .md-nav__item:nth-child(17) { --nav-index: 16; } .md-sidebar--secondary .md-nav__item:nth-child(18) { --nav-index: 17; } .md-sidebar--secondary .md-nav__item:nth-child(19) { --nav-index: 18; } .md-sidebar--secondary .md-nav__item:nth-child(20) { --nav-index: 19; }
+.md-sidebar--secondary .md-nav__item:nth-child(21) { --nav-index: 20; } .md-sidebar--secondary .md-nav__item:nth-child(22) { --nav-index: 21; } .md-sidebar--secondary .md-nav__item:nth-child(23) { --nav-index: 22; } .md-sidebar--secondary .md-nav__item:nth-child(24) { --nav-index: 23; } .md-sidebar--secondary .md-nav__item:nth-child(25) { --nav-index: 24; }
+.md-sidebar--secondary .md-nav__item:nth-child(26) { --nav-index: 25; } .md-sidebar--secondary .md-nav__item:nth-child(27) { --nav-index: 26; } .md-sidebar--secondary .md-nav__item:nth-child(28) { --nav-index: 27; } .md-sidebar--secondary .md-nav__item:nth-child(29) { --nav-index: 28; } .md-sidebar--secondary .md-nav__item:nth-child(30) { --nav-index: 29; }
 @media (prefers-reduced-motion: reduce) { .md-content__inner, .md-sidebar--secondary .md-nav__item { animation: none; } }
