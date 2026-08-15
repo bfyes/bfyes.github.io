@@ -434,6 +434,12 @@ body.rainbow-active::before {
   z-index: 1;
 }
 
+/* ---- 编辑按钮：确保在标题之上 ---- */
+.md-content__button {
+  position: relative;
+  z-index: 2;
+}
+
 .md-content__inner {
   padding-inline: var(--content-padding-inline);
 }
