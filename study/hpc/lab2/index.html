@@ -3585,12 +3585,8 @@ static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
 <script src="../../../theme/data/page-metadata.js"></script>
 
 <div class="page-info">
-  <span class="page-info__item page-info__updated" hidden>
-    <span class="page-info__label">最后更新于 / Last updated</span>
-    <span class="page-info__value"><time id="page-last-updated" datetime=""></time></span>
-  </span>
   <span class="page-info__item" id="busuanzi_container_site_pv">
-    <span class="page-info__label">本站总浏览 / Site views</span>
+    <span class="page-info__label">本站总浏览</span>
     <span class="page-info__value"><span id="busuanzi_value_site_pv"></span></span>
   </span>
   <span class="page-info__item page-info__stars">
@@ -3638,6 +3634,20 @@ static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
       });
     }
 
+    function countWords() {
+      var inner = document.querySelector(".md-content__inner");
+      if (!inner) return 0;
+      var clone = inner.cloneNode(true);
+      // 移除非正文元素
+      clone.querySelectorAll('.page-updated-top, .page-info, .md-content__button, .giscus, script, style, .md-clipboard').forEach(function(el) { el.remove(); });
+      var text = clone.textContent || "";
+      // 中文字符按字计数
+      var cjk = (text.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length;
+      // 英文单词：只匹配 a-z A-Z 组成的词
+      var words = (text.match(/[a-zA-Z]+/g) || []).length;
+      return cjk + words;
+    }
+
     function ensureTopUpdated() {
       var inner = document.querySelector(".md-content__inner");
       if (!inner) {
@@ -3650,8 +3660,10 @@ static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
         top.className = "page-updated-top";
         top.hidden = true;
         top.innerHTML =
-          '<span class="page-updated-top__label">最后更新于 / Last updated</span>' +
-          '<time class="page-updated-top__time" datetime=""></time>';
+          '<span class="page-updated-top__label">最后更新于</span>' +
+          '<time class="page-updated-top__time" datetime=""></time>' +
+          '<span class="page-updated-top__sep">·</span>' +
+          '<span class="page-updated-top__words"></span>';
 
         var title = inner.querySelector("h1");
         if (title) {
@@ -3686,25 +3698,22 @@ static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
         }
       }
 
-      if (!data || !data.updated) {
-        return;
+      var top = ensureTopUpdated();
+
+      if (data && data.updated) {
+        var text = updatedText(data.updated);
+        renderTime(top, top ? top.querySelector(".page-updated-top__time") : null, data.updated, text);
       }
 
-      var text = updatedText(data.updated);
-      renderTime(
-        document.querySelector(".page-info__updated"),
-        document.querySelector("#page-last-updated"),
-        data.updated,
-        text
-      );
-
-      var top = ensureTopUpdated();
-      renderTime(
-        top,
-        top ? top.querySelector(".page-updated-top__time") : null,
-        data.updated,
-        text
-      );
+      // 字数统计
+      var words = countWords();
+      if (top && words > 0) {
+        var wordsEl = top.querySelector(".page-updated-top__words");
+        if (wordsEl) {
+          wordsEl.textContent = "约 " + words + " 字";
+          top.hidden = false;
+        }
+      }
     }
 
     function renderPageInfo() {
