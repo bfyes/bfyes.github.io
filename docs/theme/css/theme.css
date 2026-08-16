@@ -45,11 +45,11 @@
    ============================================================================ */
 
 .md-content__inner { counter-reset: section-counter; }
-.md-content__inner h2:not(#__comments):not(.home-section__title):not(.ghc-title) {
+.md-content__inner h2:not(#__comments):not(.ghc-title):not(.home-section__title) {
   counter-increment: section-counter;
   counter-reset: subsection-counter;
 }
-.md-content__inner h2:not(#__comments):not(.home-section__title):not(.ghc-title)::before {
+.md-content__inner h2:not(#__comments):not(.ghc-title):not(.home-section__title)::before {
   content: counter(section-counter);
   color: var(--fgColor-default);
   font-weight: 700;
@@ -100,9 +100,6 @@
   color: #f0f6fc;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23f0f6fc' d='m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z'/%3E%3C/svg%3E");
 }
-
-/* 主页标题不需要 headerlink */
-.home-section__title > .headerlink { display: none; }
 
 /* :target 行为：zensical 默认显示，此处覆盖为隐藏（仅悬停/聚焦时显示）。 */
 .md-typeset :is(h1, h2, h3, h4, h5, h6):target:not(:hover) > .headerlink:not(:hover):not(:focus) {
@@ -445,7 +442,6 @@ body::before {
   );
 }
 
-body.home-active::before,
 body.rainbow-active::before {
   content: none;
 }
@@ -468,18 +464,9 @@ body.rainbow-active::before {
   padding-inline: var(--content-padding-inline);
 }
 
-body.home-active .md-content__inner {
-  padding-inline: 0;
-}
-
 [data-md-color-scheme="default"] .md-content,
 [data-md-color-scheme="default"] .md-typeset {
   background-color: var(--content-bg);
-}
-
-body.home-active .md-content,
-body.home-active .md-typeset {
-  background-color: transparent !important;
 }
 
 /* ---- 导航栏毛玻璃 ---- */

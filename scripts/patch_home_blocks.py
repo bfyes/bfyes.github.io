@@ -1,0 +1,202 @@
+#!/usr/bin/env python3
+"""patch_home_blocks.py — 构建后把主页自定义语法替换为 HTML。
+
+支持两种块语法：
+
+::changelog::
+2026.08.16: 修复公式问题。重构 css。
+2026.08.14: 更改 giscus 加载机制。
+::/changelog::
+
+::friends::
+gE0650 | https://0-rangE.cn | Orange
+dreamem0ra1n | https://dreamem0ra1n.github.io/ISYS/ | ISYS
+::/friends::
+
+::about::
+bfyes | https://github.com/bfyes | ZJU · InfoSec
+::/about::
+
+用法: uv run python scripts/patch_home_blocks.py
+"""
+from __future__ import annotations
+
+import html
+import re
+from pathlib import Path
+
+SITE = Path(__file__).resolve().parents[1] / "site"
+
+
+def parse_block(content: str, tag: str) -> str | None:
+    """提取 ::tag:: ... ::/tag:: 块内容。"""
+    m = re.search(rf"::{tag}::\s*\n(.*?)\n\s*::/{tag}::", content, re.DOTALL)
+    return m.group(1) if m else None
+
+
+def render_changelog(lines: str) -> str:
+    items = []
+    for line in lines.strip().split("\n"):
+        line = line.strip()
+        if not line:
+            continue
+        if ":" not in line:
+            continue
+        date, text = line.split(":", 1)
+        items.append(
+            f'      <div class="home-log">\n'
+            f'        <span class="home-log__date">{html.escape(date.strip())}</span>\n'
+            f'        <span>{html.escape(text.strip())}</span>\n'
+            f"      </div>"
+        )
+    return (
+        '<section class="home-section" aria-labelledby="home-log-title">\n'
+        '    <div class="home-section__head">\n'
+        '      <h2 id="home-log-title" class="home-section__title">Changelog</h2>\n'
+        "    </div>\n"
+        '    <div class="home-log-list">\n'
+        + "\n".join(items) + "\n"
+        + "    </div>\n"
+        + "</section>"
+    )
+
+
+def render_friends(lines: str, title: str = "Links", section_id: str = "home-friends-title") -> str:
+    items = []
+    for line in lines.strip().split("\n"):
+        line = line.strip()
+        if not line:
+            continue
+        parts = [p.strip() for p in line.split("|", 3)]
+        if len(parts) < 2:
+            continue
+        # 显示名 | GitHub用户名 | URL | 描述（可选）
+        # 或 GitHub用户名 | URL | 描述（显示名=GitHub用户名）
+        if len(parts) >= 3 and parts[2].startswith("http"):
+            name, github_id, href = parts[0], parts[1], parts[2]
+            desc = parts[3] if len(parts) > 3 else ""
+        else:
+            github_id = parts[0]
+            href = parts[1]
+            desc = parts[2] if len(parts) > 2 else ""
+            name = github_id
+        attrs = f'href="{html.escape(href)}" data-id="{html.escape(github_id)}"'
+        if desc:
+            attrs += f' data-description="{html.escape(desc)}"'
+        items.append(
+            f'      <a class="home-friend" {attrs}>\n'
+            f"        <strong>{html.escape(name)}</strong>\n"
+            f"      </a>"
+        )
+    return (
+        f'<section class="home-section" aria-labelledby="{section_id}">\n'
+        f'    <div class="home-section__head">\n'
+        f'      <h2 id="{section_id}" class="home-section__title">{title}</h2>\n'
+        f"    </div>\n"
+        f'    <div class="home-link-grid">\n'
+        + "\n".join(items) + "\n"
+        + "    </div>\n"
+        + "</section>"
+    )
+
+
+def render_terminal() -> str:
+    return (
+        '<section class="home-hero" aria-label="homepage intro">\n'
+        '    <div class="home-hero__main">\n'
+        '      <div class="home-terminal" aria-label="bfyes terminal intro">\n'
+        '        <div class="home-terminal__bar">\n'
+        '          <span class="home-terminal__dot home-terminal__dot--red"></span>\n'
+        '          <span class="home-terminal__dot home-terminal__dot--yellow"></span>\n'
+        '          <span class="home-terminal__dot home-terminal__dot--green"></span>\n'
+        '          <span class="home-terminal__title">bfyes@ZJU:~</span>\n'
+        '        </div>\n'
+        '        <div class="home-terminal__screen">\n'
+        '          <div class="home-terminal__line home-terminal__line--cmd">\n'
+        '            <span id="typed-line-1-host" class="typed-text typed-text--host" style="display:none;"></span><span id="typed-line-1-separator" class="typed-text typed-text--separator" style="display:none;"></span><span id="typed-line-1-prompt" class="typed-text typed-text--prompt" style="display:none;"></span><span id="typed-line-1-command" class="typed-text typed-text--command" style="display:none;"></span>\n'
+        '          </div>\n'
+        '          <div class="home-terminal__line home-terminal__line--user">\n'
+        '            <span id="typed-line-2" class="typed-text" style="display:none;"></span>\n'
+        '          </div>\n'
+        '          <div class="home-terminal__line home-terminal__line--flag">\n'
+        '            <span id="typed-line-3" class="typed-text" style="display:none;"></span>\n'
+        '          </div>\n'
+        '          <div class="home-terminal__line home-terminal__line--prompt" style="display:none;">\n'
+        '            <span class="typed-text--host">bfyes@ZJU</span><span class="typed-text--separator">:</span><span class="typed-text--prompt">~/site$ </span><span id="typed-line-4-command" class="typed-text typed-text--command" style="display:none;"></span>\n'
+        '          </div>\n'
+        '        </div>\n'
+        '      </div>\n'
+        '    </div>\n'
+        '</section>'
+    )
+
+
+def render_activity() -> str:
+    return (
+        '<section class="home-section home-section--activity" aria-labelledby="home-activity-title">\n'
+        '    <div class="home-section__head">\n'
+        '      <h2 id="home-activity-title" class="home-section__title">Activity</h2>\n'
+        "    </div>\n"
+        '    <div class="github-calendar-wrap">\n'
+        '      <div class="ghc-loading">正在加载 GitHub 贡献图...</div>\n'
+        "    </div>\n"
+        "</section>"
+    )
+
+
+def process_file(path: Path) -> bool:
+    content = path.read_text(encoding="utf-8")
+    if "::terminal::" not in content and "::changelog::" not in content and "::friends::" not in content and "::about::" not in content and "::activity::" not in content:
+        return False
+
+    original = content
+
+    # ::terminal::
+    if "::terminal::" in content:
+        content = re.sub(r"::terminal::\s*\n?", render_terminal(), content)
+
+    # ::changelog::
+    cl = parse_block(content, "changelog")
+    if cl:
+        content = content.replace(
+            re.search(r"::changelog::.*?::/changelog::", content, re.DOTALL).group(0),
+            render_changelog(cl),
+        )
+
+    # ::about::
+    ab = parse_block(content, "about")
+    if ab:
+        content = content.replace(
+            re.search(r"::about::.*?::/about::", content, re.DOTALL).group(0),
+            render_friends(ab, "About", "home-about-title"),
+        )
+
+    # ::friends::
+    fr = parse_block(content, "friends")
+    if fr:
+        content = content.replace(
+            re.search(r"::friends::.*?::/friends::", content, re.DOTALL).group(0),
+            render_friends(fr),
+        )
+
+    # ::activity::
+    if "::activity::" in content:
+        content = re.sub(r"::activity::\s*\n?", render_activity(), content)
+
+    if content != original:
+        path.write_text(content, encoding="utf-8")
+        print(f"  patched: {path.relative_to(SITE)}")
+        return True
+    return False
+
+
+def main() -> None:
+    count = 0
+    for html_file in SITE.rglob("*.html"):
+        if process_file(html_file):
+            count += 1
+    print(f"Done: {count} files patched")
+
+
+if __name__ == "__main__":
+    main()

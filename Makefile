@@ -15,7 +15,9 @@ kill: ## 杀掉 8000 端口进程
 	@lsof -ti:8000 | xargs kill -9 2>/dev/null; echo "done"
 
 zensical: metadata previews kill ## 实时预览文档站点（端口 8000）
-	uv run zensical serve -o
+	uv run zensical serve -o &
+	@sleep 1.5 && uv run python scripts/patch_home_blocks.py
+	@wait
 
 contributions: ## 抓取 GitHub 贡献图数据烘焙成静态 JSON
 	uv run python scripts/fetch_contributions.py
@@ -26,6 +28,7 @@ deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run python scripts/compress_pdfs.py
 	uv run python scripts/compress_images.py
 	uv run zensical build
+	uv run python scripts/patch_home_blocks.py
 	uv run python scripts/generate_image_previews.py --site
 	uv run python scripts/patch_image_src.py
 	cd site && git add -A && git commit -m "deploy" --allow-empty && git push --force origin HEAD:gh-pages

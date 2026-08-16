@@ -362,6 +362,22 @@ body.rainbow-active .md-sidebar__inner {
   text-decoration: none;
 }
 
+/* ---- 主页覆盖 theme.css 的全站规则 ---- */
+/* 主页去掉内容区内边距、隐藏侧边栏、透明背景 */
+body.home-active .md-content__inner { padding-inline: 0; }
+body.home-active .md-content,
+body.home-active .md-typeset { background-color: transparent !important; }
+body.home-active::before { content: none; }
+
+/* 主页隐藏自动生成的页面标题 */
+body.home-active .md-typeset h1#__skip { display: none; }
+
+/* 主页标题不需要编号和 headerlink */
+.md-content__inner .home-section__title { counter-increment: none; }
+.md-content__inner .home-section__title::before { content: none; }
+.home-section__title > .headerlink { display: none; }
+body.home-active .md-typeset h1 > .headerlink { display: none; }
+
 .home-hero {
   margin: 1rem 0 1.6rem;
 }
@@ -476,6 +492,7 @@ body.rainbow-active .md-sidebar__inner {
   background: var(--home-panel);
   color: var(--md-default-fg-color) !important;
   font-size: 0.72rem;
+  text-decoration: none !important;
   backdrop-filter: blur(var(--blur-radius));
   -webkit-backdrop-filter: blur(var(--blur-radius));
   transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
@@ -531,11 +548,14 @@ body.rainbow-active .md-sidebar__inner {
   font-size: 0.62rem;
   line-height: 1.2;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .home-friend__meta {
   margin-bottom: 0.15rem;
+  white-space: normal;
+  word-break: break-word;
+  text-decoration: none;
+  line-height: 1.5;
 }
 
 .home-section--activity .github-calendar-wrap {
