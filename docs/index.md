@@ -44,7 +44,7 @@ body.bfyes-home-page .md-grid {
     </div>
     <div class="home-log-list">
       <div class="home-log">
-        <span class="home-log__date">2026.08.14</span>
+        <span class="home-log__date">2026.08.16</span>
         <span>1. 修复公式/图标问题。 2. 重构css。 3. 添加少量动画。</span>
       </div>
       <div class="home-log">
