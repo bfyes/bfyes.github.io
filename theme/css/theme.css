@@ -374,8 +374,10 @@
 }
 
 .page-info {
-  display: grid;
-  gap: 0.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1.5rem;
   margin: 2rem 0 1.2rem;
   padding-top: 0.8rem;
   border-top: 1px solid var(--md-default-fg-color--lightest);
@@ -390,9 +392,24 @@
   min-height: 1.4rem;
 }
 
+.page-info__item:last-child {
+  margin-left: auto;
+}
+
+@media screen and (max-width: 44.984375em) {
+  .page-info__item:last-child {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+}
+
 .page-info__label {
-  width: 12.5em;
+  width: 6em;
   flex-shrink: 0;
+}
+
+.page-info__stars .page-info__label {
+  width: 12em;
 }
 
 .page-info__value {

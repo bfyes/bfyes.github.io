@@ -45,7 +45,6 @@
    ============================================================================ */
 
 .github-calendar-wrap {
-  max-width: 760px;
   margin: 1rem auto 0;
 }
 
@@ -68,7 +67,7 @@
   padding: 1.4rem 0.75rem;
   text-align: center;
   color: var(--md-default-fg-color--light);
-  font-size: var(--font-ui);
+  font-size: 0.75rem;
 }
 
 .ghc-error {
@@ -86,22 +85,20 @@
 
 .md-typeset .ghc-title {
   margin: 0;
-  color: var(--md-default-fg-color);
+  color: var(--fgColor-default);
   font-family: inherit;
   font-size: var(--font-base);
   font-weight: 400;
   line-height: 1.5;
 }
 
-.md-content__inner .ghc-title::before,
-.md-content__inner .ghc-overview-title::before {
+.md-content__inner .ghc-title::before {
   content: none;
 }
 
 .ghc-calendar-scroller {
   display: flex;
-  justify-content: center;
-  max-width: 100%;
+  justify-content: safe center;
   overflow-x: auto;
   overflow-y: hidden;
   padding: 0.45rem 1rem 0.6rem;
@@ -132,10 +129,11 @@
 }
 
 .ContributionCalendar-label {
+  position: relative;
   width: 10px;
   min-width: 10px;
   padding: 0;
-  color: var(--md-default-fg-color--light);
+  color: var(--fgColor-default);
   font-family: inherit;
   font-size: var(--font-ui-sm);
   font-weight: 400;
@@ -186,19 +184,19 @@
   outline-offset: 1px;
 }
 
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: rgb(240, 242, 245); border-color: #E4E8EB; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: rgb(172, 238, 187); border-color: transparent; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: rgb(75, 193, 107); border-color: transparent; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: rgb(44, 164, 79); border-color: transparent; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: rgb(16, 99, 41); border-color: transparent; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: #eff2f5; border-color: #1f23280d; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: #aceebb; border-color: #1f23280d; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: #4ac26b; border-color: #1f23280d; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: #2da44e; border-color: #1f23280d; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: #116329; border-color: #1f23280d; }
 
 [data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="0"] {
-  background-color: #161b22; border-color: #1c2330;
+  background-color: #151b23; border-color: #0104090d;
 }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #0e4429; border-color: transparent; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #006d32; border-color: transparent; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #26a641; border-color: transparent; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #39d353; border-color: transparent; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #033a16; border-color: #0104090d; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #196c2e; border-color: #0104090d; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #2ea043; border-color: #0104090d; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #56d364; border-color: #0104090d; }
 
 .ghc-footer {
   display: flex;
@@ -206,12 +204,12 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.35rem 1rem 0.8rem;
-  color: var(--md-default-fg-color--light);
+  color: var(--fgColor-muted);
   font-size: var(--font-ui-sm);
 }
 
 .ghc-help {
-  color: var(--md-default-fg-color--light) !important;
+  color: var(--fgColor-muted) !important;
 }
 
 .ghc-legend {
@@ -223,27 +221,7 @@
 
 .ghc-legend-day {
   display: inline-block;
-}
-
-.ghc-overview {
-  border-top: 1px solid var(--md-default-fg-color--lightest);
-  padding: 0.85rem 1rem 1rem;
-}
-
-.md-typeset .ghc-overview-title {
-  margin: 0 0 0.35rem;
-  color: var(--md-default-fg-color);
-  font-family: inherit;
-  font-size: var(--font-ui);
-  font-weight: 400;
-}
-
-.md-typeset .ghc-overview-text,
-.md-typeset .ghc-overview-meta {
-  margin: 0.15rem 0;
-  color: var(--md-default-fg-color--light);
-  font-size: var(--font-ui-sm);
-  line-height: 1.45;
+  border-radius: 3px;
 }
 
 .sr-only {
@@ -405,7 +383,7 @@ body.rainbow-active .md-sidebar__inner {
 .md-typeset .home-section__title {
   margin: 0;
   font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
-  font-size: var(--font-ui);
+  font-size: 0.92rem;
   font-weight: 800;
   line-height: 1.25;
   border-bottom: none;
@@ -476,7 +454,7 @@ body.rainbow-active .md-sidebar__inner {
 
 .home-log span:last-child {
   color: var(--home-muted);
-  font-size: var(--font-ui-sm);
+  font-size: 0.7rem;
   line-height: 1.5;
 }
 
@@ -497,7 +475,7 @@ body.rainbow-active .md-sidebar__inner {
   border-radius: var(--radius-lg);
   background: var(--home-panel);
   color: var(--md-default-fg-color) !important;
-  font-size: var(--font-ui-sm);
+  font-size: 0.72rem;
   backdrop-filter: blur(var(--blur-radius));
   -webkit-backdrop-filter: blur(var(--blur-radius));
   transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
@@ -540,7 +518,7 @@ body.rainbow-active .md-sidebar__inner {
 }
 
 .home-friend strong {
-  font-size: var(--font-ui);
+  font-size: 0.75rem;
   line-height: 1.2;
 }
 
@@ -548,7 +526,7 @@ body.rainbow-active .md-sidebar__inner {
 .home-friend__meta {
   overflow: hidden;
   color: var(--home-muted);
-  font-size: var(--font-meta);
+  font-size: 0.62rem;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -111,7 +111,7 @@
   --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
 
   /* === 首页面板 === */
-  --home-panel: rgba(255, 255, 255, 0.4);
+  --home-panel: rgba(255, 255, 255, 0.64);
   --home-border: #ccd6d8;
 
   /* === 首页分类强调色 === */
@@ -154,7 +154,7 @@
   --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
 
   /* === 首页面板 === */
-  --home-panel: rgba(1, 4, 9, 0.4);
+  --home-panel: rgba(1, 4, 9, 0.64);
   --home-border: #383e42;
 
   /* === 首页分类强调色 === */

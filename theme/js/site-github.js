@@ -82,10 +82,6 @@
       i += span;
     }
 
-    if (cells.length > 1 && cells[0].month && cells[cells.length - 1].month === cells[0].month) {
-      cells[cells.length - 1].month = "";
-      cells[cells.length - 1].full = "";
-    }
     return cells;
   }
 
@@ -129,7 +125,7 @@
       });
       if (cell.month) {
         td.appendChild(screenReader(cell.full));
-        td.appendChild(htmlEl("span", { "aria-hidden": "true" }, cell.month));
+        td.appendChild(htmlEl("span", { "aria-hidden": "true", style: "position: absolute; top: 0" }, cell.month));
       }
       headRow.appendChild(td);
     });
@@ -197,22 +193,11 @@
     root.appendChild(legend);
   }
 
-  function renderGithubOverview(root, data) {
-    var overview = htmlEl("div", { class: "ghc-overview" });
-    overview.appendChild(htmlEl("h3", { class: "ghc-overview-title" }, "Activity overview"));
-    overview.appendChild(htmlEl("p", { class: "ghc-overview-text" },
-      "Contributions are refreshed from GitHub during each site deployment."));
-    overview.appendChild(htmlEl("p", { class: "ghc-overview-meta" },
-      "Last fetched " + (data.fetchedAt || "recently") + "."));
-    root.appendChild(overview);
-  }
-
   function renderGithub(container, data) {
     var shell = htmlEl("section", { class: "ghc-shell", "aria-label": "GitHub contributions" });
     renderGithubHeader(shell, data.totalContributions || 0);
     renderGithubCalendar(shell, data);
     renderGithubLegend(shell);
-    renderGithubOverview(shell, data);
 
     container.innerHTML = "";
     container.appendChild(shell);
