@@ -185,7 +185,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
    子段：标题 → 列表 → 表格 → 引用 → 分隔线 → 强调/删除线/上下标 → 键盘 → 链接
    ============================================================================ */
 .md-typeset {
-  font-size: 16px;
+  font-size: var(--font-base);
   --md-typeset-color: var(--fgColor-default);
   color: var(--fgColor-default);
   background-color: var(--bgColor-default);
@@ -216,7 +216,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   font-weight: 700;
   padding-bottom: 0.55em;
   margin-top: 0;
-  margin-bottom: 1.6rem;
+  margin-bottom: calc(1.6rem + var(--h1-reserved-gap));
   border-bottom: 1px solid var(--borderColor-muted);
 }
 .md-typeset h2,
@@ -356,7 +356,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 .md-typeset kbd {
   display: inline-block;
   padding: var(--base-size-4, 0.25rem);
-  font-size: 11px;
+  font-size: var(--font-kbd);
   line-height: 10px;
   color: var(--fgColor-default);
   vertical-align: middle;
@@ -390,29 +390,28 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 .md-typeset pre {
   margin-top: 0;
   margin-bottom: var(--base-size-16, 1rem);
-  padding: var(--base-size-16, 1rem);
-  overflow: auto;
-  font-size: 13.6px;
+  padding: 0;
+  overflow: visible;
+  font-size: var(--font-code);
   line-height: 1.45;
   color: var(--fgColor-default);
   background-color: var(--bgColor-muted);
 }
 .md-typeset pre > code {
   font-size: inherit;
-  line-height: 1.6;
+  line-height: 1.45;
   color: var(--fgColor-default);
 }
 .md-typeset .highlight pre {
   border: 0;
-  padding: var(--base-size-16, 16px);
+  padding: 0;
   white-space: pre;
   overflow-x: auto;
   overflow-y: hidden;
 }
 .md-typeset pre code,
 .md-typeset pre tt {
-  display: inline;
-  padding: 0;
+  display: block;
   margin: 0;
   line-height: inherit;
   word-wrap: normal;
@@ -443,7 +442,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 .md-dialog__inner {
   color: var(--fgColor-muted);
-  font-size: 13px;
+  font-size: var(--font-meta);
   line-height: 1.4;
 }
 /* 标题内的行内代码：随标题字号 */
@@ -482,11 +481,10 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* ---- highlight.js 与 Material 布局兼容 ----
-   github.min.css 会给 .hljs 加自身背景与 padding，导致与 Material 的
-   pre(内边距/背景) 叠加冲突。这里让 code 回归 Material 的裸排版，
-   仅保留 github 的 token 配色。 */
+   github.min.css 会给 .hljs 加自身背景与 padding，导致与 pre 的
+   内边距/背景叠加冲突。这里让 .hljs 回归透明背景且无 padding，
+   仅保留 github 的 token 配色，padding 由 pre 统一管理。 */
 .md-typeset pre .hljs {
-  padding: 0;
   background: transparent;
   border-radius: 0;
   line-height: 1.45;
@@ -500,7 +498,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 
 /* ---- 脚注（GitHub 观感补足） ---- */
 .md-typeset .footnotes {
-  font-size: 12px;
+  font-size: var(--font-footnote);
   color: var(--fgColor-muted);
   border-top: 1px solid var(--borderColor-default);
 }

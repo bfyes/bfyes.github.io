@@ -68,7 +68,7 @@
   padding: 1.4rem 0.75rem;
   text-align: center;
   color: var(--md-default-fg-color--light);
-  font-size: 0.75rem;
+  font-size: var(--font-ui);
 }
 
 .ghc-error {
@@ -88,7 +88,7 @@
   margin: 0;
   color: var(--md-default-fg-color);
   font-family: inherit;
-  font-size: 16px;
+  font-size: var(--font-base);
   font-weight: 400;
   line-height: 1.5;
 }
@@ -137,7 +137,7 @@
   padding: 0;
   color: var(--md-default-fg-color--light);
   font-family: inherit;
-  font-size: 12px;
+  font-size: var(--font-ui-sm);
   font-weight: 400;
   line-height: 1;
   text-align: left;
@@ -207,7 +207,7 @@
   gap: 0.75rem;
   padding: 0.35rem 1rem 0.8rem;
   color: var(--md-default-fg-color--light);
-  font-size: 12px;
+  font-size: var(--font-ui-sm);
 }
 
 .ghc-help {
@@ -234,7 +234,7 @@
   margin: 0 0 0.35rem;
   color: var(--md-default-fg-color);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--font-ui);
   font-weight: 400;
 }
 
@@ -242,7 +242,7 @@
 .md-typeset .ghc-overview-meta {
   margin: 0.15rem 0;
   color: var(--md-default-fg-color--light);
-  font-size: 12px;
+  font-size: var(--font-ui-sm);
   line-height: 1.45;
 }
 
@@ -405,7 +405,7 @@ body.rainbow-active .md-sidebar__inner {
 .md-typeset .home-section__title {
   margin: 0;
   font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
-  font-size: 0.92rem;
+  font-size: var(--font-ui);
   font-weight: 800;
   line-height: 1.25;
   border-bottom: none;
@@ -470,13 +470,13 @@ body.rainbow-active .md-sidebar__inner {
 
 .home-log__date {
   color: var(--home-softer);
-  font-size: 0.66rem;
+  font-size: var(--font-meta);
   font-weight: 800;
 }
 
 .home-log span:last-child {
   color: var(--home-muted);
-  font-size: 0.7rem;
+  font-size: var(--font-ui-sm);
   line-height: 1.5;
 }
 
@@ -497,7 +497,7 @@ body.rainbow-active .md-sidebar__inner {
   border-radius: var(--radius-lg);
   background: var(--home-panel);
   color: var(--md-default-fg-color) !important;
-  font-size: 0.72rem;
+  font-size: var(--font-ui-sm);
   backdrop-filter: blur(var(--blur-radius));
   -webkit-backdrop-filter: blur(var(--blur-radius));
   transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
@@ -522,7 +522,7 @@ body.rainbow-active .md-sidebar__inner {
   border-radius: 50%;
   color: var(--avatar-color);
   background: var(--avatar-bg);
-  font-size: 0.66rem;
+  font-size: var(--font-meta);
   font-weight: 900;
 }
 
@@ -540,7 +540,7 @@ body.rainbow-active .md-sidebar__inner {
 }
 
 .home-friend strong {
-  font-size: 0.74rem;
+  font-size: var(--font-ui);
   line-height: 1.2;
 }
 
@@ -548,7 +548,7 @@ body.rainbow-active .md-sidebar__inner {
 .home-friend__meta {
   overflow: hidden;
   color: var(--home-muted);
-  font-size: 0.62rem;
+  font-size: var(--font-meta);
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -600,7 +600,7 @@ body.rainbow-active .md-sidebar__inner {
   color: var(--md-default-fg-color--light);
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
-  font-size: 13.6px;
+  font-size: var(--font-code);
 }
 
 .home-terminal__screen {
@@ -609,7 +609,7 @@ body.rainbow-active .md-sidebar__inner {
   padding: 0.6rem 0.9rem 0.7rem;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
-  font-size: 13.6px;
+  font-size: var(--font-code);
   line-height: 1.45;
 }
 
