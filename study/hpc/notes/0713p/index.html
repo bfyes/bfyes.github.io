@@ -3764,8 +3764,7 @@ cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 
 
 <script>
   var giscusScript = document.querySelector("script[src*=giscus]");
-  var saved = (typeof __md_get === "function") ? __md_get("__palette") : null;
-  var scheme = (saved && saved.color && saved.color.scheme) || "default";
+  var scheme = document.documentElement.getAttribute("data-md-color-scheme");
   var theme = scheme === "slate" ? "dark" : "light";
   if (giscusScript) giscusScript.setAttribute("data-theme", theme);
 

@@ -4,25 +4,6 @@
   window.site = window.site || {};
   var htmlEl = window.site.htmlEl;
 
-  // ---- page state + parallax grid ----
-  function syncPageState(root) {
-    var scope = root || document;
-    document.body.classList.toggle("home-active", !!scope.querySelector(".home-page"));
-    document.body.classList.toggle("rainbow-active", !!scope.querySelector(".rainbow-page"));
-  }
-
-  function initParallaxGrid() {
-    var ratio = 0.1, ticking = false;
-    function update() {
-      document.body.style.setProperty("--grid-y", -(window.scrollY * ratio) + "px");
-      ticking = false;
-    }
-    window.addEventListener("scroll", function () {
-      if (!ticking) { requestAnimationFrame(update); ticking = true; }
-    }, { passive: true });
-    update();
-  }
-
   // ---- friends ----
   function githubAvatarUrl(github) {
     return github ? "https://avatars.githubusercontent.com/" + encodeURIComponent(github) + "?size=160" : "";
@@ -49,26 +30,30 @@
   }
 
   function initFriends(root) {
-    var grid = (root || document).querySelector(".home-link-grid");
-    if (!grid || grid.dataset.friendsReady === "true") return;
-    var cards = grid.querySelectorAll(".home-friend");
-    for (var i = 0; i < cards.length; i++) {
-      var card = cards[i];
-      var github = card.getAttribute("data-id");
-      var strong = card.querySelector("strong");
-      var name = (strong ? strong.textContent : "") || github || "";
-      card.setAttribute("target", "_blank");
-      card.setAttribute("rel", "noopener");
-      buildAvatar(card, name, github);
-      if (github) {
-        var handle = htmlEl("span", { class: "home-friend__handle" }, "@" + github);
-        if (strong && strong.nextSibling) card.insertBefore(handle, strong.nextSibling);
-        else card.appendChild(handle);
+    var scope = root || document;
+    var grids = scope.querySelectorAll(".home-link-grid");
+    for (var g = 0; g < grids.length; g++) {
+      var grid = grids[g];
+      if (grid.dataset.friendsReady === "true") continue;
+      var cards = grid.querySelectorAll(".home-friend");
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var github = card.getAttribute("data-id");
+        var strong = card.querySelector("strong");
+        var name = (strong ? strong.textContent : "") || github || "";
+        card.setAttribute("target", "_blank");
+        card.setAttribute("rel", "noopener");
+        buildAvatar(card, name, github);
+        if (github) {
+          var handle = htmlEl("span", { class: "home-friend__handle" }, "@" + github);
+          if (strong && strong.nextSibling) card.insertBefore(handle, strong.nextSibling);
+          else card.appendChild(handle);
+        }
+        var desc = card.getAttribute("data-description");
+        if (desc && !card.querySelector(".home-friend__bio")) card.appendChild(htmlEl("span", { class: "home-friend__meta" }, desc));
       }
-      var desc = card.getAttribute("data-description");
-      if (desc) card.appendChild(htmlEl("span", { class: "home-friend__meta" }, desc));
+      grid.dataset.friendsReady = "true";
     }
-    grid.dataset.friendsReady = "true";
   }
 
   // ---- github contributions ----
@@ -396,9 +381,7 @@
   }
 
   // ---- init ----
-  window.site.onPageReady(syncPageState);
   window.site.onPageReady(initFriends);
   window.site.onPageReady(initGithubCalendar);
   window.site.onPageReady(startHomeTypewriter);
-  initParallaxGrid();
 })();
