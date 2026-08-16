@@ -13,6 +13,7 @@ Bill Feng | bfyes | https://github.com/bfyes | 嗨，我是BillFeng，来自浙�
 ::/about::
 
 ::changelog::
+2026.08.17: 解决历史遗留问题: mathjax.js 在 instant 模式下加载异常。
 2026.08.16: 重构js，优化主页工作流，引入新语法。调整提示块颜色，分割主页与正文资源。
 2026.08.15: 修复公式/图标问题。重构css。添加少量动画。
 2026.08.14: 更改 giscus 评论区加载机制。重构部分 css。修复已知问题。
