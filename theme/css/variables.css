@@ -44,6 +44,7 @@
   --radius-sm: 2px;   /* 贡献图小方块 */
   --radius-md: 6px;   /* 按钮、行内代码、键盘按键、导航选中态 */
   --radius-lg: 8px;   /* 卡片、面板、终端窗口、日志列表 */
+  --radius-admonition: 0.3rem;  /* 提示块 */
 
   /* === 页面信息 === */
   --page-info-font-size: var(--font-meta);
