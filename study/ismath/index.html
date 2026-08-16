@@ -5316,7 +5316,7 @@ P[Y\le X] &amp;= \int_{-1}^0\int_{y^2}^1 \frac{5}{4}x\,\mathrm{d}x\,\mathrm{d}y 
     }
 
     function scheduleRenderPageInfo() {
-      renderPageInfo();
+      requestAnimationFrame(renderPageInfo);
       setTimeout(renderPageInfo, 50);
       setTimeout(renderPageInfo, 200);
     }

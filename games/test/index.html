@@ -3984,7 +3984,7 @@ static const char *very_long_variable_name_that_exceeds_the_normal_line_width = 
     }
 
     function scheduleRenderPageInfo() {
-      renderPageInfo();
+      requestAnimationFrame(renderPageInfo);
       setTimeout(renderPageInfo, 50);
       setTimeout(renderPageInfo, 200);
     }

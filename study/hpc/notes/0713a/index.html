@@ -3607,7 +3607,7 @@ if (i &lt; N &amp;&amp; j &lt; N) {
     }
 
     function scheduleRenderPageInfo() {
-      renderPageInfo();
+      requestAnimationFrame(renderPageInfo);
       setTimeout(renderPageInfo, 50);
       setTimeout(renderPageInfo, 200);
     }

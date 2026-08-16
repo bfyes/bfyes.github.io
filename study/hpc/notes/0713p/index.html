@@ -3736,7 +3736,7 @@ cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 
     }
 
     function scheduleRenderPageInfo() {
-      renderPageInfo();
+      requestAnimationFrame(renderPageInfo);
       setTimeout(renderPageInfo, 50);
       setTimeout(renderPageInfo, 200);
     }

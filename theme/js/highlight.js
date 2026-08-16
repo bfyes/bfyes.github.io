@@ -76,38 +76,7 @@
       }
       hljsLib.highlightElement(el);
       el.dataset.hljsDone = "1";
-      addGutter(el); // 不破坏高亮：在 <code> 旁加独立行号列，绝不改动 code 内部
     });
-  }
-
-  /**
-   * 在 code 前插入独立的行号列 .code-gutter（与 code 用 flex 并排）。
-   * 完全不修改 code 内部的 hljs span，因此绝不破坏高亮。
-   */
-  function addGutter(code) {
-    if (code.dataset.gutterDone === "1") return;
-    var pre = code.parentElement;
-    if (!pre) return;
-    var source = code.textContent;
-    var lineCount = source.endsWith("\n") ? source.split("\n").length - 1 : source.split("\n").length;
-    var gutter = document.createElement("div");
-    gutter.className = "code-gutter";
-    // Safari can round the line boxes of sibling flex items differently. Derive
-    // the height from the code content's final layout instead of an em value.
-    var computed = getComputedStyle(code);
-    var verticalPadding = parseFloat(computed.paddingTop) + parseFloat(computed.paddingBottom);
-    var lineHeight = (code.getBoundingClientRect().height - verticalPadding) / lineCount;
-    if (Number.isFinite(lineHeight)) {
-      gutter.style.setProperty("--code-line-height", lineHeight + "px");
-    }
-    for (var i = 1; i <= lineCount; i++) {
-      var s = document.createElement("span");
-      s.className = "code-ln";
-      s.textContent = String(i);
-      gutter.appendChild(s);
-    }
-    pre.insertBefore(gutter, code);
-    code.dataset.gutterDone = "1";
   }
 
   function currentMode() {

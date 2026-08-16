@@ -3853,7 +3853,7 @@ update_boundary();     // 此时才能读取收到的 halo</code></pre>
     }
 
     function scheduleRenderPageInfo() {
-      renderPageInfo();
+      requestAnimationFrame(renderPageInfo);
       setTimeout(renderPageInfo, 50);
       setTimeout(renderPageInfo, 200);
     }

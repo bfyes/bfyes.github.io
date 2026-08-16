@@ -3635,7 +3635,7 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
     }
 
     function scheduleRenderPageInfo() {
-      renderPageInfo();
+      requestAnimationFrame(renderPageInfo);
       setTimeout(renderPageInfo, 50);
       setTimeout(renderPageInfo, 200);
     }

@@ -22,7 +22,6 @@
        导航栏毛玻璃(.md-header/.md-tabs)、导航选中态、
        右侧 TOC 阅读进度、页面宽度(.md-grid)、
        滚动条样式(sidebar + 代码块共用)、
-       highlight.js 行号列(.code-gutter flex 并排)、
        hljs 与 Material 布局兼容(.hljs padding 归零、圆角取消)
    04. PDF 阅读器
        .pdf-viewer-* 外壳/工具栏/原生 iframe/iOS 画布降级、
@@ -162,7 +161,7 @@
   border: 1px solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
   border-radius: var(--radius-md);
   box-shadow: none;
-  font-size: 13.6px;
+  font-size: var(--font-code);
   overflow: hidden;
   padding: 0 0.8rem;
 }
@@ -342,10 +341,10 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  margin: -0.85rem 0 1.35rem;
+  margin: calc(-1 * var(--h1-reserved-gap)) 0 var(--page-info-margin-bottom);
   color: var(--md-default-fg-color--light);
-  font-size: 0.68rem;
-  line-height: 1.5;
+  font-size: var(--page-info-font-size);
+  line-height: var(--page-info-line-height);
 }
 
 .page-updated-top[hidden],
@@ -381,7 +380,7 @@
   padding-top: 0.8rem;
   border-top: 1px solid var(--md-default-fg-color--lightest);
   color: var(--md-default-fg-color--light);
-  font-size: 0.68rem;
+  font-size: var(--font-meta);
 }
 
 .page-info__item {
@@ -449,21 +448,6 @@ body.rainbow-active::before {
 .md-content__button {
   position: relative;
   z-index: 3;
-  pointer-events: auto;
-}
-
-/* H1 标题不拦截编辑按钮的点击 */
-.md-typeset h1 {
-  pointer-events: none;
-}
-.md-typeset h1 > * {
-  pointer-events: auto;
-}
-
-/* 主页 .home-page wrapper 有 position:relative 创建层叠上下文，
-   把 H1 提到按钮之上。降低 wrapper 的 z-index 让按钮可见。 */
-.home-page {
-  z-index: 0;
 }
 
 .md-content__inner {
@@ -582,42 +566,6 @@ body.home-active .md-typeset {
   background-color: var(--scrollbar-thumb-hover);
 }
 
-/* ---- highlight.js 行号列 ---- */
-.md-typeset :is(pre.highlight, pre[class*="language-"]) {
-  display: flex;
-  align-items: stretch;
-  overflow: hidden;
-}
-.md-typeset :is(pre.highlight, pre[class*="language-"]) code {
-  flex: 1 1 auto;
-  display: block;
-  line-height: 1.45;
-  overflow-x: auto;
-  padding-bottom: var(--code-scrollbar-offset);
-  margin-bottom: calc(-1 * var(--code-scrollbar-offset));
-}
-.md-typeset .code-gutter {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  user-select: none;
-  box-sizing: border-box;
-  padding-right: 0.8em;
-  border-right: 1px solid var(--md-default-fg-color--lightest);
-  margin-right: 1em;
-  color: var(--md-default-fg-color--lighter);
-  font-family: inherit;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.45;
-  white-space: nowrap;
-}
-.md-typeset .code-gutter .code-ln {
-  display: block;
-  height: var(--code-line-height);
-  line-height: var(--code-line-height);
-}
-
 /* hljs 与 Material 布局兼容见 main.css（代码块 UI 归一管理） */
 
 /* ============================================================================
@@ -657,7 +605,7 @@ body.home-active .md-typeset {
 
 .pdf-viewer-title,
 .pdf-viewer-status {
-  font-size: 0.85rem;
+  font-size: var(--font-ui);
   color: var(--md-typeset-color, #555);
   user-select: none;
 }
@@ -700,7 +648,7 @@ body.home-active .md-typeset {
   border-bottom: 1px solid var(--md-default-fg-color--lightest, #e0e0e0);
   background: var(--md-default-bg-color, #fff);
   color: var(--md-default-fg-color--light);
-  font-size: 0.72rem;
+  font-size: var(--font-ui-sm);
   line-height: 1.35;
 }
 
@@ -778,13 +726,13 @@ body.home-active .md-typeset {
 
 .pdf-viewer-external__title {
   color: var(--md-typeset-color, #555);
-  font-size: 0.9rem;
+  font-size: var(--font-ui);
   font-weight: 600;
 }
 
 .pdf-viewer-external__text {
   color: var(--md-default-fg-color--light);
-  font-size: 0.78rem;
+  font-size: var(--font-ui-sm);
 }
 
 .pdf-viewer-external__button {
@@ -798,7 +746,7 @@ body.home-active .md-typeset {
   border-radius: var(--radius-md);
   background: var(--active-nav-bg, #f5fbff);
   color: var(--md-accent-fg-color);
-  font-size: 0.78rem;
+  font-size: var(--font-ui-sm);
   font-weight: 600;
 }
 
@@ -844,7 +792,7 @@ body.home-active .md-typeset {
   color: var(--md-default-fg-color);
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
-  font-size: 0.78rem;
+  font-size: var(--font-ui-sm);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
@@ -866,7 +814,7 @@ body.home-active .md-typeset {
 }
 
 .pdf-loader-detail {
-  font-size: 0.75rem;
+  font-size: var(--font-ui-sm);
   color: var(--md-default-fg-color--light, #999);
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
@@ -880,7 +828,7 @@ body.home-active .md-typeset {
   justify-content: center;
   padding: 24px;
   color: var(--error-color);
-  font-size: 0.9rem;
+  font-size: var(--font-ui);
   background: var(--md-default-bg-color, #fff);
   z-index: 3;
 }
@@ -934,11 +882,6 @@ body.home-active .md-typeset {
   }
   .md-typeset :is(pre.highlight, pre[class*="language-"]) code {
     -webkit-overflow-scrolling: touch;
-  }
-
-  .md-typeset .code-gutter {
-    padding-right: var(--mobile-code-gutter-padding-right);
-    margin-right: var(--mobile-code-gutter-margin-right);
   }
 }
 

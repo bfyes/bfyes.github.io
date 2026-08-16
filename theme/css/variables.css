@@ -19,6 +19,17 @@
 
 /* ---- 通用变量（亮暗共用） ---- */
 :root {
+  /* === 字号体系 === */
+  /* 正文相关：rem 跟随 html 缩放 */
+  --font-base: 0.8rem;        /* 正文 16px */
+  --font-code: 0.68rem;      /* 代码块、admonition 13.6px */
+  --font-meta: 0.65rem;      /* 页面信息 13px */
+  /* UI 组件：px 固定值，不跟随缩放 */
+  --font-ui: 14px;           /* PDF 工具栏、错误提示 */
+  --font-ui-sm: 12px;        /* PDF 状态、移动端提示 */
+  --font-kbd: 11px;          /* 键盘按键 */
+  --font-footnote: 12px;     /* 脚注 */
+
   /* === 布局 === */
   --page-max-width: 65rem;
   --content-padding-inline: 1rem;
@@ -34,13 +45,16 @@
   --radius-md: 6px;   /* 按钮、行内代码、键盘按键、导航选中态 */
   --radius-lg: 8px;   /* 卡片、面板、终端窗口、日志列表 */
 
+  /* === 页面信息 === */
+  --page-info-font-size: var(--font-meta);
+  --page-info-line-height: 1.5;
+  --page-info-margin-bottom: 1.35rem;
+  --page-info-height: calc(var(--page-info-font-size) * var(--page-info-line-height));
+  --h1-reserved-gap: calc(var(--page-info-height) + var(--page-info-margin-bottom));
+
   /* === 网格背景 === */
   --grid-clear-half: 22rem;
   --grid-fade: 20rem;
-
-  /* === 代码块行号列 === */
-  --code-scrollbar-offset: 0.4rem;
-  --code-line-height: 1.45em;
 
   /* === 滚动条 === */
   --scrollbar-width: 8px;
@@ -70,8 +84,6 @@
 
   /* === 移动端 === */
   --mobile-content-padding: 0;
-  --mobile-code-gutter-padding-right: 0.5em;
-  --mobile-code-gutter-margin-right: 0.6em;
   --mobile-terminal-font-size: 14px;
   --mobile-terminal-padding: 0.85rem 0.9rem 0.95rem;
   --mobile-log-gap: 0.25rem;

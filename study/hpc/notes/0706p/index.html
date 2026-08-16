@@ -3990,7 +3990,7 @@ cat /sys/fs/cgroup/cpu.max 2&gt;/dev/null || true   # cgroup v2 的 CPU 限额�
     }
 
     function scheduleRenderPageInfo() {
-      renderPageInfo();
+      requestAnimationFrame(renderPageInfo);
       setTimeout(renderPageInfo, 50);
       setTimeout(renderPageInfo, 200);
     }
