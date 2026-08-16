@@ -33,23 +33,43 @@ MONTH_FULL = {
 LEVEL_FALLBACK = {0: 0, 1: 1, 2: 3, 3: 6, 4: 9}
 
 
-def level_from_count(count: int) -> int:
-    """按贡献数计算 0..4 的色阶。
+def level_from_count(count: int, thresholds: tuple) -> int:
+    """按贡献数和动态阈值计算 0..4 的色阶。
 
-    GitHub 的 data-level 是基于「过去一年窗口内相对分位数」动态算的，对低活跃
-    账号极不稳定——同一批 count=1 的天，几小时内可能在 level 1 和 level 4 之间
-    跳。这里改用绝对阈值按 count 直接分级，保留 1 与 2+ 之间的细微差别，
-    且每次烘焙都稳定可预期。
+    GitHub 的 data-level 是基于全年最大贡献数动态划分的：
+    level 1: 1 ~ max/4
+    level 2: max/4+1 ~ max/2
+    level 3: max/2+1 ~ 3*max/4
+    level 4: 3*max/4+1 ~ max
+    thresholds 是 (q1, q2, q3) 三个分界值。
     """
     if count <= 0:
         return 0
-    if count == 1:
+    if count <= thresholds[0]:
         return 1
-    if count <= 3:
+    if count <= thresholds[1]:
         return 2
-    if count <= 6:
+    if count <= thresholds[2]:
         return 3
     return 4
+
+
+def compute_thresholds(cells: list) -> tuple:
+    """从全年最大贡献数计算四等分阈值 (q1, q2, q3)。
+
+    GitHub 按全年最大 count 的四等分划分 level 1-4。
+    """
+    max_count = max((c["count"] for c in cells if c["count"]), default=0)
+    if max_count <= 0:
+        return (1, 2, 4)
+    q1 = max_count // 4
+    q2 = max_count // 2
+    q3 = 3 * max_count // 4
+    return (q1, q2, q3)
+    # 确保阈值递增且至少差 1
+    q2 = max(q2, q1 + 1) if q1 < q2 else q2
+    q3 = max(q3, q2 + 1) if q2 < q3 else q3
+    return (q1, q2, q3)
 
 
 def fetch() -> str:
@@ -102,11 +122,14 @@ def parse(html: str) -> dict:
         if queue:
             c["count"] = queue.pop(0)
 
-    # count 已全部就位（缺失的用 level 兜底），最终 level 按 count 绝对阈值计算。
+    # count 已全部就位（缺失的用 level 兜底），最终 level 按动态分位数计算。
     for c in cells:
         if c["count"] is None:
             c["count"] = LEVEL_FALLBACK.get(c["level"], 0)
-        c["level"] = level_from_count(c["count"])
+
+    thresholds = compute_thresholds(cells)
+    for c in cells:
+        c["level"] = level_from_count(c["count"], thresholds)
 
     cells.sort(key=lambda c: c["date"])
 
