@@ -81,9 +81,59 @@
     return node;
   }
 
+  // ---- 主题同步（highlight.js / giscus 订阅）----
+  var mq = matchMedia("(prefers-color-scheme: dark)");
+  var themeListeners = [];
+
+  function isDark() {
+    var attr = document.body.getAttribute("data-md-color-scheme");
+    if (attr) return attr === "slate";
+    return mq.matches;
+  }
+
+  function themeMode() { return isDark() ? "dark" : "light"; }
+
+  function notifyTheme() {
+    var m = themeMode();
+    themeListeners.forEach(function (fn) { try { fn(m); } catch (e) {} });
+  }
+
+  new MutationObserver(notifyTheme).observe(document.body, {
+    attributes: true,
+    attributeFilter: ["data-md-color-scheme"],
+  });
+  mq.addEventListener("change", notifyTheme);
+
+  // ---- 图片渐进加载（preview → 全分辨率）----
+  function upgradeImages(root) {
+    var scope = root || document;
+    var imgs = scope.querySelectorAll("img[data-fullsrc]");
+    for (var i = 0; i < imgs.length; i++) {
+      (function (img) {
+        var fullSrc = img.getAttribute("data-fullsrc");
+        if (!fullSrc) return;
+        var full = new Image();
+        full.onload = function () { img.src = fullSrc; };
+        full.src = fullSrc;
+      })(imgs[i]);
+    }
+  }
+
   window.site.onPageReady = onPageReady;
   window.site.htmlEl = htmlEl;
+  window.site.theme = {
+    get mode() { return themeMode(); },
+    subscribe: function (fn) {
+      themeListeners.push(fn);
+      try { fn(themeMode()); } catch (e) {}
+      return function () {
+        var i = themeListeners.indexOf(fn);
+        if (i >= 0) themeListeners.splice(i, 1);
+      };
+    },
+  };
 
   installHeaderlinkFocusFix();
   initPageLifecycle();
+  window.site.onPageReady(upgradeImages);
 })();

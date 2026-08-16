@@ -78,25 +78,17 @@
   <script>
     (function () {
       try {
-        var saved = (typeof __md_get === "function") ? __md_get("__palette") : null;
-        var scheme;
-        if (saved && saved.color && saved.color.media) {
-          if (saved.color.media === "(prefers-color-scheme)") {
-            scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "slate" : "default";
-          } else {
-            scheme = saved.color.scheme;
-          }
-        } else {
-          scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "slate" : "default";
-        }
+        var dark = matchMedia("(prefers-color-scheme: dark)").matches;
+        var scheme = dark ? "slate" : "default";
         document.documentElement.setAttribute("data-md-color-scheme", scheme);
-        var hljsTheme = document.createElement("link");
-        hljsTheme.id = "hljs-theme";
-        hljsTheme.rel = "stylesheet";
-        hljsTheme.href = scheme === "slate"
+        var link = document.createElement("link");
+        link.id = "hljs-theme";
+        link.rel = "stylesheet";
+        link.href = dark
           ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
           : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
-        document.head.appendChild(hljsTheme);
+        document.head.appendChild(link);
+        // body 加载后同步 attribute（bundle 切换主题时写 body，这里保证 html 跟随）
         var attach = function () {
           document.body.setAttribute("data-md-color-scheme", scheme);
           new MutationObserver(function () {
@@ -107,16 +99,10 @@
             attributeFilter: ["data-md-color-scheme"],
           });
         };
-        if (document.body) {
-          attach();
-        } else {
-          new MutationObserver(function (_, obs) {
-            if (document.body) {
-              attach();
-              obs.disconnect();
-            }
-          }).observe(document.documentElement, { childList: true });
-        }
+        if (document.body) attach();
+        else new MutationObserver(function (_, obs) {
+          if (document.body) { attach(); obs.disconnect(); }
+        }).observe(document.documentElement, { childList: true });
       } catch (e) {}
     })();
   </script>
@@ -3775,127 +3761,43 @@ S(p)=\frac{1}{s+(1-s)/p}.
 
   <!-- Giscus 评论区 -->
 
-<div class="giscus"></div>
+<script src="https://giscus.app/client.js"
+  data-repo="bfyes/bfyes.github.io"
+  data-repo-id="R_kgDOQ6xWqA"
+  data-category="Announcements"
+  data-category-id="DIC_kwDOQ6xWqM4DA0Jv"
+  data-mapping="pathname"
+  data-strict="0"
+  data-reactions-enabled="1"
+  data-emit-metadata="0"
+  data-input-position="bottom"
+  data-theme="preferred_color_scheme"
+  data-lang="zh-CN"
+  crossorigin="anonymous"
+  async>
+</script>
+
 <script>
-  // 让 giscus 首次加载和后续切换都跟随站点主题。
-  (function () {
-    var SCRIPT_ID = "giscus-client";
-    var FRAME_SEL = "iframe.giscus-frame";
+  var giscusScript = document.querySelector("script[src*=giscus]");
+  var saved = (typeof __md_get === "function") ? __md_get("__palette") : null;
+  var scheme = (saved && saved.color && saved.color.scheme) || "default";
+  var theme = scheme === "slate" ? "dark" : "light";
+  if (giscusScript) giscusScript.setAttribute("data-theme", theme);
 
-    function currentMode() {
-      if (window.site && window.site.theme) return window.site.theme.mode;
-      var htmlScheme = document.documentElement.getAttribute("data-md-color-scheme");
-      var bodyScheme = document.body && document.body.getAttribute("data-md-color-scheme");
-      return (htmlScheme || bodyScheme) === "slate" ? "dark" : "light";
-    }
-
-    function themeFor(mode) {
-      // dark = GitHub dark (#0d1117 纯净黑底)，比 dark_dimmed 的灰底更干净。
-      return mode === "dark" ? "dark" : "light";
-    }
-
-    function getFrame() {
-      return document.querySelector(FRAME_SEL);
-    }
-
-    function postTheme(theme) {
-      var iframe = getFrame();
-      if (!iframe || !iframe.contentWindow) return false;
-      iframe.contentWindow.postMessage(
-        { giscus: { setConfig: { theme: theme } } },
-        "https://giscus.app"
-      );
+  function setGiscusTheme(mode) {
+    var frame = document.querySelector(".giscus-frame");
+    if (frame) frame.contentWindow.postMessage(
+      { giscus: { setConfig: { theme: mode === "dark" ? "dark" : "light" } } }, "https://giscus.app"
+    );
+  }
+  function trySubscribe() {
+    if (window.site && window.site.theme) {
+      window.site.theme.subscribe(setGiscusTheme);
       return true;
     }
-
-    // 无论之前是否发过，都按当前主题再发一次（不带 lastTheme 去重短路，
-    // 避免 giscus iframe 尚未应用主题就被误判为"已同步"而漏发）。
-    function sync(mode) {
-      var theme = themeFor(mode || currentMode());
-      postTheme(theme);
-    }
-
-    function loadGiscus() {
-      if (document.getElementById(SCRIPT_ID)) return;
-      var script = document.createElement("script");
-      script.id = SCRIPT_ID;
-      script.src = "https://giscus.app/client.js";
-      script.async = true;
-      script.crossOrigin = "anonymous";
-      script.setAttribute("data-repo", "bfyes/bfyes.github.io");
-      script.setAttribute("data-repo-id", "R_kgDOQ6xWqA");
-      script.setAttribute("data-category", "Announcements");
-      script.setAttribute("data-category-id", "DIC_kwDOQ6xWqM4DA0Jv");
-      script.setAttribute("data-mapping", "pathname");
-      script.setAttribute("data-strict", "1");
-      script.setAttribute("data-reactions-enabled", "1");
-      script.setAttribute("data-emit-metadata", "0");
-      script.setAttribute("data-input-position", "bottom");
-      script.setAttribute("data-theme", themeFor(currentMode()));
-      script.setAttribute("data-lang", "zh-CN");
-      document.querySelector(".giscus").appendChild(script);
-    }
-
-    function bindThemeChanges() {
-      if (window.site && window.site.theme) {
-        window.site.theme.subscribe(sync);
-        return;
-      }
-      if (typeof MutationObserver === "undefined") return;
-      new MutationObserver(function () { sync(); }).observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["data-md-color-scheme"],
-      });
-    }
-
-    // giscus iframe 在 DOM 出现但内容可能尚未加载完成。若此刻 postMessage，
-    // giscus 可能还来不及注册 message 监听而丢弃消息——这是"要刷新才同步"的根因。
-    // 所以除了 DOM 出现时同步一次，还要在 iframe 真正 load 完成后按当前主题再补发一次。
-    function watchFrame(iframe) {
-      if (iframe && !iframe.__themeWatched) {
-        iframe.__themeWatched = true;
-        iframe.addEventListener("load", function () { sync(); });
-        // 兜底：load 事件有时早已触发，用超时再补一次。
-        setTimeout(function () { sync(); }, 1000);
-      }
-    }
-
-    function syncWhenFrameReady() {
-      var frame = getFrame();
-      if (frame) {
-        sync();
-        watchFrame(frame);
-        return;
-      }
-      if (typeof MutationObserver === "undefined" || !document.body) return;
-      var obs = new MutationObserver(function () {
-        var f = getFrame();
-        if (!f) return;
-        obs.disconnect();
-        sync();
-        watchFrame(f);
-      });
-      obs.observe(document.body, { childList: true, subtree: true });
-      setTimeout(function () { obs.disconnect(); }, 8000);
-    }
-
-    // 等页面完全准备好（DOM + 主题 + 布局）后再加载 Giscus，
-    // 避免 instant navigation 时容器宽度未确定导致 iframe 太窄。
-    function whenReady(fn) {
-      if (document.readyState === "complete") {
-        setTimeout(fn, 0);
-      } else {
-        window.addEventListener("load", fn);
-      }
-    }
-
-    whenReady(function () {
-      loadGiscus();
-      bindThemeChanges();
-      syncWhenFrameReady();
-      sync();
-    });
-  })();
+    return false;
+  }
+  if (!trySubscribe()) document.addEventListener("DOMContentLoaded", trySubscribe);
 </script>
 
 
@@ -3986,8 +3888,6 @@ S(p)=\frac{1}{s+(1-s)/p}.
     
       <script src="../../../../assets/javascripts/bundle.0df4f2d0.min.js"></script>
       
-        <script src="../../../../theme/js/theme-sync.js"></script>
-      
         <script src="../../../../theme/js/mathjax.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-mml-chtml.js"></script>
@@ -4004,17 +3904,9 @@ S(p)=\frac{1}{s+(1-s)/p}.
       
         <script src="../../../../theme/js/site.js"></script>
       
-        <script src="../../../../theme/js/site-home.js"></script>
+        <script src="../../../../theme/js/home.js"></script>
       
-        <script src="../../../../theme/js/site-terminal.js"></script>
-      
-        <script src="../../../../theme/js/site-images.js"></script>
-      
-        <script src="../../../../theme/js/site-pdf.js"></script>
-      
-        <script src="../../../../theme/js/site-friends.js"></script>
-      
-        <script src="../../../../theme/js/site-github.js"></script>
+        <script src="../../../../theme/js/pdf-viewer.js"></script>
       
     
   </body>
