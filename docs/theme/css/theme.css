@@ -170,9 +170,9 @@
 }
 .md-typeset .admonition.note,
 .md-typeset details.note {
-  --admonition-color: #f97316;
-  --admonition-accent: #facc15;
-  --admonition-spectrum: #22c55e;
+  --admonition-color: #2563eb;
+  --admonition-accent: #06b6d4;
+  --admonition-spectrum: #14b8a6;
 }
 .md-typeset .admonition.abstract,
 .md-typeset details.abstract {
@@ -195,8 +195,8 @@
 .md-typeset .admonition.success,
 .md-typeset details.success {
   --admonition-color: #16a34a;
-  --admonition-accent: #eab308;
-  --admonition-spectrum: #f97316;
+  --admonition-accent: #22c55e;
+  --admonition-spectrum: #4ade80;
 }
 .md-typeset .admonition.question,
 .md-typeset details.question {
@@ -213,14 +213,14 @@
 .md-typeset .admonition.failure,
 .md-typeset details.failure {
   --admonition-color: #dc2626;
-  --admonition-accent: #d946ef;
-  --admonition-spectrum: #7c3aed;
+  --admonition-accent: #ef4444;
+  --admonition-spectrum: #f87171;
 }
 .md-typeset .admonition.danger,
 .md-typeset details.danger {
   --admonition-color: #b91c1c;
   --admonition-accent: #f97316;
-  --admonition-spectrum: #dc2626;
+  --admonition-spectrum: #facc15;
 }
 .md-typeset .admonition.bug,
 .md-typeset details.bug {
