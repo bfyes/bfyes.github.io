@@ -112,6 +112,12 @@ body.bfyes-home-page .md-grid {
       <a class="home-friend" href="https://0-rangE.cn" data-id="gE0650" data-description="Orange">
         <strong>gE</strong>
       </a>
+      <a class="home-friend" href="https://dreamem0ra1n.github.io/ISYS/" data-id="dreamem0ra1n" data-description="ISYS">
+        <strong>dreamem0ra1n</strong>
+      </a>
+      <a class="home-friend" href="https://github.com/rickanderson219" data-id="rickanderson219">
+        <strong>Rick Anderson</strong>
+      </a>
       <a class="home-friend" href="https://evelina-is.github.io/Evelina_personal_web/" data-id="evelina-is">
         <strong>Evelina</strong>
       </a>
@@ -121,9 +127,7 @@ body.bfyes-home-page .md-grid {
       <a class="home-friend" href="https://hechenyu.xin" data-id="ChenyuHeee">
         <strong>chenyuheee</strong>
       </a>
-      <a class="home-friend" href="https://dreamem0ra1n.github.io/ISYS/" data-id="dreamem0ra1n" data-description="ISYS">
-        <strong>dreamem0ra1n</strong>
-      </a>
+
     </div>
 </section>
 

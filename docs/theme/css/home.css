@@ -467,7 +467,7 @@ body.rainbow-active .md-sidebar__inner {
 .home-friend {
   display: grid;
   grid-template-columns: 2.75rem minmax(0, 1fr);
-  gap: 0.2rem 0.55rem;
+  gap: 0.2rem 1rem;
   align-items: center;
   min-height: 5.2rem;
   padding: 0.65rem;
@@ -489,6 +489,7 @@ body.rainbow-active .md-sidebar__inner {
 
 .home-friend__avatar {
   grid-row: span 3;
+  margin-left: 0.2rem;
   position: relative;
   overflow: hidden;
   display: inline-flex;
@@ -520,6 +521,7 @@ body.rainbow-active .md-sidebar__inner {
 .home-friend strong {
   font-size: 0.75rem;
   line-height: 1.2;
+  margin-top: 0.15rem;
 }
 
 .home-friend__handle,
@@ -530,6 +532,10 @@ body.rainbow-active .md-sidebar__inner {
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.home-friend__meta {
+  margin-bottom: 0.15rem;
 }
 
 .home-section--activity .github-calendar-wrap {
