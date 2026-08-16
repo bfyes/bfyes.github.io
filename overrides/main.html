@@ -5,25 +5,17 @@
   <script>
     (function () {
       try {
-        var saved = (typeof __md_get === "function") ? __md_get("__palette") : null;
-        var scheme;
-        if (saved && saved.color && saved.color.media) {
-          if (saved.color.media === "(prefers-color-scheme)") {
-            scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "slate" : "default";
-          } else {
-            scheme = saved.color.scheme;
-          }
-        } else {
-          scheme = matchMedia("(prefers-color-scheme: dark)").matches ? "slate" : "default";
-        }
+        var dark = matchMedia("(prefers-color-scheme: dark)").matches;
+        var scheme = dark ? "slate" : "default";
         document.documentElement.setAttribute("data-md-color-scheme", scheme);
-        var hljsTheme = document.createElement("link");
-        hljsTheme.id = "hljs-theme";
-        hljsTheme.rel = "stylesheet";
-        hljsTheme.href = scheme === "slate"
+        var link = document.createElement("link");
+        link.id = "hljs-theme";
+        link.rel = "stylesheet";
+        link.href = dark
           ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
           : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
-        document.head.appendChild(hljsTheme);
+        document.head.appendChild(link);
+        // body 加载后同步 attribute（bundle 切换主题时写 body，这里保证 html 跟随）
         var attach = function () {
           document.body.setAttribute("data-md-color-scheme", scheme);
           new MutationObserver(function () {
@@ -34,16 +26,10 @@
             attributeFilter: ["data-md-color-scheme"],
           });
         };
-        if (document.body) {
-          attach();
-        } else {
-          new MutationObserver(function (_, obs) {
-            if (document.body) {
-              attach();
-              obs.disconnect();
-            }
-          }).observe(document.documentElement, { childList: true });
-        }
+        if (document.body) attach();
+        else new MutationObserver(function (_, obs) {
+          if (document.body) { attach(); obs.disconnect(); }
+        }).observe(document.documentElement, { childList: true });
       } catch (e) {}
     })();
   </script>

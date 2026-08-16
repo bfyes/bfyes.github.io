@@ -6,7 +6,7 @@
    目录
    01. GitHub 贡献图
        .ghc-* / .ContributionCalendar-* 静态贡献日历、
-       数据由 theme/js/site-github.js 从 theme/data/contributions.json 读取、
+       数据由 theme/js/home.js 从 theme/data/contributions.json 读取、
        亮/暗模式各 5 级颜色(data-level="0"~"4")、
        加载/错误/正常三态、概览面板、图例、无障碍(.sr-only)
    02. 彩虹背景
@@ -24,7 +24,7 @@
        .home-link-grid / .home-friend 友链卡片(auto-fit 网格 + 头像 + hover 上浮)
    04. 首页终端
        .home-terminal 终端窗口(三色圆点 + 等宽屏幕)、
-       .typed-text / .typed-cursor 打字机效果(由 site-terminal.js 驱动)、
+       .typed-text / .typed-cursor 打字机效果(由 home.js 驱动)、
        host/prompt/command/cursor 四色文字、亮/暗模式背景
    05. 响应式（主页移动端适配）与动画
        ≤44.984375em：友链单列、贡献图 footer 纵向、
@@ -40,7 +40,7 @@
    01. GitHub 贡献图
    ----------------------------------------------------------------------------
    .ghc-* / .ContributionCalendar-* 静态贡献日历组件。
-   数据由 theme/js/site-github.js 从 theme/data/contributions.json 读取并渲染。
+   数据由 theme/js/home.js 从 theme/data/contributions.json 读取并渲染。
    亮/暗模式各有 5 级颜色（data-level="0"~"4"），与 GitHub 官方配色一致。
    ============================================================================ */
 
@@ -546,7 +546,7 @@ body.rainbow-active .md-sidebar__inner {
    04. 首页终端
    ----------------------------------------------------------------------------
    .home-terminal-* / .typed-* 打字机组件。
-   终端窗口三色圆点 + 等宽字体屏幕，打字机效果由 theme/js/site-terminal.js 驱动。
+   终端窗口三色圆点 + 等宽字体屏幕，打字机效果由 theme/js/home.js 驱动。
    ============================================================================ */
 
 .home-terminal {

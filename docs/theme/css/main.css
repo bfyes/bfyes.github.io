@@ -216,7 +216,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   font-weight: 700;
   padding-bottom: 0.55em;
   margin-top: 0;
-  margin-bottom: calc(1.6rem + var(--h1-reserved-gap));
+  margin-bottom: calc(0.8rem + var(--h1-reserved-gap));
   border-bottom: 1px solid var(--borderColor-muted);
 }
 .md-typeset h2,

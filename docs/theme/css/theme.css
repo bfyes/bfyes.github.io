@@ -45,11 +45,11 @@
    ============================================================================ */
 
 .md-content__inner { counter-reset: section-counter; }
-.md-content__inner h2 {
+.md-content__inner h2:not(#__comments):not(.home-section__title):not(.ghc-title) {
   counter-increment: section-counter;
   counter-reset: subsection-counter;
 }
-.md-content__inner h2::before {
+.md-content__inner h2:not(#__comments):not(.home-section__title):not(.ghc-title)::before {
   content: counter(section-counter);
   color: var(--fgColor-default);
   font-weight: 700;
