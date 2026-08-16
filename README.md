@@ -1,4 +1,4 @@
-# <bfyes.github.io>
+# [bfyes.github.io](https://bfyes.github.io)
 
 bfyes 的个人文档站，使用 Zensical/MkDocs 构建，主题层基于 GitHub 风格深度定制。
 
