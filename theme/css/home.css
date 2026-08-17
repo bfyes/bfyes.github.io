@@ -242,10 +242,9 @@
    z 轴体系（从底到顶）：
      z-index: -1   彩虹色斑（.rainbow-page::before/after, .rainbow-backdrop）
      z-index: 0    网格（body::before），仅在非彩虹页显示
-     auto          sidebar / .md-content（正常文档流）
-     z-index: 1    .md-content（position: relative），正文区域
-     z-index: 90   .md-tabs
-     z-index: 100  .md-header
+     z-index: 1    .md-content / .md-footer（position: relative），遮盖网格
+     z-index: 2    .md-tabs（zensical 自带）
+     z-index: 4    .md-header（zensical 自带）
    ============================================================================ */
 
 .rainbow-page {
