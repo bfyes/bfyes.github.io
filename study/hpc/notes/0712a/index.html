@@ -3527,7 +3527,7 @@
 for (int i = 0; i &lt; n; ++i) sum += a[i];</code></pre>
 <p>若把循环直接分给多线程，<code>sum += a[i]</code> 不是原子操作，结果会不稳定。并行的正确性首先来自数据所有权和同步，不来自这次跑出来数值看起来对。</p>
 <details class="note" open="open">
-<summary>为什么 sum += a[i] 在多线程下会出错</summary>
+<summary>为什么 <code>sum += a[i]</code> 在多线程下会出错</summary>
 <p>单周期 CPU 课程里，一条指令从读到加号结果再到写回是完完整整一步，通常不会想到把它拆开。但 <code>sum += a[i]</code> 在真实硬件上其实是几步：先把 <code>sum</code> 的当前值读进寄存器，加 <code>a[i]</code>，再把结果写回内存。<strong>这几步不是原子地连在一起的</strong>。</p>
 <p>假设线程 A 和线程 B 同时执行。两个线程都可能先读到 <code>sum = 5</code>，各自在这个旧值上加 1，再各自把 6 写回去。结果本该是 7，最后却是 6——一次更新被覆盖掉了。这就是<strong>数据竞争（race condition）</strong>。它并非偶尔古怪，只要线程交错就可能发生，而且难以复现。</p>
 <p>所以并行程序需要<strong>同步</strong>：要么用锁/原子操作把读-改-写串行化或变成一步原子操作，要么让线程各自维护私有变量、最后再归约合并。无论哪种，原则都是：<strong>同一个共享变量，同一时刻只能有一个写者，或者让写互不覆盖</strong>。</p>

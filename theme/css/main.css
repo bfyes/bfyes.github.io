@@ -47,15 +47,13 @@
 
 /* 顶部导航标题：衬线字体 */
 .md-header__title {
-  font-family: "Noto Serif SC", serif;
+  font-family: var(--font-serif);
   font-weight: 700;
 }
 /* 正文：采用 github-markdown-css 风格的系统无衬线栈；H1 保留自定义衬线标题。 */
 body, .md-typeset, .md-typeset h2, .md-typeset h3, .md-typeset h4,
 .md-typeset h5, .md-typeset h6, .md-nav {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
-    "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
-    "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font-text);
 }
 /* 搜索面板（输入框 + 结果列表）渲染在 Shadow DOM 里，外部选择器进不去。
    其内部样式读 --md-text-font-family 变量，而 CSS 变量能穿透 shadow 边界。
@@ -63,34 +61,29 @@ body, .md-typeset, .md-typeset h2, .md-typeset h3, .md-typeset h4,
    使用 !important 确保覆盖 Material 主题的 body font-family 声明。
    同时将 font-smoothing / letter-spacing / font-feature-settings 对齐 GitHub 默认值。 */
 body {
-  --md-text-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Noto Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
-    "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Noto Sans", "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
-    "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  --md-text-font-family: var(--font-text) !important;
+  font-family: var(--font-text) !important;
   -webkit-font-smoothing: auto !important;
   -moz-osx-font-smoothing: auto !important;
   letter-spacing: normal !important;
   font-feature-settings: normal !important;
 }
 
-/* 暗色模式：全局背景统一为 #0d1117（GitHub 暗色基准） */
+/* 暗色模式：全局背景统一为暗色基准（GitHub #0d1117，见 variables.css --dark-bg） */
 [data-md-color-scheme="slate"] body {
-  background-color: #0d1117 !important;
+  background-color: var(--dark-bg) !important;
 }
 /* 暗色模式：sidebar / content / footer / nav-title 保持不透明暗色背景 */
 [data-md-color-scheme="slate"] .md-sidebar__inner,
 [data-md-color-scheme="slate"] .md-content,
 [data-md-color-scheme="slate"] .md-footer,
 [data-md-color-scheme="slate"] .md-nav__title {
-  background-color: #0d1117 !important;
+  background-color: var(--dark-bg) !important;
 }
 
 /* 等宽字体：代码 / 键盘 / 终端数字统一 */
 code, kbd, pre, .md-typeset code, .md-typeset pre {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-family: var(--font-mono);
 }
 
 /* ============================================================================
@@ -212,7 +205,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   letter-spacing: normal;
 }
 .md-typeset h1 {
-  font-family: "Noto Serif SC", serif;
+  font-family: var(--font-serif);
   font-weight: 700;
   padding-bottom: 0.55em;
   margin-top: 0;
