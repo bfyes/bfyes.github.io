@@ -1,6 +1,8 @@
 (function () {
   "use strict";
 
+  console.log("welcome to bfyes");
+
   // 核心：页面生命周期与共享工具。各功能模块通过 window.site.onPageReady 注册。
   window.site = window.site || {};
 
@@ -174,11 +176,13 @@
 
   function setGiscusTheme(mode) {
     var frame = document.querySelector(".giscus-frame");
-    if (!frame) return;
-    frame.contentWindow.postMessage(
-      { giscus: { setConfig: { theme: mode === "dark" ? "dark" : "light" } } },
-      "https://giscus.app"
-    );
+    if (!frame || !frame.contentWindow) return;
+    try {
+      frame.contentWindow.postMessage(
+        { giscus: { setConfig: { theme: mode === "dark" ? "dark" : "light" } } },
+        "https://giscus.app"
+      );
+    } catch (e) { /* iframe 未就绪或跨域受限（代理/超时），静默跳过 */ }
   }
 
   function initGiscus() {
