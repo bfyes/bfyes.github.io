@@ -184,19 +184,19 @@
   outline-offset: 1px;
 }
 
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: #eff2f5; border-color: #1f23280d; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: #aceebb; border-color: #1f23280d; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: #4ac26b; border-color: #1f23280d; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: #2da44e; border-color: #1f23280d; }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: #116329; border-color: #1f23280d; }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: #eff2f5; border-color: var(--cont-border); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: #aceebb; border-color: var(--cont-border); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: #4ac26b; border-color: var(--cont-border); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: #2da44e; border-color: var(--cont-border); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: #116329; border-color: var(--cont-border); }
 
 [data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="0"] {
-  background-color: #151b23; border-color: #0104090d;
+  background-color: #151b23; border-color: var(--cont-border);
 }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #033a16; border-color: #0104090d; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #196c2e; border-color: #0104090d; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #2ea043; border-color: #0104090d; }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #56d364; border-color: #0104090d; }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #033a16; border-color: var(--cont-border); }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #196c2e; border-color: var(--cont-border); }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #2ea043; border-color: var(--cont-border); }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #56d364; border-color: var(--cont-border); }
 
 .ghc-footer {
   display: flex;
@@ -602,8 +602,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 .home-terminal__title {
   margin-left: 0.35rem;
   color: var(--md-default-fg-color--light);
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-family: var(--font-mono);
   font-size: var(--font-code);
 }
 
@@ -611,8 +610,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   position: relative;
   min-height: 10rem;
   padding: 0.6rem 0.9rem 0.7rem;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-family: var(--font-mono);
   font-size: var(--font-code);
   line-height: 1.45;
 }
@@ -638,8 +636,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 }
 
 .typed-text {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-family: var(--font-mono);
 }
 
 .typed-text--host {
@@ -653,8 +650,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 .typed-cursor,
 .typed-text .typed-cursor,
 .typed-cursor-standalone {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", "Noto Sans Mono CJK SC", monospace;
+  font-family: var(--font-mono);
   font-size: inherit;
   color: var(--md-typeset-color);
 }
