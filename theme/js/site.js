@@ -211,6 +211,7 @@
       setTimeout(function () { setGiscusTheme(window.site.theme.mode); }, 800);  // 0.8s
       setTimeout(function () { setGiscusTheme(window.site.theme.mode); }, 1600); // 1.6s
       setTimeout(function () { setGiscusTheme(window.site.theme.mode); }, 4500); // 4.5s
+      setTimeout(function () { setGiscusTheme(window.site.theme.mode); }, 12000); // 12s
     });
   }
 
