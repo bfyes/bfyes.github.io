@@ -12,7 +12,11 @@ nav = [
     { "主页" = "/" },
     { "学习" = [
         "study/index.md",
-        { "信息安全原理与数学基础" = "study/ismath.md" },
+        { "信息安全原理与数学基础" = [
+            "study/ismath/index.md",
+            {"离散数学" = "study/ismath/discrete.md" },
+            {"Probability and Statistics" = "study/ismath/probability.md" },
+        ] },
         { "汇编语言设计与调试" = "study/asm.md" },
         { "计算机系统Ⅰ" = [
             "study/sys1/index.md",
@@ -228,3 +232,9 @@ custom_checkbox = true
 # --------------------------------------------------------------------------
 [project.plugins.glightbox]
 [project.plugins.tags]
+
+# --------------------------------------------------------------------------
+# Extra（MkDocs 的 extra 配置，zenpartials 用它控制 footer generator 等）
+# --------------------------------------------------------------------------
+[project.extra]
+generator = false
