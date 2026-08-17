@@ -18,7 +18,7 @@
    03. 站点框架
        Logo(.bf-logo)、页面信息(.page-updated-top/.page-info)、
        虚线网格背景(body::before SVG + mask 视差)、
-       正文区域(.md-content z-index:1 遮盖网格)、footer(z-index:1 同级)、
+       正文区域(.md-content z-index:1 遮盖网格)、
        导航栏毛玻璃(.md-header/.md-tabs)、导航选中态、
        右侧 TOC 阅读进度、页面宽度(.md-grid)、
        滚动条样式(sidebar + 代码块共用)
@@ -430,12 +430,6 @@ body.grid-off-active::before {
 .md-content {
   background-color: var(--md-default-bg-color);
   box-shadow: none;
-  position: relative;
-  z-index: 1;
-}
-
-/* ---- footer：与正文同级，遮盖网格 ---- */
-.md-footer {
   position: relative;
   z-index: 1;
 }

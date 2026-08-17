@@ -195,11 +195,36 @@
         container.innerHTML = "";
         container.appendChild(shell);
         container.setAttribute("data-ghc-state", "ready");
+        bindContributionTooltips(shell);
       })
       .catch(function (err) {
         container.innerHTML = '<div class="ghc-error">GitHub contribution graph failed to load: ' + (err.message || "read failed") + "</div>";
         container.setAttribute("data-ghc-state", "error");
       });
+  }
+
+  // 贡献图由 fetch 回调动态渲染，tooltip2 初始化扫描已结束，需手动绑定。
+  function bindContributionTooltips(root) {
+    root.querySelectorAll(".ContributionCalendar-day[title]").forEach(function (cell) {
+      var text = cell.title; cell.removeAttribute("title");
+      var tip = document.createElement("div");
+      tip.className = "md-tooltip2 md-tooltip2--top";
+      tip.setAttribute("role", "tooltip");
+      tip.innerHTML = '<div class="md-tooltip2__inner">' + text + "</div>";
+      tip.style.cssText = "pointer-events:none;opacity:0;position:absolute;z-index:0;transition:transform .25s,opacity .25s;width:max-content;max-width:300px;--md-tooltip-tail:0px";
+      document.body.appendChild(tip);
+      cell.addEventListener("mouseenter", function () {
+        var r = cell.getBoundingClientRect();
+        tip.style.left = r.left + r.width / 2 - tip.offsetWidth / 2 + window.scrollX + "px";
+        tip.style.top = r.top + window.scrollY - tip.offsetHeight - 6 + "px";
+        tip.style.opacity = "1"; tip.style.zIndex = "4";
+        tip.style.transition = "transform .4s cubic-bezier(0,1,.35,1),opacity .25s";
+      });
+      cell.addEventListener("mouseleave", function () {
+        tip.style.opacity = "0"; tip.style.zIndex = "0";
+        tip.style.transition = "transform .25s,opacity .25s";
+      });
+    });
   }
 
   // ---- terminal typewriter ----
