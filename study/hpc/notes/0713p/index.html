@@ -3468,6 +3468,7 @@
 
 
 
+
 <h1 id="07-13-下午cuda-编程基础">07-13 下午：CUDA 编程基础<a class="headerlink" href="#07-13-下午cuda-编程基础" title="Permanent link"></a></h1>
 <p>CUDA 把 CPU 称为 host，把 NVIDIA GPU 称为 device。host 负责组织数据和发射 kernel；device 上有大量线程执行同一段 kernel 代码。写 CUDA 的关键在于把问题拆成大量相似工作，让线程、数据和内存层级相匹配，而不是简单地把普通 C 循环搬到 GPU。</p>
 <h2 id="cuda-程序流程">CUDA 程序流程<a class="headerlink" href="#cuda-程序流程" title="Permanent link"></a></h2>

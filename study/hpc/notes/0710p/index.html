@@ -3714,6 +3714,7 @@
 
 
 
+
 <h1 id="07-10-下午向量化并行计算基础">07-10 下午：向量化并行计算基础<a class="headerlink" href="#07-10-下午向量化并行计算基础" title="Permanent link"></a></h1>
 <p>同一段数组计算可能停在 Python 解释器、标量指令、cache miss，或不规则的数据依赖上。SIMD 只处理其中许多相同、独立元素操作的一段；进入 intrinsic 之前，先让循环边界、别名关系和数据布局足够明确。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/vector-simd.png"><img width="2000" height="1125" alt="一条 SIMD 指令在多个 lane 上完成相同运算" src="../assets/0710p/vector-simd.preview.jpg" data-fullsrc="../assets/0710p/vector-simd.png" /></a></p>

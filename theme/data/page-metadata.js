@@ -159,7 +159,7 @@ window.__PAGE_META__ = {
     "updated": "2026-08-17T13:51:09.727430+08:00"
   },
   "/study/ismath/discrete/": {
-    "updated": "2026-08-17T13:52:29.894462+08:00"
+    "updated": "2026-08-17T16:11:09.115873+08:00"
   },
   "/study/ismath/probability/": {
     "updated": "2026-08-17T13:52:39.690824+08:00"
