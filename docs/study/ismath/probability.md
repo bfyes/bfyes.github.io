@@ -4,7 +4,7 @@
 
 ### 填空题
 
-!!! question "1. [推测] — 分布模型匹配"
+!!! question "1. \[推测\] — 分布模型匹配"
     Match the following scenarios to the corresponding discrete probability distribution models:
 
     (a) A factory produces parts, each with probability $p$ of being defective. Inspect **one** part to see if it is defective.
@@ -48,7 +48,7 @@
         | (e) | **Geometric**（几何分布） | 直到第一次成功（Pascal 的特例 $k=1$） |
         | (f) | **Discrete Uniform**（离散均匀分布） | 有限个等可能结果 |
 
-!!! question "2. [23-24 真题]"
+!!! question "2. \[23-24 真题\]"
     The probability of fog in a city on any given day is $0.4$. On foggy days, the probability that a resident wears a mask is $0.2$; on non-foggy days, the probability is $0.01$.
 
     (1) Find the probability that a randomly selected resident wears a mask on a randomly chosen day;
@@ -82,7 +82,7 @@
         - $B_1$ = 有雾，$B_2$ = 无雾
         - 先算 $P(\text{戴口罩})$，再算 $P(\text{至少一人戴})=1-(1-p)^3$
 
-!!! question "3. [24-25 真题]"
+!!! question "3. \[24-25 真题\]"
     The probability of haze in a city is $0.2$. On hazy days, the probability that a resident wears a mask is $0.3$; on non-hazy days, the probability is $0.05$.
 
     (1) Find the probability that a randomly selected resident wears a mask;
@@ -115,7 +115,7 @@
 
 ### 计算题
 
-!!! question "1. [23-24 真题] — 中心极限定理"
+!!! question "1. \[23-24 真题\] — 中心极限定理"
     A random binary string of length $1\,000\,000$ is generated, with each bit independently and equally likely to be $0$ or $1$. Use the Central Limit Theorem to estimate the probability that the string contains at least $502\,000$ ones.
 
     ??? info "点击查看参考翻译"
@@ -143,7 +143,7 @@
 
         本题与 **LLN**（大数定律）的区别：LLN 说样本均值趋近期望，不给具体概率；CLT 给出近似分布，能算具体概率。
 
-!!! question "2. [24-25 真题] — 泊松分布"
+!!! question "2. \[24-25 真题\] — 泊松分布"
     Customer arrivals at a store follow a Poisson distribution, with an average of $10$ customers arriving in $20$ minutes.
 
     (1) Find the probability that at least $1$ customer arrives in $20$ minutes;
@@ -177,7 +177,7 @@
 
         - **恰好 k 个**直接代入公式
 
-!!! question "3. [23-24 真题] — 切比雪夫 + CLT"
+!!! question "3. \[23-24 真题\] — 切比雪夫 + CLT"
     Let $W = \dfrac{X_1+X_2+X_3+X_4}{4}$, where $E(X_i)=5$, $\text{Var}(X_i)=20$, and $X_1,X_2,X_3,X_4$ are mutually independent.
 
     (1) Find the mean and variance of $W$;
@@ -222,7 +222,7 @@
 
         本题中 $W=\frac{X_1+X_2+X_3+X_4}{4}$，$E(W)=5$，$\mathrm{Var}(W)=5$。切比雪夫给出上界约 0.0222，CLT 给出近似值约 0（$Z=6.708$ 远在 3$\sigma$ 之外）。
 
-!!! question "4. [23-24 真题] — 联合分布 / 协方差 / 相关系数"
+!!! question "4. \[23-24 真题\] — 联合分布 / 协方差 / 相关系数"
     The joint frequency distribution of a two-dimensional discrete random variable $(X,Y)$ is given below:
 
     | $Y\backslash X$ | $0$ | $1$ | $2$ |
@@ -293,7 +293,7 @@
            - $\mathrm{Cov}(X,Y)=E(XY)-E(X)E(Y)$
            - $\rho_{XY}=\dfrac{\mathrm{Cov}(X,Y)}{\sqrt{\mathrm{Var}(X)\mathrm{Var}(Y)}}$
 
-!!! question "5. [24-25 真题] — 联合分布 / 协方差 / 相关系数"
+!!! question "5. \[24-25 真题\] — 联合分布 / 协方差 / 相关系数"
     For a total of $1200$ samples, the joint frequencies of hair color ($0$ = white / $1$ = grey / $2$ = dark) and length ($0$ = short / $1$ = long) are as follows:
 
     |  | white($0$) | grey($1$) | dark($2$) |
@@ -345,7 +345,7 @@
         $\text{Var}(Y)=0.6-0.6^2=0.24$。
         $\rho_{XY}=0.055/\sqrt{0.4944\times0.24}\approx 0.1597$。
 
-!!! question "6. [23-24 真题] — 连续型随机变量 PDF/CDF"
+!!! question "6. \[23-24 真题\] — 连续型随机变量 PDF/CDF"
     Let the probability density function of a random variable $X$ be
 
     $$f_X(x)=\begin{cases}k(1-x),&0<x<1\\[4pt]\dfrac{1}{2}x,&1\le x\le 2\\[4pt]0,&\text{otherwise}\end{cases}$$
@@ -387,7 +387,7 @@
 
         本题 PDF 分段：$0<x<1$ 时 $f(x)=k(1-x)$，$1\le x\le2$ 时 $f(x)=\frac12 x$，注意分段积分时 CDF 每段要加上前一段的累积值。
 
-!!! question "7. [24-25 真题] — 连续型随机变量 PDF/CDF"
+!!! question "7. \[24-25 真题\] — 连续型随机变量 PDF/CDF"
     Let the probability density function of a random variable $X$ be
 
     $$f_X(x)=\begin{cases}c(4-x^2),&0<x<2\\[4pt]0,&\text{otherwise}\end{cases}$$
@@ -420,7 +420,7 @@
 
         $$P[-1<X<1.5] = F_X(1.5) - F_X(0) = \dfrac{3}{16}\Bigl(4\cdot1.5-\dfrac{3.375}{3}\Bigr) = \dfrac{3}{16}(6-1.125) \approx 0.9141$$
 
-!!! question "8. [23-24/24-25 真题] — 联合 PDF / 边缘 / 条件"
+!!! question "8. \[23-24/24-25 真题\] — 联合 PDF / 边缘 / 条件"
     Let the joint probability density function of $(X,Y)$ be
 
     $$f_{X,Y}(x,y)=\begin{cases}\dfrac{5}{4}x,&y^2<x<1\\[4pt]0,&\text{otherwise}\end{cases}$$
