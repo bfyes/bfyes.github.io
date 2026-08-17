@@ -138,6 +138,7 @@
     var scope = root || document;
     document.body.classList.toggle("home-active", !!scope.querySelector(".home-page"));
     document.body.classList.toggle("rainbow-active", !!scope.querySelector(".rainbow-page"));
+    document.body.classList.toggle("grid-off-active", !!scope.querySelector(".grid-off"));
   }
 
   function initParallaxGrid() {

@@ -7,6 +7,9 @@
 {% if page.meta.rainbow %}
   {% set page_class = (page_class ~ " rainbow-page") | trim %}
 {% endif %}
+{% if "grid" in (page.meta.hide | default([])) %}
+  {% set page_class = (page_class ~ " grid-off") | trim %}
+{% endif %}
 {% if page_class %}
   <div class="{{ page_class }}">
     {% if page.meta.rainbow %}

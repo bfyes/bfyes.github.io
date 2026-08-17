@@ -446,6 +446,12 @@ body.rainbow-active::before {
   content: none;
 }
 
+/* 单页关闭网格：front matter 里 hide: [grid] → content.html 输出 .grid-off
+   → site.js 给 body 加 grid-off-active → 隐藏虚线网格背景（保留普通背景）。 */
+body.grid-off-active::before {
+  content: none;
+}
+
 /* ---- 正文区域 ---- */
 .md-content {
   background-color: var(--md-default-bg-color);
