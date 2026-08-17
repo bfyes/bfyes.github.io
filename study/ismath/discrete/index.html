@@ -3760,11 +3760,13 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
 <p><span class="arithmatex">\(n=0\)</span>：<span class="arithmatex">\(4^1+3^2=4+9=13\)</span>，成立。</p>
 <p>设 <span class="arithmatex">\(n=k\)</span> 成立：<span class="arithmatex">\(4^{2k+1}+3^{k+2}=13m\)</span>。</p>
 <p><span class="arithmatex">\(n=k+1\)</span>：</p>
-<div class="arithmatex">\[\begin{align*}
+<div class="arithmatex">\[
+\begin{align*}
 4^{2k+3}+3^{k+3} &amp;= 16\cdot4^{2k+1}+3\cdot3^{k+2} \\
 &amp;= 13\cdot4^{2k+1}+3(4^{2k+1}+3^{k+2}) \\
 &amp;= 13(4^{2k+1}+3m)
-\end{align*}\]</div>
+\end{align*}
+\]</div>
 <p>能被 13 整除。得证。</p>
 </details>
 </div>
@@ -4008,20 +4010,24 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
 <p><strong>归纳假设</strong>：设 <span class="arithmatex">\(n=k\)</span> 时成立，即</p>
 <div class="arithmatex">\[\left(1+\frac{1}{3}\right)\cdots\left(1+\frac{1}{2k-1}\right)\ge\frac{\sqrt{2k+1}}{2}\]</div>
 <p><strong>归纳递推</strong> <span class="arithmatex">\(n=k+1\)</span>：</p>
-<div class="arithmatex">\[\begin{align*}
+<div class="arithmatex">\[
+\begin{align*}
 \text{左边} &amp;= \left[\left(1+\frac{1}{3}\right)\cdots\left(1+\frac{1}{2k-1}\right)\right]\cdot\left(1+\frac{1}{2k+1}\right) \\
 &amp;\ge \frac{\sqrt{2k+1}}{2}\cdot\frac{2k+2}{2k+1} \qquad\text{（归纳假设）}\\
 &amp;= \frac{\sqrt{2k+1}}{2}\cdot\frac{2(k+1)}{2k+1} \\
 &amp;= \frac{k+1}{2k+1}\sqrt{2k+1}
-\end{align*}\]</div>
+\end{align*}
+\]</div>
 <p>只需证 <span class="arithmatex">\(\displaystyle\frac{k+1}{2k+1}\sqrt{2k+1}\ge\frac{\sqrt{2k+3}}{2}\)</span>，两边平方等价于：</p>
-<div class="arithmatex">\[\begin{align*}
+<div class="arithmatex">\[
+\begin{align*}
 \frac{(k+1)^2}{(2k+1)^2}\cdot(2k+1) &amp;\ge \frac{2k+3}{4} \\
 \frac{(k+1)^2}{2k+1} &amp;\ge \frac{2k+3}{4} \\
 4(k^2+2k+1) &amp;\ge (2k+1)(2k+3) \\
 4k^2+8k+4 &amp;\ge 4k^2+8k+3 \\
 4 &amp;\ge 3
-\end{align*}\]</div>
+\end{align*}
+\]</div>
 <p>故 <span class="arithmatex">\(n=k+1\)</span> 时也成立。由数学归纳法，原不等式对任意 <span class="arithmatex">\(n&gt;1\)</span> 成立。</p>
 </details>
 </div>
@@ -4030,7 +4036,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
 <!-- 
 #### 单选题
 
-!!! question "1. [模拟]"
+!!! question "1. \[模拟\]"
     设论域为全体人类，$L(x,y)$ 表示“$x$ 喜欢 $y$”，准确表达“每个人都被且仅被一个人喜欢”的是（）
 
     (A) $\forall x \exists y\ L(y,x)$
@@ -4044,7 +4050,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
     ??? info "点击查看答案"
         **D**。$\forall x\exists y(L(y,x)\land\forall z(L(z,x)\to z=y))$ 表示对每个 $x$ 存在唯一的 $y$ 喜欢 $x$。
 
-!!! question "2. [模拟]"
+!!! question "2. \[模拟\]"
     设集合 $S$ 中有 $n$ 个元素，满足 $A\subseteq B\subseteq S$ 的集合对 $(A,B)$ 共有（）对。
 
     (A) $2^n$
@@ -4058,7 +4064,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
     ??? info "点击查看答案"
         **B（$3^n$）**。每个元素有三种归属：不在 $A$ 中、在 $A$ 中但不在 $B\setminus A$ 中、在 $B$ 中。独立选择，共 $3^n$。
 
-!!! question "3. [模拟]"
+!!! question "3. \[模拟\]"
     设函数 $f:\mathbb{R}\rightarrow\mathbb{R}$ 定义为 $f(x)=\lfloor x \rfloor$（向下取整函数），对于集合 $S=\{0\}$，其原像 $f^{-1}(S)$ 为（）
 
     (A) $\{0\}$
@@ -4072,7 +4078,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
     ??? info "点击查看答案"
         **B（$[0,1)$）**。$f^{-1}(\{0\}) = \{x\mid \lfloor x\rfloor=0\} = [0,1)$。
 
-!!! question "4. [模拟]"
+!!! question "4. \[模拟\]"
     设 $(G,*)$ 是群，单位元为 $e$，如果对于 $G$ 中的任意元素 $a$ 都有 $a*a=e$，则群 $G$ 必定是（）
 
     (A) 循环群
@@ -4095,7 +4101,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
             | 交换群 | $\forall a,b,\ ab=ba$ | 是 |
             | 非交换群 | 存在 $ab\neq ba$ | 否 |
 
-!!! question "5. [模拟]"
+!!! question "5. \[模拟\]"
     设 $R$ 是非空集合 $A$ 上的二元关系，如果 $R$ 满足对称性和传递性，则下列结论必定正确的是（）
 
     (A) 若对于 $\forall x\in A$，都 $\exists y\in A$ 使得 $xRy$，则 $R$ 是等价关系
@@ -4109,7 +4115,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
     ??? info "点击查看答案"
         **A**。对称+传递，且每个 $x$ 都有某个 $y$ 满足 $xRy$，则 $xRx$（由 $xRy,yRx$ 及传递得），加上自反性即等价关系。
 
-!!! question "6. [模拟]"
+!!! question "6. \[模拟\]"
     下列谓词逻辑等价式中，不正确的是（）
 
     (A) $\neg(\exists x)A(x) \iff (\forall x)\neg A(x)$
@@ -4137,7 +4143,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
 
 #### 不定项选择题
 
-!!! question "1. [模拟]"
+!!! question "1. \[模拟\]"
     关于集合的幂集 $\mathcal{P}(A)$，下列说法中正确的有（）
 
     (A) 对于任何集合 $A$，$\emptyset\in\mathcal{P}(A)$ 恒成立
@@ -4151,7 +4157,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
     ??? info "点击查看答案"
         **ACD**。(A) ✓；(B) 不成立，如 $A=\{1\},B=\{2\}$；(C) 幂集单调保包含 ✓；(D) 有限集幂集基数 ✓。
 
-!!! question "2. [模拟]"
+!!! question "2. \[模拟\]"
     设映射 $f:X\rightarrow Y$ 且 $A,B\subseteq X,\ C,D\subseteq Y$，下列关系中恒成立的有（）
 
     (A) $f(A\cup B) = f(A)\cup f(B)$
@@ -4165,7 +4171,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
     ??? info "点击查看答案"
         **AD**。(A) 像保并 ✓；(B) 像不保交（除非单射）；(C) 像不保差；(D) 原像保并 ✓。
 
-!!! question "3. [模拟]"
+!!! question "3. \[模拟\]"
     设 $R$ 是集合 $A$ 上的二元关系，下列命题正确的有（）
 
     (A) $R$ 是自反的 $\iff I_A\subseteq R$（$I_A$ 是 $A$ 上恒等关系）
@@ -4179,7 +4185,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
     ??? info "点击查看答案"
         **ABD**。(A) ✓；(B) ✓；(C) ✗，反对称的正确等价条件是 $R\cap R^{-1}\subseteq I_A$，而非 $\subseteq\emptyset$。$R\cap R^{-1}\subseteq\emptyset$ 意味着 $R\cap R^{-1}=\emptyset$，即不存在任何 $a,b$ 同时满足 $aRb$ 和 $bRa$，这比反对称更强（反对称允许 $a=b$ 时 $(a,a)$ 同时属于两边）；(D) ✓。
 
-!!! question "4. [模拟]"
+!!! question "4. \[模拟\]"
     下列逻辑关系式中正确的有（）
 
     (A) $P\rightarrow(Q\rightarrow R) \iff (P\land Q)\rightarrow R$
@@ -4193,7 +4199,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
     ??? info "点击查看答案"
         **AC**。(A) $P\to(Q\to R)\iff\neg P\lor(\neg Q\lor R)\iff\neg(P\land Q)\lor R\iff(P\land Q)\to R$ ✓；(C) ✓；(B)(D) 不成立。
 
-!!! question "5. [模拟]"
+!!! question "5. \[模拟\]"
     关于图的说法正确的有（）
 
     (A) 两个同构的简单无向图的顶点数和边数一定分别相等
@@ -4207,7 +4213,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
     ??? info "点击查看答案"
         **ABC**。(A)(B)(C) 正确；(D) 度序列相同不一定同构，需要图结构也一致。
 
-!!! question "6. [模拟]"
+!!! question "6. \[模拟\]"
     关于哈密顿图，下列说法正确的有（）
 
     (A) 所有的完全图 $K_n(n\ge3)$ 一定是哈密顿图
@@ -4237,7 +4243,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
 
 #### 计算题
 
-!!! question "1. [模拟]"
+!!! question "1. \[模拟\]"
     设集合 $A=\{1,2,3,4,5,6,7,8,9,10,11,12\}$，在 $A$ 上有关系 $R_1=\{(a,b)\mid a^2\equiv b^2 \pmod{5}\}$，请回答以下问题：
     (1) 请求出关系 $R_1$ 对应的划分 $\Pi_1$；
     (2) 若在 $A$ 上另有关系 $R_2=\{(a,b)\mid a\equiv b \pmod{4}\}$，请求出关系 $R_2$ 对应的划分 $\Pi_2$；
@@ -4267,7 +4273,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
 
         共 10 个非空块（$3\times4=12$ 格中有 2 个为空：余4类 ∩ 模4余1 = $\emptyset$，余0类 ∩ 模4余3 = 余0类 ∩ 模4余0 = $\emptyset$）。
 
-!!! question "2. [模拟]"
+!!! question "2. \[模拟\]"
     设集合 $A=\{2,3,4,6,8,9,12,18,24,36\}$，关系 $R$ 为 $A$ 上的整除关系，请回答下面问题：
     (1) 画出关于 $A$ 和 $R$ 的哈斯图；
     (2) 写出 $A$ 中的最大元、最小元、极大元、极小元。
@@ -4297,7 +4303,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
 
 #### 证明题
 
-!!! question "1. [模拟]"
+!!! question "1. \[模拟\]"
     设 $A,B,C$ 均为集合，请证明下列等式恒成立：
 
     $$(A\cup B)\cap (B\cup C)\cap (C\cup A) = (A\cap B)\cup (B\cap C)\cup (C\cap A)$$
@@ -4313,7 +4319,7 @@ P\to(Q\to R) &amp;\iff \neg P\lor(\neg Q\lor R) \\
         \end{aligned}
         $$
 
-!!! question "2. [模拟]"
+!!! question "2. \[模拟\]"
     证明：任意正整数 $n\in \mathbb{N}^*$，$n^5-n$ 都能被 $5$ 整除。
 
     ??? info "点击查看答案"
