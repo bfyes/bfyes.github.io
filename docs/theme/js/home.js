@@ -203,27 +203,39 @@
       });
   }
 
-  // 贡献图由 fetch 回调动态渲染，tooltip2 初始化扫描已结束，需手动绑定。
+  // 贡献图由 fetch 回调动态渲染，content.tooltips 的初始化扫描已结束，
+  // 这里手动按同一套机制（Material tooltip2）为每个格子补绑 tooltip：
+  //   - DOM 与 .md-tooltip2[role=tooltip] 完全一致，复用主题已加载的 CSS；
+  //   - 激活时写入 --md-tooltip-host-x/y（格子页面坐标）与 --md-tooltip-x/y
+  //     （role=tooltip 偏移：水平居中、下方 8px，对应 Material 的“恒下方”），
+  //     再切 --active 触发出场动画（上滑 + 淡入）；
+  //   - 水平 clamp（规避视口裁切）与出入场过渡全部交给 CSS，不再手写定位。
   function bindContributionTooltips(root) {
     root.querySelectorAll(".ContributionCalendar-day[title]").forEach(function (cell) {
-      var text = cell.title; cell.removeAttribute("title");
-      var tip = document.createElement("div");
-      tip.className = "md-tooltip2 md-tooltip2--top";
-      tip.setAttribute("role", "tooltip");
-      tip.innerHTML = '<div class="md-tooltip2__inner">' + text + "</div>";
-      tip.style.cssText = "pointer-events:none;opacity:0;position:absolute;z-index:0;transition:transform .25s,opacity .25s;width:max-content;max-width:300px;--md-tooltip-tail:0px";
+      var text = cell.title;
+      cell.removeAttribute("title");
+      var inner = htmlEl("div", { class: "md-tooltip2__inner md-typeset" }, text);
+      var tip = htmlEl("div", { class: "md-tooltip2", role: "tooltip" });
+      tip.appendChild(inner);
+      tip.style.setProperty("--md-tooltip-tail", "0px");
       document.body.appendChild(tip);
-      cell.addEventListener("mouseenter", function () {
+
+      function show() {
         var r = cell.getBoundingClientRect();
-        tip.style.left = r.left + r.width / 2 - tip.offsetWidth / 2 + window.scrollX + "px";
-        tip.style.top = r.top + window.scrollY - tip.offsetHeight - 6 + "px";
-        tip.style.opacity = "1"; tip.style.zIndex = "4";
-        tip.style.transition = "transform .4s cubic-bezier(0,1,.35,1),opacity .25s";
-      });
-      cell.addEventListener("mouseleave", function () {
-        tip.style.opacity = "0"; tip.style.zIndex = "0";
-        tip.style.transition = "transform .25s,opacity .25s";
-      });
+        tip.style.setProperty("--md-tooltip-host-x", (r.left + window.scrollX) + "px");
+        tip.style.setProperty("--md-tooltip-host-y", (r.top + window.scrollY) + "px");
+        tip.style.setProperty("--md-tooltip-x", (r.width / 2) + "px");
+        tip.style.setProperty("--md-tooltip-y", -(8 + inner.offsetHeight) + "px");
+        tip.style.setProperty("--md-tooltip-width", inner.offsetWidth + "px");
+        tip.classList.add("md-tooltip2--top");
+        tip.classList.add("md-tooltip2--active");
+      }
+      function hide() { tip.classList.remove("md-tooltip2--active"); }
+
+      cell.addEventListener("mouseenter", show);
+      cell.addEventListener("mouseleave", hide);
+      cell.addEventListener("touchstart", show, { passive: true });
+      cell.addEventListener("touchend", hide, { passive: true });
     });
   }
 
