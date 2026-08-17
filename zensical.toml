@@ -3,7 +3,7 @@ site_name = "bfyes 的文档站"
 site_url = "https://bfyes.github.io"
 repo_url = "https://github.com/bfyes/bfyes.github.io"
 repo_name = "bfyes.github.io"
-edit_uri = "blob/main/docs/"
+edit_uri = "edit/main/docs/"
 site_description = "bfyes 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。"
 site_author = "BillFeng"
 copyright = ""
@@ -137,12 +137,13 @@ extra_javascript = [
 custom_dir = "overrides"
 logo = ""
 favicon = "theme/assets/favicon.svg"
-icon = { edit = "material/file-code-outline" }
 features = [
     "content.action.edit",
+    "content.action.view",
     "content.code.annotate",
     "content.code.copy",
     "content.code.select",
+    "content.tooltips",
     "navigation.footer",
     "navigation.indexes",
     "navigation.instant",

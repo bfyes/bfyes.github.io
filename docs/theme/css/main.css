@@ -18,8 +18,9 @@
        引用 → 分隔线 → 强调/删除线/上下标 → 键盘按键 → 链接
    05. 代码块与代码相关 UI
        代码块(GitHub 风格 13.6px) → 行内代码(胶囊) → 复制提示 →
-       标题内行内代码 → 统一块级底边距(p/列表/表格/引用/pre/details) →
-       blockquote 首尾子元素 margin 归零 → hljs 兼容 → 脚注
+       标题内行内代码 → hljs 兼容 → 脚注
+   06. 行间距
+       GitHub 式统一块级元素底边距（p/列表/表格/引用/pre/details）
 
    可调参数见 variables.css（加载于本文件之前）。
    通用组件覆盖见 theme.css，主页定制见 home.css（均加载于其后）。
@@ -93,16 +94,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
    GitHub markdown 兼容变量作用域到 .md-typeset。
    变量含义与 github-markdown-css 一致；通过 [data-md-color-scheme] 切换明暗。
    ============================================================================ */
-[data-md-color-scheme="default"] {
-  --md-accent-fg-color: #0969da;
-  --md-typeset-a-color: #0969da;
-}
-
-[data-md-color-scheme="slate"] {
-  --md-accent-fg-color: #4493f8;
-  --md-typeset-a-color: #4493f8;
-}
-
 [data-md-color-scheme="default"] .md-typeset,
 [data-markdown-body] .markdown-body,
 .markdown-body[data-theme="light"] {
@@ -303,9 +294,9 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   background-color: var(--bgColor-muted);
 }
 
-/* 引用 */
+/* 引用（top/bottom 边距由 section 06 统一管理） */
 .md-typeset blockquote {
-  margin: 0;
+  margin-inline: 0;
   padding: 0 1em;
   color: var(--fgColor-muted);
   border-left: 0.25em solid var(--borderColor-default);
@@ -355,7 +346,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   vertical-align: middle;
   background-color: var(--bgColor-muted);
   border: solid 1px var(--borderColor-neutral-muted);
-  border-bottom-color: var(--borderColor-neutral-muted);
   border-radius: var(--radius-md);
   box-shadow: inset 0 -1px 0 var(--borderColor-neutral-muted);
 }
@@ -380,8 +370,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 
 /* ---- 代码块（GitHub 风格 + 站点行号特性） ---- */
 .md-typeset pre {
-  margin-top: 0;
-  margin-bottom: var(--base-size-16, 1rem);
   padding: 0;
   overflow: visible;
   font-size: var(--font-code);
@@ -422,10 +410,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   color: var(--fgColor-default);
   font-weight: 500;
 }
-[data-md-color-scheme="slate"] .md-typeset code:not(pre code) {
-  background-color: var(--bgColor-neutral-muted);
-  color: var(--fgColor-default);
-}
 
 /* 复制成功提示：去掉 Material 默认的彩色胶囊背景，只保留文字。 */
 [data-md-color-scheme] .md-dialog {
@@ -446,30 +430,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 .md-typeset h6 code {
   padding: 0 0.2em;
   font-size: inherit;
-}
-
-/* ---- 行间距：GitHub 式统一块级元素底边距 ----
-   放在各具体规则之后，覆盖上层块（p/列表/表格/引用/代码块等）底部为 1rem；
-   嵌套列表（ul ul 等）因 specificity 更高仍保持 0，符合 GitHub 行为。
-   tabbed-set/admonition 边距见 theme.css（组件归一管理）。 */
-.md-typeset p,
-.md-typeset blockquote,
-.md-typeset ul,
-.md-typeset ol,
-.md-typeset dl,
-.md-typeset table:not(.ContributionCalendar-grid),
-.md-typeset pre,
-.md-typeset details {
-  margin-top: 0;
-  margin-bottom: var(--base-size-16, 1rem);
-  letter-spacing: normal;
-}
-
-.md-typeset blockquote > :first-child {
-  margin-top: 0;
-}
-.md-typeset blockquote > :last-child {
-  margin-bottom: 0;
 }
 
 /* ---- highlight.js 与 Material 布局兼容 ----
@@ -496,4 +456,20 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 .md-typeset .footnotes ol {
   padding-left: var(--base-size-16, 1rem);
+}
+
+/* ---- 行间距：统一块级元素 top/bottom 边距 ----
+   嵌套列表（ul ul 等） specificity 更高，保持 0 不受影响。
+   tabbed-set/admonition 边距见 theme.css。 */
+.md-typeset p,
+.md-typeset blockquote,
+.md-typeset ul,
+.md-typeset ol,
+.md-typeset dl,
+.md-typeset table:not(.ContributionCalendar-grid),
+.md-typeset pre,
+.md-typeset details {
+  margin-top: 0;
+  margin-bottom: var(--base-size-16, 1rem);
+  letter-spacing: normal;
 }
