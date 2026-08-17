@@ -365,7 +365,7 @@ body.rainbow-active .md-sidebar__inner {
 /* 主页去掉内容区内边距、隐藏侧边栏、透明背景 */
 body.home-active .md-content__inner { padding-inline: 0; }
 body.home-active .md-content,
-body.home-active .md-typeset { background-color: transparent !important; }
+body.home-active .md-content > .md-typeset { background-color: transparent !important; }
 body.home-active::before { content: none; }
 
 /* 主页隐藏自动生成的页面标题 */
