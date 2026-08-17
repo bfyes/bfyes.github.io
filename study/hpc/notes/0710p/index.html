@@ -4245,70 +4245,10 @@ print(f"NumPy : {t3 - t2:.3f}s")</code></pre>
   })();
 </script>
 
-  <!-- Giscus 评论区 -->
+  <!-- Giscus 评论区（加载与主题同步逻辑见 site.js 的 giscus 模块）
+     本文件只负责在需要评论的页面放置容器并声明 giscus 配置。 -->
 
 <div class="giscus"></div>
-
-<script>
-  (function () {
-    var GISCUS_ATTRS = {
-      "data-repo": "bfyes/bfyes.github.io",
-      "data-repo-id": "R_kgDOQ6xWqA",
-      "data-category": "Announcements",
-      "data-category-id": "DIC_kwDOQ6xWqM4DA0Jv",
-      "data-mapping": "pathname",
-      "data-strict": "1",
-      "data-reactions-enabled": "1",
-      "data-emit-metadata": "0",
-      "data-input-position": "bottom",
-      "data-lang": "zh-CN",
-      "crossorigin": "anonymous"
-    };
-
-    function loadGiscus() {
-      var container = document.querySelector(".giscus");
-      if (!container) return;
-      if (container.querySelector("iframe.giscus-frame")) return;
-
-      var scheme = document.documentElement.getAttribute("data-md-color-scheme");
-      var theme = scheme === "slate" ? "dark" : "light";
-
-      container.innerHTML = "";
-      var script = document.createElement("script");
-      script.src = "https://giscus.app/client.js";
-      script.async = true;
-      for (var key in GISCUS_ATTRS) {
-        script.setAttribute(key, GISCUS_ATTRS[key]);
-      }
-      script.setAttribute("data-theme", theme);
-      container.appendChild(script);
-    }
-
-    function setGiscusTheme(mode) {
-      var frame = document.querySelector(".giscus-frame");
-      if (frame) frame.contentWindow.postMessage(
-        { giscus: { setConfig: { theme: mode === "dark" ? "dark" : "light" } } }, "https://giscus.app"
-      );
-    }
-
-    function trySubscribe() {
-      if (window.site && window.site.theme) {
-        window.site.theme.subscribe(setGiscusTheme);
-        return true;
-      }
-      return false;
-    }
-
-    loadGiscus();
-    if (!trySubscribe()) document.addEventListener("DOMContentLoaded", trySubscribe);
-
-    if (window.document$) {
-      window.document$.subscribe(function () {
-        setTimeout(loadGiscus, 0);
-      });
-    }
-  })();
-</script>
 
 
               </article>
