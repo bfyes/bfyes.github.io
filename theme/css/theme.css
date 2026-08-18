@@ -159,7 +159,7 @@
   --admonition-accent: #06b6d4;
   --admonition-spectrum: #22c55e;
   background-color: transparent !important;
-  border: 0.075rem solid var(--borderColor-muted);
+  border: 0.075rem solid var(--admonition-color);
   border: 0.075rem solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
   border-radius: var(--radius-admonition);
   box-shadow: var(--shadow-sm);
@@ -178,6 +178,12 @@
   --admonition-color: #7c3aed;
   --admonition-accent: #2563eb;
   --admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition.info,
+.md-typeset details.info {
+  --admonition-color: #2563eb;
+  --admonition-accent: #8bd5e5;
+  --admonition-spectrum: #dad883;
 }
 .md-typeset .admonition.tip,
 .md-typeset details.tip {
@@ -224,8 +230,8 @@
 .md-typeset .admonition.example,
 .md-typeset details.example {
   --admonition-color: #06b6d4;
-  --admonition-accent: #2563eb;
-  --admonition-spectrum: #7c3aed;
+  --admonition-accent: #06d4d0;
+  --admonition-spectrum: #06d458;
 }
 .md-typeset .admonition.quote,
 .md-typeset details.quote {
@@ -238,7 +244,7 @@
   margin: 0 -0.8rem 0.55rem;
   padding-top: 0.55rem;
   padding-bottom: 0.55rem;
-  background: rgba(127, 127, 127, 0.07);
+  background: var(--admonition-color);
   background:
     linear-gradient(
       105deg,
@@ -841,6 +847,7 @@ body.grid-off-active::before {
    ============================================================================ */
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes toc-fade { from { opacity: 0.4; color: var(--md-default-fg-color--light); } 40% { opacity: 0.5; color: var(--md-default-fg-color--light); } 66% { opacity: 0.6; color: color-mix(in srgb, var(--md-accent-fg-color) 40%, var(--md-default-fg-color)); } to { opacity: 1; } }
+/* 如果想要未动画和未浏览一样颜色，则透明度要设置为 0.86*/
 .md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1s ease both; }
 /* 右侧 TOC 逐条淡入：只动 opacity，不动 transform/几何，避免干扰 Material
    的 toc.follow 滚动运算（transform 会改变 offsetTop/getBoundingClientRect）。
