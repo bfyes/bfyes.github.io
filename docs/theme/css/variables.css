@@ -136,7 +136,7 @@
   --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
 
   /* === 贡献图边框（亮色） === */
-  --cont-border: #1f23280d;
+  --cont-border: rgba(31, 35, 40, 0.05);
 
   /* === 首页面板 === */
   --home-panel: rgba(255, 255, 255, 0.64);
@@ -150,6 +150,7 @@
 
   /* === 友链头像 === */
   --avatar-color: #1a7f37;
+  --avatar-bg: rgba(45, 164, 78, 0.1);
   --avatar-bg: color-mix(in srgb, #2da44e 10%, transparent);
 
   /* === 彩虹色斑 === */
@@ -191,7 +192,7 @@
 
   /* === 暗色基准背景 + 贡献图边框（暗色） === */
   --dark-bg: #0d1117;
-  --cont-border: #0104090d;
+  --cont-border: rgba(1, 4, 9, 0.05);
 
   /* === 首页面板 === */
   --home-panel: rgba(1, 4, 9, 0.64);
@@ -205,6 +206,7 @@
 
   /* === 友链头像 === */
   --avatar-color: #7ee787;
+  --avatar-bg: rgba(126, 231, 135, 0.12);
   --avatar-bg: color-mix(in srgb, #7ee787 12%, transparent);
 
   /* === 彩虹色斑（暗色更亮） === */
