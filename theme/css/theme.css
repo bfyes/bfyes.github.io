@@ -615,10 +615,6 @@ body.grid-off-active::before {
   white-space: nowrap;
 }
 
-.pdf-viewer-spacer {
-  flex: 1;
-}
-
 .pdf-viewer-action {
   display: inline-flex;
   align-items: center;
@@ -634,19 +630,6 @@ body.grid-off-active::before {
 .pdf-viewer-action:hover {
   color: var(--md-accent-fg-color);
   background: var(--md-default-fg-color--lightest);
-}
-
-.pdf-viewer-mobile-hint {
-  padding: 6px 12px;
-  border-bottom: 1px solid var(--md-default-fg-color--lightest);
-  background: var(--md-default-bg-color);
-  color: var(--md-default-fg-color--light);
-  font-size: var(--font-ui-sm);
-  line-height: 1.35;
-}
-
-.pdf-viewer-mobile-hint[hidden] {
-  display: none;
 }
 
 .pdf-viewer-native-wrap {
@@ -810,19 +793,6 @@ body.grid-off-active::before {
   font-family: var(--font-mono);
 }
 
-.pdf-viewer-error {
-  position: absolute;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  color: var(--error-color);
-  font-size: var(--font-ui);
-  background: var(--md-default-bg-color);
-  z-index: 3;
-}
-
 [data-md-color-scheme="slate"] .pdf-loader-overlay {
   background: var(--md-default-bg-color);
 }
@@ -869,16 +839,16 @@ body.grid-off-active::before {
    正文元素 fade-in；右侧 TOC 逐条淡入(nav-index 错开延迟)。
    transform 会干扰 Material 的 toc.follow 滚动运算，故只动 opacity。
    ============================================================================ */
-@keyframes fade-in { from { opacity: 0.05; } to { opacity: 1; } }
-@keyframes toc-fade { from { opacity: 0.1; } to { opacity: 1; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes toc-fade { from { opacity: 0.4; color: var(--md-default-fg-color--light); } 40% { opacity: 0.5; color: var(--md-default-fg-color--light); } 66% { opacity: 0.6; color: color-mix(in srgb, var(--md-accent-fg-color) 40%, var(--md-default-fg-color)); } to { opacity: 1; } }
 .md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1s ease both; }
 /* 右侧 TOC 逐条淡入：只动 opacity，不动 transform/几何，避免干扰 Material
    的 toc.follow 滚动运算（transform 会改变 offsetTop/getBoundingClientRect）。 */
-.md-sidebar--secondary .md-nav__item { animation: toc-fade 0.8s ease-out both; animation-delay: calc(var(--nav-index, 0) * 120ms); }
-.md-sidebar--secondary .md-nav__item:nth-child(1) { --nav-index: 0; } .md-sidebar--secondary .md-nav__item:nth-child(2) { --nav-index: 1; } .md-sidebar--secondary .md-nav__item:nth-child(3) { --nav-index: 2; } .md-sidebar--secondary .md-nav__item:nth-child(4) { --nav-index: 3; } .md-sidebar--secondary .md-nav__item:nth-child(5) { --nav-index: 4; }
-.md-sidebar--secondary .md-nav__item:nth-child(6) { --nav-index: 5; } .md-sidebar--secondary .md-nav__item:nth-child(7) { --nav-index: 6; } .md-sidebar--secondary .md-nav__item:nth-child(8) { --nav-index: 7; } .md-sidebar--secondary .md-nav__item:nth-child(9) { --nav-index: 8; } .md-sidebar--secondary .md-nav__item:nth-child(10) { --nav-index: 9; }
-.md-sidebar--secondary .md-nav__item:nth-child(11) { --nav-index: 10; } .md-sidebar--secondary .md-nav__item:nth-child(12) { --nav-index: 11; } .md-sidebar--secondary .md-nav__item:nth-child(13) { --nav-index: 12; } .md-sidebar--secondary .md-nav__item:nth-child(14) { --nav-index: 13; } .md-sidebar--secondary .md-nav__item:nth-child(15) { --nav-index: 14; }
-.md-sidebar--secondary .md-nav__item:nth-child(16) { --nav-index: 15; } .md-sidebar--secondary .md-nav__item:nth-child(17) { --nav-index: 16; } .md-sidebar--secondary .md-nav__item:nth-child(18) { --nav-index: 17; } .md-sidebar--secondary .md-nav__item:nth-child(19) { --nav-index: 18; } .md-sidebar--secondary .md-nav__item:nth-child(20) { --nav-index: 19; }
-.md-sidebar--secondary .md-nav__item:nth-child(21) { --nav-index: 20; } .md-sidebar--secondary .md-nav__item:nth-child(22) { --nav-index: 21; } .md-sidebar--secondary .md-nav__item:nth-child(23) { --nav-index: 22; } .md-sidebar--secondary .md-nav__item:nth-child(24) { --nav-index: 23; } .md-sidebar--secondary .md-nav__item:nth-child(25) { --nav-index: 24; }
-.md-sidebar--secondary .md-nav__item:nth-child(26) { --nav-index: 25; } .md-sidebar--secondary .md-nav__item:nth-child(27) { --nav-index: 26; } .md-sidebar--secondary .md-nav__item:nth-child(28) { --nav-index: 27; } .md-sidebar--secondary .md-nav__item:nth-child(29) { --nav-index: 28; } .md-sidebar--secondary .md-nav__item:nth-child(30) { --nav-index: 29; }
+.md-sidebar--secondary .md-nav__link { animation: toc-fade 0.8s ease-out both; animation-delay: calc(var(--nav-index, 0) * 120ms); }
+.md-sidebar--secondary .md-nav__item:nth-child(1) .md-nav__link { --nav-index: 0; } .md-sidebar--secondary .md-nav__item:nth-child(2) .md-nav__link { --nav-index: 1; } .md-sidebar--secondary .md-nav__item:nth-child(3) .md-nav__link { --nav-index: 2; } .md-sidebar--secondary .md-nav__item:nth-child(4) .md-nav__link { --nav-index: 3; } .md-sidebar--secondary .md-nav__item:nth-child(5) .md-nav__link { --nav-index: 4; }
+.md-sidebar--secondary .md-nav__item:nth-child(6) .md-nav__link { --nav-index: 5; } .md-sidebar--secondary .md-nav__item:nth-child(7) .md-nav__link { --nav-index: 6; } .md-sidebar--secondary .md-nav__item:nth-child(8) .md-nav__link { --nav-index: 7; } .md-sidebar--secondary .md-nav__item:nth-child(9) .md-nav__link { --nav-index: 8; } .md-sidebar--secondary .md-nav__item:nth-child(10) .md-nav__link { --nav-index: 9; }
+.md-sidebar--secondary .md-nav__item:nth-child(11) .md-nav__link { --nav-index: 10; } .md-sidebar--secondary .md-nav__item:nth-child(12) .md-nav__link { --nav-index: 11; } .md-sidebar--secondary .md-nav__item:nth-child(13) .md-nav__link { --nav-index: 12; } .md-sidebar--secondary .md-nav__item:nth-child(14) .md-nav__link { --nav-index: 13; } .md-sidebar--secondary .md-nav__item:nth-child(15) .md-nav__link { --nav-index: 14; }
+.md-sidebar--secondary .md-nav__item:nth-child(16) .md-nav__link { --nav-index: 15; } .md-sidebar--secondary .md-nav__item:nth-child(17) .md-nav__link { --nav-index: 16; } .md-sidebar--secondary .md-nav__item:nth-child(18) .md-nav__link { --nav-index: 17; } .md-sidebar--secondary .md-nav__item:nth-child(19) .md-nav__link { --nav-index: 18; } .md-sidebar--secondary .md-nav__item:nth-child(20) .md-nav__link { --nav-index: 19; }
+.md-sidebar--secondary .md-nav__item:nth-child(21) .md-nav__link { --nav-index: 20; } .md-sidebar--secondary .md-nav__item:nth-child(22) .md-nav__link { --nav-index: 21; } .md-sidebar--secondary .md-nav__item:nth-child(23) .md-nav__link { --nav-index: 22; } .md-sidebar--secondary .md-nav__item:nth-child(24) .md-nav__link { --nav-index: 23; } .md-sidebar--secondary .md-nav__item:nth-child(25) .md-nav__link { --nav-index: 24; }
+.md-sidebar--secondary .md-nav__item:nth-child(26) .md-nav__link { --nav-index: 25; } .md-sidebar--secondary .md-nav__item:nth-child(27) .md-nav__link { --nav-index: 26; } .md-sidebar--secondary .md-nav__item:nth-child(28) .md-nav__link { --nav-index: 27; } .md-sidebar--secondary .md-nav__item:nth-child(29) .md-nav__link { --nav-index: 28; } .md-sidebar--secondary .md-nav__item:nth-child(30) .md-nav__link { --nav-index: 29; }
 @media (prefers-reduced-motion: reduce) { .md-content__inner, .md-sidebar--secondary .md-nav__item { animation: none; } }

@@ -94,9 +94,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
    GitHub markdown 兼容变量作用域到 .md-typeset。
    变量含义与 github-markdown-css 一致；通过 [data-md-color-scheme] 切换明暗。
    ============================================================================ */
-[data-md-color-scheme="default"] .md-typeset,
-[data-markdown-body] .markdown-body,
-.markdown-body[data-theme="light"] {
+[data-md-color-scheme="default"] .md-typeset {
   color-scheme: light;
   --fgColor-default: #1f2328;
   --fgColor-muted: #59636e;
@@ -127,9 +125,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   --base-text-weight-semibold: 600;
 }
 
-[data-md-color-scheme="slate"] .md-typeset,
-[data-markdown-body] .markdown-body,
-.markdown-body[data-theme="dark"] {
+[data-md-color-scheme="slate"] .md-typeset {
   color-scheme: dark;
   --fgColor-default: #f0f6fc;
   --fgColor-muted: #9198a1;
