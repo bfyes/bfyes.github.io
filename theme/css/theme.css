@@ -162,12 +162,11 @@
      仅现代浏览器（支持 color-mix）通过下方 @supports 应用自定义。 */
 }
 
-/* ---- Admonition 自定义（渐进增强，仅支持 color-mix 的浏览器生效） ----
+/* ---- Admonition 自定义（渐进增强，仅支持 color-mix 的浏览器生效）----
    老 iPad 不识别 color-mix → @supports 不通过 → 保持 zensical 官方默认样式。
-   现代浏览器 → 应用自定义半透明边框与渐变标题栏。
+   现代浏览器 → 应用自定义半透明边框与渐变标题栏、垂直居中图标/箭头。
    ============================================================================ */
 @supports (color: color-mix(in srgb, red 50%, blue)) {
-  /* ---- 提示块容器：自定义边框 + 透明正文 ---- */
   .md-typeset .admonition,
   .md-typeset details {
     background-color: transparent !important;
@@ -178,8 +177,6 @@
     overflow: hidden;
     padding: 0 0.8rem;
   }
-
-  /* ---- 标题栏：渐变背景 + 缩进适配图标 ---- */
   .md-typeset .admonition-title,
   .md-typeset summary {
     background:
@@ -200,8 +197,7 @@
   [dir="rtl"] .md-typeset summary {
     padding-right: 2.35rem;
   }
-
-  /* ---- 图标：垂直居中 + 左侧定位 + 跟随类型色 ---- */
+  /* 图标垂直居中（官方 top:.125em 会歪，必须自定义居中定位） */
   .md-typeset .admonition-title::before,
   .md-typeset summary::before {
     background-color: var(--admonition-color) !important;
@@ -216,8 +212,6 @@
   [dir="rtl"] .md-typeset summary::before {
     right: 0.8rem;
   }
-
-  /* ---- 折叠箭头：垂直居中 + 右侧定位 + 跟随类型色 ---- */
   .md-typeset .admonition-title::after,
   .md-typeset summary::after {
     color: var(--admonition-color) !important;
@@ -314,18 +308,9 @@
   --admonition-accent: #64748b;
   --admonition-spectrum: #94a3b8;
 }
-.md-typeset .admonition-title,
-.md-typeset summary {
-  margin: 0 -0.8rem 0.55rem;
-  padding-top: 0.55rem;
-  padding-bottom: 0.55rem;
-  /* 背景由上方 @supports 块按浏览器能力应用（现代=自定义渐变，老 iPad=官方）。 */
-  color: var(--fgColor-default);
-  line-height: 1.45;
-}
 /* 标题栏基础（边距/文字色）：所有浏览器通用。
-   背景、缩进、图标/箭头定位与颜色 = 自定义观感，全部由上方 @supports 块应用；
-   老 iPad（不支持 color-mix）→ @supports 不通过 → 此处不覆盖 → 完全走官方默认。 */
+   背景、缩进、图标/箭头定位与颜色 = 自定义观感，全部由 @supports 块应用；
+   老 iPad（不支持 color-mix）→ @supports 不通过 → 不覆盖 → 完全走官方默认。 */
 .md-typeset .admonition-title,
 .md-typeset summary {
   margin: 0 -0.8rem 0.55rem;
