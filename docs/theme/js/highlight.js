@@ -47,7 +47,9 @@
   function highlightRoot(root) {
     if (!hljsLib.highlightElement) return;
     root = root || document;
-    root.querySelectorAll("pre code[class*='language-'], pre code.highlight").forEach(function (el) {
+    // 同时处理代码块（pre > code）与行内代码（#!python 等 inlinehilite 产物）。
+    // 行内 code 带 language-xxx / highlight class，由 hljs 运行时上色。
+    root.querySelectorAll("code[class*='language-'], code.highlight").forEach(function (el) {
       if (el.dataset.hljsDone === "1") return;
       if (el.classList.contains("language-asm")) {
         el.classList.remove("language-asm");

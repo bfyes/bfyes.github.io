@@ -311,13 +311,6 @@
   height: 1.45rem;
   width: auto;
 }
-.bf-logo__text {
-  font-family: "Courier New", Courier, ui-monospace, monospace;
-  font-size: 40px;
-  font-weight: 700;
-  letter-spacing: 0;
-  fill: var(--md-default-fg-color);
-}
 
 /* ---- 页面信息 ---- */
 .page-updated-top {

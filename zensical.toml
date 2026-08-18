@@ -1,10 +1,10 @@
 [project]
-site_name = "bfyes 的文档站"
+site_name = "BillFeng 的文档站"
 site_url = "https://bfyes.github.io"
 repo_url = "https://github.com/bfyes/bfyes.github.io"
 repo_name = "bfyes.github.io"
 edit_uri = "edit/main/docs/"
-site_description = "bfyes 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。"
+site_description = "BillFeng 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。"
 site_author = "BillFeng"
 copyright = ""
 
@@ -171,7 +171,7 @@ toggle.name = "切换至深色模式"
 [[project.theme.palette]]
 media = "(prefers-color-scheme: dark)"
 scheme = "slate"
-toggle.icon = "lucide/moon"
+toggle.icon = "lucide/moon-star"
 toggle.name = "根据系统模式切换主题"
 
 # --------------------------------------------------------------------------

@@ -111,6 +111,8 @@ $$
 
 ## 代码
 
+行内代码 `#!python squares = [x ** 2 for x in data]`，`#!c #define MAX_LEN 256`，`#!asm assume cs:code, ds:data`，`#!asm repne scasb`，`#!asm les di, dword ptr [bp+2]`，`#!bash cd ~/bfyes`，`不指定语言 int main()`以及代码块：
+
 ```c
 #include <stdio.h>
 #define MAX_LEN 256
