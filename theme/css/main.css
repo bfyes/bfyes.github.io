@@ -438,7 +438,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   line-height: 1.45;
 }
 
-.md-typeset .highlight,
+.md-typeset pre.highlight,
 .md-typeset pre,
 .md-typeset pre>code {
   border-radius: 0;
