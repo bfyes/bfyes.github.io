@@ -179,6 +179,8 @@
   }
   .md-typeset .admonition-title,
   .md-typeset summary {
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
     background:
       linear-gradient(
         105deg,
@@ -309,13 +311,12 @@
   --admonition-spectrum: #94a3b8;
 }
 /* 标题栏基础（边距/文字色）：所有浏览器通用。
-   背景、缩进、图标/箭头定位与颜色 = 自定义观感，全部由 @supports 块应用；
-   老 iPad（不支持 color-mix）→ @supports 不通过 → 不覆盖 → 完全走官方默认。 */
+   padding 上/下、背景、缩进、图标/箭头定位与颜色 = 自定义观感，全部由 @supports 块应用，
+   与自定义模式下图标 top:50% 配套；老 iPad（@supports 不通过）→ 不覆盖 → 标题栏保持官方
+   高度(padding=0)，官方图标 top:.125em 才能天然居中。 */
 .md-typeset .admonition-title,
 .md-typeset summary {
   margin: 0 -0.8rem 0.55rem;
-  padding-top: 0.55rem;
-  padding-bottom: 0.55rem;
   color: var(--fgColor-default);
   line-height: 1.45;
 }
