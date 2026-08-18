@@ -158,14 +158,6 @@
   --admonition-color: #2563eb;
   --admonition-accent: #06b6d4;
   --admonition-spectrum: #22c55e;
-  background-color: transparent !important;
-  border: 0.075rem solid var(--borderColor-muted);
-  border: 0.075rem solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
-  border-radius: var(--radius-admonition);
-  box-shadow: var(--shadow-sm);
-  font-size: var(--font-code);
-  overflow: hidden;
-  padding: 0 0.8rem;
 }
 .md-typeset .admonition.note,
 .md-typeset details.note {
@@ -178,6 +170,12 @@
   --admonition-color: #7c3aed;
   --admonition-accent: #2563eb;
   --admonition-spectrum: #06b6d4;
+}
+.md-typeset .admonition.info,
+.md-typeset details.info {
+  --admonition-color: #2563eb;
+  --admonition-accent: #8bd5e5;
+  --admonition-spectrum: #dad883;
 }
 .md-typeset .admonition.tip,
 .md-typeset details.tip {
@@ -224,8 +222,8 @@
 .md-typeset .admonition.example,
 .md-typeset details.example {
   --admonition-color: #06b6d4;
-  --admonition-accent: #2563eb;
-  --admonition-spectrum: #7c3aed;
+  --admonition-accent: #06d4d0;
+  --admonition-spectrum: #06d458;
 }
 .md-typeset .admonition.quote,
 .md-typeset details.quote {
@@ -233,76 +231,99 @@
   --admonition-accent: #64748b;
   --admonition-spectrum: #94a3b8;
 }
-.md-typeset .admonition-title,
-.md-typeset summary {
-  margin: 0 -0.8rem 0.55rem;
-  padding-top: 0.55rem;
-  padding-bottom: 0.55rem;
-  background: rgba(127, 127, 127, 0.07);
-  background:
-    linear-gradient(
-      105deg,
-      color-mix(in srgb, var(--admonition-color) 12%, transparent),
-      color-mix(in srgb, var(--admonition-color) 11%, transparent) 50%,
-      color-mix(in srgb, var(--admonition-accent) 10%, transparent) 70%,
-      color-mix(in srgb, var(--admonition-spectrum) 8%, transparent) 86%,
-      color-mix(in srgb, var(--admonition-spectrum) 7%, transparent)
-    );
-  color: var(--fgColor-default);
-  line-height: 1.45;
+/* 以上全局仅定义类型色变量（--admonition-*），不覆盖任何提示块属性，
+   因此不触发 @supports 时提示块完全走官方默认，此处不再有任何影响提示块的规则。
+   所有自定义（边框/背景/标题栏 padding 与渐变/图标箭头定位颜色）统一在下方 @supports 块内。 */
+
+/* 退化后的标题行高恢复：main.css 的 .md-typeset { line-height:1.5 } 会连带压低提示块标题，
+   使图标 top:.125em 相对标题行中心偏下。此处仅对标题行恢复官方 1.8，
+   不影响提示块正文与其他正文的 GitHub 1.5 行高。 */
+.md-typeset .admonition > .admonition-title,
+.md-typeset details > summary {
+  line-height: 1.8;
 }
-[dir="ltr"] .md-typeset .admonition-title,
-[dir="ltr"] .md-typeset summary {
-  padding-left: 2.35rem;
-}
-[dir="rtl"] .md-typeset .admonition-title,
-[dir="rtl"] .md-typeset summary {
-  padding-right: 2.35rem;
-}
-.md-typeset .admonition > :last-child,
-.md-typeset details > :last-child {
-  margin-bottom: 0.45rem;
-}
-.md-typeset .admonition-title::before,
-.md-typeset summary::before {
-  background-color: var(--admonition-color) !important;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.md-typeset .admonition-title::after,
-.md-typeset summary::after {
-  color: var(--admonition-color) !important;
-}
-[dir="ltr"] .md-typeset .admonition-title::before,
-[dir="ltr"] .md-typeset summary::before {
-  left: 0.8rem;
-}
-[dir="rtl"] .md-typeset .admonition-title::before,
-[dir="rtl"] .md-typeset summary::before {
-  right: 0.8rem;
-}
-[dir="ltr"] .md-typeset summary::after {
-  right: 0.35rem;
-}
-[dir="rtl"] .md-typeset summary::after {
-  left: 0.35rem;
-}
-.md-typeset summary::after {
-  top: 50%;
-  transform: translateY(-50%) rotate(0deg);
-}
-.md-typeset details[open] > summary::after {
-  transform: translateY(-50%) rotate(90deg);
-}
-[dir="rtl"] .md-typeset summary::after {
-  transform: translateY(-50%) rotate(180deg);
-}
-[dir="rtl"] .md-typeset details[open] > summary::after {
-  transform: translateY(-50%) rotate(90deg);
-}
-.md-typeset details:not([open]) > summary {
-  margin-bottom: 0;
-  border-bottom: 0;
+
+/* ---- Admonition 自定义（置于所有提示块定义下方）----
+   仅支持 color-mix 的现代浏览器通过；老 iPad / 不支持者 → @supports 不通过 → 提示块完全官方。 */
+
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  .md-typeset .admonition,
+  .md-typeset details {
+    background-color: transparent !important;
+    border: 0.075rem solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
+    border-radius: var(--radius-admonition);
+    box-shadow: var(--shadow-sm);
+    font-size: var(--font-code);
+    overflow: hidden;
+    padding: 0 0.8rem;
+  }
+  .md-typeset .admonition-title,
+  .md-typeset summary {
+    /* 负 margin 撑满容器左右 padding，让渐变标题栏贴到边框（缩小边框观感） */
+    margin: 0 -0.8rem 0.55rem;
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+    background:
+      linear-gradient(
+        105deg,
+        color-mix(in srgb, var(--admonition-color) 12%, transparent),
+        color-mix(in srgb, var(--admonition-color) 11%, transparent) 50%,
+        color-mix(in srgb, var(--admonition-accent) 10%, transparent) 70%,
+        color-mix(in srgb, var(--admonition-spectrum) 8%, transparent) 86%,
+        color-mix(in srgb, var(--admonition-spectrum) 7%, transparent)
+      );
+  }
+  /* 折叠态（未展开）：官方 details:not([open]) > summary { margin-bottom: .6rem }
+     会在标题栏底边留一块空白。此处以更高特异性清零，让标题栏贴到底边。 */
+  .md-typeset details:not([open]) > summary {
+    margin: 0 -0.8rem 0;
+  }
+  [dir="ltr"] .md-typeset .admonition-title,
+  [dir="ltr"] .md-typeset summary {
+    padding-left: 2.35rem;
+  }
+  [dir="rtl"] .md-typeset .admonition-title,
+  [dir="rtl"] .md-typeset summary {
+    padding-right: 2.35rem;
+  }
+  /* 图标垂直居中 */
+  .md-typeset .admonition-title::before,
+  .md-typeset summary::before {
+    background-color: var(--admonition-color) !important;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  [dir="ltr"] .md-typeset .admonition-title::before,
+  [dir="ltr"] .md-typeset summary::before {
+    left: 0.8rem;
+  }
+  [dir="rtl"] .md-typeset .admonition-title::before,
+  [dir="rtl"] .md-typeset summary::before {
+    right: 0.8rem;
+  }
+  .md-typeset .admonition-title::after,
+  .md-typeset summary::after {
+    color: var(--admonition-color) !important;
+  }
+  [dir="ltr"] .md-typeset summary::after {
+    right: 0.35rem;
+  }
+  [dir="rtl"] .md-typeset summary::after {
+    left: 0.35rem;
+  }
+  .md-typeset summary::after {
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+  }
+  .md-typeset details[open] > summary::after {
+    transform: translateY(-50%) rotate(90deg);
+  }
+  [dir="rtl"] .md-typeset summary::after {
+    transform: translateY(-50%) rotate(180deg);
+  }
+  [dir="rtl"] .md-typeset details[open] > summary::after {
+    transform: translateY(-50%) rotate(90deg);
+  }
 }
 
 /* ============================================================================
@@ -841,6 +862,7 @@ body.grid-off-active::before {
    ============================================================================ */
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes toc-fade { from { opacity: 0.4; color: var(--md-default-fg-color--light); } 40% { opacity: 0.5; color: var(--md-default-fg-color--light); } 66% { opacity: 0.6; color: color-mix(in srgb, var(--md-accent-fg-color) 40%, var(--md-default-fg-color)); } to { opacity: 1; } }
+/* 如果想要未动画和未浏览一样颜色，则透明度要设置为 0.86*/
 .md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1s ease both; }
 /* 右侧 TOC 逐条淡入：只动 opacity，不动 transform/几何，避免干扰 Material
    的 toc.follow 滚动运算（transform 会改变 offsetTop/getBoundingClientRect）。
