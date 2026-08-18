@@ -9,7 +9,7 @@ site_author = "BillFeng"
 copyright = ""
 
 nav = [
-    { "主页" = "/" },
+    { "主页" = "index.md" },
     { "学习" = [
         "study/index.md",
         { "信息安全原理与数学基础" = [
