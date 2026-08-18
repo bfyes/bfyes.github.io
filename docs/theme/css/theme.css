@@ -615,10 +615,6 @@ body.grid-off-active::before {
   white-space: nowrap;
 }
 
-.pdf-viewer-spacer {
-  flex: 1;
-}
-
 .pdf-viewer-action {
   display: inline-flex;
   align-items: center;
@@ -634,19 +630,6 @@ body.grid-off-active::before {
 .pdf-viewer-action:hover {
   color: var(--md-accent-fg-color);
   background: var(--md-default-fg-color--lightest);
-}
-
-.pdf-viewer-mobile-hint {
-  padding: 6px 12px;
-  border-bottom: 1px solid var(--md-default-fg-color--lightest);
-  background: var(--md-default-bg-color);
-  color: var(--md-default-fg-color--light);
-  font-size: var(--font-ui-sm);
-  line-height: 1.35;
-}
-
-.pdf-viewer-mobile-hint[hidden] {
-  display: none;
 }
 
 .pdf-viewer-native-wrap {
@@ -810,19 +793,6 @@ body.grid-off-active::before {
   font-family: var(--font-mono);
 }
 
-.pdf-viewer-error {
-  position: absolute;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  color: var(--error-color);
-  font-size: var(--font-ui);
-  background: var(--md-default-bg-color);
-  z-index: 3;
-}
-
 [data-md-color-scheme="slate"] .pdf-loader-overlay {
   background: var(--md-default-bg-color);
 }
@@ -870,7 +840,7 @@ body.grid-off-active::before {
    transform 会干扰 Material 的 toc.follow 滚动运算，故只动 opacity。
    ============================================================================ */
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes toc-fade { from { opacity: 0.86; color: var(--md-default-fg-color--light); } 30% { opacity: 0.86; color: var(--md-default-fg-color--light); } 55% { opacity: 0.86; color: color-mix(in srgb, var(--md-accent-fg-color) 25%, var(--md-default-fg-color)); } to { opacity: 1; } }
+@keyframes toc-fade { from { opacity: 0.4; color: var(--md-default-fg-color--light); } 40% { opacity: 0.5; color: var(--md-default-fg-color--light); } 66% { opacity: 0.6; color: color-mix(in srgb, var(--md-accent-fg-color) 40%, var(--md-default-fg-color)); } to { opacity: 1; } }
 .md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1s ease both; }
 /* 右侧 TOC 逐条淡入：只动 opacity，不动 transform/几何，避免干扰 Material
    的 toc.follow 滚动运算（transform 会改变 offsetTop/getBoundingClientRect）。 */

@@ -252,7 +252,7 @@
     typewriterTimers = [];
     document.querySelectorAll(".typed-cursor, .typed-cursor-standalone").forEach(function (e) { e.remove(); });
     document.querySelectorAll(".typed-text").forEach(function (e) { e.textContent = ""; e.style.display = "none"; });
-    document.querySelectorAll(".home-terminal__line--prompt, .terminal-hidden-input, .home-terminal-keys, [id^='typed-br-']").forEach(function (e) { e.style.display = "none"; });
+    document.querySelectorAll(".home-terminal__line--prompt, .terminal-hidden-input, .home-terminal-keys").forEach(function (e) { e.style.display = "none"; });
   }
 
   function startHomeTypewriter(root) {
