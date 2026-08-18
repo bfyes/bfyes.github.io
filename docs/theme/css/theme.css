@@ -244,25 +244,34 @@
 }
 
 /* ---- Admonition 自定义（置于所有提示块定义下方）----
-   仅支持 color-mix 的现代浏览器通过；老 iPad / 不支持者 → @supports 不通过 → 提示块完全官方。 */
+   仅支持 color-mix 的现代浏览器通过；不支持者 @supports 不通过 → 提示块完全官方。 */
 
 @supports (color: color-mix(in srgb, red 50%, blue)) {
   .md-typeset .admonition,
   .md-typeset details {
+    position: relative;
     background-color: transparent !important;
     border: 0.075rem solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
-    border-radius: var(--radius-admonition);
     box-shadow: var(--shadow-sm);
-    font-size: var(--font-code);
     overflow: hidden;
     padding: 0 0.8rem;
+    font-size: var(--font-code);
+  }
+  .md-typeset .admonition-title + *,
+  .md-typeset summary + * {
+    padding-top: 0.6rem;
   }
   .md-typeset .admonition-title,
   .md-typeset summary {
-    /* 负 margin 撑满容器左右 padding，让渐变标题栏贴到边框（缩小边框观感） */
-    margin: 0 -0.8rem 0.55rem;
-    padding-top: 0.45rem;
-    padding-bottom: 0.45rem;
+    margin-top: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+  .md-typeset .admonition::before,
+  .md-typeset details::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: calc(0.4rem * 2 + 1.8em);
     background:
       linear-gradient(
         105deg,
@@ -272,57 +281,17 @@
         color-mix(in srgb, var(--admonition-spectrum) 8%, transparent) 86%,
         color-mix(in srgb, var(--admonition-spectrum) 7%, transparent)
       );
+    pointer-events: none;
   }
-  /* 折叠态（未展开）：官方 details:not([open]) > summary { margin-bottom: .6rem }
-     会在标题栏底边留一块空白。此处以更高特异性清零，让标题栏贴到底边。 */
   .md-typeset details:not([open]) > summary {
-    margin: 0 -0.8rem 0;
+    margin-bottom: 0.4rem;
   }
-  [dir="ltr"] .md-typeset .admonition-title,
-  [dir="ltr"] .md-typeset summary {
-    padding-left: 2.35rem;
-  }
-  [dir="rtl"] .md-typeset .admonition-title,
-  [dir="rtl"] .md-typeset summary {
-    padding-right: 2.35rem;
-  }
-  /* 图标垂直居中 */
   .md-typeset .admonition-title::before,
   .md-typeset summary::before {
     background-color: var(--admonition-color) !important;
-    top: 50%;
-    transform: translateY(-50%);
   }
-  [dir="ltr"] .md-typeset .admonition-title::before,
-  [dir="ltr"] .md-typeset summary::before {
-    left: 0.8rem;
-  }
-  [dir="rtl"] .md-typeset .admonition-title::before,
-  [dir="rtl"] .md-typeset summary::before {
-    right: 0.8rem;
-  }
-  .md-typeset .admonition-title::after,
   .md-typeset summary::after {
     color: var(--admonition-color) !important;
-  }
-  [dir="ltr"] .md-typeset summary::after {
-    right: 0.35rem;
-  }
-  [dir="rtl"] .md-typeset summary::after {
-    left: 0.35rem;
-  }
-  .md-typeset summary::after {
-    top: 50%;
-    transform: translateY(-50%) rotate(0deg);
-  }
-  .md-typeset details[open] > summary::after {
-    transform: translateY(-50%) rotate(90deg);
-  }
-  [dir="rtl"] .md-typeset summary::after {
-    transform: translateY(-50%) rotate(180deg);
-  }
-  [dir="rtl"] .md-typeset details[open] > summary::after {
-    transform: translateY(-50%) rotate(90deg);
   }
 }
 
