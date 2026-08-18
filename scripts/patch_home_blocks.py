@@ -25,6 +25,8 @@ import html
 import re
 from pathlib import Path
 
+import markdown
+
 SITE = Path(__file__).resolve().parents[1] / "site"
 
 
@@ -32,6 +34,14 @@ def parse_block(content: str, tag: str) -> str | None:
     """提取 ::tag:: ... ::/tag:: 块内容。"""
     m = re.search(rf"::{tag}::\s*\n(.*?)\n\s*::/{tag}::", content, re.DOTALL)
     return m.group(1) if m else None
+
+
+def render_inline_markdown(text: str) -> str:
+    """把单行文本经 Markdown 渲染，并剥掉外层 <p>…</p>，支持 <url> 与 [text](url)。"""
+    rendered = markdown.markdown(text.strip())
+    if rendered.startswith("<p>") and rendered.endswith("</p>"):
+        rendered = rendered[len("<p>") : -len("</p>")]
+    return rendered
 
 
 def render_changelog(lines: str) -> str:
@@ -43,10 +53,11 @@ def render_changelog(lines: str) -> str:
         if ":" not in line:
             continue
         date, text = line.split(":", 1)
+        rendered = render_inline_markdown(text)
         items.append(
             f'      <div class="home-log">\n'
             f'        <span class="home-log__date">{html.escape(date.strip())}</span>\n'
-            f'        <span>{html.escape(text.strip())}</span>\n'
+            f"        <span>{rendered}</span>\n"
             f"      </div>"
         )
     return (
@@ -82,7 +93,10 @@ def render_friends(lines: str, title: str = "Links", section_id: str = "home-fri
             name = github_id
         attrs = f'href="{html.escape(href)}" data-id="{html.escape(github_id)}"'
         if desc:
-            attrs += f' data-description="{html.escape(desc)}"'
+            # 描述与 changelog 同逻辑：过一遍 Markdown 渲染，支持 <url> 与 [text](url)。
+            # 渲染后的 HTML 存入 data-description，仅对引号做属性级转义。
+            rendered = render_inline_markdown(desc)
+            attrs += f' data-description="{html.escape(rendered, quote=True)}"'
         items.append(
             f'      <a class="home-friend" {attrs}>\n'
             f"        <strong>{html.escape(name)}</strong>\n"

@@ -50,7 +50,11 @@
           else card.appendChild(handle);
         }
         var desc = card.getAttribute("data-description");
-        if (desc && !card.querySelector(".home-friend__bio")) card.appendChild(htmlEl("span", { class: "home-friend__meta" }, desc));
+        if (desc && !card.querySelector(".home-friend__bio")) {
+          var meta = htmlEl("span", { class: "home-friend__meta" });
+          meta.innerHTML = desc; // 描述由 Python 侧 Markdown 渲染，支持 <url> 链接
+          card.appendChild(meta);
+        }
       }
       grid.dataset.friendsReady = "true";
     }

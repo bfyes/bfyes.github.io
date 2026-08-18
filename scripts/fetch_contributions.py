@@ -65,7 +65,6 @@ def compute_thresholds(cells: list) -> tuple:
     q1 = max_count // 4
     q2 = max_count // 2
     q3 = 3 * max_count // 4
-    return (q1, q2, q3)
     # 确保阈值递增且至少差 1
     q2 = max(q2, q1 + 1) if q1 < q2 else q2
     q3 = max(q3, q2 + 1) if q2 < q3 else q3
@@ -74,7 +73,7 @@ def compute_thresholds(cells: list) -> tuple:
 
 def fetch() -> str:
     req = urllib.request.Request(URL, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=30) as r:
+    with urllib.request.urlopen(req, timeout=8) as r:
         return r.read().decode("utf-8", errors="replace")
 
 

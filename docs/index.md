@@ -13,6 +13,7 @@ Bill Feng | bfyes | https://github.com/bfyes | 嗨，我是BillFeng，来自浙�
 ::/about::
 
 ::changelog::
+2026.08.18: 向 Zensical 提了一个issue <https://github.com/zensical/ui/issues/201>。
 2026.08.17: 解决历史遗留问题: mathjax.js 在 instant 模式下加载异常；补发广播解决 giscus 时序问题。新增部分文档。
 2026.08.16: 重构js，优化主页工作流，引入新语法。调整提示块颜色，分割主页与正文资源。
 2026.08.15: 修复公式/图标问题。重构css。添加少量动画。
