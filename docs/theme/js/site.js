@@ -155,6 +155,24 @@
     update();
   }
 
+  // ---- 右侧 TOC 逐条淡入 ----
+  // 由 JS 按实际条数给每条链接注入递增的 animation-delay（inline style），
+  // 替代 CSS 里手写的 nth-child 规则，任意条数都自适应、无需维护上限。
+  // data-md-component="toc" 位于 <ul class="md-nav__list"> 上（即 TOC 容器本身）；
+  // 页面里主侧边栏也存在同名标记，因此必须限定在 .md-sidebar--secondary 内。
+  // querySelectorAll 返回深度优先文档序，父级标题在前、子级紧随，
+  // 注入的序号即"视觉从上到下"的线性顺序，不受目录嵌套层级影响。
+  function initTocFade(root) {
+    var sidebar = document.querySelector(".md-sidebar--secondary");
+    var toc = sidebar && sidebar.querySelector('[data-md-component="toc"]');
+    if (!toc) return;
+    var links = toc.querySelectorAll(".md-nav__link");
+    toc.style.setProperty("--nav-count", String(links.length));
+    for (var i = 0; i < links.length; i++) {
+      links[i].style.animationDelay = (i * 100) + "ms";
+    }
+  }
+
   // ---- Giscus 评论区 ----
   // 通过 onPageReady 注册：首次加载 + instant 换页（document$）都会触发，
   // 覆盖 navigation.instant 的 SPA 切换，无需再单独订阅 document$。
@@ -224,6 +242,7 @@
   initPageLifecycle();
   window.site.onPageReady(syncPageState);
   window.site.onPageReady(upgradeImages);
+  window.site.onPageReady(initTocFade);
   initParallaxGrid();
   window.site.onPageReady(initGiscus);
 })();
