@@ -16,9 +16,8 @@
        blur + saturate 滤镜、alternate 动画、
        prefers-reduced-motion 降级
    03. 首页分区
-       .home-page 容器、.home-hero / .home-section 分区、
+       .home-page 容器、.home-section 分区、
        .home-section__head 标题栏(下划线)、.home-section__title(JetBrains Mono)、
-       4 分类强调色(study/tools/diary/games)、
        .home-terminal-keys 终端分类链接、
        .home-log-list / .home-log 更新日志(日期 + 内容网格)、
        .home-link-grid / .home-friend 友链卡片(auto-fit 网格 + 头像 + hover 上浮)
@@ -52,13 +51,9 @@
   --ghc-level-3: #2da44e;
   --ghc-level-4: #116329;
 
-  /* 首页面板 + 分类强调色 */
+  /* 首页面板 */
   --home-panel: rgba(255, 255, 255, 0.64);
   --home-border: #ccd6d8;
-  --accent-study: #0969da;
-  --accent-tools: #bc4c00;
-  --accent-diary: #8250df;
-  --accent-games: #1a7f37;
 
   /* 友链头像 */
   --avatar-color: #1a7f37;
@@ -80,7 +75,7 @@
   --terminal-cursor-color: #111111;
 
   /* 主页移动端尺寸 */
-  --mobile-terminal-font-size: 14px;
+  --mobile-terminal-font-size: var(--font-code);
   --mobile-terminal-padding: 0.85rem 0.9rem 0.95rem;
   --mobile-log-gap: 0.25rem;
   --mobile-section-head-gap: 0.25rem;
@@ -95,13 +90,9 @@
   --ghc-level-3: #2ea043;
   --ghc-level-4: #56d364;
 
-  /* 首页面板 + 分类强调色（暗色） */
+  /* 首页面板（暗色） */
   --home-panel: rgba(1, 4, 9, 0.64);
   --home-border: #383e42;
-  --accent-study: #79c0ff;
-  --accent-tools: #ffa657;
-  --accent-diary: #d2a8ff;
-  --accent-games: #7ee787;
 
   /* 友链头像（暗色） */
   --avatar-color: #7ee787;
@@ -478,10 +469,6 @@ body.home-active .md-typeset h1#__skip { display: none; }
 .home-section__title > .headerlink { display: none; }
 body.home-active .md-typeset h1 > .headerlink { display: none; }
 
-.home-hero {
-  margin: 1rem 0 1.6rem;
-}
-
 .home-section {
   margin: 1.8rem 0;
 }
@@ -505,15 +492,6 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   border-bottom: none;
   padding-bottom: 0;
 }
-
-.md-content__inner .home-section__title::before {
-  content: none;
-}
-
-.home-card--study { --home-accent: var(--accent-study); }
-.home-card--tools { --home-accent: var(--accent-tools); }
-.home-card--diary { --home-accent: var(--accent-diary); }
-.home-card--games { --home-accent: var(--accent-games); }
 
 .home-terminal-keys {
   display: inline-flex;
@@ -578,8 +556,13 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 .home-friend {
   display: grid;
   grid-template-columns: 2.75rem minmax(0, 1fr);
-  gap: 0.2rem 1rem;
+  gap: 0.4rem 1rem;
   align-items: center;
+  /* min-height 撑出的余量默认被 align-content: stretch 摊到各行，使 name/handle/meta
+     间距随卡片宽窄（meta 折行与否）忽大忽小。center 让行紧凑成块并整体垂直居中：
+     行间距只由 row-gap + line-height 决定（宽度无关），头像（span 3）随块居中、
+     不再随 meta 折行上下漂移。 */
+  align-content: center;
   min-height: 5.2rem;
   padding: 0.65rem;
   border: 1px solid var(--home-border);
@@ -664,6 +647,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   overflow: hidden;
   border: 1px solid var(--home-border);
   border-radius: var(--radius-lg);
+  background: var(--home-panel);
   box-shadow: var(--shadow-md);
   backdrop-filter: blur(var(--blur-radius));
   -webkit-backdrop-filter: blur(var(--blur-radius));
@@ -750,14 +734,6 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 .home-terminal__line--user .typed-text,
 .home-terminal__line--flag .typed-text {
   color: var(--terminal-command-color);
-}
-
-.home-terminal {
-  background: var(--home-panel);
-}
-.home-terminal__bar,
-.home-terminal__screen {
-  background: transparent;
 }
 
 [data-md-color-scheme="slate"] .home-terminal {

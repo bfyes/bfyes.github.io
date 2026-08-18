@@ -9,61 +9,6 @@
   // 此处不再需要运行时补 DOM（原 initFriends / buildAvatar / friendInitials 已移除）。
 
   // ---- github contributions ----
-    return github ? "https://avatars.githubusercontent.com/" + encodeURIComponent(github) + "?size=160" : "";
-  }
-
-  function friendInitials(name, github) {
-    var source = (name || github || "?").trim();
-    if (!source) return "?";
-    if (/^[\u4e00-\u9fa5]/.test(source)) return source.slice(0, 1);
-    var parts = source.split(/\s+/);
-    if (parts.length > 1) return (parts[0][0] + parts[1][0]).toUpperCase();
-    return source.slice(0, 2);
-  }
-
-  function buildAvatar(card, name, github) {
-    var avatar = htmlEl("span", { class: "home-friend__avatar" }, friendInitials(name, github));
-    var src = githubAvatarUrl(github);
-    if (src) {
-      var img = htmlEl("img", { src: src, alt: "", width: 96, height: 96 });
-      img.onerror = function () { this.remove(); };
-      avatar.appendChild(img);
-    }
-    card.insertBefore(avatar, card.firstChild);
-  }
-
-  function initFriends(root) {
-    var scope = root || document;
-    var grids = scope.querySelectorAll(".home-link-grid");
-    for (var g = 0; g < grids.length; g++) {
-      var grid = grids[g];
-      if (grid.dataset.friendsReady === "true") continue;
-      var cards = grid.querySelectorAll(".home-friend");
-      for (var i = 0; i < cards.length; i++) {
-        var card = cards[i];
-        var github = card.getAttribute("data-id");
-        var strong = card.querySelector("strong");
-        var name = (strong ? strong.textContent : "") || github || "";
-        card.setAttribute("target", "_blank");
-        card.setAttribute("rel", "noopener");
-        buildAvatar(card, name, github);
-        if (github) {
-          var handle = htmlEl("span", { class: "home-friend__handle" }, "@" + github);
-          if (strong && strong.nextSibling) card.insertBefore(handle, strong.nextSibling);
-          else card.appendChild(handle);
-        }
-        var desc = card.getAttribute("data-description");
-        if (desc && !card.querySelector(".home-friend__bio")) {
-          var meta = htmlEl("span", { class: "home-friend__meta" });
-          meta.innerHTML = desc; // 描述由 Python 侧 Markdown 渲染，支持 <url> 链接
-          card.appendChild(meta);
-        }
-      }
-      grid.dataset.friendsReady = "true";
-    }
-  }
-
-  // ---- github contributions ----
   var CONTRIBUTIONS_URL = "theme/data/contributions.json";
   var WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   var WEEKDAY_SHORT = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -425,7 +370,6 @@
   }
 
   // ---- init ----
-  window.site.onPageReady(initFriends);
   window.site.onPageReady(initGithubCalendar);
   window.site.onPageReady(startHomeTypewriter);
 })();
