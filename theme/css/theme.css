@@ -167,12 +167,10 @@
    现代浏览器 → 应用自定义半透明边框与渐变标题栏。
    ============================================================================ */
 @supports (color: color-mix(in srgb, red 50%, blue)) {
+  /* ---- 提示块容器：自定义边框 + 透明正文 ---- */
   .md-typeset .admonition,
   .md-typeset details {
-    --admonition-bg: rgba(37, 99, 235, 0.12);
-    --admonition-border: rgba(37, 99, 235, 0.36);
     background-color: transparent !important;
-    border: 0.075rem solid var(--admonition-border);
     border: 0.075rem solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
     border-radius: var(--radius-admonition);
     box-shadow: var(--shadow-sm);
@@ -180,9 +178,10 @@
     overflow: hidden;
     padding: 0 0.8rem;
   }
+
+  /* ---- 标题栏：渐变背景 + 缩进适配图标 ---- */
   .md-typeset .admonition-title,
   .md-typeset summary {
-    background: var(--admonition-bg);
     background:
       linear-gradient(
         105deg,
@@ -192,6 +191,55 @@
         color-mix(in srgb, var(--admonition-spectrum) 8%, transparent) 86%,
         color-mix(in srgb, var(--admonition-spectrum) 7%, transparent)
       );
+  }
+  [dir="ltr"] .md-typeset .admonition-title,
+  [dir="ltr"] .md-typeset summary {
+    padding-left: 2.35rem;
+  }
+  [dir="rtl"] .md-typeset .admonition-title,
+  [dir="rtl"] .md-typeset summary {
+    padding-right: 2.35rem;
+  }
+
+  /* ---- 图标：垂直居中 + 左侧定位 + 跟随类型色 ---- */
+  .md-typeset .admonition-title::before,
+  .md-typeset summary::before {
+    background-color: var(--admonition-color) !important;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  [dir="ltr"] .md-typeset .admonition-title::before,
+  [dir="ltr"] .md-typeset summary::before {
+    left: 0.8rem;
+  }
+  [dir="rtl"] .md-typeset .admonition-title::before,
+  [dir="rtl"] .md-typeset summary::before {
+    right: 0.8rem;
+  }
+
+  /* ---- 折叠箭头：垂直居中 + 右侧定位 + 跟随类型色 ---- */
+  .md-typeset .admonition-title::after,
+  .md-typeset summary::after {
+    color: var(--admonition-color) !important;
+  }
+  [dir="ltr"] .md-typeset summary::after {
+    right: 0.35rem;
+  }
+  [dir="rtl"] .md-typeset summary::after {
+    left: 0.35rem;
+  }
+  .md-typeset summary::after {
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+  }
+  .md-typeset details[open] > summary::after {
+    transform: translateY(-50%) rotate(90deg);
+  }
+  [dir="rtl"] .md-typeset summary::after {
+    transform: translateY(-50%) rotate(180deg);
+  }
+  [dir="rtl"] .md-typeset details[open] > summary::after {
+    transform: translateY(-50%) rotate(90deg);
   }
 }
 .md-typeset .admonition.note,
@@ -275,55 +323,22 @@
   color: var(--fgColor-default);
   line-height: 1.45;
 }
-[dir="ltr"] .md-typeset .admonition-title,
-[dir="ltr"] .md-typeset summary {
-  padding-left: 2.35rem;
-}
-[dir="rtl"] .md-typeset .admonition-title,
-[dir="rtl"] .md-typeset summary {
-  padding-right: 2.35rem;
+/* 标题栏基础（边距/文字色）：所有浏览器通用。
+   背景、缩进、图标/箭头定位与颜色 = 自定义观感，全部由上方 @supports 块应用；
+   老 iPad（不支持 color-mix）→ @supports 不通过 → 此处不覆盖 → 完全走官方默认。 */
+.md-typeset .admonition-title,
+.md-typeset summary {
+  margin: 0 -0.8rem 0.55rem;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+  color: var(--fgColor-default);
+  line-height: 1.45;
 }
 .md-typeset .admonition > :last-child,
 .md-typeset details > :last-child {
   margin-bottom: 0.45rem;
 }
-.md-typeset .admonition-title::before,
-.md-typeset summary::before {
-  background-color: var(--admonition-color) !important;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.md-typeset .admonition-title::after,
-.md-typeset summary::after {
-  color: var(--admonition-color) !important;
-}
-[dir="ltr"] .md-typeset .admonition-title::before,
-[dir="ltr"] .md-typeset summary::before {
-  left: 0.8rem;
-}
-[dir="rtl"] .md-typeset .admonition-title::before,
-[dir="rtl"] .md-typeset summary::before {
-  right: 0.8rem;
-}
-[dir="ltr"] .md-typeset summary::after {
-  right: 0.35rem;
-}
-[dir="rtl"] .md-typeset summary::after {
-  left: 0.35rem;
-}
-.md-typeset summary::after {
-  top: 50%;
-  transform: translateY(-50%) rotate(0deg);
-}
-.md-typeset details[open] > summary::after {
-  transform: translateY(-50%) rotate(90deg);
-}
-[dir="rtl"] .md-typeset summary::after {
-  transform: translateY(-50%) rotate(180deg);
-}
-[dir="rtl"] .md-typeset details[open] > summary::after {
-  transform: translateY(-50%) rotate(90deg);
-}
+/* 折叠收起时标题栏底边（功能相关，官方未提供，保留全局）。 */
 .md-typeset details:not([open]) > summary {
   margin-bottom: 0;
   border-bottom: 0;
