@@ -158,85 +158,6 @@
   --admonition-color: #2563eb;
   --admonition-accent: #06b6d4;
   --admonition-spectrum: #22c55e;
-  /* 自定义边框/背景默认不覆盖（老 iPad / 官方 fallback）。
-     仅现代浏览器（支持 color-mix）通过下方 @supports 应用自定义。 */
-}
-
-/* ---- Admonition 自定义（渐进增强，仅支持 color-mix 的浏览器生效）----
-   老 iPad 不识别 color-mix → @supports 不通过 → 保持 zensical 官方默认样式。
-   现代浏览器 → 应用自定义半透明边框与渐变标题栏、垂直居中图标/箭头。
-   ============================================================================ */
-@supports (color: color-mix(in srgb, red 50%, blue)) {
-  .md-typeset .admonition,
-  .md-typeset details {
-    background-color: transparent !important;
-    border: 0.075rem solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
-    border-radius: var(--radius-admonition);
-    box-shadow: var(--shadow-sm);
-    font-size: var(--font-code);
-    overflow: hidden;
-    padding: 0 0.8rem;
-  }
-  .md-typeset .admonition-title,
-  .md-typeset summary {
-    padding-top: 0.55rem;
-    padding-bottom: 0.55rem;
-    background:
-      linear-gradient(
-        105deg,
-        color-mix(in srgb, var(--admonition-color) 12%, transparent),
-        color-mix(in srgb, var(--admonition-color) 11%, transparent) 50%,
-        color-mix(in srgb, var(--admonition-accent) 10%, transparent) 70%,
-        color-mix(in srgb, var(--admonition-spectrum) 8%, transparent) 86%,
-        color-mix(in srgb, var(--admonition-spectrum) 7%, transparent)
-      );
-  }
-  [dir="ltr"] .md-typeset .admonition-title,
-  [dir="ltr"] .md-typeset summary {
-    padding-left: 2.35rem;
-  }
-  [dir="rtl"] .md-typeset .admonition-title,
-  [dir="rtl"] .md-typeset summary {
-    padding-right: 2.35rem;
-  }
-  /* 图标垂直居中（官方 top:.125em 会歪，必须自定义居中定位） */
-  .md-typeset .admonition-title::before,
-  .md-typeset summary::before {
-    background-color: var(--admonition-color) !important;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  [dir="ltr"] .md-typeset .admonition-title::before,
-  [dir="ltr"] .md-typeset summary::before {
-    left: 0.8rem;
-  }
-  [dir="rtl"] .md-typeset .admonition-title::before,
-  [dir="rtl"] .md-typeset summary::before {
-    right: 0.8rem;
-  }
-  .md-typeset .admonition-title::after,
-  .md-typeset summary::after {
-    color: var(--admonition-color) !important;
-  }
-  [dir="ltr"] .md-typeset summary::after {
-    right: 0.35rem;
-  }
-  [dir="rtl"] .md-typeset summary::after {
-    left: 0.35rem;
-  }
-  .md-typeset summary::after {
-    top: 50%;
-    transform: translateY(-50%) rotate(0deg);
-  }
-  .md-typeset details[open] > summary::after {
-    transform: translateY(-50%) rotate(90deg);
-  }
-  [dir="rtl"] .md-typeset summary::after {
-    transform: translateY(-50%) rotate(180deg);
-  }
-  [dir="rtl"] .md-typeset details[open] > summary::after {
-    transform: translateY(-50%) rotate(90deg);
-  }
 }
 .md-typeset .admonition.note,
 .md-typeset details.note {
@@ -310,24 +231,99 @@
   --admonition-accent: #64748b;
   --admonition-spectrum: #94a3b8;
 }
-/* 标题栏基础（边距/文字色）：所有浏览器通用。
-   padding 上/下、背景、缩进、图标/箭头定位与颜色 = 自定义观感，全部由 @supports 块应用，
-   与自定义模式下图标 top:50% 配套；老 iPad（@supports 不通过）→ 不覆盖 → 标题栏保持官方
-   高度(padding=0)，官方图标 top:.125em 才能天然居中。 */
-.md-typeset .admonition-title,
-.md-typeset summary {
-  margin: 0 -0.8rem 0.55rem;
-  color: var(--fgColor-default);
-  line-height: 1.45;
+/* 以上全局仅定义类型色变量（--admonition-*），不覆盖任何提示块属性，
+   因此不触发 @supports 时提示块完全走官方默认，此处不再有任何影响提示块的规则。
+   所有自定义（边框/背景/标题栏 padding 与渐变/图标箭头定位颜色）统一在下方 @supports 块内。 */
+
+/* 退化后的标题行高恢复：main.css 的 .md-typeset { line-height:1.5 } 会连带压低提示块标题，
+   使图标 top:.125em 相对标题行中心偏下。此处仅对标题行恢复官方 1.8，
+   不影响提示块正文与其他正文的 GitHub 1.5 行高。 */
+.md-typeset .admonition > .admonition-title,
+.md-typeset details > summary {
+  line-height: 1.8;
 }
-.md-typeset .admonition > :last-child,
-.md-typeset details > :last-child {
-  margin-bottom: 0.45rem;
-}
-/* 折叠收起时标题栏底边（功能相关，官方未提供，保留全局）。 */
-.md-typeset details:not([open]) > summary {
-  margin-bottom: 0;
-  border-bottom: 0;
+
+/* ---- Admonition 自定义（置于所有提示块定义下方）----
+   仅支持 color-mix 的现代浏览器通过；老 iPad / 不支持者 → @supports 不通过 → 提示块完全官方。 */
+
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  .md-typeset .admonition,
+  .md-typeset details {
+    background-color: transparent !important;
+    border: 0.075rem solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
+    border-radius: var(--radius-admonition);
+    box-shadow: var(--shadow-sm);
+    font-size: var(--font-code);
+    overflow: hidden;
+    padding: 0 0.8rem;
+  }
+  .md-typeset .admonition-title,
+  .md-typeset summary {
+    /* 负 margin 撑满容器左右 padding，让渐变标题栏贴到边框（缩小边框观感） */
+    margin: 0 -0.8rem 0.55rem;
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+    background:
+      linear-gradient(
+        105deg,
+        color-mix(in srgb, var(--admonition-color) 12%, transparent),
+        color-mix(in srgb, var(--admonition-color) 11%, transparent) 50%,
+        color-mix(in srgb, var(--admonition-accent) 10%, transparent) 70%,
+        color-mix(in srgb, var(--admonition-spectrum) 8%, transparent) 86%,
+        color-mix(in srgb, var(--admonition-spectrum) 7%, transparent)
+      );
+  }
+  /* 折叠态（未展开）：官方 details:not([open]) > summary { margin-bottom: .6rem }
+     会在标题栏底边留一块空白。此处以更高特异性清零，让标题栏贴到底边。 */
+  .md-typeset details:not([open]) > summary {
+    margin: 0 -0.8rem 0;
+  }
+  [dir="ltr"] .md-typeset .admonition-title,
+  [dir="ltr"] .md-typeset summary {
+    padding-left: 2.35rem;
+  }
+  [dir="rtl"] .md-typeset .admonition-title,
+  [dir="rtl"] .md-typeset summary {
+    padding-right: 2.35rem;
+  }
+  /* 图标垂直居中 */
+  .md-typeset .admonition-title::before,
+  .md-typeset summary::before {
+    background-color: var(--admonition-color) !important;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  [dir="ltr"] .md-typeset .admonition-title::before,
+  [dir="ltr"] .md-typeset summary::before {
+    left: 0.8rem;
+  }
+  [dir="rtl"] .md-typeset .admonition-title::before,
+  [dir="rtl"] .md-typeset summary::before {
+    right: 0.8rem;
+  }
+  .md-typeset .admonition-title::after,
+  .md-typeset summary::after {
+    color: var(--admonition-color) !important;
+  }
+  [dir="ltr"] .md-typeset summary::after {
+    right: 0.35rem;
+  }
+  [dir="rtl"] .md-typeset summary::after {
+    left: 0.35rem;
+  }
+  .md-typeset summary::after {
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+  }
+  .md-typeset details[open] > summary::after {
+    transform: translateY(-50%) rotate(90deg);
+  }
+  [dir="rtl"] .md-typeset summary::after {
+    transform: translateY(-50%) rotate(180deg);
+  }
+  [dir="rtl"] .md-typeset details[open] > summary::after {
+    transform: translateY(-50%) rotate(90deg);
+  }
 }
 
 /* ============================================================================
