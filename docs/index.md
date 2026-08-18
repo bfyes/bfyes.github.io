@@ -13,8 +13,9 @@ Bill Feng | bfyes | https://github.com/bfyes | 嗨，我是BillFeng，来自浙�
 ::/about::
 
 ::changelog::
-2026.08.18: 向 Zensical 提了一个issue <https://github.com/zensical/ui/issues/201>。
-2026.08.17: 解决历史遗留问题: mathjax.js 在 instant 模式下加载异常；补发广播解决 giscus 时序问题。新增部分文档。
+2026.08.19: 终于重构到令我满意！滚去做 hpc 了，考虑开学时发布一下我的定制主题！
+2026.08.18: 向 Zensical 提了一个issue <https://github.com/zensical/ui/issues/201>，官方秒回并归档为`bug`。
+2026.08.17: 解决历史遗留问题: mathjax.js 在 instant 模式下加载异常；补发广播解决 giscus 时序问题。新增部分文档。<br>向 HPC101 仓库提出一个 PR <https://github.com/ZJUSCT/HPC101/pull/50>。
 2026.08.16: 重构js，优化主页工作流，引入新语法。调整提示块颜色，分割主页与正文资源。
 2026.08.15: 修复公式/图标问题。重构css。添加少量动画。
 2026.08.14: 更改 giscus 评论区加载机制。重构部分 css。修复已知问题。

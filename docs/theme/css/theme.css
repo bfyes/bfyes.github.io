@@ -15,21 +15,25 @@
        透明背景 + 类型色渐变标题栏、12 种类型配色(note/abstract/info/tip/
        success/question/warning/failure/danger/bug/example/quote)、
        标题图标(::before)定位、折叠箭头(::after)旋转
-   03. 站点框架
-       Logo(.bf-logo)、页面信息(.page-updated-top/.page-info)、
+   03. 顶部导航
+       Logo(.bf-logo)、导航栏毛玻璃(.md-header/.md-tabs)、站点宽度(.md-grid)
+   04. 页面信息
+       顶部更新时间/字数条(.page-updated-top)、底部页面信息(.page-info)
+   05. 背景与正文层
        虚线网格背景(body::before SVG + mask 视差)、
-       正文区域(.md-content z-index:1 遮盖网格)、footer(z-index:1 同级)、
-       导航栏毛玻璃(.md-header/.md-tabs)、导航选中态、
-       右侧 TOC 阅读进度、页面宽度(.md-grid)、
-       滚动条样式(sidebar + 代码块共用)
-   04. PDF 阅读器
+       正文/footer/编辑按钮 z-index 叠压(网格 z:0 → 正文/footer z:1 → 按钮 z:3)
+   06. 侧栏导航与 TOC
+       左侧导航选中态/hover、右侧 TOC 阅读进度(已读/当前着色)
+   07. 滚动条样式
+       sidebar 滚动容器 + 代码块横向滚动条共用一套（webkit + Firefox）
+   08. PDF 阅读器
        .pdf-viewer-* 外壳/工具栏/原生 iframe/iOS 画布降级、
        加载覆盖层(进度条 + 百分比 + 闪烁圆点)、
        错误提示、暗色模式背景覆盖
-   05. 响应式（移动端通用适配）
+   09. 响应式（移动端通用适配）
        ≤44.984375em：隐藏 headerlink、正文 padding 归零、
        代码块横向滚动、行号列缩小间距
-   06. 淡入动画
+   10. 淡入动画
        正文元素 fade-in、右侧 TOC 逐条淡入(nav-index 错开延迟)
 
    可调参数见 variables.css（加载于本文件之前）。
@@ -87,6 +91,9 @@
   background-repeat: no-repeat;
   background-size: 16px 16px;
 }
+/* 暗色模式：headerlink 图标改浅色。
+   注意：background-image 里的 SVG data URI 是独立资源，fill='currentColor'
+   不会解析成宿主元素的 color（落回默认黑），故必须在此重写 SVG 并硬编码 fill。 */
 [data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink,
 [data-md-color-scheme="slate"] .md-typeset :is(h1, h2, h3, h4, h5, h6) > .headerlink:hover {
   color: #f0f6fc;
@@ -247,31 +254,58 @@
    仅支持 color-mix 的现代浏览器通过；不支持者 @supports 不通过 → 提示块完全官方。 */
 
 @supports (color: color-mix(in srgb, red 50%, blue)) {
+  /* —— 容器：透明底 + 类型色描边 + 防溢出 ——
+     position:relative 作为下方 ::before 填充块的定位锚点；
+     overflow:hidden 配合圆角/填充块，裁切超长内容与渐变溢出；
+     字号统一用代码块字号（--font-code，标题与正文一致）。 */
   .md-typeset .admonition,
   .md-typeset details {
     position: relative;
     background-color: transparent !important;
-    border: 0.075rem solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
+    border: var(--admonition-border-w) solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
     box-shadow: var(--shadow-sm);
     overflow: hidden;
-    padding: 0 0.8rem;
+    padding: 0 var(--admonition-pad-inline);
     font-size: var(--font-code);
   }
-  .md-typeset .admonition-title + *,
-  .md-typeset summary + * {
-    padding-top: 0.6rem;
-  }
+  /* —— 标题 margin：容器 padding 上下为 0，由标题 margin-top/bottom 撑出
+     标题与容器顶边、标题与正文之间的空隙（上下均取标题 margin）。 —— */
   .md-typeset .admonition-title,
   .md-typeset summary {
-    margin-top: 0.4rem;
-    margin-bottom: 0.4rem;
+    margin-top: var(--admonition-title-margin);
+    margin-bottom: var(--admonition-title-margin);
   }
+  /* —— 正文首元素 padding-top：与标题底边留白（取正文 margin，与正文末元素底边对称）。 —— */
+  .md-typeset .admonition-title + *,
+  .md-typeset summary + * {
+    padding-top: var(--admonition-body-margin);
+  }
+  /* —— 标题即末子时（折叠态 details:not([open])>summary，或只有标题无正文的
+     .admonition>.admonition-title），Material 的 :last-child{margin-bottom:.6rem}
+     把标题底边撑成 0.6，与顶边 0.4 不对称；此处统一压回标题 margin，保持上下对称。
+     有正文时标题非末子，不触发，正文末子见下方规则约束。 —— */
+  .md-typeset details:not([open]) > summary,
+  .md-typeset .admonition > .admonition-title:last-child,
+  .md-typeset details > summary:last-child {
+    margin-bottom: var(--admonition-title-margin);
+  }
+  /* —— 正文末元素底边距：Material 默认 .admonition>:last-child{margin-bottom:.6rem}，
+     此处显式约束到变量，与正文首元素 padding-top 联动（上下对称）。 —— */
+  .md-typeset .admonition > :last-child,
+  .md-typeset details > :last-child {
+    margin-bottom: var(--admonition-body-margin);
+  }
+  /* —— 填充高亮块（::before）——
+     绝对定位贴在容器顶部，高度 = 标题 margin×2 + 标题行高，
+     与 <p class="admonition-title"> 标题行精确对齐。
+     五段 105° 渐变取类型色 → 强调色 → 光谱色，逐段淡出；
+     pointer-events:none 保证不拦截点击。 */
   .md-typeset .admonition::before,
   .md-typeset details::before {
     content: "";
     position: absolute;
     inset: 0 0 auto 0;
-    height: calc(0.4rem * 2 + 1.8em);
+    height: calc(var(--admonition-title-margin) * 2 + var(--admonition-title-lh) * 1em);
     background:
       linear-gradient(
         105deg,
@@ -283,9 +317,8 @@
       );
     pointer-events: none;
   }
-  .md-typeset details:not([open]) > summary {
-    margin-bottom: 0.4rem;
-  }
+  /* —— 图标与箭头着色：复用类型色，与边框/填充呼应 ——
+     ::before 是标题左侧图标底色，::after 是折叠箭头。 */
   .md-typeset .admonition-title::before,
   .md-typeset summary::before {
     background-color: var(--admonition-color) !important;
@@ -296,10 +329,9 @@
 }
 
 /* ============================================================================
-   03. 站点框架
+   03. 顶部导航
    ----------------------------------------------------------------------------
-   Logo、页面信息、虚线网格背景、正文区域、导航栏毛玻璃、导航选中态、
-   右侧 TOC 阅读进度、页面宽度、滚动条样式、highlight.js 行号列。
+   Logo、导航栏毛玻璃(.md-header/.md-tabs)、站点宽度(.md-grid)。
    ============================================================================ */
 
 /* ---- Logo ---- */
@@ -309,7 +341,34 @@
   width: auto;
 }
 
-/* ---- 页面信息 ---- */
+/* ---- 导航栏毛玻璃 ---- */
+.md-header,
+.md-tabs {
+  background-color: var(--header-bg);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+}
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: var(--header-bg) !important;
+}
+
+.md-tabs__list {
+  padding-left: 0;
+}
+
+/* ---- 站点宽度 ---- */
+.md-grid {
+  max-width: var(--page-max-width);
+}
+
+/* ============================================================================
+   04. 页面信息
+   ----------------------------------------------------------------------------
+   顶部更新时间/字数条(.page-updated-top)、底部页面信息(.page-info)。
+   ============================================================================ */
+
+/* ---- 顶部更新时间/字数条 ---- */
 .page-updated-top {
   display: flex;
   align-items: center;
@@ -346,6 +405,7 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ---- 底部页面信息 ---- */
 .page-info {
   display: flex;
   flex-wrap: wrap;
@@ -394,6 +454,13 @@
   display: block;
 }
 
+/* ============================================================================
+   05. 背景与正文层
+   ----------------------------------------------------------------------------
+   虚线网格背景(body::before，视差 + mask 挖空正文区)、
+   正文/footer/编辑按钮 z-index 叠压(网格 z:0 → 正文/footer z:1 → 按钮 z:3)。
+   ============================================================================ */
+
 /* ---- 虚线网格背景（视差） ---- */
 body::before {
   content: "";
@@ -416,7 +483,7 @@ body.grid-off-active::before {
   content: none;
 }
 
-/* ---- 正文区域 ---- */
+/* ---- 正文区域：遮盖网格 ---- */
 .md-content {
   background-color: var(--md-default-bg-color);
   box-shadow: none;
@@ -445,23 +512,13 @@ body.grid-off-active::before {
   background-color: var(--content-bg);
 }
 
-/* ---- 导航栏毛玻璃 ---- */
-.md-header,
-.md-tabs {
-  background-color: var(--header-bg);
-  backdrop-filter: blur(var(--blur-radius));
-  -webkit-backdrop-filter: blur(var(--blur-radius));
-}
-[data-md-color-scheme="slate"] .md-header,
-[data-md-color-scheme="slate"] .md-tabs {
-  background-color: var(--header-bg) !important;
-}
+/* ============================================================================
+   06. 侧栏导航与 TOC
+   ----------------------------------------------------------------------------
+   左侧导航选中态/hover、右侧 TOC 阅读进度(已读/当前着色)。
+   ============================================================================ */
 
-.md-tabs__list {
-  padding-left: 0rem;
-}
-
-/* ---- 导航选中态 ---- */
+/* ---- 左侧导航选中态 ---- */
 .md-sidebar--primary .md-nav__link--active,
 .md-sidebar--primary .md-nav__item--active > .md-nav__container {
   color: var(--md-accent-fg-color);
@@ -508,12 +565,15 @@ body.grid-off-active::before {
   opacity: 1;
 }
 
-/* ---- 页面宽度 ---- */
-.md-grid {
-  max-width: var(--page-max-width);
-}
 
-/* ---- 滚动条 ---- */
+/* ============================================================================
+   07. 滚动条样式
+   ----------------------------------------------------------------------------
+   sidebar 滚动容器与代码块横向滚动条共用一套样式：
+   Firefox 用 scrollbar-width / scrollbar-color，webkit 用 ::-webkit-scrollbar*。
+   尺寸与配色变量见 variables.css（--scrollbar-width / -height / -thumb /
+   -thumb-hover），按 [data-md-color-scheme] 切换明暗。
+   ============================================================================ */
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner),
 .md-typeset :is(pre.highlight, pre[class*="language-"]) code {
   scrollbar-width: thin;
@@ -552,7 +612,7 @@ body.grid-off-active::before {
 /* hljs 与 Material 布局兼容见 main.css（代码块 UI 归一管理） */
 
 /* ============================================================================
-   04. PDF 阅读器
+   08. PDF 阅读器
    ----------------------------------------------------------------------------
    .pdf-viewer-* / 下载进度 + 原生 PDF 查看器 + iOS/iPadOS 画布降级。
    ============================================================================ */
@@ -802,7 +862,7 @@ body.grid-off-active::before {
 }
 
 /* ============================================================================
-   05. 响应式（移动端通用适配）
+   09. 响应式（移动端通用适配）
    ============================================================================ */
 
 @media screen and (max-width: 44.984375em) {
@@ -824,13 +884,27 @@ body.grid-off-active::before {
 }
 
 /* ============================================================================
-   06. 淡入动画
+   10. 淡入动画
    ----------------------------------------------------------------------------
    正文元素 fade-in；右侧 TOC 逐条淡入(nav-index 错开延迟)。
    transform 会干扰 Material 的 toc.follow 滚动运算，故只动 opacity。
    ============================================================================ */
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes toc-fade { from { opacity: 0.4; color: var(--md-default-fg-color--light); } 40% { opacity: 0.5; color: var(--md-default-fg-color--light); } 66% { opacity: 0.6; color: color-mix(in srgb, var(--md-accent-fg-color) 40%, var(--md-default-fg-color)); } to { opacity: 1; } }
+@keyframes toc-fade {
+  from {
+    opacity: 0.4;
+    color: var(--md-default-fg-color--light);
+  }
+  40% {
+    opacity: 0.5;
+    color: var(--md-default-fg-color--light);
+  }
+  66% {
+    opacity: 0.6;
+    color: color-mix(in srgb, var(--md-accent-fg-color) 40%, var(--md-default-fg-color));
+  }
+  to { opacity: 1; }
+}
 /* 如果想要未动画和未浏览一样颜色，则透明度要设置为 0.86*/
 .md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1s ease both; }
 /* 右侧 TOC 逐条淡入：只动 opacity，不动 transform/几何，避免干扰 Material

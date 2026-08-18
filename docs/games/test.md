@@ -43,8 +43,38 @@
 ??? tip "可折叠 Tip"
     这是折叠提示块，用来检查右侧展开箭头的对齐和动画。
 
-??? info "可折叠 Info"
+??? info "可折叠 Info（有惊喜！）"
     第二个折叠块，用来确认多个 details 连续出现时的间距。
+    !!! note "无正文提示块"
+
+    ??? note "无正文折叠块"
+
+    ??? success "有惊喜"
+        嵌套折叠块测试。
+
+        ??? success "嵌套"
+            嵌套折叠块测试。
+
+            ??? success "嵌套"
+                嵌套折叠块测试。
+
+                ??? success "嵌套"
+                    嵌套折叠块测试。
+
+                    ??? success "嵌套"
+                        嵌套折叠块测试。
+
+                        ??? success "嵌套"
+                            嵌套折叠块测试。
+                            
+                            ??? success "嵌套"
+                                嵌套折叠块测试。
+
+                                ??? success "嵌套"
+                                    嵌套折叠块测试。
+                                                        
+                                    ??? success "嵌套"
+                                        你成功浪费了一分钟。
 
 ## H2 标题
 
@@ -89,6 +119,8 @@
 
 ## 公式
 
+右键公式可唤出 MathJax 菜单，选择 “Show Math As → TeX Commands” 可查看公式的 LaTeX 源码。
+
 1. 行内公式 $E = mc^2$ 和 $\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$。$\sum_{i=1}^n \frac1i$ 
 2. 行内公式 $\displaystyle E = mc^2$ 和 $\displaystyle\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$。$\displaystyle\sum_{i=1}^n \frac1i$
 
@@ -109,7 +141,7 @@ $$
 
 ## 代码
 
-行内代码 `#!python squares = [x ** 2 for x in data]`，`#!c #define MAX_LEN 256`，`#!asm assume cs:code, ds:data`，`#!asm repne scasb`，`#!asm les di, dword ptr [bp+2]`，`#!bash cd ~/bfyes`，`不指定语言 int main()`以及代码块：
+行内代码 `#!python squares = [x ** 2 for x in data]`，`#!c #define MAX_LEN 256`，`#!asm assume cs:code, ds:data`，`#!asm repne scasb`，`#!asm les di, dword ptr [bp+2]`，`#!bash cd ~/bfyes`，`#!makefile $(CC) $(CFLAGS) -o hello hello.c`，`int main() (不指定语言)`以及代码块：
 
 ```c
 #include <stdio.h>
@@ -160,6 +192,14 @@ _start:
     add a0, a0, a1      # a0 = 49
     lw t1, 0(t0)
     ret
+```
+
+```makefile
+CC = gcc
+CFLAGS = -O2 -Wall
+all: hello
+hello: hello.c
+    $(CC) $(CFLAGS) -o hello hello.c
 ```
 
 ## 命令行

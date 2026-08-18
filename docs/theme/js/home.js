@@ -5,7 +5,10 @@
   var htmlEl = window.site.htmlEl;
 
   // ---- friends ----
-  function githubAvatarUrl(github) {
+  // 头像 / handle / 描述已由 scripts/patch_home_blocks.py 在构建期烘焙进 HTML，
+  // 此处不再需要运行时补 DOM（原 initFriends / buildAvatar / friendInitials 已移除）。
+
+  // ---- github contributions ----
     return github ? "https://avatars.githubusercontent.com/" + encodeURIComponent(github) + "?size=160" : "";
   }
 

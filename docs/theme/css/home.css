@@ -11,7 +11,7 @@
        加载/错误/正常三态、概览面板、图例、无障碍(.sr-only)
    02. 彩虹背景
        .rainbow-page / .rainbow-backdrop 氛围背景、
-       z 轴体系(-1 彩虹 / 0 网格 / 1 正文 / 90 tabs / 100 header)、
+       z 轴体系(-1 彩虹 / 0 网格 / 1 正文 / 2 tabs / 4 header)、
        4 组色斑(local-aurora / band-pass / beam-b / beam-c)、
        blur + saturate 滤镜、alternate 动画、
        prefers-reduced-motion 降级
@@ -35,6 +35,105 @@
    可调参数见 variables.css（加载于本文件之前）。
    加载顺序：variables.css → main.css → theme.css → home.css。
    ============================================================================ */
+
+/* ============================================================================
+   00. 主页专属变量
+   ----------------------------------------------------------------------------
+   主页用到的配色/尺寸变量，按明暗方案定义。删 home.css 即随之一并消失，
+   variables.css 不残留死变量。引用的全站通用变量（--font-* / --shadow-* /
+   --radius-* / --blur-radius / --mobile-*）仍在 variables.css。
+   ============================================================================ */
+[data-md-color-scheme="default"] {
+  /* 贡献图边框 + 日方格 5 级配色（0=无 1=少 2=中 3=多 4=最多） */
+  --cont-border: rgba(31, 35, 40, 0.05);
+  --ghc-level-0: #eff2f5;
+  --ghc-level-1: #aceebb;
+  --ghc-level-2: #4ac26b;
+  --ghc-level-3: #2da44e;
+  --ghc-level-4: #116329;
+
+  /* 首页面板 + 分类强调色 */
+  --home-panel: rgba(255, 255, 255, 0.64);
+  --home-border: #ccd6d8;
+  --accent-study: #0969da;
+  --accent-tools: #bc4c00;
+  --accent-diary: #8250df;
+  --accent-games: #1a7f37;
+
+  /* 友链头像 */
+  --avatar-color: #1a7f37;
+  --avatar-bg: color-mix(in srgb, #2da44e 10%, transparent);
+
+  /* 彩虹色斑 */
+  --rainbow-red: rgba(255, 92, 122, 0.2);
+  --rainbow-orange: rgba(255, 190, 86, 0.2);
+  --rainbow-green: rgba(77, 220, 138, 0.18);
+  --rainbow-cyan: rgba(58, 213, 230, 0.18);
+  --rainbow-blue: rgba(91, 156, 255, 0.18);
+  --rainbow-violet: rgba(174, 111, 255, 0.18);
+
+  /* 终端阴影 + 文字色 */
+  --terminal-shadow: var(--shadow-md);
+  --terminal-host-color: #2da44e;
+  --terminal-prompt-color: #0969da;
+  --terminal-command-color: #111111;
+  --terminal-cursor-color: #111111;
+
+  /* 主页移动端尺寸 */
+  --mobile-terminal-font-size: 14px;
+  --mobile-terminal-padding: 0.85rem 0.9rem 0.95rem;
+  --mobile-log-gap: 0.25rem;
+  --mobile-section-head-gap: 0.25rem;
+}
+
+[data-md-color-scheme="slate"] {
+  /* 贡献图边框 + 日方格 5 级配色（暗色） */
+  --cont-border: rgba(1, 4, 9, 0.05);
+  --ghc-level-0: #151b23;
+  --ghc-level-1: #033a16;
+  --ghc-level-2: #196c2e;
+  --ghc-level-3: #2ea043;
+  --ghc-level-4: #56d364;
+
+  /* 首页面板 + 分类强调色（暗色） */
+  --home-panel: rgba(1, 4, 9, 0.64);
+  --home-border: #383e42;
+  --accent-study: #79c0ff;
+  --accent-tools: #ffa657;
+  --accent-diary: #d2a8ff;
+  --accent-games: #7ee787;
+
+  /* 友链头像（暗色） */
+  --avatar-color: #7ee787;
+  --avatar-bg: color-mix(in srgb, #7ee787 12%, transparent);
+
+  /* 彩虹色斑（暗色更亮） */
+  --rainbow-red: rgba(255, 123, 146, 0.2);
+  --rainbow-orange: rgba(255, 201, 107, 0.2);
+  --rainbow-green: rgba(126, 231, 161, 0.18);
+  --rainbow-cyan: rgba(94, 234, 255, 0.18);
+  --rainbow-blue: rgba(147, 197, 253, 0.2);
+  --rainbow-violet: rgba(216, 180, 254, 0.18);
+
+  /* 终端阴影 + 文字色（暗色） */
+  --terminal-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+  --terminal-host-color: #7ee787;
+  --terminal-prompt-color: #79c0ff;
+  --terminal-command-color: #ffffff;
+  --terminal-cursor-color: #fff;
+}
+
+/* 亮暗相同的值（终端圆点 + 主页专用字体栈） */
+:root {
+  /* macOS 风格终端圆点 */
+  --terminal-dot-red: #ff5c60;
+  --terminal-dot-yellow: #fac800;
+  --terminal-dot-green: #35c759;
+  /* 主页专用字体栈：与全站 --font-text / --font-mono 不同（Inter / JetBrains Mono
+     优先），故单独定义而非复用；逐字保留原硬编码栈，外观行为不变。 */
+  --font-ghc: "Inter", "Noto Sans SC", sans-serif;
+  --font-home-title: "JetBrains Mono", "Noto Sans SC", sans-serif;
+}
 
 /* ============================================================================
    01. GitHub 贡献图
@@ -76,7 +175,7 @@
 
 .ghc-shell {
   overflow: hidden;
-  font-family: "Inter", "Noto Sans SC", sans-serif;
+  font-family: var(--font-ghc);
 }
 
 .ghc-header {
@@ -184,19 +283,21 @@
   outline-offset: 1px;
 }
 
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: #eff2f5; border-color: var(--cont-border); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: #aceebb; border-color: var(--cont-border); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: #4ac26b; border-color: var(--cont-border); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: #2da44e; border-color: var(--cont-border); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: #116329; border-color: var(--cont-border); }
+/* 贡献图 5 级日方格配色（data-level="0"~"4"），引用上方 00 节定义的
+   --ghc-level-* 变量；与 GitHub 官方一致：0=无贡献 1=少 2=中 3=多 4=最多。 */
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: var(--ghc-level-0); border-color: var(--cont-border); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: var(--ghc-level-1); border-color: var(--cont-border); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: var(--ghc-level-2); border-color: var(--cont-border); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: var(--ghc-level-3); border-color: var(--cont-border); }
+[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: var(--ghc-level-4); border-color: var(--cont-border); }
 
 [data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="0"] {
-  background-color: #151b23; border-color: var(--cont-border);
+  background-color: var(--ghc-level-0); border-color: var(--cont-border);
 }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: #033a16; border-color: var(--cont-border); }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: #196c2e; border-color: var(--cont-border); }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: #2ea043; border-color: var(--cont-border); }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: #56d364; border-color: var(--cont-border); }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: var(--ghc-level-1); border-color: var(--cont-border); }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: var(--ghc-level-2); border-color: var(--cont-border); }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: var(--ghc-level-3); border-color: var(--cont-border); }
+[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: var(--ghc-level-4); border-color: var(--cont-border); }
 
 .ghc-footer {
   display: flex;
@@ -397,7 +498,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 
 .md-typeset .home-section__title {
   margin: 0;
-  font-family: "JetBrains Mono", "Noto Sans SC", sans-serif;
+  font-family: var(--font-home-title);
   font-size: 0.92rem;
   font-weight: 800;
   line-height: 1.25;

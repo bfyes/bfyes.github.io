@@ -24,10 +24,42 @@ from __future__ import annotations
 import html
 import re
 from pathlib import Path
+from urllib.parse import quote
 
 import markdown
 
 SITE = Path(__file__).resolve().parents[1] / "site"
+
+
+def friend_initials(name: str, github: str) -> str:
+    """与原 home.js friendInitials 一致：中文取首字；多词取前两词首字母；单词取前两字符。"""
+    source = (name or github or "?").strip()
+    if not source:
+        return "?"
+    if "一" <= source[0] <= "龥":
+        return source[0]
+    parts = source.split()
+    if len(parts) > 1:
+        return (parts[0][0] + parts[1][0]).upper()
+    return source[:2]
+
+
+def github_avatar_url(github: str) -> str:
+    """与原 home.js githubAvatarUrl 一致（encodeURIComponent → quote(safe='')）。"""
+    return f"https://avatars.githubusercontent.com/{quote(github, safe='')}?size=160" if github else ""
+
+
+def render_avatar(name: str, github: str) -> str:
+    """构建头像 span：首字母占位 + 叠加 GitHub 头像 img（加载失败由 onerror 移除，露出首字母）。"""
+    initials = html.escape(friend_initials(name, github))
+    src = github_avatar_url(github)
+    img = (
+        f'<img src="{html.escape(src, quote=True)}" alt="" width="96" height="96" '
+        f'onerror="this.remove()">'
+        if src
+        else ""
+    )
+    return f'<span class="home-friend__avatar">{initials}{img}</span>'
 
 
 def parse_block(content: str, tag: str) -> str | None:
@@ -91,15 +123,24 @@ def render_friends(lines: str, title: str = "Links", section_id: str = "home-fri
             href = parts[1]
             desc = parts[2] if len(parts) > 2 else ""
             name = github_id
-        attrs = f'href="{html.escape(href)}" data-id="{html.escape(github_id)}"'
+        attrs = f'href="{html.escape(href)}" target="_blank" rel="noopener"'
+        # 头像：构建期生成首字母 + GitHub 头像 img（onerror 移除 img 露出首字母）。
+        avatar = render_avatar(name, github_id)
+        # handle：仅当有 GitHub 用户名时输出 @用户名。
+        handle = (
+            f'\n        <span class="home-friend__handle">@{html.escape(github_id)}</span>'
+            if github_id
+            else ""
+        )
+        # 描述：过一遍 Markdown 渲染，支持 <url> 与 [text](url)，直接以正文 span 输出。
+        meta = ""
         if desc:
-            # 描述与 changelog 同逻辑：过一遍 Markdown 渲染，支持 <url> 与 [text](url)。
-            # 渲染后的 HTML 存入 data-description，仅对引号做属性级转义。
             rendered = render_inline_markdown(desc)
-            attrs += f' data-description="{html.escape(rendered, quote=True)}"'
+            meta = f'\n        <span class="home-friend__meta">{rendered}</span>'
         items.append(
             f'      <a class="home-friend" {attrs}>\n'
-            f"        <strong>{html.escape(name)}</strong>\n"
+            f"        {avatar}\n"
+            f"        <strong>{html.escape(name)}</strong>{handle}{meta}\n"
             f"      </a>"
         )
     return (
