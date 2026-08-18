@@ -836,12 +836,13 @@ body.grid-off-active::before {
 @keyframes toc-fade { from { opacity: 0.4; color: var(--md-default-fg-color--light); } 40% { opacity: 0.5; color: var(--md-default-fg-color--light); } 66% { opacity: 0.6; color: color-mix(in srgb, var(--md-accent-fg-color) 40%, var(--md-default-fg-color)); } to { opacity: 1; } }
 .md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1s ease both; }
 /* 右侧 TOC 逐条淡入：只动 opacity，不动 transform/几何，避免干扰 Material
-   的 toc.follow 滚动运算（transform 会改变 offsetTop/getBoundingClientRect）。 */
-.md-sidebar--secondary .md-nav__link { animation: toc-fade 0.8s ease-out both; animation-delay: calc(var(--nav-index, 0) * 120ms); }
-.md-sidebar--secondary .md-nav__item:nth-child(1) .md-nav__link { --nav-index: 0; } .md-sidebar--secondary .md-nav__item:nth-child(2) .md-nav__link { --nav-index: 1; } .md-sidebar--secondary .md-nav__item:nth-child(3) .md-nav__link { --nav-index: 2; } .md-sidebar--secondary .md-nav__item:nth-child(4) .md-nav__link { --nav-index: 3; } .md-sidebar--secondary .md-nav__item:nth-child(5) .md-nav__link { --nav-index: 4; }
-.md-sidebar--secondary .md-nav__item:nth-child(6) .md-nav__link { --nav-index: 5; } .md-sidebar--secondary .md-nav__item:nth-child(7) .md-nav__link { --nav-index: 6; } .md-sidebar--secondary .md-nav__item:nth-child(8) .md-nav__link { --nav-index: 7; } .md-sidebar--secondary .md-nav__item:nth-child(9) .md-nav__link { --nav-index: 8; } .md-sidebar--secondary .md-nav__item:nth-child(10) .md-nav__link { --nav-index: 9; }
-.md-sidebar--secondary .md-nav__item:nth-child(11) .md-nav__link { --nav-index: 10; } .md-sidebar--secondary .md-nav__item:nth-child(12) .md-nav__link { --nav-index: 11; } .md-sidebar--secondary .md-nav__item:nth-child(13) .md-nav__link { --nav-index: 12; } .md-sidebar--secondary .md-nav__item:nth-child(14) .md-nav__link { --nav-index: 13; } .md-sidebar--secondary .md-nav__item:nth-child(15) .md-nav__link { --nav-index: 14; }
-.md-sidebar--secondary .md-nav__item:nth-child(16) .md-nav__link { --nav-index: 15; } .md-sidebar--secondary .md-nav__item:nth-child(17) .md-nav__link { --nav-index: 16; } .md-sidebar--secondary .md-nav__item:nth-child(18) .md-nav__link { --nav-index: 17; } .md-sidebar--secondary .md-nav__item:nth-child(19) .md-nav__link { --nav-index: 18; } .md-sidebar--secondary .md-nav__item:nth-child(20) .md-nav__link { --nav-index: 19; }
-.md-sidebar--secondary .md-nav__item:nth-child(21) .md-nav__link { --nav-index: 20; } .md-sidebar--secondary .md-nav__item:nth-child(22) .md-nav__link { --nav-index: 21; } .md-sidebar--secondary .md-nav__item:nth-child(23) .md-nav__link { --nav-index: 22; } .md-sidebar--secondary .md-nav__item:nth-child(24) .md-nav__link { --nav-index: 23; } .md-sidebar--secondary .md-nav__item:nth-child(25) .md-nav__link { --nav-index: 24; }
-.md-sidebar--secondary .md-nav__item:nth-child(26) .md-nav__link { --nav-index: 25; } .md-sidebar--secondary .md-nav__item:nth-child(27) .md-nav__link { --nav-index: 26; } .md-sidebar--secondary .md-nav__item:nth-child(28) .md-nav__link { --nav-index: 27; } .md-sidebar--secondary .md-nav__item:nth-child(29) .md-nav__link { --nav-index: 28; } .md-sidebar--secondary .md-nav__item:nth-child(30) .md-nav__link { --nav-index: 29; }
-@media (prefers-reduced-motion: reduce) { .md-content__inner, .md-sidebar--secondary .md-nav__item { animation: none; } }
+   的 toc.follow 滚动运算（transform 会改变 offsetTop/getBoundingClientRect）。
+   CSS 只声明动画本身；每条链接的 animation-delay（逐步错开）由 site.js 注入，
+   按实际条数深度优先编号，线性顺序、自适应上限。 */
+.md-sidebar--secondary [data-md-component="toc"] .md-nav__link {
+  animation: toc-fade 0.8s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .md-content__inner,
+  .md-sidebar--secondary [data-md-component="toc"] .md-nav__link { animation: none; }
+}
