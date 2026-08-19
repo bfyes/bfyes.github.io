@@ -5,8 +5,8 @@
 
    目录
    01. GitHub 贡献图
-       .ghc-* / .ContributionCalendar-* 静态贡献日历、
-       数据由 theme/js/home.js 从 theme/data/contributions.json 读取、
+       .ghc-* / .ContributionCalendar-* 贡献日历、
+       数据由 home.js 渲染（动态 contributions-live.js 或静态 contributions.json）、
        亮/暗模式各 5 级颜色(data-level="0"~"4")、
        加载/错误/正常三态、概览面板、图例、无障碍(.sr-only)
    02. 彩虹背景
@@ -27,7 +27,7 @@
        host/prompt/command/cursor 四色文字、亮/暗模式背景
    05. 响应式（主页移动端适配）与动画
        ≤44.984375em：友链单列、贡献图 footer 纵向、
-       标题栏纵向、日志单列、终端字号缩小、
+       标题栏纵向、日志单列、
        prefers-reduced-motion 彩虹动画停用、
        keyframes: rainbow-local-aurora / rainbow-band-pass / rainbow-beam-b / rainbow-beam-c
 
@@ -40,7 +40,7 @@
    ----------------------------------------------------------------------------
    主页用到的配色/尺寸变量，按明暗方案定义。删 home.css 即随之一并消失，
    variables.css 不残留死变量。引用的全站通用变量（--font-* / --shadow-* /
-   --radius-* / --blur-radius / --mobile-*）仍在 variables.css。
+   --radius-* / --blur-radius）仍在 variables.css。
    ============================================================================ */
 [data-md-color-scheme="default"] {
   /* 贡献图边框 + 日方格 5 级配色（0=无 1=少 2=中 3=多 4=最多） */
@@ -73,12 +73,6 @@
   --terminal-prompt-color: #0969da;
   --terminal-command-color: #111111;
   --terminal-cursor-color: #111111;
-
-  /* 主页移动端尺寸 */
-  --mobile-terminal-font-size: var(--font-code);
-  --mobile-terminal-padding: 0.85rem 0.9rem 0.95rem;
-  --mobile-log-gap: 0.25rem;
-  --mobile-section-head-gap: 0.25rem;
 }
 
 [data-md-color-scheme="slate"] {
@@ -129,9 +123,12 @@
 /* ============================================================================
    01. GitHub 贡献图
    ----------------------------------------------------------------------------
-   .ghc-* / .ContributionCalendar-* 静态贡献日历组件。
-   数据由 theme/js/home.js 从 theme/data/contributions.json 读取并渲染。
-   亮/暗模式各有 5 级颜色（data-level="0"~"4"），与 GitHub 官方配色一致。
+   .ghc-* / .ContributionCalendar-* 贡献日历组件。
+   数据由 home.js 的 initGithubCalendar 渲染：优先取 contributions-live.js
+   注入的 window.site.fetchContributions（动态：GraphQL/代理实时抓取），
+   否则回退 theme/data/contributions.json（静态）。两条路径产出同构 data，
+   下游渲染不感知来源。亮/暗模式各有 5 级颜色（data-level="0"~"4"），
+   与 GitHub 官方配色一致。
    ============================================================================ */
 
 .github-calendar-wrap {
@@ -258,7 +255,7 @@
 
 .ContributionCalendar-day {
   box-sizing: border-box;
-  border: 0.5px solid;
+  border: 0.5px solid var(--cont-border);
   border-radius: var(--radius-sm);
   outline: none;
   transition: opacity 0.12s ease;
@@ -274,21 +271,15 @@
   outline-offset: 1px;
 }
 
-/* 贡献图 5 级日方格配色（data-level="0"~"4"），引用上方 00 节定义的
-   --ghc-level-* 变量；与 GitHub 官方一致：0=无贡献 1=少 2=中 3=多 4=最多。 */
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="0"] { background-color: var(--ghc-level-0); border-color: var(--cont-border); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="1"] { background-color: var(--ghc-level-1); border-color: var(--cont-border); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="2"] { background-color: var(--ghc-level-2); border-color: var(--cont-border); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="3"] { background-color: var(--ghc-level-3); border-color: var(--cont-border); }
-[data-md-color-scheme="default"] .ContributionCalendar-day[data-level="4"] { background-color: var(--ghc-level-4); border-color: var(--cont-border); }
-
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="0"] {
-  background-color: var(--ghc-level-0); border-color: var(--cont-border);
-}
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="1"] { background-color: var(--ghc-level-1); border-color: var(--cont-border); }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="2"] { background-color: var(--ghc-level-2); border-color: var(--cont-border); }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="3"] { background-color: var(--ghc-level-3); border-color: var(--cont-border); }
-[data-md-color-scheme="slate"] .ContributionCalendar-day[data-level="4"] { background-color: var(--ghc-level-4); border-color: var(--cont-border); }
+/* 贡献图 5 级日方格配色（data-level="0"~"4"），引用 00 节定义的 --ghc-level-*。
+   与 GitHub 官方一致：0=无贡献 1=少 2=中 3=多 4=最多。
+   --ghc-level-* 与 --cont-border 已在 00 节按亮/暗方案分别取值，故此处无需
+   再写 [data-md-color-scheme] 前缀——变量自动按当前方案解析。 */
+.ContributionCalendar-day[data-level="0"] { background-color: var(--ghc-level-0); }
+.ContributionCalendar-day[data-level="1"] { background-color: var(--ghc-level-1); }
+.ContributionCalendar-day[data-level="2"] { background-color: var(--ghc-level-2); }
+.ContributionCalendar-day[data-level="3"] { background-color: var(--ghc-level-3); }
+.ContributionCalendar-day[data-level="4"] { background-color: var(--ghc-level-4); }
 
 .ghc-footer {
   display: flex;
@@ -460,13 +451,8 @@ body.home-active .md-content,
 body.home-active .md-content > .md-typeset { background-color: transparent !important; }
 body.home-active::before { content: none; }
 
-/* 主页隐藏自动生成的页面标题 */
-body.home-active .md-typeset h1#__skip { display: none; }
-
-/* 主页标题不需要编号和 headerlink */
-.md-content__inner .home-section__title { counter-increment: none; }
-.md-content__inner .home-section__title::before { content: none; }
-.home-section__title > .headerlink { display: none; }
+/* 主页隐藏自动生成的页面标题 headerlink（h1#welcome 由 Markdown 渲染，
+   会带一个 permalink headerlink，主页不需要）。 */
 body.home-active .md-typeset h1 > .headerlink { display: none; }
 
 .home-section {
@@ -547,23 +533,52 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   line-height: 1.5;
 }
 
+/* ----------------------------------------------------------------------------
+   友链卡片网格：auto-fit 自适应列，每列最小 12rem，随容器拉伸。
+   卡片间 0.65rem 间隙，同行的卡片由网格默认 align-items:stretch 拉到等高。
+   ---------------------------------------------------------------------------- */
 .home-link-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
   gap: 0.65rem;
 }
 
+/* ============================================================================
+   友链卡片（.home-friend）
+   ----------------------------------------------------------------------------
+   布局：2 列 × 3 行的隐式网格
+     列1 (2.75rem)   头像，跨全部 3 行（grid-row: span 3）
+     列2 (minmax 0)  文本列，按 DOM 顺序依次落进行 1/2/3：
+                       strong(name) → __handle → __meta
+   DOM 由 scripts/patch_home_blocks.py 在构建期烘焙进 HTML，运行时 JS 不触碰
+   （原 initFriends/buildAvatar/friendInitials 已删，见 home.js）。
+
+   定位策略（解决「随卡片宽窄忽大忽小」）：
+     align-items: center    每个格子在自己行内垂直居中；头像在其跨 3 行的
+                            轨道内垂直居中。
+     align-content: start   ★改自 center★：让 name/handle/meta 三行文本块
+                            顶部对齐——距卡片顶 padding 固定，不随 meta 折行
+                            上下漂移、不随卡片宽窄跳变。
+     row-gap: 0.4rem        行间距只由 gap + line-height 决定（与宽度无关）。
+   行模板 grid-template-rows: auto auto minmax(0.95rem, 1fr)：
+     行3（meta）下限预留一行高(≈0.95rem)，没写介绍也占一行 → 与单行介绍卡片等高；
+     上限 1fr：同行有多行 meta 卡片拉高本卡时，多余高度全吸进行3，
+     头像 span 跨满 3 行即可在整卡内垂直居中（不再偏上）。
+   其余：半透明面板 + 毛玻璃 + hover 上浮（border 变色 + 阴影 + 上移 1px）。
+   ============================================================================ */
 .home-friend {
   display: grid;
   grid-template-columns: 2.75rem minmax(0, 1fr);
+  /* 三行模板：行1 name / 行2 handle / 行3 meta。
+     行3 minmax(0.95rem, 1fr)——
+       下限 0.95rem ≈ meta 一行高(0.62rem×1.5)：没写介绍也预留一行槽位，
+       使「无介绍」卡片与「单行介绍」卡片等高（任务1）；
+       上限 1fr：同行有多行 meta 卡片把本卡拉伸时，多余高度全吸进行3，
+       头像跨满 3 行即可在整卡内垂直居中（任务2）。 */
+  grid-template-rows: auto auto minmax(0.95rem, 1fr);
   gap: 0.4rem 1rem;
   align-items: center;
-  /* min-height 撑出的余量默认被 align-content: stretch 摊到各行，使 name/handle/meta
-     间距随卡片宽窄（meta 折行与否）忽大忽小。center 让行紧凑成块并整体垂直居中：
-     行间距只由 row-gap + line-height 决定（宽度无关），头像（span 3）随块居中、
-     不再随 meta 折行上下漂移。 */
-  align-content: center;
-  min-height: 5.2rem;
+  align-content: start;
   padding: 0.65rem;
   border: 1px solid var(--home-border);
   border-radius: var(--radius-lg);
@@ -582,6 +597,9 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   transform: translateY(-1px);
 }
 
+/* 头像：固定 2.75rem 圆形容器，占第 1 列、跨 3 行。
+   首字母占位（GitHub 用户名首字母）打底；其上叠 GitHub 头像 img，
+   onerror 移除 img 即露出首字母（构建期烘焙，见 patch_home_blocks.py）。 */
 .home-friend__avatar {
   grid-row: span 3;
   margin-left: 0.2rem;
@@ -608,12 +626,15 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   object-fit: cover;
 }
 
+/* ---- 文本列三行：name / handle / meta ---- */
+/* 行1：name（strong）。略大字号，顶部留 0.15rem 呼吸。 */
 .home-friend strong {
   font-size: 0.75rem;
   line-height: 1.2;
   margin-top: 0.15rem;
 }
 
+/* 行2/3 共用：handle 与 meta 都做单行省略的基底。 */
 .home-friend__handle,
 .home-friend__meta {
   overflow: hidden;
@@ -623,6 +644,13 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   text-overflow: ellipsis;
 }
 
+/* 行2：@handle，单行省略（white-space:nowrap 由上文 text-overflow 链生效）。 */
+.home-friend__handle {
+  white-space: nowrap;
+}
+
+/* 行3：描述。允许折行（white-space:normal + word-break），故不省略——
+   多行时撑高卡片，少行时回落，正是高度随内容变化的一环。 */
 .home-friend__meta {
   margin-bottom: 0.15rem;
   white-space: normal;
@@ -640,6 +668,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
    ----------------------------------------------------------------------------
    .home-terminal-* / .typed-* 打字机组件。
    终端窗口三色圆点 + 等宽字体屏幕，打字机效果由 theme/js/home.js 驱动。
+   字号使用代码块字号（--font-code）而非继承正文，使终端视觉更紧凑。
    ============================================================================ */
 
 .home-terminal {
@@ -677,7 +706,6 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   margin-left: 0.35rem;
   color: var(--md-default-fg-color--light);
   font-family: var(--font-mono);
-  font-size: var(--font-code);
 }
 
 .home-terminal__screen {
@@ -721,9 +749,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   color: var(--terminal-prompt-color);
 }
 
-.typed-cursor,
-.typed-text .typed-cursor,
-.typed-cursor-standalone {
+.typed-cursor {
   font-family: var(--font-mono);
   font-size: inherit;
   color: var(--terminal-cursor-color);
@@ -742,8 +768,12 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 
 /* ============================================================================
    05. 响应式（主页移动端适配）与动画
+   ============================================================================
+   终端字号 / padding 不设移动端覆盖：终端是 .md-typeset 后代，不写 font-size
+   即继承正文字号；padding 用桌面值 0.6rem 0.9rem 0.7rem，移动端亦合适。
+   切勿为终端单独引入 --mobile-terminal-* 变量——曾因只在 default 色板块定义、
+   slate 移动端取不到导致 padding 变 0，是主页 CSS 历史屎山的根因。
    ============================================================================ */
-
 @media screen and (max-width: 44.984375em) {
   .home-link-grid {
     grid-template-columns: 1fr;
@@ -757,17 +787,12 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   .home-section__head {
     align-items: flex-start;
     flex-direction: column;
-    gap: var(--mobile-section-head-gap);
+    gap: 0.25rem;
   }
 
   .home-log {
     grid-template-columns: 1fr;
-    gap: var(--mobile-log-gap);
-  }
-
-  .home-terminal__screen {
-    padding: var(--mobile-terminal-padding);
-    font-size: var(--mobile-terminal-font-size);
+    gap: 0.25rem;
   }
 }
 

@@ -1,19 +1,106 @@
 (function () {
   "use strict";
 
+  /* ============================================================================
+     home.js —— 主页运行时（仅主页加载）
+     ----------------------------------------------------------------------------
+     职责（三大块，按 DOM 出现顺序）：
+       1. 友链（friends）        —— 已迁移至构建期，运行时无逻辑（见下注释）
+       2. GitHub 贡献图          —— fetch contributions.json → 渲染表格 + tooltip
+       3. 终端打字机              —— 逐字敲入 + 命令解析 + 交互输入
+
+     不涉及：友链卡片 DOM/高度/字号（全由 home.css + patch_home_blocks.py 负责）。
+     加载：由主题入口在主页注入，window.site.onPageReady 注册初始化函数。
+     ============================================================================ */
+
   window.site = window.site || {};
   var htmlEl = window.site.htmlEl;
 
-  // ---- friends ----
-  // 头像 / handle / 描述已由 scripts/patch_home_blocks.py 在构建期烘焙进 HTML，
-  // 此处不再需要运行时补 DOM（原 initFriends / buildAvatar / friendInitials 已移除）。
+  /* ---- 1. 友链（friends）-------------------------------------------------
+     头像 / handle / 描述已由 scripts/patch_home_blocks.py 在构建期烘焙进 HTML
+     （render_avatar / render_friends），CSS 用 .home-friend 网格定位。
+     运行时无需补 DOM，故此处无逻辑。
+     已删除的运行时函数：initFriends / buildAvatar / friendInitials / githubAvatarUrl
+     （等价逻辑现存在于 patch_home_blocks.py，保持一致）。 */
 
-  // ---- github contributions ----
+  /* ---- 2. GitHub 贡献图 --------------------------------------------------
+     两步渐进：1) 静态 JSON（本地面板，always）→ 立即渲染；2) CORS 代理实时
+     抓取贡献页（8s 超时，成功则替换刷新）。渲染为 GitHub 风格 53×7 日方格
+     表格，并为每个格子绑定 Material tooltip。 */
   var CONTRIBUTIONS_URL = "theme/data/contributions.json";
   var WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   var WEEKDAY_SHORT = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   var MONTH_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  /* ---- 实时抓取（CORS 代理，无需 token） ---- */
+  var PAGE_URL = "https://github.com/users/bfyes/contributions";
+  var MIN_CELLS = 300;
+  var MONTH_FULL = {
+    January: 1, February: 2, March: 3, April: 4, May: 5, June: 6,
+    July: 7, August: 8, September: 9, October: 10, November: 11, December: 12
+  };
+  var LEVEL_FALLBACK = { 0: 0, 1: 1, 2: 3, 3: 6, 4: 9 };
+  var PROXIES = [
+    function (u) {
+      return fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(u), { cache: "no-store" })
+        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
+        .then(function (j) { if (!j || !j.contents) throw new Error("no contents"); return j.contents; });
+    },
+    function (u) {
+      return fetch("https://corsproxy.io/?url=" + encodeURIComponent(u), { cache: "no-store" })
+        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.text(); });
+    },
+    function (u) {
+      return fetch("https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(u), { cache: "no-store" })
+        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.text(); });
+    }
+  ];
+  function levelFromCount(count, t) { return count <= 0 ? 0 : count <= t[0] ? 1 : count <= t[1] ? 2 : count <= t[2] ? 3 : 4; }
+  function computeThresholds(cells) {
+    var i, max = 0; for (i = 0; i < cells.length; i++) if (cells[i].count > max) max = cells[i].count;
+    if (max <= 0) return [1, 2, 4];
+    var q1 = (max / 4) | 0, q2 = (max / 2) | 0, q3 = (3 * max / 4) | 0;
+    if (q1 < q2) q2 = Math.max(q2, q1 + 1); if (q2 < q3) q3 = Math.max(q3, q2 + 1);
+    return [q1, q2, q3];
+  }
+  function sortByDate(a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; }
+  function packageCells(cells, total) {
+    var t = computeThresholds(cells), i, sum = 0;
+    for (i = 0; i < cells.length; i++) { cells[i].level = levelFromCount(cells[i].count, t); sum += cells[i].count; }
+    cells.sort(sortByDate);
+    if (total !== sum) total = sum;
+    var dates = cells.map(function (c) { return c.date; });
+    return { user: "bfyes", totalContributions: total, from: dates.length ? dates[0] : null, to: dates.length ? dates[dates.length - 1] : null, fetchedAt: new Date().toISOString(), contributions: cells };
+  }
+  function parseHtml(html) {
+    var total = 0, i, tm = html.match(/id="js-contribution-activity-description"[^>]*>\s*([0-9,]+)\s*contributions/);
+    if (tm) total = parseInt(tm[1].replace(/,/g, ""), 10);
+    var cells = [], re = /data-date="([^"]+)"[^>]*data-level="([0-4])"/g, m;
+    while ((m = re.exec(html))) cells.push({ date: m[1], count: null });
+    var tips = [];
+    re = />([0-9]+|No) contributions? on (\w+) (\d+)\w{2}\.</g;
+    while ((m = re.exec(html))) {
+      var mn = MONTH_FULL[m[2]];
+      if (mn == null) continue;
+      tips.push([mn, parseInt(m[3], 10), m[1] === "No" ? 0 : parseInt(m[1], 10)]);
+    }
+    var pending = {};
+    for (i = 0; i < tips.length; i++) {
+      var key = tips[i][0] + ":" + tips[i][1];
+      (pending[key] = pending[key] || []).push(tips[i][2]);
+    }
+    for (i = 0; i < cells.length; i++) {
+      var d = new Date(cells[i].date + "T00:00:00Z");
+      var q = pending[d.getUTCMonth() + 1 + ":" + d.getUTCDate()];
+      if (q && q.length) cells[i].count = q.shift();
+    }
+    for (i = 0; i < cells.length; i++) { if (cells[i].count == null) cells[i].count = LEVEL_FALLBACK[cells[i].level] || 0; }
+    return packageCells(cells, total);
+  }
+  function fetchViaProxy(url) {
+    return PROXIES.reduce(function (chain, make) { return chain.catch(function () { return make(url); }); }, Promise.reject(new Error("no proxy tried")));
+  }
 
   function screenReader(text) { return htmlEl("span", { class: "sr-only" }, text); }
   function plural(n, one, many) { return n === 1 ? one : many; }
@@ -137,22 +224,46 @@
     var container = (root || document).querySelector(".github-calendar-wrap");
     if (!container) return;
     container.setAttribute("data-ghc-state", "loading");
+
+    /* ---- 构建日历 shell 的通用函数 ---- */
+    function buildShell(data) {
+      var shell = htmlEl("section", { class: "ghc-shell", "aria-label": "GitHub contributions" });
+      renderGithubHeader(shell, data.totalContributions || 0);
+      renderGithubCalendar(shell, data);
+      renderGithubLegend(shell);
+      container.innerHTML = "";
+      container.appendChild(shell);
+      container.setAttribute("data-ghc-state", "ready");
+      bindContributionTooltips(shell);
+    }
+
+    /* ---- Step 1: 静态 JSON（本地，极快，始终兜底）---- */
     fetch(CONTRIBUTIONS_URL, { cache: "no-store" })
-      .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
-      .then(function (data) {
-        var shell = htmlEl("section", { class: "ghc-shell", "aria-label": "GitHub contributions" });
-        renderGithubHeader(shell, data.totalContributions || 0);
-        renderGithubCalendar(shell, data);
-        renderGithubLegend(shell);
-        container.innerHTML = "";
-        container.appendChild(shell);
-        container.setAttribute("data-ghc-state", "ready");
-        bindContributionTooltips(shell);
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
       })
+      .then(function (data) {
+        return packageCells(data.contributions || []);
+      })
+      .then(buildShell)
       .catch(function (err) {
         container.innerHTML = '<div class="ghc-error">GitHub contribution graph failed to load: ' + (err.message || "read failed") + "</div>";
         container.setAttribute("data-ghc-state", "error");
       });
+
+    /* ---- Step 2（不阻塞）: CORS 代理实时抓取，8s 超时（成功则替换刷新）---- */
+    var timeoutP = new Promise(function (_, reject) {
+      setTimeout(reject, 8000);
+    });
+    var liveP = fetchViaProxy(PAGE_URL).then(function (html) {
+      var data = parseHtml(html);
+      if (data.contributions.length < MIN_CELLS) throw new Error("proxy truncated");
+      return data;
+    });
+    Promise.race([liveP, timeoutP])
+      .then(buildShell)
+      .catch(function () { /* 超时或失败 → 静态 JSON 已展示，无操作 */ });
   }
 
   // 贡献图由 fetch 回调动态渲染，content.tooltips 的初始化扫描已结束，
@@ -191,7 +302,10 @@
     });
   }
 
-  // ---- terminal typewriter ----
+  // ---- 3. 终端打字机 --------------------------------------------------
+  // 终端窗口(.home-terminal)的逐字敲入动画 + 简易命令解析 + 隐藏输入。
+  // DOM 由 patch_home_blocks.py render_terminal() 烘焙；此处只驱动文字。
+  // 字号/高度/布局全在 home.css，JS 不修改任何尺寸。
   var typewriterTimers = [], typewriterRun = 0;
 
   function rememberTimer(id) { typewriterTimers.push(id); return id; }
@@ -202,7 +316,7 @@
     typewriterRun++;
     typewriterTimers.forEach(clearTimeout);
     typewriterTimers = [];
-    document.querySelectorAll(".typed-cursor, .typed-cursor-standalone").forEach(function (e) { e.remove(); });
+    document.querySelectorAll(".typed-cursor").forEach(function (e) { e.remove(); });
     document.querySelectorAll(".typed-text").forEach(function (e) { e.textContent = ""; e.style.display = "none"; });
     document.querySelectorAll(".home-terminal__line--prompt, .terminal-hidden-input, .home-terminal-keys").forEach(function (e) { e.style.display = "none"; });
   }

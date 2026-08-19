@@ -157,8 +157,7 @@ def render_friends(lines: str, title: str = "Links", section_id: str = "home-fri
 
 def render_terminal() -> str:
     return (
-        '<section class="home-hero" aria-label="homepage intro">\n'
-        '    <div class="home-hero__main">\n'
+        '<section aria-label="homepage intro">\n'
         '      <div class="home-terminal" aria-label="bfyes terminal intro">\n'
         '        <div class="home-terminal__bar">\n'
         '          <span class="home-terminal__dot home-terminal__dot--red"></span>\n'
@@ -167,7 +166,7 @@ def render_terminal() -> str:
         '          <span class="home-terminal__title">bfyes@ZJU:~</span>\n'
         '        </div>\n'
         '        <div class="home-terminal__screen">\n'
-        '          <div class="home-terminal__line home-terminal__line--cmd">\n'
+        '          <div class="home-terminal__line">\n'
         '            <span id="typed-line-1-host" class="typed-text typed-text--host" style="display:none;"></span><span id="typed-line-1-separator" class="typed-text typed-text--separator" style="display:none;"></span><span id="typed-line-1-prompt" class="typed-text typed-text--prompt" style="display:none;"></span><span id="typed-line-1-command" class="typed-text typed-text--command" style="display:none;"></span>\n'
         '          </div>\n'
         '          <div class="home-terminal__line home-terminal__line--user">\n'
@@ -181,7 +180,6 @@ def render_terminal() -> str:
         '          </div>\n'
         '        </div>\n'
         '      </div>\n'
-        '    </div>\n'
         '</section>'
     )
 
