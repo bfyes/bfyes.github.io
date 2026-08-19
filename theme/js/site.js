@@ -110,21 +110,31 @@
   function upgradeImages(root) {
     var scope = root || document;
 
-    /* 1. data-fullsrc：预载全分辨率 → 交换 src，加载期间加 lqip blur-up */
+    /* 1. data-fullsrc（预览图 → 全图两段式）：
+          预览图带 lqip 模糊占位 → 后台预载全分辨率 → 全图就绪后交换 src，
+          待全图真正加载完成再移除 lqip，由 CSS transition 做去模糊动画。
+          关键：lqip 必须贯穿"预览加载 + 全图预载 + 全图解码"全程，
+          不能在预览 load 时就移除（否则全图换上时已无模糊过渡）。 */
     var imgs = scope.querySelectorAll("img[data-fullsrc]");
     for (var i = 0; i < imgs.length; i++) {
       (function (img) {
         var fullSrc = img.getAttribute("data-fullsrc");
         if (!fullSrc) return;
-        if (!img.complete || !img.naturalWidth) img.classList.add("lqip");
+        img.classList.add("lqip");
         var full = new Image();
-        full.onload = function () { img.src = fullSrc; };
-        full.onerror = function () { img.classList.remove("lqip"); };
-        full.src = fullSrc;
-        img.addEventListener("load", function onLoad() {
+        full.onload = function () {
+          // 全图预载完成：交换 src，等这次交换触发的 load 之后再去模糊
+          img.addEventListener("load", function onSwap() {
+            img.classList.remove("lqip");
+            img.removeEventListener("load", onSwap);
+          }, { once: true });
+          img.src = fullSrc;
+        };
+        full.onerror = function () {
+          // 全图加载失败：放弃升级，直接露出预览（去模糊）
           img.classList.remove("lqip");
-          img.removeEventListener("load", onLoad);
-        });
+        };
+        full.src = fullSrc;
       })(imgs[i]);
     }
 

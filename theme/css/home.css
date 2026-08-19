@@ -6,7 +6,7 @@
    目录
    01. GitHub 贡献图
        .ghc-* / .ContributionCalendar-* 贡献日历、
-       数据由 home.js 渲染（动态 contributions-live.js 或静态 contributions.json）、
+   数据由 home.js 渲染（静态 contributions.json 本地兜底 + CORS 代理实时刷新）、
        亮/暗模式各 5 级颜色(data-level="0"~"4")、
        加载/错误/正常三态、概览面板、图例、无障碍(.sr-only)
    02. 彩虹背景
@@ -21,6 +21,7 @@
        .home-terminal-keys 终端分类链接、
        .home-log-list / .home-log 更新日志(日期 + 内容网格)、
        .home-link-grid / .home-friend 友链卡片(auto-fit 网格 + 头像 + hover 上浮)
+       .home-friend 已改 flex 单列布局（绝对定位头像 + 内容垂直居中），网格只用于外层排布
    04. 首页终端
        .home-terminal 终端窗口(三色圆点 + 等宽屏幕，字号 --font-code)、
        .typed-text / .typed-cursor 打字机效果(由 home.js 驱动)、
@@ -125,9 +126,13 @@
   /* 主页通用元信息字号：退化为全局 --font-meta，但定义为主页变量以集中管理 */
   --home-meta-size: 0.68rem;
 
-  /* 友链字号 —— 仅字号保留为变量，其余布局常量已下放至各规则内联。 */
+  /* 友链卡片 —— 跨规则同步的布局常量。
+     --pad 是卡片内边距基准：.home-friend 的四向 padding 与 .home-friend__avatar
+     的 left 都引用它（改一处即全同步，避免 padding 与头像定位脱节）。
+     字号供 name/handle/meta 三行引用。其余数值仍在各规则内联直写。 */
   --home-friend-name-size: 0.8rem;
   --home-friend-handle-size: 0.6rem;
+  --pad: 0.8rem;  /* 友链卡片内边距（四向共用）；avatar left = --pad + 0.2rem */
 
   /* 彩虹色斑不透明度（仅 home.css 使用，不污染 variables.css） */
   --rainbow-opacity-aurora: 0.34;
@@ -580,14 +585,14 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 
    头像通过 position: absolute 定位在卡片左侧 padding 区域内，
    top: 50% + translateY(-50%) 在整个元素中垂直居中（不受行数影响）。
-   左侧 padding = --pad + 3rem（头像宽）+ 1.2rem（原列间距），用内联变量 --pad
-   使四向 padding 共用同一值（改一处即同步）。
+   左侧 padding = --pad + 3rem（头像宽）+ 1.2rem（原列间距）。--pad 定义在
+   :root（00 段），四向 padding 与头像 left 共用同一值（改一处即同步）。
 
    flex 替代 grid 的原因：Safari 下 grid + align-content: start 在容器宽度变化
    时存在高度重排滞后（文字换行/取消换行后行高不立即更新，导致文字重叠），
    flex column + will-change: transform 强制 GPU 合成，宽度变化时即时 reflow。
 
-   所有布局数值均为规则内联直写，仅字号保留为 root 变量。
+   --pad 与字号均为 :root 变量，其余布局数值在规则内联直写。
    meta span 由 scripts/patch_home_blocks.py 始终输出（无描述含 \xa0 + --empty），
    以便未来只需改 CSS 的 display 即可恢复第三行。DOM 在构建期烘焙，JS 不触碰。
    其余：半透明面板 + 毛玻璃 + hover 上浮（border 变色 + 阴影 + 上移 1px）。
@@ -599,8 +604,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   gap: 0.1rem;
   position: relative;
   min-height: 5rem;
-  /* 内联变量 --pad：四向 padding 共用，padding-left 在此基础上加头像宽 + 列间距 */
-  --pad: 0.8rem;
+  /* --pad 已上提至 :root（00 段），此处四向 padding 与下方 avatar left 共用同一值。 */
   padding: var(--pad);
   padding-left: calc(var(--pad) + 3rem + 1.2rem);
   border: 1px solid var(--home-border);
@@ -628,7 +632,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
    onerror 移除 img 即露出首字母（构建期烘焙，见 patch_home_blocks.py）。 */
 .home-friend__avatar {
   position: absolute;
-  left: calc(0.8rem + 0.2rem);  /* padding + 头像偏移 */
+  left: calc(var(--pad) + 0.2rem);  /* 与卡片 padding 同步：--pad + 头像偏移 */
   top: 50%;
   transform: translateY(-50%);
   overflow: hidden;

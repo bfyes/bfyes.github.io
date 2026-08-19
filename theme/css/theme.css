@@ -687,6 +687,10 @@ body.grid-off-active::before {
   overflow: hidden;
   -webkit-overflow-scrolling: touch;
   background: var(--md-code-bg-color);
+  /* 底部圆角与 .pdf-viewer 对齐：iframe 的直接裁切父级是本元素，
+     若无圆角则 iframe（Safari 原生 PDF 查看器，白色）被裁成直角矩形，
+     顶到 .pdf-viewer 方角，从圆弧外漏白（暗色模式可见）。顶部紧贴 toolbar 故 0。 */
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
 .pdf-viewer-native {
@@ -864,15 +868,21 @@ body.grid-off-active::before {
 /* ============================================================================
    09. 图片渐进加载（blur-up 过渡）
    ----------------------------------------------------------------------------
-   全站所有 img 在加载完成时通过 filter + transform 平滑过渡，消除"啪"跳变。
-   lqip class 由构建期或 JS 添加（详见 patch_home_blocks.py 与 site.js）。
+   全站 img 的 blur-up：加载期间 lqip 类施加模糊，正式图片就绪后移除类、
+   由 transition 平滑去模糊。lqip class 由构建期或 JS 添加
+   （详见 patch_image_src.py 与 site.js）。
+
+   动画只在"去模糊"（移除 lqip）那一刻发生：img.lqip 显式声明 transition:none，
+   使添加 lqip 时模糊瞬间就位（preview 阶段无动画）；移除 lqip 后元素回归 img
+   基础规则的 0.5s 过渡，blur(5px)→0 才做动画，且仅发生在正式图加载完成时。
+   尺寸不变（不用 scale 放大），避免与 width/height 占位冲突。
    ============================================================================ */
 img {
-  transition: filter 0.5s ease, transform 0.5s ease;
+  transition: filter 0.5s ease;
 }
 img.lqip {
-  filter: blur(10px);
-  transform: scale(1.05);
+  filter: blur(var(--lqip-blur));
+  transition: none;  /* 进入模糊阶段不动画；去模糊时由 img 基础规则接管 */
 }
 
 /* ============================================================================

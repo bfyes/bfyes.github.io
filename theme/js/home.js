@@ -18,7 +18,7 @@
 
   /* ---- 1. 友链（friends）-------------------------------------------------
      头像 / handle / 描述已由 scripts/patch_home_blocks.py 在构建期烘焙进 HTML
-     （render_avatar / render_friends），CSS 用 .home-friend 网格定位。
+     （render_avatar / render_friends），CSS 用 .home-friend flex 单列布局定位。
      运行时无需补 DOM，故此处无逻辑。
      已删除的运行时函数：initFriends / buildAvatar / friendInitials / githubAvatarUrl
      （等价逻辑现存在于 patch_home_blocks.py，保持一致）。 */
