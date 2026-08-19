@@ -3054,8 +3054,7 @@
 
 
 <h1 id="welcome">Welcome<a class="headerlink" href="#welcome" title="Permanent link"></a></h1>
-<p><section class="home-hero" aria-label="homepage intro">
-    <div class="home-hero__main">
+<p><section aria-label="homepage intro">
       <div class="home-terminal" aria-label="bfyes terminal intro">
         <div class="home-terminal__bar">
           <span class="home-terminal__dot home-terminal__dot--red"></span>
@@ -3064,7 +3063,7 @@
           <span class="home-terminal__title">bfyes@ZJU:~</span>
         </div>
         <div class="home-terminal__screen">
-          <div class="home-terminal__line home-terminal__line--cmd">
+          <div class="home-terminal__line">
             <span id="typed-line-1-host" class="typed-text typed-text--host" style="display:none;"></span><span id="typed-line-1-separator" class="typed-text typed-text--separator" style="display:none;"></span><span id="typed-line-1-prompt" class="typed-text typed-text--prompt" style="display:none;"></span><span id="typed-line-1-command" class="typed-text typed-text--command" style="display:none;"></span>
           </div>
           <div class="home-terminal__line home-terminal__line--user">
@@ -3078,15 +3077,17 @@
           </div>
         </div>
       </div>
-    </div>
 </section></p>
 <p><section class="home-section" aria-labelledby="home-about-title">
     <div class="home-section__head">
       <h2 id="home-about-title" class="home-section__title">About</h2>
     </div>
     <div class="home-link-grid">
-      <a class="home-friend" href="https://github.com/bfyes" data-id="bfyes" data-description="嗨，我是BillFeng，来自浙江大学25级信息安全专业。新手小白，多多包涵。持续学习中，期待与大家共同进步！">
+      <a class="home-friend" href="https://github.com/bfyes" target="_blank" rel="noopener">
+        <span class="home-friend__avatar">BF<img src="https://avatars.githubusercontent.com/bfyes?size=160" alt="" class="lqip" loading="lazy" onload="this.classList.remove('lqip')" onerror="this.remove()"></span>
         <strong>Bill Feng</strong>
+        <span class="home-friend__handle">@bfyes</span>
+        <span class="home-friend__meta">嗨，我是BillFeng，来自浙江大学25级信息安全专业。新手小白，多多包涵。持续学习中，期待与大家共同进步！</span>
       </a>
     </div>
 </section></p>
@@ -3096,12 +3097,16 @@
     </div>
     <div class="home-log-list">
       <div class="home-log">
+        <span class="home-log__date">2026.08.19</span>
+        <span>终于重构到令我满意！必须滚去做 HPC 了，考虑开学时发布一下我的定制主题！</span>
+      </div>
+      <div class="home-log">
         <span class="home-log__date">2026.08.18</span>
-        <span>向 Zensical 提了一个issue <a href="https://github.com/zensical/ui/issues/201">https://github.com/zensical/ui/issues/201</a>。</span>
+        <span>向 Zensical 提了一个issue <a href="https://github.com/zensical/ui/issues/201">https://github.com/zensical/ui/issues/201</a>，官方秒回并归档为<code>bug</code>。</span>
       </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.17</span>
-        <span>解决历史遗留问题: mathjax.js 在 instant 模式下加载异常；补发广播解决 giscus 时序问题。新增部分文档。</span>
+        <span>解决历史遗留问题: mathjax.js 在 instant 模式下加载异常；补发广播解决 giscus 时序问题。新增部分文档。<br>向 HPC101 仓库提出一个 PR <a href="https://github.com/ZJUSCT/HPC101/pull/50">https://github.com/ZJUSCT/HPC101/pull/50</a>。</span>
       </div>
       <div class="home-log">
         <span class="home-log__date">2026.08.16</span>
@@ -3170,23 +3175,41 @@
       <h2 id="home-friends-title" class="home-section__title">Links</h2>
     </div>
     <div class="home-link-grid">
-      <a class="home-friend" href="https://0-rangE.cn" data-id="gE0650" data-description="Orange">
+      <a class="home-friend" href="https://0-rangE.cn" target="_blank" rel="noopener">
+        <span class="home-friend__avatar">gE<img src="https://avatars.githubusercontent.com/gE0650?size=160" alt="" class="lqip" loading="lazy" onload="this.classList.remove('lqip')" onerror="this.remove()"></span>
         <strong>gE</strong>
+        <span class="home-friend__handle">@gE0650</span>
+        <span class="home-friend__meta">Orange</span>
       </a>
-      <a class="home-friend" href="https://dreamem0ra1n.github.io/ISYS/" data-id="dreamem0ra1n" data-description="ISYS">
+      <a class="home-friend" href="https://dreamem0ra1n.github.io/ISYS/" target="_blank" rel="noopener">
+        <span class="home-friend__avatar">dr<img src="https://avatars.githubusercontent.com/dreamem0ra1n?size=160" alt="" class="lqip" loading="lazy" onload="this.classList.remove('lqip')" onerror="this.remove()"></span>
         <strong>dreamem0ra1n</strong>
+        <span class="home-friend__handle">@dreamem0ra1n</span>
+        <span class="home-friend__meta">ISYS</span>
       </a>
-      <a class="home-friend" href="https://github.com/rickanderson219" data-id="rickanderson219">
+      <a class="home-friend" href="https://github.com/rickanderson219" target="_blank" rel="noopener">
+        <span class="home-friend__avatar">RA<img src="https://avatars.githubusercontent.com/rickanderson219?size=160" alt="" class="lqip" loading="lazy" onload="this.classList.remove('lqip')" onerror="this.remove()"></span>
         <strong>Rick Anderson</strong>
+        <span class="home-friend__handle">@rickanderson219</span>
+        <span class="home-friend__meta home-friend__meta--empty"> </span>
       </a>
-      <a class="home-friend" href="https://evelina-is.github.io/Evelina_personal_web/" data-id="evelina-is">
+      <a class="home-friend" href="https://evelina-is.github.io/Evelina_personal_web/" target="_blank" rel="noopener">
+        <span class="home-friend__avatar">Ev<img src="https://avatars.githubusercontent.com/evelina-is?size=160" alt="" class="lqip" loading="lazy" onload="this.classList.remove('lqip')" onerror="this.remove()"></span>
         <strong>Evelina</strong>
+        <span class="home-friend__handle">@evelina-is</span>
+        <span class="home-friend__meta home-friend__meta--empty"> </span>
       </a>
-      <a class="home-friend" href="https://pastwithin.github.io/Pastwithin-Zensical/" data-id="Pastwithin">
+      <a class="home-friend" href="https://pastwithin.github.io/Pastwithin-Zensical/" target="_blank" rel="noopener">
+        <span class="home-friend__avatar">Pa<img src="https://avatars.githubusercontent.com/Pastwithin?size=160" alt="" class="lqip" loading="lazy" onload="this.classList.remove('lqip')" onerror="this.remove()"></span>
         <strong>Pastwithin</strong>
+        <span class="home-friend__handle">@Pastwithin</span>
+        <span class="home-friend__meta home-friend__meta--empty"> </span>
       </a>
-      <a class="home-friend" href="https://hechenyu.xin" data-id="ChenyuHeee">
+      <a class="home-friend" href="https://hechenyu.xin" target="_blank" rel="noopener">
+        <span class="home-friend__avatar">ch<img src="https://avatars.githubusercontent.com/ChenyuHeee?size=160" alt="" class="lqip" loading="lazy" onload="this.classList.remove('lqip')" onerror="this.remove()"></span>
         <strong>chenyuheee</strong>
+        <span class="home-friend__handle">@ChenyuHeee</span>
+        <span class="home-friend__meta home-friend__meta--empty"> </span>
       </a>
     </div>
 </section></p>

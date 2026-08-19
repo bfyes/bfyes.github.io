@@ -4,20 +4,28 @@
    所有可调参数集中在此，方便统一调整。
    亮色（default）和暗色（slate）分别定义，通过 [data-md-color-scheme] 切换。
 
+   主页专属变量（--home-* / --accent-* / --avatar-* / --rainbow-* /
+   --terminal-* / --cont-border / --ghc-level-*）已收敛到 home.css，
+   删 home.css 后本文件不残留死变量。
+
    目录
    01. 通用变量（亮暗共用）
-       字号、字体、标题编号、布局、断点、毛玻璃、圆角、页面信息、
-       网格背景、滚动条、终端圆点、阴影、错误色、PDF 背景、移动端
+       字号、字体、标题编号、布局、断点、毛玻璃、admonition 尺寸、
+       圆角、页面信息、网格背景、滚动条、阴影、PDF 背景、移动端
    02. 亮色模式（default）
-       背景、全局高亮色、导航选中态、滚动条、网格 SVG、
-       首页面板/分类色/友链头像/彩虹色斑、终端文字色/阴影
+       背景、全局高亮色、导航选中态、滚动条、网格 SVG
    03. 暗色模式（slate）
        同上，暗色配色覆盖
 
    加载顺序：variables.css → main.css → theme.css → home.css。
    ============================================================================ */
 
-/* ---- 通用变量（亮暗共用） ---- */
+/* ============================================================================
+   01. 通用变量（亮暗共用）
+   ----------------------------------------------------------------------------
+   字号、字体、标题编号、布局、断点、毛玻璃、admonition 尺寸、
+   圆角、页面信息、网格背景、滚动条、阴影、PDF 背景、移动端
+   ============================================================================ */
 :root {
   /* === 字号体系 === */
   /* 正文相关：rem 跟随 html 缩放 */
@@ -52,17 +60,22 @@
   --page-max-width: 65rem;
   --content-padding-inline: 1rem;
 
-  /* === 响应式断点（移动端 ≤ 此值，桌面端 > 此值） === */
-  --mobile-breakpoint: 44.984375em;
-
   /* === 毛玻璃 === */
   --blur-radius: 12px;
+
+  /* === Admonition 提示块尺寸（@supports 块专用，theme.css 引用）===
+     消费者：theme.css 的 @supports (color-mix) 块。集中定义后，::before
+     高度的 calc 自引变量，改一个值全块联动，无需逐处同步。 */
+  --admonition-border-w: 0.075rem;     /* 提示块边框宽度 */
+  --admonition-pad-inline: 0.8rem;     /* 左右内边距 */
+  --admonition-title-margin: 0.4rem;   /* 标题 margin（顶/底） */
+  --admonition-title-lh: 1.8;          /* 标题行高（与 ::before 高度联动）*/
+  --admonition-body-margin: 0.6rem;    /* 正文 margin（首元素 padding-top + 末元素 margin-bottom，上下统一值）*/
 
   /* === 圆角 === */
   --radius-sm: 2px;   /* 贡献图小方块 */
   --radius-md: 6px;   /* 按钮、行内代码、键盘按键、导航选中态 */
   --radius-lg: 8px;   /* 卡片、面板、终端窗口、日志列表 */
-  --radius-admonition: 0.3rem;  /* 提示块 */
 
   /* === 页面信息 === */
   --page-info-font-size: var(--font-meta);
@@ -87,31 +100,23 @@
   --scrollbar-width: 8px;
   --scrollbar-height: 8px;
 
-  /* === 终端圆点（macOS 风格，亮暗相同） === */
-  --terminal-dot-red: #ff5f57;
-  --terminal-dot-yellow: #ffbd2e;
-  --terminal-dot-green: #28c840;
-
   /* === 阴影 === */
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.10);
   --shadow-lg: 0 8px 18px rgba(0, 0, 0, 0.07);
 
-  /* === 错误色 === */
-  --error-color: #e53e3e;
-
   /* === PDF 页面背景 === */
   --pdf-page-bg: #fff;
 
-  /* === 移动端 === */
+  /* === 移动端（全站通用）=== */
   --mobile-content-padding: 0;
-  --mobile-terminal-font-size: 14px;
-  --mobile-terminal-padding: 0.85rem 0.9rem 0.95rem;
-  --mobile-log-gap: 0.25rem;
-  --mobile-section-head-gap: 0.25rem;
 }
 
-/* ---- 亮色模式（default） ---- */
+/* ============================================================================
+   02. 亮色模式（default）
+   ----------------------------------------------------------------------------
+   背景、全局高亮色、导航选中态、滚动条、网格 SVG
+   ============================================================================ */
 [data-md-color-scheme="default"] {
   /* === 导航栏 / 面板半透明背景 === */
   --header-bg: rgba(255, 255, 255, 0.8);
@@ -134,42 +139,13 @@
 
   /* === 网格 SVG（虚线） === */
   --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(100,100,100,0.32)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
-
-  /* === 贡献图边框（亮色） === */
-  --cont-border: rgba(31, 35, 40, 0.05);
-
-  /* === 首页面板 === */
-  --home-panel: rgba(255, 255, 255, 0.64);
-  --home-border: #ccd6d8;
-
-  /* === 首页分类强调色 === */
-  --accent-study: #0969da;
-  --accent-tools: #bc4c00;
-  --accent-diary: #8250df;
-  --accent-games: #1a7f37;
-
-  /* === 友链头像 === */
-  --avatar-color: #1a7f37;
-  --avatar-bg: rgba(45, 164, 78, 0.1);
-  --avatar-bg: color-mix(in srgb, #2da44e 10%, transparent);
-
-  /* === 彩虹色斑 === */
-  --rainbow-red: rgba(255, 92, 122, 0.2);
-  --rainbow-orange: rgba(255, 190, 86, 0.2);
-  --rainbow-green: rgba(77, 220, 138, 0.18);
-  --rainbow-cyan: rgba(58, 213, 230, 0.18);
-  --rainbow-blue: rgba(91, 156, 255, 0.18);
-  --rainbow-violet: rgba(174, 111, 255, 0.18);
-
-  /* === 终端阴影 + 文字色 === */
-  --terminal-shadow: var(--shadow-md);
-  --terminal-host-color: #2da44e;
-  --terminal-prompt-color: #0969da;
-  --terminal-command-color: #111111;
-  --terminal-cursor-color: #111111;
 }
 
-/* ---- 暗色模式（slate） ---- */
+/* ============================================================================
+   03. 暗色模式（slate）
+   ----------------------------------------------------------------------------
+   同上，暗色配色覆盖
+   ============================================================================ */
 [data-md-color-scheme="slate"] {
   /* === 导航栏 / 面板半透明背景 === */
   --header-bg: rgba(13, 17, 23, 0.8);
@@ -190,37 +166,6 @@
   /* === 网格 SVG（虚线，暗色更淡） === */
   --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
 
-  /* === 暗色基准背景 + 贡献图边框（暗色） === */
+  /* === 暗色基准背景（main.css 暗色全局背景引用） === */
   --dark-bg: #0d1117;
-  --cont-border: rgba(1, 4, 9, 0.05);
-
-  /* === 首页面板 === */
-  --home-panel: rgba(1, 4, 9, 0.64);
-  --home-border: #383e42;
-
-  /* === 首页分类强调色 === */
-  --accent-study: #79c0ff;
-  --accent-tools: #ffa657;
-  --accent-diary: #d2a8ff;
-  --accent-games: #7ee787;
-
-  /* === 友链头像 === */
-  --avatar-color: #7ee787;
-  --avatar-bg: rgba(126, 231, 135, 0.12);
-  --avatar-bg: color-mix(in srgb, #7ee787 12%, transparent);
-
-  /* === 彩虹色斑（暗色更亮） === */
-  --rainbow-red: rgba(255, 123, 146, 0.2);
-  --rainbow-orange: rgba(255, 201, 107, 0.2);
-  --rainbow-green: rgba(126, 231, 161, 0.18);
-  --rainbow-cyan: rgba(94, 234, 255, 0.18);
-  --rainbow-blue: rgba(147, 197, 253, 0.2);
-  --rainbow-violet: rgba(216, 180, 254, 0.18);
-
-  /* === 终端阴影 + 文字色 === */
-  --terminal-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
-  --terminal-host-color: #7ee787;
-  --terminal-prompt-color: #79c0ff;
-  --terminal-command-color: #ffffff;
-  --terminal-cursor-color: #fff;
 }

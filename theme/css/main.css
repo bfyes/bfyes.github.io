@@ -337,6 +337,8 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   display: inline-block;
   padding: var(--base-size-4, 0.25rem);
   font-size: var(--font-kbd);
+  /* line-height 取 10px：github-markdown-css 原值，与 11px 字号配合
+     让单行按键垂直居中（rem 会随 html 缩放波动，px 固定更稳）。 */
   line-height: 10px;
   color: var(--fgColor-default);
   vertical-align: middle;

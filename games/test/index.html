@@ -3725,8 +3725,50 @@
 <p>这是折叠提示块，用来检查右侧展开箭头的对齐和动画。</p>
 </details>
 <details class="info">
-<summary>可折叠 Info</summary>
+<summary>可折叠 Info（有惊喜！）</summary>
 <p>第二个折叠块，用来确认多个 details 连续出现时的间距。</p>
+<div class="admonition note">
+<p class="admonition-title">无正文提示块</p>
+</div>
+<details class="note">
+<summary>无正文折叠块</summary>
+</details>
+<details class="success">
+<summary>有惊喜</summary>
+<p>嵌套折叠块测试。</p>
+<details class="success">
+<summary>嵌套</summary>
+<p>嵌套折叠块测试。</p>
+<details class="success">
+<summary>嵌套</summary>
+<p>嵌套折叠块测试。</p>
+<details class="success">
+<summary>嵌套</summary>
+<p>嵌套折叠块测试。</p>
+<details class="success">
+<summary>嵌套</summary>
+<p>嵌套折叠块测试。</p>
+<details class="success">
+<summary>嵌套</summary>
+<p>嵌套折叠块测试。</p>
+<details class="success">
+<summary>嵌套</summary>
+<p>嵌套折叠块测试。</p>
+<details class="success">
+<summary>嵌套</summary>
+<p>嵌套折叠块测试。</p>
+<details class="success">
+<summary>嵌套</summary>
+<p>你成功浪费了一分钟。</p>
+</details>
+</details>
+</details>
+</details>
+</details>
+</details>
+</details>
+</details>
+</details>
 </details>
 <h2 id="h2-标题">H2 标题<a class="headerlink" href="#h2-标题" title="Permanent link"></a></h2>
 <h3 id="h3-标题">H3 标题<a class="headerlink" href="#h3-标题" title="Permanent link"></a></h3>
@@ -3768,6 +3810,7 @@
 <dd>定义列表第二项。</dd>
 </dl>
 <h2 id="公式">公式<a class="headerlink" href="#公式" title="Permanent link"></a></h2>
+<p>右键公式可唤出 MathJax 菜单，选择 “Show Math As → TeX Commands” 可查看公式的 LaTeX 源码。</p>
 <ol>
 <li>行内公式 <span class="arithmatex">\(E = mc^2\)</span> 和 <span class="arithmatex">\(\sum_{i=1}^{n} i = \frac{n(n+1)}{2}\)</span>。<span class="arithmatex">\(\sum_{i=1}^n \frac1i\)</span> </li>
 <li>行内公式 <span class="arithmatex">\(\displaystyle E = mc^2\)</span> 和 <span class="arithmatex">\(\displaystyle\sum_{i=1}^{n} i = \frac{n(n+1)}{2}\)</span>。<span class="arithmatex">\(\displaystyle\sum_{i=1}^n \frac1i\)</span></li>
@@ -3809,7 +3852,7 @@
 </tbody>
 </table>
 <h2 id="代码">代码<a class="headerlink" href="#代码" title="Permanent link"></a></h2>
-<p>行内代码 <code class="language-python highlight">squares = [x ** 2 for x in data]</code>，<code class="language-c highlight">#define MAX_LEN 256</code>，<code class="language-asm highlight">assume cs:code, ds:data</code>，<code class="language-asm highlight">repne scasb</code>，<code class="language-asm highlight">les di, dword ptr [bp+2]</code>，<code class="language-bash highlight">cd ~/bfyes</code>，<code>不指定语言 int main()</code>以及代码块：</p>
+<p>行内代码 <code class="language-python highlight">squares = [x ** 2 for x in data]</code>，<code class="language-c highlight">#define MAX_LEN 256</code>，<code class="language-asm highlight">assume cs:code, ds:data</code>，<code class="language-asm highlight">repne scasb</code>，<code class="language-asm highlight">les di, dword ptr [bp+2]</code>，<code class="language-bash highlight">cd ~/bfyes</code>，<code class="language-makefile highlight">$(CC) $(CFLAGS) -o hello hello.c</code>，<code>int main() (不指定语言)</code>以及代码块：</p>
 <pre class="highlight"><code class="language-c">#include &lt;stdio.h&gt;
 #define MAX_LEN 256
 // 行注释
@@ -3846,6 +3889,11 @@ _start:
     add a0, a0, a1      # a0 = 49
     lw t1, 0(t0)
     ret</code></pre>
+<pre class="highlight"><code class="language-makefile">CC = gcc
+CFLAGS = -O2 -Wall
+all: hello
+hello: hello.c
+    $(CC) $(CFLAGS) -o hello hello.c</code></pre>
 <h2 id="命令行">命令行<a class="headerlink" href="#命令行" title="Permanent link"></a></h2>
 <pre class="highlight"><code class="language-bash">#!/usr/bin/env bash
 set -euo pipefail

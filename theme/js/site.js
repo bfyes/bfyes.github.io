@@ -106,18 +106,54 @@
   });
   mq.addEventListener("change", notifyTheme);
 
-  // ---- 图片渐进加载（preview → 全分辨率）----
+  // ---- 图片渐进加载（lqip blur-up：全站 img 懒加载模糊 → 加载完成 transition 去模糊）----
   function upgradeImages(root) {
     var scope = root || document;
+
+    /* 1. data-fullsrc：预载全分辨率 → 交换 src，加载期间加 lqip blur-up */
     var imgs = scope.querySelectorAll("img[data-fullsrc]");
     for (var i = 0; i < imgs.length; i++) {
       (function (img) {
         var fullSrc = img.getAttribute("data-fullsrc");
         if (!fullSrc) return;
+        if (!img.complete || !img.naturalWidth) img.classList.add("lqip");
         var full = new Image();
         full.onload = function () { img.src = fullSrc; };
+        full.onerror = function () { img.classList.remove("lqip"); };
         full.src = fullSrc;
+        img.addEventListener("load", function onLoad() {
+          img.classList.remove("lqip");
+          img.removeEventListener("load", onLoad);
+        });
       })(imgs[i]);
+    }
+
+    /* 2. 已烘焙 lqip（构建期 <img class="lqip"> 的 avatar 等）：加载/出错后移除 */
+    var lqipImgs = scope.querySelectorAll("img.lqip:not([data-fullsrc])");
+    for (var i = 0; i < lqipImgs.length; i++) {
+      (function (img) {
+        function removeLqip() { img.classList.remove("lqip"); }
+        img.addEventListener("load", removeLqip, { once: true });
+        img.addEventListener("error", removeLqip, { once: true });
+        if (img.complete) removeLqip();
+      })(lqipImgs[i]);
+    }
+
+    /* 3. 普通 img（无 lqip、无 data-fullsrc）：主动加 lqip，加载完毕 transition 去模糊 */
+    var otherImgs = scope.querySelectorAll("img:not(.lqip):not([data-fullsrc])");
+    for (var i = 0; i < otherImgs.length; i++) {
+      (function (img) {
+        if (img.complete && img.naturalWidth > 0) return;
+        img.classList.add("lqip");
+        img.addEventListener("load", function onLoad() {
+          img.classList.remove("lqip");
+          img.removeEventListener("load", onLoad);
+        }, { once: true });
+        img.addEventListener("error", function onError() {
+          img.classList.remove("lqip");
+          img.removeEventListener("error", onError);
+        }, { once: true });
+      })(otherImgs[i]);
     }
   }
 
