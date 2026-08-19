@@ -42,16 +42,7 @@
   };
   var PROXIES = [
     function (u) {
-      return fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(u), { cache: "no-store" })
-        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
-        .then(function (j) { if (!j || !j.contents) throw new Error("no contents"); return j.contents; });
-    },
-    function (u) {
-      return fetch("https://corsproxy.io/?url=" + encodeURIComponent(u), { cache: "no-store" })
-        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.text(); });
-    },
-    function (u) {
-      return fetch("https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(u), { cache: "no-store" })
+      return fetch("https://proxy.cors.sh/" + u, { cache: "no-store" })
         .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.text(); });
     }
   ];

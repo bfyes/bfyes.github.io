@@ -687,10 +687,6 @@ body.grid-off-active::before {
   overflow: hidden;
   -webkit-overflow-scrolling: touch;
   background: var(--md-code-bg-color);
-  /* 底部圆角与 .pdf-viewer 对齐：iframe 的直接裁切父级是本元素，
-     若无圆角则 iframe（Safari 原生 PDF 查看器，白色）被裁成直角矩形，
-     顶到 .pdf-viewer 方角，从圆弧外漏白（暗色模式可见）。顶部紧贴 toolbar 故 0。 */
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
 
 .pdf-viewer-native {
@@ -934,6 +930,7 @@ img.lqip {
 }
 /* 如果想要未动画和未浏览一样颜色，则透明度要设置为 0.86*/
 .md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1s ease both; }
+body.home-active .md-content__inner > * { animation: none; }
 /* 右侧 TOC 逐条淡入：只动 opacity，不动 transform/几何，避免干扰 Material
    的 toc.follow 滚动运算（transform 会改变 offsetTop/getBoundingClientRect）。
    CSS 只声明动画本身；每条链接的 animation-delay（逐步错开）由 site.js 注入，

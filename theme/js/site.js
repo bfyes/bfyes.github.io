@@ -106,64 +106,18 @@
   });
   mq.addEventListener("change", notifyTheme);
 
-  // ---- 图片渐进加载（lqip blur-up：全站 img 懒加载模糊 → 加载完成 transition 去模糊）----
+  // ---- 图片渐进加载（preview → 全分辨率）----
   function upgradeImages(root) {
     var scope = root || document;
-
-    /* 1. data-fullsrc（预览图 → 全图两段式）：
-          预览图带 lqip 模糊占位 → 后台预载全分辨率 → 全图就绪后交换 src，
-          待全图真正加载完成再移除 lqip，由 CSS transition 做去模糊动画。
-          关键：lqip 必须贯穿"预览加载 + 全图预载 + 全图解码"全程，
-          不能在预览 load 时就移除（否则全图换上时已无模糊过渡）。 */
     var imgs = scope.querySelectorAll("img[data-fullsrc]");
     for (var i = 0; i < imgs.length; i++) {
       (function (img) {
         var fullSrc = img.getAttribute("data-fullsrc");
         if (!fullSrc) return;
-        img.classList.add("lqip");
         var full = new Image();
-        full.onload = function () {
-          // 全图预载完成：交换 src，等这次交换触发的 load 之后再去模糊
-          img.addEventListener("load", function onSwap() {
-            img.classList.remove("lqip");
-            img.removeEventListener("load", onSwap);
-          }, { once: true });
-          img.src = fullSrc;
-        };
-        full.onerror = function () {
-          // 全图加载失败：放弃升级，直接露出预览（去模糊）
-          img.classList.remove("lqip");
-        };
+        full.onload = function () { img.src = fullSrc; };
         full.src = fullSrc;
       })(imgs[i]);
-    }
-
-    /* 2. 已烘焙 lqip（构建期 <img class="lqip"> 的 avatar 等）：加载/出错后移除 */
-    var lqipImgs = scope.querySelectorAll("img.lqip:not([data-fullsrc])");
-    for (var i = 0; i < lqipImgs.length; i++) {
-      (function (img) {
-        function removeLqip() { img.classList.remove("lqip"); }
-        img.addEventListener("load", removeLqip, { once: true });
-        img.addEventListener("error", removeLqip, { once: true });
-        if (img.complete) removeLqip();
-      })(lqipImgs[i]);
-    }
-
-    /* 3. 普通 img（无 lqip、无 data-fullsrc）：主动加 lqip，加载完毕 transition 去模糊 */
-    var otherImgs = scope.querySelectorAll("img:not(.lqip):not([data-fullsrc])");
-    for (var i = 0; i < otherImgs.length; i++) {
-      (function (img) {
-        if (img.complete && img.naturalWidth > 0) return;
-        img.classList.add("lqip");
-        img.addEventListener("load", function onLoad() {
-          img.classList.remove("lqip");
-          img.removeEventListener("load", onLoad);
-        }, { once: true });
-        img.addEventListener("error", function onError() {
-          img.classList.remove("lqip");
-          img.removeEventListener("error", onError);
-        }, { once: true });
-      })(otherImgs[i]);
     }
   }
 

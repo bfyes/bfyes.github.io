@@ -20,8 +20,7 @@
        .home-section__head 标题栏(下划线)、.home-section__title(JetBrains Mono)、
        .home-terminal-keys 终端分类链接、
        .home-log-list / .home-log 更新日志(日期 + 内容网格)、
-       .home-link-grid / .home-friend 友链卡片(auto-fit 网格 + 头像 + hover 上浮)
-       .home-friend 已改 flex 单列布局（绝对定位头像 + 内容垂直居中），网格只用于外层排布
+       .home-link-grid / .home-friend 友链卡片(auto-fit 网格 + flex row 头像 + hover 上浮)
    04. 首页终端
        .home-terminal 终端窗口(三色圆点 + 等宽屏幕，字号 --font-code)、
        .typed-text / .typed-cursor 打字机效果(由 home.js 驱动)、
@@ -123,16 +122,11 @@
 
   /* 主页分区标题字号（0.92rem），比全局 --font-base 略大以突出分区头。 */
   --home-section-title-size: 0.92rem;
-  /* 主页通用元信息字号：退化为全局 --font-meta，但定义为主页变量以集中管理 */
+  /* 主页通用元信息字号：比全站 --font-meta(0.65rem) 略大，主页专属 */
   --home-meta-size: 0.68rem;
 
-  /* 友链卡片 —— 跨规则同步的布局常量。
-     --pad 是卡片内边距基准：.home-friend 的四向 padding 与 .home-friend__avatar
-     的 left 都引用它（改一处即全同步，避免 padding 与头像定位脱节）。
-     字号供 name/handle/meta 三行引用。其余数值仍在各规则内联直写。 */
   --home-friend-name-size: 0.8rem;
   --home-friend-handle-size: 0.6rem;
-  --pad: 0.8rem;  /* 友链卡片内边距（四向共用）；avatar left = --pad + 0.2rem */
 
   /* 彩虹色斑不透明度（仅 home.css 使用，不污染 variables.css） */
   --rainbow-opacity-aurora: 0.34;
@@ -472,6 +466,27 @@ body.rainbow-active .md-sidebar__inner {
   text-decoration: none;
 }
 
+/* ============================================================================
+   吸引子背景（#hero）
+   ----------------------------------------------------------------------------
+   fixed 全屏 WebGL canvas，z-index: 0 铺在主页内容之下。
+   JS (attractor.js) 在主页初始化，非主页隐藏。
+   ============================================================================ */
+#hero {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+#hero canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* ---- 主页覆盖 theme.css 的全站规则 ---- */
 /* 主页去掉内容区内边距、隐藏侧边栏、透明背景 */
 body.home-active .md-content__inner { padding-inline: 0; }
@@ -574,54 +589,22 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 /* ============================================================================
    友链卡片（.home-friend）
    ----------------------------------------------------------------------------
-   布局：flex column + 绝对定位头像 + 内容垂直居中 + min-height 占位
-
-   统一居中规则：卡片以 min-height: 5rem 保底，内容（2 行或 3 行）通过
-   justify-content: center 在主轴上整体垂直居中。
-     - 2 行（name + handle，meta 为 --empty / display:none）→ 居中。
-     - 3 行（name + handle + meta）→ 同样居中。
-     - 当内容 + 上下 padding 超过 min-height 时，卡片自然撑高（不裁切）。
-   gap: 0.1rem 使 name↔handle 间距紧凑；handle 另有 padding-left 微缩进。
-
-   头像通过 position: absolute 定位在卡片左侧 padding 区域内，
-   top: 50% + translateY(-50%) 在整个元素中垂直居中（不受行数影响）。
-   左侧 padding = --pad + 3rem（头像宽）+ 1.2rem（原列间距）。--pad 定义在
-   :root（00 段），四向 padding 与头像 left 共用同一值（改一处即同步）。
-
-   flex 替代 grid 的原因：Safari 下 grid + align-content: start 在容器宽度变化
-   时存在高度重排滞后（文字换行/取消换行后行高不立即更新，导致文字重叠），
-   flex column + contain:layout 隔离子树布局，宽度变化时即时 reflow。
-
-   --pad 与字号均为 :root 变量，其余布局数值在规则内联直写。
-   meta span 由 scripts/patch_home_blocks.py 始终输出（无描述含 \xa0 + --empty），
-   以便未来只需改 CSS 的 display 即可恢复第三行。DOM 在构建期烘焙，JS 不触碰。
-   其余：半透明面板 + 毛玻璃 + hover 上浮（border 变色 + 阴影 + 上移 1px）。
+   flex row：avatar 左 + 文字列右。极简布局，网格 stretch 保证同行等高。
    ============================================================================ */
 .home-friend {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0.1rem;
-  position: relative;
-  min-height: 5rem;
-  /* --pad 已上提至 :root（00 段），此处四向 padding 与下方 avatar left 共用同一值。 */
-  padding: var(--pad);
-  padding-left: calc(var(--pad) + 3rem + 1.2rem);
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem;
   border: 1px solid var(--home-border);
   border-radius: var(--radius-lg);
   background: var(--home-panel);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
   color: var(--md-default-fg-color) !important;
   font-size: var(--font-base);
   text-decoration: none !important;
-  backdrop-filter: blur(var(--blur-radius));
-  -webkit-backdrop-filter: blur(var(--blur-radius));
   transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
-  /* contain:layout 把卡片的布局计算隔离在子树内：内部换行导致尺寸变化时，
-     浏览器立即重算该子树（边界清晰、成本低），不再等一帧——盖住 Safari 下
-     flex + backdrop-filter 组合「换行后行高延迟更新」导致的文字重叠。
-     替代原 will-change:transform（后者靠提升合成层的副作用达到同样效果，
-     但常驻 GPU 层、改变层叠上下文，语义也脏）。Safari 需实测确认等效。 */
-  contain: layout;
 }
 
 .home-friend:hover {
@@ -630,14 +613,9 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   transform: translateY(-1px);
 }
 
-/* 头像：固定尺寸圆形容器，绝对定位在卡片左侧、垂直居中。
-   首字母占位（GitHub 用户名首字母）打底；其上叠 GitHub 头像 img，
-   onerror 移除 img 即露出首字母（构建期烘焙，见 patch_home_blocks.py）。 */
 .home-friend__avatar {
-  position: absolute;
-  left: calc(var(--pad) + 0.2rem);  /* 与卡片 padding 同步：--pad + 头像偏移 */
-  top: 50%;
-  transform: translateY(-50%);
+  flex-shrink: 0;
+  position: relative;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
@@ -660,46 +638,44 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   object-fit: cover;
 }
 
-/* ---- 文本列三行：name / handle / meta ---- */
-/* 行1：name（strong）。略大字号，顶部留 0.15rem 呼吸。 */
+/* 文字列：min-width:0 让 flex 子元素能收缩，防止长文本撑破卡片。
+   flex:1 占满 avatar 右侧剩余空间，内部 name/handle/meta 自然垂直排列。 */
+.home-friend__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
 .home-friend strong {
   font-size: var(--home-friend-name-size);
   line-height: 1.2;
 }
 
-/* 行2/3 共用：handle 与 meta 都做单行省略的基底。 */
 .home-friend__handle,
 .home-friend__meta {
   overflow: hidden;
-  color: var(--home-muted);
-  font-size: var(--home-friend-handle-size);
   line-height: 1.2;
   text-overflow: ellipsis;
 }
 
-/* 行2：@handle，单行省略（white-space:nowrap 由上文 text-overflow 链生效）。
-   padding-left:0.2rem 让 @handle 相对 name 左缩进一丁点，视觉与 name 错开。 */
 .home-friend__handle {
+  color: var(--home-softer);
+  font-size: var(--home-friend-handle-size);
+  font-style: italic;
+  margin-left: 0.1rem;
   white-space: nowrap;
-  padding-left: 0.2rem;
 }
 
-/* 行3：描述。有内容时正常显示为第三行，无内容时隐藏（--empty class 使其不参与
-   flex 布局，仅两行通过 justify-content: center 垂直居中在 min-height: 5rem 中；
-   min-height: 1rem 在有内容时确保单行描述也占高度）。
-
-   统一说明：卡片以 min-height: 5rem 保底，可用垂直高度 = min-height - padding-top - padding-bottom。
-   当 meta 有内容时（3 行），justify-content: center 将三行整体居中；当 meta 为空（--empty,
-   display: none）时，name + handle 两行同样居中。无论何种情况，内容超过 min-height 时卡片自然撑高。 */
 .home-friend__meta {
   margin-top: 0.3rem;
-  margin-bottom: 0.15rem;
-  min-height: 1rem;
+  color: var(--home-muted);
+  font-size: var(--home-meta-size);
   white-space: normal;
   word-break: break-word;
   text-decoration: none;
   line-height: 1.5;
-  font-size: var(--home-meta-size);
 }
 .home-friend__meta--empty {
   display: none;
@@ -723,9 +699,9 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   border: 1px solid var(--home-border);
   border-radius: var(--radius-lg);
   background: var(--home-panel);
-  box-shadow: var(--shadow-md);
   backdrop-filter: blur(var(--blur-radius));
   -webkit-backdrop-filter: blur(var(--blur-radius));
+  box-shadow: var(--shadow-md);
 }
 
 .home-terminal__bar {
