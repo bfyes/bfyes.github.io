@@ -862,7 +862,30 @@ body.grid-off-active::before {
 }
 
 /* ============================================================================
-   09. 响应式（移动端通用适配）
+   09. 图片渐进加载（blur-up 过渡）
+   ----------------------------------------------------------------------------
+   全站 img 的 blur-up：加载期间 lqip 类施加模糊，正式图片就绪后移除类、
+   由 transition 平滑去模糊。lqip class 由构建期或 JS 添加
+   （详见 patch_image_src.py 与 site.js）。
+
+   动画只在"去模糊"（移除 lqip）那一刻发生：img.lqip 显式声明 transition:none，
+   使添加 lqip 时模糊瞬间就位（preview 阶段无动画）；移除 lqip 后元素回归 img
+   基础规则的 1s 过渡，blur → 0 才做动画，且仅发生在正式图加载完成时。
+   尺寸不变（不用 scale 放大），避免与 width/height 占位冲突。
+   ============================================================================ */
+img {
+  transition: filter 1s ease;
+}
+img.lqip {
+  filter: blur(var(--lqip-blur));
+  transition: none;  /* 进入模糊阶段不动画；去模糊时由 img 基础规则接管 */
+}
+
+/* ============================================================================
+   10. 响应式（移动端通用适配）
+
+   响应 44.984375em 断点：隐藏 headerlink、正文 padding 归零、
+   代码块横向滚动、行号列缩小间距。
    ============================================================================ */
 
 @media screen and (max-width: 44.984375em) {
@@ -884,7 +907,7 @@ body.grid-off-active::before {
 }
 
 /* ============================================================================
-   10. 淡入动画
+   11. 淡入动画
    ----------------------------------------------------------------------------
    正文元素 fade-in；右侧 TOC 逐条淡入(nav-index 错开延迟)。
    transform 会干扰 Material 的 toc.follow 滚动运算，故只动 opacity。
@@ -907,6 +930,7 @@ body.grid-off-active::before {
 }
 /* 如果想要未动画和未浏览一样颜色，则透明度要设置为 0.86*/
 .md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1s ease both; }
+body.home-active .md-content__inner > * { animation: none; }
 /* 右侧 TOC 逐条淡入：只动 opacity，不动 transform/几何，避免干扰 Material
    的 toc.follow 滚动运算（transform 会改变 offsetTop/getBoundingClientRect）。
    CSS 只声明动画本身；每条链接的 animation-delay（逐步错开）由 site.js 注入，

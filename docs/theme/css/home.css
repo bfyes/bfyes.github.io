@@ -6,7 +6,7 @@
    目录
    01. GitHub 贡献图
        .ghc-* / .ContributionCalendar-* 贡献日历、
-       数据由 home.js 渲染（动态 contributions-live.js 或静态 contributions.json）、
+   数据由 home.js 渲染（静态 contributions.json 本地兜底 + CORS 代理实时刷新）、
        亮/暗模式各 5 级颜色(data-level="0"~"4")、
        加载/错误/正常三态、概览面板、图例、无障碍(.sr-only)
    02. 彩虹背景
@@ -20,11 +20,12 @@
        .home-section__head 标题栏(下划线)、.home-section__title(JetBrains Mono)、
        .home-terminal-keys 终端分类链接、
        .home-log-list / .home-log 更新日志(日期 + 内容网格)、
-       .home-link-grid / .home-friend 友链卡片(auto-fit 网格 + 头像 + hover 上浮)
+       .home-link-grid / .home-friend 友链卡片(auto-fit 网格 + flex row 头像 + hover 上浮)
    04. 首页终端
-       .home-terminal 终端窗口(三色圆点 + 等宽屏幕)、
+       .home-terminal 终端窗口(三色圆点 + 等宽屏幕，字号 --font-code)、
        .typed-text / .typed-cursor 打字机效果(由 home.js 驱动)、
        host/prompt/command/cursor 四色文字、亮/暗模式背景
+
    05. 响应式（主页移动端适配）与动画
        ≤44.984375em：友链单列、贡献图 footer 纵向、
        标题栏纵向、日志单列、
@@ -118,16 +119,42 @@
      优先），故单独定义而非复用；逐字保留原硬编码栈，外观行为不变。 */
   --font-ghc: "Inter", "Noto Sans SC", sans-serif;
   --font-home-title: "JetBrains Mono", "Noto Sans SC", sans-serif;
+
+  /* 主页分区标题字号（0.92rem），比全局 --font-base 略大以突出分区头。 */
+  --home-section-title-size: 0.92rem;
+  /* 主页通用元信息字号：比全站 --font-meta(0.65rem) 略大，主页专属 */
+  --home-meta-size: 0.68rem;
+
+  --home-friend-name-size: 0.8rem;
+  --home-friend-handle-size: 0.6rem;
+
+  /* 彩虹色斑不透明度（仅 home.css 使用，不污染 variables.css） */
+  --rainbow-opacity-aurora: 0.34;
+  --rainbow-opacity-beam-c: 0.16;
+  --rainbow-opacity-band-pass: 0.28;
+  --rainbow-opacity-beam-b: 0.2;
+  /* 彩虹动画关键帧 opacity 端点 */
+  --rainbow-aurora-min: 0.28;
+  --rainbow-aurora-max: 0.42;
+  --rainbow-bandpass-min: 0.2;
+  --rainbow-bandpass-max: 0.34;
+  --rainbow-beam-b-min: 0.14;
+  --rainbow-beam-b-max: 0.26;
+}
+
+/* 主页专用派生色（从 Material 全局变量计算得出，集中在此便于调整 */
+.home-page {
+  --home-muted: var(--md-default-fg-color--light);
+  --home-softer: var(--md-default-fg-color--lighter);
 }
 
 /* ============================================================================
    01. GitHub 贡献图
    ----------------------------------------------------------------------------
    .ghc-* / .ContributionCalendar-* 贡献日历组件。
-   数据由 home.js 的 initGithubCalendar 渲染：优先取 contributions-live.js
-   注入的 window.site.fetchContributions（动态：GraphQL/代理实时抓取），
-   否则回退 theme/data/contributions.json（静态）。两条路径产出同构 data，
-   下游渲染不感知来源。亮/暗模式各有 5 级颜色（data-level="0"~"4"），
+   数据由 home.js 的 initGithubCalendar 渲染：本地 JSON + CORS 代理实时。
+   两路都通过 packageCells 统一计算等级与总数。
+   亮/暗模式各有 5 级颜色（data-level="0"~"4"），
    与 GitHub 官方配色一致。
    ============================================================================ */
 
@@ -154,7 +181,7 @@
   padding: 1.4rem 0.75rem;
   text-align: center;
   color: var(--md-default-fg-color--light);
-  font-size: 0.75rem;
+  font-size: var(--font-base);
 }
 
 .ghc-error {
@@ -363,7 +390,7 @@ body.rainbow-active .md-sidebar__inner {
     radial-gradient(circle at 48% 32%, var(--rainbow-orange), transparent 9rem),
     radial-gradient(circle at 68% 56%, var(--rainbow-green), transparent 10rem);
   filter: blur(24px) saturate(1.25);
-  opacity: 0.34;
+  opacity: var(--rainbow-opacity-aurora);
   animation: rainbow-local-aurora 18s ease-in-out infinite alternate;
 }
 
@@ -378,7 +405,7 @@ body.rainbow-active .md-sidebar__inner {
     radial-gradient(circle at 40% 36%, var(--rainbow-violet), transparent 7rem),
     radial-gradient(circle at 68% 62%, var(--rainbow-red), transparent 8rem);
   filter: blur(28px) saturate(1.25);
-  opacity: 0.16;
+  opacity: var(--rainbow-opacity-beam-c);
   animation: rainbow-beam-c 27s ease-in-out infinite alternate;
 }
 
@@ -407,7 +434,7 @@ body.rainbow-active .md-sidebar__inner {
     radial-gradient(circle at 64% 54%, var(--rainbow-blue), transparent 10rem),
     radial-gradient(circle at 50% 72%, var(--rainbow-violet), transparent 8rem);
   filter: blur(26px) saturate(1.2);
-  opacity: 0.28;
+  opacity: var(--rainbow-opacity-band-pass);
   animation: rainbow-band-pass 16s ease-in-out infinite alternate;
 }
 
@@ -424,7 +451,7 @@ body.rainbow-active .md-sidebar__inner {
     radial-gradient(circle at 68% 62%, var(--rainbow-cyan), transparent 8rem),
     radial-gradient(circle at 72% 58%, var(--rainbow-blue), transparent 8rem);
   filter: blur(28px) saturate(1.25);
-  opacity: 0.2;
+  opacity: var(--rainbow-opacity-beam-b);
   animation: rainbow-beam-b 23s ease-in-out infinite alternate;
 }
 
@@ -435,13 +462,29 @@ body.rainbow-active .md-sidebar__inner {
    面板用半透明背景 + backdrop-filter 毛玻璃，暗色模式面板透明度更低。
    ============================================================================ */
 
-.home-page {
-  --home-muted: var(--md-default-fg-color--light);
-  --home-softer: var(--md-default-fg-color--lighter);
-}
-
 .home-page a {
   text-decoration: none;
+}
+
+/* ============================================================================
+   吸引子背景（#hero）
+   ----------------------------------------------------------------------------
+   fixed 全屏 WebGL canvas，z-index: 0 铺在主页内容之下。
+   JS (attractor.js) 在主页初始化，非主页隐藏。
+   ============================================================================ */
+#hero {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+#hero canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* ---- 主页覆盖 theme.css 的全站规则 ---- */
@@ -472,7 +515,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 .md-typeset .home-section__title {
   margin: 0;
   font-family: var(--font-home-title);
-  font-size: 0.92rem;
+  font-size: var(--home-section-title-size);
   font-weight: 800;
   line-height: 1.25;
   border-bottom: none;
@@ -523,13 +566,13 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 
 .home-log__date {
   color: var(--home-softer);
-  font-size: var(--font-meta);
+  font-size: var(--home-meta-size);
   font-weight: 800;
 }
 
 .home-log span:last-child {
   color: var(--home-muted);
-  font-size: 0.7rem;
+  font-size: var(--home-meta-size);
   line-height: 1.5;
 }
 
@@ -546,48 +589,21 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 /* ============================================================================
    友链卡片（.home-friend）
    ----------------------------------------------------------------------------
-   布局：2 列 × 3 行的隐式网格
-     列1 (2.75rem)   头像，跨全部 3 行（grid-row: span 3）
-     列2 (minmax 0)  文本列，按 DOM 顺序依次落进行 1/2/3：
-                       strong(name) → __handle → __meta
-   DOM 由 scripts/patch_home_blocks.py 在构建期烘焙进 HTML，运行时 JS 不触碰
-   （原 initFriends/buildAvatar/friendInitials 已删，见 home.js）。
-
-   定位策略（解决「随卡片宽窄忽大忽小」）：
-     align-items: center    每个格子在自己行内垂直居中；头像在其跨 3 行的
-                            轨道内垂直居中。
-     align-content: start   ★改自 center★：让 name/handle/meta 三行文本块
-                            顶部对齐——距卡片顶 padding 固定，不随 meta 折行
-                            上下漂移、不随卡片宽窄跳变。
-     row-gap: 0.4rem        行间距只由 gap + line-height 决定（与宽度无关）。
-   行模板 grid-template-rows: auto auto minmax(0.95rem, 1fr)：
-     行3（meta）下限预留一行高(≈0.95rem)，没写介绍也占一行 → 与单行介绍卡片等高；
-     上限 1fr：同行有多行 meta 卡片拉高本卡时，多余高度全吸进行3，
-     头像 span 跨满 3 行即可在整卡内垂直居中（不再偏上）。
-   其余：半透明面板 + 毛玻璃 + hover 上浮（border 变色 + 阴影 + 上移 1px）。
+   flex row：avatar 左 + 文字列右。极简布局，网格 stretch 保证同行等高。
    ============================================================================ */
 .home-friend {
-  display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr);
-  /* 三行模板：行1 name / 行2 handle / 行3 meta。
-     行3 minmax(0.95rem, 1fr)——
-       下限 0.95rem ≈ meta 一行高(0.62rem×1.5)：没写介绍也预留一行槽位，
-       使「无介绍」卡片与「单行介绍」卡片等高（任务1）；
-       上限 1fr：同行有多行 meta 卡片把本卡拉伸时，多余高度全吸进行3，
-       头像跨满 3 行即可在整卡内垂直居中（任务2）。 */
-  grid-template-rows: auto auto minmax(0.95rem, 1fr);
-  gap: 0.4rem 1rem;
+  display: flex;
   align-items: center;
-  align-content: start;
-  padding: 0.65rem;
+  gap: 0.8rem;
+  padding: 1rem;
   border: 1px solid var(--home-border);
   border-radius: var(--radius-lg);
   background: var(--home-panel);
-  color: var(--md-default-fg-color) !important;
-  font-size: 0.72rem;
-  text-decoration: none !important;
   backdrop-filter: blur(var(--blur-radius));
   -webkit-backdrop-filter: blur(var(--blur-radius));
+  color: var(--md-default-fg-color) !important;
+  font-size: var(--font-base);
+  text-decoration: none !important;
   transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
 }
 
@@ -597,24 +613,20 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   transform: translateY(-1px);
 }
 
-/* 头像：固定 2.75rem 圆形容器，占第 1 列、跨 3 行。
-   首字母占位（GitHub 用户名首字母）打底；其上叠 GitHub 头像 img，
-   onerror 移除 img 即露出首字母（构建期烘焙，见 patch_home_blocks.py）。 */
 .home-friend__avatar {
-  grid-row: span 3;
-  margin-left: 0.2rem;
+  flex-shrink: 0;
   position: relative;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 3rem;
+  height: 3rem;
   border: 1px solid var(--home-border);
   border-radius: 50%;
   color: var(--avatar-color);
   background: var(--avatar-bg);
-  font-size: var(--font-meta);
+  font-size: var(--home-meta-size);
   font-weight: 900;
 }
 
@@ -626,37 +638,47 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   object-fit: cover;
 }
 
-/* ---- 文本列三行：name / handle / meta ---- */
-/* 行1：name（strong）。略大字号，顶部留 0.15rem 呼吸。 */
-.home-friend strong {
-  font-size: 0.75rem;
-  line-height: 1.2;
-  margin-top: 0.15rem;
+/* 文字列：min-width:0 让 flex 子元素能收缩，防止长文本撑破卡片。
+   flex:1 占满 avatar 右侧剩余空间，内部 name/handle/meta 自然垂直排列。 */
+.home-friend__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
 }
 
-/* 行2/3 共用：handle 与 meta 都做单行省略的基底。 */
+.home-friend strong {
+  font-size: var(--home-friend-name-size);
+  line-height: 1.2;
+}
+
 .home-friend__handle,
 .home-friend__meta {
   overflow: hidden;
-  color: var(--home-muted);
-  font-size: 0.62rem;
   line-height: 1.2;
   text-overflow: ellipsis;
 }
 
-/* 行2：@handle，单行省略（white-space:nowrap 由上文 text-overflow 链生效）。 */
 .home-friend__handle {
+  color: var(--home-softer);
+  font-size: var(--home-friend-handle-size);
+  font-style: italic;
+  margin-left: 0.1rem;
   white-space: nowrap;
 }
 
-/* 行3：描述。允许折行（white-space:normal + word-break），故不省略——
-   多行时撑高卡片，少行时回落，正是高度随内容变化的一环。 */
 .home-friend__meta {
-  margin-bottom: 0.15rem;
+  margin-top: 0.3rem;
+  color: var(--home-muted);
+  font-size: var(--home-meta-size);
   white-space: normal;
   word-break: break-word;
   text-decoration: none;
   line-height: 1.5;
+}
+.home-friend__meta--empty {
+  display: none;
 }
 
 .home-section--activity .github-calendar-wrap {
@@ -677,9 +699,9 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   border: 1px solid var(--home-border);
   border-radius: var(--radius-lg);
   background: var(--home-panel);
-  box-shadow: var(--shadow-md);
   backdrop-filter: blur(var(--blur-radius));
   -webkit-backdrop-filter: blur(var(--blur-radius));
+  box-shadow: var(--shadow-md);
 }
 
 .home-terminal__bar {
@@ -706,6 +728,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   margin-left: 0.35rem;
   color: var(--md-default-fg-color--light);
   font-family: var(--font-mono);
+  font-size: var(--font-code);
 }
 
 .home-terminal__screen {
@@ -769,8 +792,8 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 /* ============================================================================
    05. 响应式（主页移动端适配）与动画
    ============================================================================
-   终端字号 / padding 不设移动端覆盖：终端是 .md-typeset 后代，不写 font-size
-   即继承正文字号；padding 用桌面值 0.6rem 0.9rem 0.7rem，移动端亦合适。
+   终端字号已显式设为 var(--font-code)（0.68rem），与原行为（继承正文）不同。
+   padding 仍用桌面值 0.6rem 0.9rem 0.7rem，移动端亦合适，无需覆盖。
    切勿为终端单独引入 --mobile-terminal-* 变量——曾因只在 default 色板块定义、
    slate 移动端取不到导致 padding 变 0，是主页 CSS 历史屎山的根因。
    ============================================================================ */
@@ -806,18 +829,18 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 }
 
 @keyframes rainbow-local-aurora {
-  0% { transform: translate3d(-0.8rem, -0.4rem, 0) scale(0.98); opacity: 0.28; }
-  100% { transform: translate3d(2rem, 1rem, 0) scale(1.06); opacity: 0.42; }
+  0% { transform: translate3d(-0.8rem, -0.4rem, 0) scale(0.98); opacity: var(--rainbow-aurora-min); }
+  100% { transform: translate3d(2rem, 1rem, 0) scale(1.06); opacity: var(--rainbow-aurora-max); }
 }
 
 @keyframes rainbow-band-pass {
-  0% { transform: translate3d(-1.2rem, -0.7rem, 0) scale(0.96); opacity: 0.2; }
-  100% { transform: translate3d(1.6rem, 0.9rem, 0) scale(1.05); opacity: 0.34; }
+  0% { transform: translate3d(-1.2rem, -0.7rem, 0) scale(0.96); opacity: var(--rainbow-bandpass-min); }
+  100% { transform: translate3d(1.6rem, 0.9rem, 0) scale(1.05); opacity: var(--rainbow-bandpass-max); }
 }
 
 @keyframes rainbow-beam-b {
-  0% { transform: translate3d(1rem, -0.8rem, 0) scale(1); opacity: 0.14; }
-  100% { transform: translate3d(-1.6rem, 1rem, 0) scale(1.1); opacity: 0.26; }
+  0% { transform: translate3d(1rem, -0.8rem, 0) scale(1); opacity: var(--rainbow-beam-b-min); }
+  100% { transform: translate3d(-1.6rem, 1rem, 0) scale(1.1); opacity: var(--rainbow-beam-b-max); }
 }
 
 @keyframes rainbow-beam-c {

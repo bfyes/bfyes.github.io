@@ -63,6 +63,11 @@
   /* === 毛玻璃 === */
   --blur-radius: 12px;
 
+  /* === 图片渐进加载（LQIP blur-up）===
+     img.lqip 的模糊量；正式图加载完成后移除 lqip 类，
+     由 theme.css 的 transition 平滑过渡到清晰（blur→0）。 */
+  --lqip-blur: 6px;
+
   /* === Admonition 提示块尺寸（@supports 块专用，theme.css 引用）===
      消费者：theme.css 的 @supports (color-mix) 块。集中定义后，::before
      高度的 calc 自引变量，改一个值全块联动，无需逐处同步。 */

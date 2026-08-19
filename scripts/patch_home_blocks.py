@@ -1,21 +1,24 @@
 #!/usr/bin/env python3
 """patch_home_blocks.py — 构建后把主页自定义语法替换为 HTML。
 
-支持两种块语法：
+支持块语法（::terminal:: / ::about:: / ::changelog:: / ::friends:: / ::activity::）：
+
+::friends::
+gE | gE0650 | https://0-rangE.cn | Orange
+dreamem0ra1n | dreamem0ra1n | https://dreamem0ra1n.github.io/ISYS/ | ISYS
+::/friends::
+
+  字段：显示名 | GitHub用户名 | URL | 描述（可选）
+  缺省显示名时取 GitHub 用户名；描述可选，无描述时 meta span 带 --empty class（CSS 隐藏）。
 
 ::changelog::
 2026.08.16: 修复公式问题。重构 css。
-2026.08.14: 更改 giscus 加载机制。
 ::/changelog::
 
-::friends::
-gE0650 | https://0-rangE.cn | Orange
-dreamem0ra1n | https://dreamem0ra1n.github.io/ISYS/ | ISYS
-::/friends::
+  字段：日期: 内容（内容经 Markdown 行内渲染，支持 <url> 与 [text](url)）。
 
-::about::
-bfyes | https://github.com/bfyes | ZJU · InfoSec
-::/about::
+::about::   —— 与 ::friends:: 同结构，标题渲染为 "About"
+::terminal:: / ::activity:: —— 无参数，直接替换为固定 HTML 外壳。
 
 用法: uv run python scripts/patch_home_blocks.py
 """
@@ -55,6 +58,7 @@ def render_avatar(name: str, github: str) -> str:
     src = github_avatar_url(github)
     img = (
         f'<img src="{html.escape(src, quote=True)}" alt="" width="96" height="96" '
+        f'class="lqip" loading="lazy" onload="this.classList.remove(\'lqip\')" '
         f'onerror="this.remove()">'
         if src
         else ""
@@ -133,14 +137,19 @@ def render_friends(lines: str, title: str = "Links", section_id: str = "home-fri
             else ""
         )
         # 描述：过一遍 Markdown 渲染，支持 <url> 与 [text](url)，直接以正文 span 输出。
-        meta = ""
-        if desc:
-            rendered = render_inline_markdown(desc)
-            meta = f'\n        <span class="home-friend__meta">{rendered}</span>'
+        # 无描述时附加 --empty class（CSS 将其 display:none），保留 \xa0 占位；
+        # 有描述时正常显示。卡片通过 justify-content: center 统一垂直居中，
+        # 2 行（name + handle）和 3 行（+ meta）均适用。
+        has_desc = bool(desc)
+        meta_content = render_inline_markdown(desc) if has_desc else "\xa0"
+        meta_cls = "home-friend__meta" + ("" if has_desc else " home-friend__meta--empty")
+        meta = f'\n        <span class="{meta_cls}">{meta_content}</span>'
         items.append(
             f'      <a class="home-friend" {attrs}>\n'
             f"        {avatar}\n"
-            f"        <strong>{html.escape(name)}</strong>{handle}{meta}\n"
+            f'        <span class="home-friend__body">\n'
+            f"          <strong>{html.escape(name)}</strong>{handle}{meta}\n"
+            f"        </span>\n"
             f"      </a>"
         )
     return (

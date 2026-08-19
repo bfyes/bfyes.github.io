@@ -127,6 +127,7 @@ extra_javascript = [
     "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js",
     "theme/js/highlight.js",
     "theme/js/home.js",
+    # "theme/js/attractor.js",  # 动态线条背景难调试，暂时不用
     "theme/js/pdf-viewer.js",
 ]
 

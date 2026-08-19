@@ -35,8 +35,8 @@
   </script>
 {% endblock %}
 
-{# 在每页正文底部插入 Giscus 评论区 #}
 {% block content %}
+  {# <div id="hero"></div> #}
   {{ super() }}
   {% include "partials/page-info.html" %}
   {% include "partials/comments.html" %}

@@ -18,7 +18,7 @@
 
   /* ---- 1. 友链（friends）-------------------------------------------------
      头像 / handle / 描述已由 scripts/patch_home_blocks.py 在构建期烘焙进 HTML
-     （render_avatar / render_friends），CSS 用 .home-friend 网格定位。
+     （render_avatar / render_friends），CSS 用 .home-friend flex 单列布局定位。
      运行时无需补 DOM，故此处无逻辑。
      已删除的运行时函数：initFriends / buildAvatar / friendInitials / githubAvatarUrl
      （等价逻辑现存在于 patch_home_blocks.py，保持一致）。 */
@@ -40,19 +40,9 @@
     January: 1, February: 2, March: 3, April: 4, May: 5, June: 6,
     July: 7, August: 8, September: 9, October: 10, November: 11, December: 12
   };
-  var LEVEL_FALLBACK = { 0: 0, 1: 1, 2: 3, 3: 6, 4: 9 };
   var PROXIES = [
     function (u) {
-      return fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(u), { cache: "no-store" })
-        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
-        .then(function (j) { if (!j || !j.contents) throw new Error("no contents"); return j.contents; });
-    },
-    function (u) {
-      return fetch("https://corsproxy.io/?url=" + encodeURIComponent(u), { cache: "no-store" })
-        .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.text(); });
-    },
-    function (u) {
-      return fetch("https://api.codetabs.com/v1/proxy/?quest=" + encodeURIComponent(u), { cache: "no-store" })
+      return fetch("https://proxy.cors.sh/" + u, { cache: "no-store" })
         .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.text(); });
     }
   ];
@@ -93,9 +83,8 @@
     for (i = 0; i < cells.length; i++) {
       var d = new Date(cells[i].date + "T00:00:00Z");
       var q = pending[d.getUTCMonth() + 1 + ":" + d.getUTCDate()];
-      if (q && q.length) cells[i].count = q.shift();
+      cells[i].count = (q && q.length) ? q.shift() : 0;
     }
-    for (i = 0; i < cells.length; i++) { if (cells[i].count == null) cells[i].count = LEVEL_FALLBACK[cells[i].level] || 0; }
     return packageCells(cells, total);
   }
   function fetchViaProxy(url) {
@@ -154,7 +143,7 @@
   }
 
   function renderGithubCalendar(root, data) {
-    var weeks = toWeeks(data.contributions || []);
+    var weeks = toWeeks(data.contributions);
     var tableWidth = 28 + weeks.length * 10 + (weeks.length + 2) * 3;
     var table = htmlEl("table", { class: "ContributionCalendar-grid", role: "grid", "aria-readonly": "true", "aria-label": "Contribution Graph" });
     table.style.width = tableWidth + "px";
@@ -228,9 +217,14 @@
     /* ---- 构建日历 shell 的通用函数 ---- */
     function buildShell(data) {
       var shell = htmlEl("section", { class: "ghc-shell", "aria-label": "GitHub contributions" });
-      renderGithubHeader(shell, data.totalContributions || 0);
+      renderGithubHeader(shell, data.totalContributions);
       renderGithubCalendar(shell, data);
       renderGithubLegend(shell);
+      /* 替换 shell 前：清掉历次 shell 残留在 body 的 tooltip div。
+         tooltip 是 appendChild 到 body（非 shell 内），container.innerHTML=""
+         带不走它们；instant 切页重入会累积，hover 中遇异步刷新也会留下孤立的
+         active tooltip。此处统一移除（含正在显示的，元素一删即消失）。 */
+      document.querySelectorAll(".ghc-tooltip").forEach(function (t) { t.remove(); });
       container.innerHTML = "";
       container.appendChild(shell);
       container.setAttribute("data-ghc-state", "ready");
@@ -244,7 +238,7 @@
         return res.json();
       })
       .then(function (data) {
-        return packageCells(data.contributions || []);
+        return packageCells(data.contributions);
       })
       .then(buildShell)
       .catch(function (err) {
@@ -278,7 +272,7 @@
       var text = cell.title;
       cell.removeAttribute("title");
       var inner = htmlEl("div", { class: "md-tooltip2__inner md-typeset" }, text);
-      var tip = htmlEl("div", { class: "md-tooltip2", role: "tooltip" });
+      var tip = htmlEl("div", { class: "md-tooltip2 ghc-tooltip", role: "tooltip" });
       tip.appendChild(inner);
       tip.style.setProperty("--md-tooltip-tail", "0px");
       document.body.appendChild(tip);
