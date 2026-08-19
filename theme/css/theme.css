@@ -874,11 +874,11 @@ body.grid-off-active::before {
 
    动画只在"去模糊"（移除 lqip）那一刻发生：img.lqip 显式声明 transition:none，
    使添加 lqip 时模糊瞬间就位（preview 阶段无动画）；移除 lqip 后元素回归 img
-   基础规则的 0.5s 过渡，blur(5px)→0 才做动画，且仅发生在正式图加载完成时。
+   基础规则的 1s 过渡，blur → 0 才做动画，且仅发生在正式图加载完成时。
    尺寸不变（不用 scale 放大），避免与 width/height 占位冲突。
    ============================================================================ */
 img {
-  transition: filter 0.5s ease;
+  transition: filter 1s ease;
 }
 img.lqip {
   filter: blur(var(--lqip-blur));

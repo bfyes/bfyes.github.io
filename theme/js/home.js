@@ -229,6 +229,11 @@
       renderGithubHeader(shell, data.totalContributions);
       renderGithubCalendar(shell, data);
       renderGithubLegend(shell);
+      /* 替换 shell 前：清掉历次 shell 残留在 body 的 tooltip div。
+         tooltip 是 appendChild 到 body（非 shell 内），container.innerHTML=""
+         带不走它们；instant 切页重入会累积，hover 中遇异步刷新也会留下孤立的
+         active tooltip。此处统一移除（含正在显示的，元素一删即消失）。 */
+      document.querySelectorAll(".ghc-tooltip").forEach(function (t) { t.remove(); });
       container.innerHTML = "";
       container.appendChild(shell);
       container.setAttribute("data-ghc-state", "ready");
@@ -276,7 +281,7 @@
       var text = cell.title;
       cell.removeAttribute("title");
       var inner = htmlEl("div", { class: "md-tooltip2__inner md-typeset" }, text);
-      var tip = htmlEl("div", { class: "md-tooltip2", role: "tooltip" });
+      var tip = htmlEl("div", { class: "md-tooltip2 ghc-tooltip", role: "tooltip" });
       tip.appendChild(inner);
       tip.style.setProperty("--md-tooltip-tail", "0px");
       document.body.appendChild(tip);

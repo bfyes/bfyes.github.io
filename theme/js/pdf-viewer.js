@@ -90,6 +90,11 @@
   function showPdf(v, blob) {
     if (isIOS()) return showCanvasPdf(v, blob);
     var url = URL.createObjectURL(blob);
+    // 先挂 load 再设 src：iframe 的 PDF 查看器加载完成后即 revoke。
+    // 原生查看器此时已把整个 blob 读进内存，revoke 仅使该 URL 失效（不再可被新请求
+    // 引用），不影响已加载内容。不 revoke 会留在 blob URL 注册表里直到文档 unload，
+    // 连看多个 PDF 会累积泄漏。
+    v.frame.addEventListener("load", function () { URL.revokeObjectURL(url); }, { once: true });
     v.frame.src = url;
     v.status.textContent = "已加载";
     v.dot.classList.add("pdf-loader-dot--done");

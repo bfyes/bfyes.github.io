@@ -590,7 +590,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
 
    flex 替代 grid 的原因：Safari 下 grid + align-content: start 在容器宽度变化
    时存在高度重排滞后（文字换行/取消换行后行高不立即更新，导致文字重叠），
-   flex column + will-change: transform 强制 GPU 合成，宽度变化时即时 reflow。
+   flex column + contain:layout 隔离子树布局，宽度变化时即时 reflow。
 
    --pad 与字号均为 :root 变量，其余布局数值在规则内联直写。
    meta span 由 scripts/patch_home_blocks.py 始终输出（无描述含 \xa0 + --empty），
@@ -616,9 +616,12 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   backdrop-filter: blur(var(--blur-radius));
   -webkit-backdrop-filter: blur(var(--blur-radius));
   transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
-  /* will-change 强制 GPU 合成，解决 Safari 窗口宽度变化时 flex 容器
-     高度重排滞后导致的文字重叠问题。 */
-  will-change: transform;
+  /* contain:layout 把卡片的布局计算隔离在子树内：内部换行导致尺寸变化时，
+     浏览器立即重算该子树（边界清晰、成本低），不再等一帧——盖住 Safari 下
+     flex + backdrop-filter 组合「换行后行高延迟更新」导致的文字重叠。
+     替代原 will-change:transform（后者靠提升合成层的副作用达到同样效果，
+     但常驻 GPU 层、改变层叠上下文，语义也脏）。Safari 需实测确认等效。 */
+  contain: layout;
 }
 
 .home-friend:hover {
