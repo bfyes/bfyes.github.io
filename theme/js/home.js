@@ -32,6 +32,7 @@
   var WEEKDAY_SHORT = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   var MONTH_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var contributionRun = 0;
 
   /* ---- 实时抓取（CORS 代理，无需 token） ---- */
   var PAGE_URL = "https://github.com/users/bfyes/contributions";
@@ -212,10 +213,12 @@
   function initGithubCalendar(root) {
     var container = (root || document).querySelector(".github-calendar-wrap");
     if (!container) return;
+    var runId = ++contributionRun;
     container.setAttribute("data-ghc-state", "loading");
 
     /* ---- 构建日历 shell 的通用函数 ---- */
     function buildShell(data) {
+      if (runId !== contributionRun || !container.isConnected) return;
       var shell = htmlEl("section", { class: "ghc-shell", "aria-label": "GitHub contributions" });
       renderGithubHeader(shell, data.totalContributions);
       renderGithubCalendar(shell, data);
@@ -242,6 +245,7 @@
       })
       .then(buildShell)
       .catch(function (err) {
+        if (runId !== contributionRun || !container.isConnected) return;
         container.innerHTML = '<div class="ghc-error">GitHub contribution graph failed to load: ' + (err.message || "read failed") + "</div>";
         container.setAttribute("data-ghc-state", "error");
       });
@@ -447,9 +451,8 @@
       });
     }
     function bindTerminalKeys() {
-      if (document.__keysBound) return;
-      document.__keysBound = true;
-      document.addEventListener("click", function (e) {
+      if (!terminalScreen) return;
+      terminalScreen.addEventListener("click", function (e) {
         var link = e.target && e.target.closest ? e.target.closest(".home-terminal-link") : null;
         if (!link) return;
         e.preventDefault();

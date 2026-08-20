@@ -864,16 +864,17 @@ body.grid-off-active::before {
 /* ============================================================================
    09. 图片渐进加载（blur-up 过渡）
    ----------------------------------------------------------------------------
-   全站 img 的 blur-up：加载期间 lqip 类施加模糊，正式图片就绪后移除类、
+   渐进图片的 blur-up：加载期间 lqip 类施加模糊，正式图片就绪或超时后移除类、
    由 transition 平滑去模糊。lqip class 由构建期或 JS 添加
    （详见 patch_image_src.py 与 site.js）。
 
    动画只在"去模糊"（移除 lqip）那一刻发生：img.lqip 显式声明 transition:none，
    使添加 lqip 时模糊瞬间就位（preview 阶段无动画）；移除 lqip 后元素回归 img
-   基础规则的 1s 过渡，blur → 0 才做动画，且仅发生在正式图加载完成时。
+   基础规则的 1s 过渡，blur → 0 才做动画，加载失败或超过 15 秒也会收尾。
    尺寸不变（不用 scale 放大），避免与 width/height 占位冲突。
    ============================================================================ */
-img {
+img[data-fullsrc],
+.home-friend__avatar img {
   filter: blur(0);
   transition: filter 1s ease;
 }
