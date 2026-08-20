@@ -32,7 +32,7 @@
   var contributionRun = 0;
 
   /* ---- 实时抓取（CORS 代理，无需 token） ---- */
-  var PAGE_URL = "https://github.com/users/bfyes/contributions";
+  var DEFAULT_USER = "bfyes";
   var MIN_CELLS = 300;
   var MONTH_FULL = {
     January: 1, February: 2, March: 3, April: 4, May: 5, June: 6,
@@ -53,15 +53,15 @@
     return [q1, q2, q3];
   }
   function sortByDate(a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; }
-  function packageCells(cells, total) {
+  function packageCells(cells, total, user) {
     var t = computeThresholds(cells), i, sum = 0;
     for (i = 0; i < cells.length; i++) { cells[i].level = levelFromCount(cells[i].count, t); sum += cells[i].count; }
     cells.sort(sortByDate);
     if (total !== sum) total = sum;
     var dates = cells.map(function (c) { return c.date; });
-    return { user: "bfyes", totalContributions: total, from: dates.length ? dates[0] : null, to: dates.length ? dates[dates.length - 1] : null, fetchedAt: new Date().toISOString(), contributions: cells };
+    return { user: user, totalContributions: total, from: dates.length ? dates[0] : null, to: dates.length ? dates[dates.length - 1] : null, fetchedAt: new Date().toISOString(), contributions: cells };
   }
-  function parseHtml(html) {
+  function parseHtml(html, user) {
     var total = 0, i, tm = html.match(/id="js-contribution-activity-description"[^>]*>\s*([0-9,]+)\s*contributions/);
     if (tm) total = parseInt(tm[1].replace(/,/g, ""), 10);
     var cells = [], re = /data-date="([^"]+)"[^>]*data-level="([0-4])"/g, m;
@@ -83,7 +83,7 @@
       var q = pending[d.getUTCMonth() + 1 + ":" + d.getUTCDate()];
       cells[i].count = (q && q.length) ? q.shift() : 0;
     }
-    return packageCells(cells, total);
+    return packageCells(cells, total, user);
   }
   function fetchViaProxy(url) {
     return PROXIES.reduce(function (chain, make) { return chain.catch(function () { return make(url); }); }, Promise.reject(new Error("no proxy tried")));
@@ -210,6 +210,8 @@
   function initGithubCalendar(root) {
     var container = (root || document).querySelector(".github-calendar-wrap");
     if (!container) return;
+    var user = container.getAttribute("data-user") || DEFAULT_USER;
+    var pageUrl = "https://github.com/users/" + user + "/contributions";
     var runId = ++contributionRun;
     container.setAttribute("data-ghc-state", "loading");
 
@@ -238,7 +240,7 @@
         return res.json();
       })
       .then(function (data) {
-        return packageCells(data.contributions);
+        return packageCells(data.contributions, undefined, user);
       })
       .then(buildShell)
       .catch(function (err) {
@@ -251,8 +253,8 @@
     var timeoutP = new Promise(function (_, reject) {
       setTimeout(reject, 8000);
     });
-    var liveP = fetchViaProxy(PAGE_URL).then(function (html) {
-      var data = parseHtml(html);
+    var liveP = fetchViaProxy(pageUrl).then(function (html) {
+      var data = parseHtml(html, user);
       if (data.contributions.length < MIN_CELLS) throw new Error("proxy truncated");
       return data;
     });
