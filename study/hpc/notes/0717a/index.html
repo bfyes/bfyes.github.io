@@ -3443,12 +3443,12 @@
 <p>预训练带来的变化尤其大。模型不再只为某个固定数据集训练，而是用大量通用语料先得到一个基座模型，再通过指令数据、偏好数据、强化学习或工具交互适配任务。这样训练出来的模型覆盖面更广，但训练和服务成本也被放大到不能只靠多买几张卡解决。</p>
 <p>讲者把目前的工作分成两个容易割裂的社群：算法、数据和模型能力是一边，并行、编译、存储与运行时是另一边。实际方案常要同时改动两侧。GPU 矩阵单元偏好低精度时，量化误差需要重新评估；MoE 路由触发大量 All-to-All 时，expert placement 和通信路径就进入设计；KV cache 受限时，MQA、GQA 或 latent attention 会成为模型层面的选项。</p>
 <p>协同设计发生在方案尚未固定时。计算、内存、通信和部署代价都要进入模型选择；等模型定型后才处理运行代价，能调整的空间往往很小。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/mlsys-compute-mem-comm-triangle.jpg"><img width="1280" height="720" alt="课件的 MLSys 三角：Compute、Memory、Communication 三者互相牵制，任何一方成为瓶颈都会进入系统设计的视野。" src="../assets/0717a/mlsys-compute-mem-comm-triangle.preview.jpg" data-fullsrc="../assets/0717a/mlsys-compute-mem-comm-triangle.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/mlsys-compute-mem-comm-triangle.jpg"><img width="1280" height="720" class="lqip" alt="课件的 MLSys 三角：Compute、Memory、Communication 三者互相牵制，任何一方成为瓶颈都会进入系统设计的视野。" src="../assets/0717a/mlsys-compute-mem-comm-triangle.preview.jpg" data-fullsrc="../assets/0717a/mlsys-compute-mem-comm-triangle.jpg" /></a></p>
 <p><em>图：算力、显存与互连构成系统三角；协同设计是在三者之间找平衡，而不是只盯峰值算力。</em></p>
 <p>一个具体的判断方式是先问瓶颈落在哪里。训练时，参数状态可能放不进显存，activation 也可能更大；长上下文服务时，瓶颈常转向 KV cache 的容量与访存；MoE 则会把 token 路由和 All-to-All 通信推到前台。原因不同，优先动作也不同。将所有问题统称为显卡不够会掩盖真正的约束。</p>
 <h2 id="scaling-law-与数据">Scaling Law 与数据<a class="headerlink" href="#scaling-law-与数据" title="Permanent link"></a></h2>
 <p>大模型能力提升可以分成预训练、后训练和测试时推理三个阶段。预训练常讨论 scaling law：在模型参数量、训练 token 数和训练计算量增加时，训练损失怎样下降。它给的是经验上的资源分配规律，不是保证能力线性增长的承诺。数据质量、重复率、模型结构和训练稳定性都会改变实际曲线。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/scaling-law-data-flywheel.jpg"><img width="1280" height="720" alt="课件说明 scaling law 与数据飞轮：更多算力与更好的数据可用性相互促进，形成持续改进的循环。" src="../assets/0717a/scaling-law-data-flywheel.preview.jpg" data-fullsrc="../assets/0717a/scaling-law-data-flywheel.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/scaling-law-data-flywheel.jpg"><img width="1280" height="720" class="lqip" alt="课件说明 scaling law 与数据飞轮：更多算力与更好的数据可用性相互促进，形成持续改进的循环。" src="../assets/0717a/scaling-law-data-flywheel.preview.jpg" data-fullsrc="../assets/0717a/scaling-law-data-flywheel.jpg" /></a></p>
 <p><em>图：scaling 不只是模型更大，还包括数据、算力与评估之间的反馈循环（data flywheel）。</em></p>
 <p>语言模型的预训练目标仍很朴素。给定前面的 token，预测下一个 token：</p>
 <div class="arithmatex">\[
@@ -3466,15 +3466,15 @@
 <li>ZeRO/FSDP 分片参数、梯度和优化器状态；</li>
 <li>sequence/context parallelism 沿长序列切 attention 的工作。</li>
 </ul>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/parallelism-strategies-dp.jpg"><img width="1280" height="720" alt="课件按并行维度大致画了并行策略：数据并行沿 batch 维度把工作分给各 GPU，ZeRO/FSDP 再进一步分片显存冗余。" src="../assets/0717a/parallelism-strategies-dp.preview.jpg" data-fullsrc="../assets/0717a/parallelism-strategies-dp.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/parallelism-strategies-dp.jpg"><img width="1280" height="720" class="lqip" alt="课件按并行维度大致画了并行策略：数据并行沿 batch 维度把工作分给各 GPU，ZeRO/FSDP 再进一步分片显存冗余。" src="../assets/0717a/parallelism-strategies-dp.preview.jpg" data-fullsrc="../assets/0717a/parallelism-strategies-dp.jpg" /></a></p>
 <p><em>图：并行方式按切什么分类——切数据、切矩阵、切层、分片状态；不同切法对应不同通信模式。</em></p>
 <p>并行度不是越大越好。把矩阵切得更细会降低单卡显存，却提高通信频率；流水线 stage 变多会产生 bubble；数据并行增大后全局 batch 和学习率策略也会变化。训练日志里的 MFU（model FLOPs utilization）只反映计算单元利用率的一面，还要看通信等待、数据加载和故障恢复。</p>
 <p>训练框架只是把这些选择实现成不同的默认组合。以 FSDP、Megatron 和 DeepSpeed 为例：FSDP 更贴近 PyTorch 原生生态，善于做参数/梯度/优化器状态分片；Megatron-LM/Core 通常提供成熟的 TP、PP、DP、EP、CP 组合与高性能 kernel；DeepSpeed 覆盖 ZeRO、offload、MoE 等较多场景。它们没有放之四海皆准的胜负关系。模型大小、网络拓扑、团队维护能力和所需并行策略，才是选型的依据。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/framework-fsdp-megatron-deepspeed.jpg"><img width="1280" height="720" alt="课件用表格对比 PyTorch FSDP2、Megatron-LM/Core 与 DeepSpeed 三种框架的核心思路与优缺点。" src="../assets/0717a/framework-fsdp-megatron-deepspeed.preview.jpg" data-fullsrc="../assets/0717a/framework-fsdp-megatron-deepspeed.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/framework-fsdp-megatron-deepspeed.jpg"><img width="1280" height="720" class="lqip" alt="课件用表格对比 PyTorch FSDP2、Megatron-LM/Core 与 DeepSpeed 三种框架的核心思路与优缺点。" src="../assets/0717a/framework-fsdp-megatron-deepspeed.preview.jpg" data-fullsrc="../assets/0717a/framework-fsdp-megatron-deepspeed.jpg" /></a></p>
 <p><em>图：三类框架分别是贴近 PyTorch 的分片、成熟的多维并行组合、多样的 ZeRO/offload/MoE 覆盖；选型取决于场景而非优劣。</em></p>
 <p>实际排障时，先把一次 step 切成数据准备、前向、反向、梯度同步、优化器更新几个时间段，再看哪段长、哪张卡在等。看到 GPU 利用率低，可能是数据加载不足，也可能是 collective 卡住、流水线不平衡或显存碎片引起的重算。优化前先测量，才不会把时间花在并不主导的部分。</p>
 <p>优化器本身也是一个可省显存、可省算力的变量。AdamW 是最常见的默认项：它对每个参数维护一阶与二阶动量，训练效果好，但多出两份状态、占内存不小。与其在给定优化器下堆并行，不如也考虑换一个更新规则是否划算。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/adamw-to-muon.png"><img width="1280" height="720" alt="课件对比 AdamW 与 Muon：AdamW 维护一阶/二阶动量，Muon 是面向矩阵的更新，宣称以约一半的训练 FLOPs 达到 AdamW 级 loss。" src="../assets/0717a/adamw-to-muon.preview.jpg" data-fullsrc="../assets/0717a/adamw-to-muon.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/adamw-to-muon.png"><img width="1280" height="720" class="lqip" alt="课件对比 AdamW 与 Muon：AdamW 维护一阶/二阶动量，Muon 是面向矩阵的更新，宣称以约一半的训练 FLOPs 达到 AdamW 级 loss。" src="../assets/0717a/adamw-to-muon.preview.jpg" data-fullsrc="../assets/0717a/adamw-to-muon.png" /></a></p>
 <p><em>图：更好的优化器等同一笔免费算力——若新优化器在更少 step 里达到相同 loss，就直接省下整段训练时间。</em></p>
 <p>以 Muon 为代表的矩阵感知优化器利用参数是矩阵的结构做更新，在部分实验中明显降低达到目标 loss 所需的 FLOPs。它是否适用取决于模型与超参，不能想当然替换；但优化器质量确实是训练成本方程里的一个自由变量，和并行策略、精度选择一样值得在动手堆硬件前先尝试。实际判断仍靠同输入、同 loss 目标下的收敛曲线对比。</p>
 <h2 id="高效-attention-与内存访问">高效 Attention 与内存访问<a class="headerlink" href="#高效-attention-与内存访问" title="Permanent link"></a></h2>
@@ -3482,11 +3482,11 @@
 <div class="arithmatex">\[
 \operatorname{Attention}(Q,K,V)=\operatorname{softmax}\left(\frac{QK^T}{\sqrt d}\right)V.
 \]</div>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/self-attention-qkv.jpg"><img width="1280" height="720" alt="课件回顾 Transformer 的 self-attention：从隐藏向量得到 queries、keys、values，先算相关性再加权选出输出。" src="../assets/0717a/self-attention-qkv.preview.jpg" data-fullsrc="../assets/0717a/self-attention-qkv.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/self-attention-qkv.jpg"><img width="1280" height="720" class="lqip" alt="课件回顾 Transformer 的 self-attention：从隐藏向量得到 queries、keys、values，先算相关性再加权选出输出。" src="../assets/0717a/self-attention-qkv.preview.jpg" data-fullsrc="../assets/0717a/self-attention-qkv.jpg" /></a></p>
 <p><em>图：Q/K/V 来自同一序列的不同投影；attention 让每个位置按相似度聚合其他位置的信息。</em></p>
 <p>若序列长度为 <span class="arithmatex">\(S\)</span>，中间的 <span class="arithmatex">\(QK^T\)</span> 是 <span class="arithmatex">\(S\times S\)</span>。长上下文时，直接物化这个矩阵既占显存，又会在 GPU 高带宽内存和片上存储之间搬运大量数据。问题不只在 FLOPs，也在 I/O。</p>
 <p>FlashAttention 的核心做法是把 <span class="arithmatex">\(Q,K,V\)</span> 分块，利用寄存器和 shared memory 完成块内计算，避免把完整 attention matrix 写回 HBM。softmax 的分母依赖所有 key，因此它维护块级的运行最大值与归一化量，在数值稳定的条件下合并每个块的结果。输出没有变成近似值，改变的是数据的存取顺序。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/flashattention-io-aware.jpg"><img width="1280" height="720" alt="课件说明 FlashAttention 是 IO-aware 的 exact attention：把 Q/K/V 按 tile 放进片上 SRAM，算一块、归并一块、丢掉不需要的中间分数。" src="../assets/0717a/flashattention-io-aware.preview.jpg" data-fullsrc="../assets/0717a/flashattention-io-aware.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/flashattention-io-aware.jpg"><img width="1280" height="720" class="lqip" alt="课件说明 FlashAttention 是 IO-aware 的 exact attention：把 Q/K/V 按 tile 放进片上 SRAM，算一块、归并一块、丢掉不需要的中间分数。" src="../assets/0717a/flashattention-io-aware.preview.jpg" data-fullsrc="../assets/0717a/flashattention-io-aware.jpg" /></a></p>
 <p><em>图：FlashAttention 用分块与在线 softmax 减少 HBM 往返，不改 attention 的数学结果，主要优化的是 I/O 而不是算术量。</em></p>
 <p>GPU 的层级存储决定了这种改写为何有效。HBM 容量大但访问代价高，shared memory 和寄存器容量小却更快。标准实现如果不断把巨大的中间矩阵在 HBM 中读出、写回，算术单元会等待数据；分块后的 kernel 让同一块数据在更近的存储层完成更多计算。这里优化的是 I/O 复杂度，而非把 attention 的数学定义悄悄替换掉。</p>
 <p>线性 attention、稀疏 attention、滑动窗口 attention 会改变计算形式或可见范围。它们在代价、表达能力和长序列行为上各有取舍。阅读论文时要分开看：FlashAttention 优化的是 exact attention 的实现；线性或稀疏方法会改变 attention 的计算复杂度或近似方式。</p>
@@ -3495,9 +3495,9 @@
 <p>线性 attention 和稀疏 attention 则试图改变随序列长度增长的代价。线性 attention 用特征映射近似或重写相似度，使某些计算可按结合律重排，避免显式构造全部 <span class="arithmatex">\(S\times S\)</span> 关系；因果场景中，它可维护随 token 更新的状态。代价是表示能力、训练稳定性和现有推理缓存机制都要重新评估。稀疏 attention 只让一个 query 关注部分 token，固定窗口、块稀疏和动态选 token 是常见做法；动态选择本身也会引入索引和不规则访存的成本。</p>
 <h2 id="moe-路由与执行">MoE 路由与执行<a class="headerlink" href="#moe-路由与执行" title="Permanent link"></a></h2>
 <p>Transformer block 里有 attention 和 FFN 两块主要计算。attention 让 token 之间交换信息；普通 FFN 则对每个 token 的隐藏向量单独做两次矩阵投影和一次激活。MoE 没有把整个 Transformer 换掉，它只是用很多个参数不同的 FFN 取代原来的一个 FFN。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/transformer-moe-architecture.jpg"><img width="1280" height="720" alt="课件将 Transformer block 中的 FFN 展开为 DeepSeekMoE：router 为每个 token 选出少数 routed experts，结果再合并回原 token。" src="../assets/0717a/transformer-moe-architecture.preview.jpg" data-fullsrc="../assets/0717a/transformer-moe-architecture.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/transformer-moe-architecture.jpg"><img width="1280" height="720" class="lqip" alt="课件将 Transformer block 中的 FFN 展开为 DeepSeekMoE：router 为每个 token 选出少数 routed experts，结果再合并回原 token。" src="../assets/0717a/transformer-moe-architecture.preview.jpg" data-fullsrc="../assets/0717a/transformer-moe-architecture.jpg" /></a></p>
 <p><em>图：MoE 位于原 FFN 的位置；真正要处理的是 token 到 expert 的不规则映射。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/deepseek-moe.jpg"><img width="1280" height="720" alt="课件进一步画 DeepSeekMoE 的组织：除了被路由选择的 routed expert，还有一组共享专家始终参与，平衡容量与开销。" src="../assets/0717a/deepseek-moe.preview.jpg" data-fullsrc="../assets/0717a/deepseek-moe.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/deepseek-moe.jpg"><img width="1280" height="720" class="lqip" alt="课件进一步画 DeepSeekMoE 的组织：除了被路由选择的 routed expert，还有一组共享专家始终参与，平衡容量与开销。" src="../assets/0717a/deepseek-moe.preview.jpg" data-fullsrc="../assets/0717a/deepseek-moe.jpg" /></a></p>
 <p><em>图：DeepSeekMoE 在 routed expert 之外加入 shared expert，是如何组织专家集合的一种具体取舍。</em></p>
 <p>若一个 token 的隐藏状态为 <span class="arithmatex">\(x_t\)</span>，router 会为 <span class="arithmatex">\(E\)</span> 个 expert 给分并选出 top-<span class="arithmatex">\(k\)</span>。被选中的 expert 各自计算一个 FFN 输出，最后按 gate 权重加权：</p>
 <div class="arithmatex">\[
@@ -3518,9 +3518,9 @@ y_t=\sum_{e\in\operatorname{topk}(x_tW_{\mathrm{router}})}g_{t,e}\,\operatorname
 W=W_0+\Delta W,\qquad \Delta W=BA,
 \]</div>
 <p>其中 <span class="arithmatex">\(A\in\mathbb{R}^{r\times d}\)</span>、<span class="arithmatex">\(B\in\mathbb{R}^{k\times r}\)</span>，秩 <span class="arithmatex">\(r\)</span> 远小于原矩阵维度。训练时只保存和更新小矩阵 <span class="arithmatex">\(A,B\)</span>；部署时可把 <span class="arithmatex">\(BA\)</span> 合并进 <span class="arithmatex">\(W_0\)</span>，也可保留 adapter 以便在同一基座上切换任务。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/lora-q-lora.jpg"><img width="1280" height="720" alt="LoRA 冻结基座权重，只训练低秩增量；Q-LoRA 将基座以低比特保存，把显存压力进一步压低。" src="../assets/0717a/lora-q-lora.preview.jpg" data-fullsrc="../assets/0717a/lora-q-lora.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/lora-q-lora.jpg"><img width="1280" height="720" class="lqip" alt="LoRA 冻结基座权重，只训练低秩增量；Q-LoRA 将基座以低比特保存，把显存压力进一步压低。" src="../assets/0717a/lora-q-lora.preview.jpg" data-fullsrc="../assets/0717a/lora-q-lora.jpg" /></a></p>
 <p><em>图：训练 LoRA 时只更新低秩分支，基座权重保持冻结。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/lora-low-rank-ba.jpg"><img width="1280" height="720" alt="课件直接给出 LoRA 的公式：冻结预训练权重 \(W_0\)，只学习一个低秩更新 \(\Delta W = BA\)，训练时只保存和更新小矩阵。" src="../assets/0717a/lora-low-rank-ba.preview.jpg" data-fullsrc="../assets/0717a/lora-low-rank-ba.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/lora-low-rank-ba.jpg"><img width="1280" height="720" class="lqip" alt="课件直接给出 LoRA 的公式：冻结预训练权重 \(W_0\)，只学习一个低秩更新 \(\Delta W = BA\)，训练时只保存和更新小矩阵。" src="../assets/0717a/lora-low-rank-ba.preview.jpg" data-fullsrc="../assets/0717a/lora-low-rank-ba.jpg" /></a></p>
 <p><em>图：低秩分解 <span class="arithmatex">\(BA\)</span> 让可训练参数量大幅下降；部署时把 <span class="arithmatex">\(BA\)</span> 合并回 <span class="arithmatex">\(W_0\)</span> 或不保留 adapter 均可。</em></p>
 <p>Q-LoRA 再把冻结的基座量化到低比特，以更少显存加载大模型，同时让 LoRA 分支保持可训练精度。量化并不等于所有张量都直接截成相同格式。权重、激活、梯度和 KV cache 对误差的敏感度不同；缩放因子的粒度、异常值、累积精度和硬件指令都会影响最终效果。</p>
 <h2 id="kv-cache-与推理内存">KV Cache 与推理内存<a class="headerlink" href="#kv-cache-与推理内存" title="Permanent link"></a></h2>
@@ -3530,20 +3530,20 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 2\times L\times S\times H_{kv}\times d
 \]</div>
 <p>增长，其中 2 表示 K 与 V。多并发请求、长上下文和多轮对话会很快填满 GPU HBM。decode 每步算术量并不大，却反复读取越来越长的 cache，常呈现 memory-bound 或 I/O-bound 特征。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/hierarchical-kv-cache.jpg"><img width="1280" height="720" alt="课件的分层 KV cache：GPU HBM 保存最热的块，CPU DRAM 或更低层保存冷数据，容量和带宽形成明显梯度。" src="../assets/0717a/hierarchical-kv-cache.preview.jpg" data-fullsrc="../assets/0717a/hierarchical-kv-cache.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/hierarchical-kv-cache.jpg"><img width="1280" height="720" class="lqip" alt="课件的分层 KV cache：GPU HBM 保存最热的块，CPU DRAM 或更低层保存冷数据，容量和带宽形成明显梯度。" src="../assets/0717a/hierarchical-kv-cache.preview.jpg" data-fullsrc="../assets/0717a/hierarchical-kv-cache.jpg" /></a></p>
 <p><em>图：分层缓存用较慢但更大的存储层容纳冷 KV 块。</em></p>
 <p>分层缓存是其中一种处理法。热请求与正在生成的 token 留在 GPU；暂时不用或已被逐出的块可以转到 CPU DRAM，再在需要时取回。代价是 PCIe/NVLink 传输与调度复杂度，不能假设缓存能放下就等于延迟仍然好。PagedAttention 一类设计把 KV cache 切成固定大小 block，用逻辑块表管理物理块，减少连续大块分配造成的碎片，也便于请求共享前缀。</p>
 <p>前缀缓存能复用的前提很严格：从开头到命中位置的 token 序列必须相同。共享系统提示词、相同文档前缀或多人重复查询同一段资料时，收益很高；工具调用不断返回不同结果的 agent 场景里，一处差异就会让后续前缀无法复用。缓存压缩、选择性保留和线性 attention 的固定状态都可能减小内存，却也可能降低这类复用能力。系统设计要把平均命中率、尾延迟和请求类型一起看。</p>
 <p>模型结构也能降低 cache。Multi-Query Attention 让多个 query head 共用较少的 KV head；Grouped-Query Attention 是两者间的折中；某些 latent attention 先把 KV 压缩为更小的潜变量。这些选择会影响推理内存、带宽、模型质量和 kernel 形状，正是算法—系统共同取舍的例子。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/kvcache-mha-gqa-mla.jpg"><img width="1280" height="720" alt="课件梳理 KV cache 与 attention 架构的协同：从 MHA 到 MQA、GQA，再到 MLA 之类压缩 KV 的变体。" src="../assets/0717a/kvcache-mha-gqa-mla.preview.jpg" data-fullsrc="../assets/0717a/kvcache-mha-gqa-mla.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/kvcache-mha-gqa-mla.jpg"><img width="1280" height="720" class="lqip" alt="课件梳理 KV cache 与 attention 架构的协同：从 MHA 到 MQA、GQA，再到 MLA 之类压缩 KV 的变体。" src="../assets/0717a/kvcache-mha-gqa-mla.preview.jpg" data-fullsrc="../assets/0717a/kvcache-mha-gqa-mla.jpg" /></a></p>
 <p><em>图：共享或压缩 KV head 能显著缩小缓存与带宽，代价是表达能力与实现复杂度——这正是算法与系统协同设计的例子。</em></p>
 <p>这几种变体在缓存字节数上有干净的对照。若每层有 <span class="arithmatex">\(h\)</span> 个 query head、分组 <span class="arithmatex">\(g\)</span> 个、每 head 维度 <span class="arithmatex">\(d_k\)</span>，则 MHA 需为每个 head 各存一份 K/V，缓存约 <span class="arithmatex">\(2h d_k\)</span>；GQA 让一组 query head 共享一份 K/V，约 <span class="arithmatex">\(2g d_k\)</span>（MHA 的 <span class="arithmatex">\(g/h\)</span>）；MQA 让全部 query head 共用一个 K/V，约 <span class="arithmatex">\(2d_k\)</span>（MHA 的 <span class="arithmatex">\(1/h\)</span>），是三者里缓存最小的。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/mha-mqa-gqa-mla-comparison.png"><img width="1280" height="720" alt="课件给出 MHA、MQA、GQA 与 MLA 的对照：缓存大小、效果与显存占用各有倾斜，MLA 靠低秩压缩拿到接近 MQA 的缓存、接近 MHA 的效果。" src="../assets/0717a/mha-mqa-gqa-mla-comparison.preview.jpg" data-fullsrc="../assets/0717a/mha-mqa-gqa-mla-comparison.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/mha-mqa-gqa-mla-comparison.png"><img width="1280" height="720" class="lqip" alt="课件给出 MHA、MQA、GQA 与 MLA 的对照：缓存大小、效果与显存占用各有倾斜，MLA 靠低秩压缩拿到接近 MQA 的缓存、接近 MHA 的效果。" src="../assets/0717a/mha-mqa-gqa-mla-comparison.preview.jpg" data-fullsrc="../assets/0717a/mha-mqa-gqa-mla-comparison.png" /></a></p>
 <p><em>图：MHA 效果最好但缓存最大，MQA 缓存最小但效果有损，GQA 是折中；MLA 把 K/V 压缩成共享潜变量，避开缓存小与效果好之间的两难。</em></p>
 <p>MLA（Multi-head Latent Attention）更进一步，不直接共享完整 K/V，而是把 KV 低秩联合压缩成一个较小的潜变量 <span class="arithmatex">\(c_t\)</span>，推理时只缓存这个潜向量，再在线还原。它的缓存量（如论文中 <span class="arithmatex">\(d_c+d_r\)</span>）与 head 数无关，却能保留接近 MHA 的表达能力。正因为 KV cache 是长上下文推理的显存与带宽瓶颈，压缩 KV 这件事既是模型架构选择，也是系统能在多长上下文、多大并发下运行的变量。</p>
 <h2 id="量化推理与服务调度">量化推理与服务调度<a class="headerlink" href="#量化推理与服务调度" title="Permanent link"></a></h2>
 <p>低比特权重减少容量和带宽压力，校准误差、反量化路径与服务调度决定这部分节省能否转化成端到端收益。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/quantization-mapping.jpg"><img width="1280" height="720" alt="课件说明神经网络量化的本质：把高精度权重与激活映射到更少的离散取值，用 scale 等参数近似还原。" src="../assets/0717a/quantization-mapping.preview.jpg" data-fullsrc="../assets/0717a/quantization-mapping.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/quantization-mapping.jpg"><img width="1280" height="720" class="lqip" alt="课件说明神经网络量化的本质：把高精度权重与激活映射到更少的离散取值，用 scale 等参数近似还原。" src="../assets/0717a/quantization-mapping.preview.jpg" data-fullsrc="../assets/0717a/quantization-mapping.jpg" /></a></p>
 <p><em>图：量化的核心是把连续范围映射到有限格点；格点越粗，存储越省，误差越大。</em></p>
 <h3 id="量化误差与-gptq">量化误差与 GPTQ<a class="headerlink" href="#量化误差与-gptq" title="Permanent link"></a></h3>
 <p>权重量化并非只最小化 <code>\|W-\hat W\|</code>。线性层真正关心输出扰动 <code>X(W-\hat W)</code>；输入激活在某些方向幅度很大时，即使权重逐元素误差很小，输出也可能明显偏移。GPTQ 用校准样本的激活二阶信息近似这种敏感度，按列/组逐步量化并补偿尚未量化的权重误差。校准集不需要标签，却应覆盖实际 prompt 的激活分布；用完全无关的短文本校准，量化后的困惑度可能恶化。</p>
@@ -3563,10 +3563,10 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 <p>W4A16 把权重压成 INT4，激活仍以 FP16/BF16 等较高精度参与计算。实际 kernel 通常按 group 保存 scale 和 zero point，把两个 INT4 值打包进一个字节；运行时再解包、转换到计算精度并乘上 scale。若先把所有权重反量化成 fp16 临时矩阵再调用 GEMM，就会额外写出并读回一个完整高精度权重张量。</p>
 <p>fused dequant-GEMM 在 tile 被搬入寄存器或 shared memory 时完成解包和缩放，让结果直接参与矩阵乘加，避免这个全局中间量。它仍受 tensor core 所需布局、tile 对齐、group 边界和 scale 加载影响；当 batch 很小或矩阵很窄，launch、访存和 reduction 开销可能盖过理论算力优势。看到实现中的 <code>pack</code>、<code>unpack</code>、<code>scales</code> 和 <code>group_size</code>，可以顺着检查数据在哪个维度分组、谁负责读 scale，以及反量化后的值是否离开计算单元。</p>
 <h3 id="端到端服务调度">端到端服务调度<a class="headerlink" href="#端到端服务调度" title="Permanent link"></a></h3>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/fp4-inference.jpg"><img width="1280" height="720" alt="课件对比低精度格式的缩放粒度，并将它放在实际预训练和推理吞吐的语境中。" src="../assets/0717a/fp4-inference.preview.jpg" data-fullsrc="../assets/0717a/fp4-inference.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/fp4-inference.jpg"><img width="1280" height="720" class="lqip" alt="课件对比低精度格式的缩放粒度，并将它放在实际预训练和推理吞吐的语境中。" src="../assets/0717a/fp4-inference.preview.jpg" data-fullsrc="../assets/0717a/fp4-inference.jpg" /></a></p>
 <p><em>图：低比特格式除了位宽不同，缩放因子的粒度也不同。</em></p>
 <p>服务端要同时处理吞吐和延迟。continuous batching 允许请求在不同时间加入批次，提高设备利用率；prefill 与 decode 的资源特征不同，常被拆开调度；speculative decoding 用较小模型或草稿分支一次提出多个 token，再由目标模型验证，以额外计算换取更少的串行 decode 轮数。是否有效取决于接受率、模型大小和请求长度。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/speculative-decoding.jpg"><img width="1280" height="720" alt="课件画出 speculative decoding：小模型 draft 一次提出多个候选 token，目标模型并行验证，接受被认可的，从而减少串行 decode 轮数。" src="../assets/0717a/speculative-decoding.preview.jpg" data-fullsrc="../assets/0717a/speculative-decoding.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/speculative-decoding.jpg"><img width="1280" height="720" class="lqip" alt="课件画出 speculative decoding：小模型 draft 一次提出多个候选 token，目标模型并行验证，接受被认可的，从而减少串行 decode 轮数。" src="../assets/0717a/speculative-decoding.preview.jpg" data-fullsrc="../assets/0717a/speculative-decoding.jpg" /></a></p>
 <p><em>图：用便宜草稿模型生成一批候选，再由目标模型一次性验证；以额外计算换更少的串行生成步数。</em></p>
 <p>大模型在有限显存上运行时，GPTQ 将权重压到 INT4，NLL 用来确认概率质量没有越过阈值。优化对象不只是一层线性算子，还包括反量化与 GEMM、KV cache 分配、prefill/decode 调度、CPU/GPU offload 与 profiler 中真正占时的阶段。显存、省下的字节和吞吐相互制约，必须在完整推理负载上比较。</p>
 <div class="admonition warning">
@@ -3579,7 +3579,7 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 <li><strong>Model</strong> 是能理解与生成的神经网络，负责会说什么；</li>
 <li><strong>Harness</strong> 是控制 agent 如何工作的代码——如何构造 prompt、发起工具调用、管理子 agent、控制流程、维护 memory 与工作流。同一个模型换上不同 harness，就变成不同的 agent 行为。</li>
 </ul>
-<p><a class="glightbox" data-type="image" href="../assets/0717a/agent-model-harness.png"><img width="1280" height="720" alt="课件画出 Agent Loop 并把 Agent 拆成 Model 与 Harness：模型负责能力，harness 负责把能力编排成多轮工具调用与决策流程。" src="../assets/0717a/agent-model-harness.preview.jpg" data-fullsrc="../assets/0717a/agent-model-harness.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717a/agent-model-harness.png"><img width="1280" height="720" class="lqip" alt="课件画出 Agent Loop 并把 Agent 拆成 Model 与 Harness：模型负责能力，harness 负责把能力编排成多轮工具调用与决策流程。" src="../assets/0717a/agent-model-harness.preview.jpg" data-fullsrc="../assets/0717a/agent-model-harness.png" /></a></p>
 <p><em>图：模型是会推理的脑子，harness 是怎么用这个脑子的系统代码；两者分离后，能力升级与流程改造可各自进行。</em></p>
 <p>把自动化做成 agent 不是给模型一个更强的推理，而是系统地编排环境、工具和记忆。以 coding agent 为例，harness 决定何时查代码、运行测试、读报错日志、该怎么重试。因为 harness 完全由我们自己控制，针对它的优化走白盒、便宜且快；改动模型则是要重训或微调，慢且贵。于是在这里，系统层（harness）是多数迭代成本低、收益快的一侧——这也是算法—系统协同设计在 agent 场景下的体现。</p>
 <p>多模态模型又把输入扩展为图像、视频、音频或动作。视觉编码器把图像变成视觉 token，再与文本 token 在语言模型中融合；生成任务可能使用自回归、扩散或两者混合的架构。图像 token 数、视频帧数和跨模态 attention 都会直接放大上下文与推理成本。</p>

@@ -3570,12 +3570,12 @@
 </table>
 <h2 id="网络接口与链路层">网络接口与链路层<a class="headerlink" href="#网络接口与链路层" title="Permanent link"></a></h2>
 <p>网络连接先是物理问题。计算机需要网卡，需要网线、光纤或无线链路把网卡连到交换机/AP，再由驱动让操作系统识别这块网卡。每块网卡有一个 MAC 地址。它是链路层的地址，用来在一个局域网内把以太网帧送到正确的网口。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/network-interface-cards.jpg"><img width="1280" height="720" alt="课件展示的多种服务器网卡。网卡提供物理接入，驱动把它暴露为操作系统中的网络接口。" src="../assets/0706p/network-interface-cards.preview.jpg" data-fullsrc="../assets/0706p/network-interface-cards.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/network-interface-cards.jpg"><img width="1280" height="720" class="lqip" alt="课件展示的多种服务器网卡。网卡提供物理接入，驱动把它暴露为操作系统中的网络接口。" src="../assets/0706p/network-interface-cards.preview.jpg" data-fullsrc="../assets/0706p/network-interface-cards.jpg" /></a></p>
 <p><em>图：NIC 的硬件形态各异；程序和 <code>ip link</code> 看到的是驱动注册后的接口，而不是 PCIe 卡本身。</em></p>
 <p>交换机主要根据 MAC 地址转发帧。它会学习某个 MAC 地址在哪个端口后面，下次再发给该 MAC 的帧就不必广播。路由器不同，路由器根据 IP 地址判断下一跳，负责把数据送往其他网络。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/switch-mac-learning.jpg"><img width="1280" height="720" alt="交换机从收到帧的源 MAC 学习端口；目的 MAC 已知时定向转发，未知时才泛洪到其余端口。" src="../assets/0706p/switch-mac-learning.preview.jpg" data-fullsrc="../assets/0706p/switch-mac-learning.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/switch-mac-learning.jpg"><img width="1280" height="720" class="lqip" alt="交换机从收到帧的源 MAC 学习端口；目的 MAC 已知时定向转发，未知时才泛洪到其余端口。" src="../assets/0706p/switch-mac-learning.preview.jpg" data-fullsrc="../assets/0706p/switch-mac-learning.jpg" /></a></p>
 <p><em>图：交换机的 MAC 表把二层地址映射到物理端口。它学习源地址，查询目的地址。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/rack-network-devices.jpg"><img width="1280" height="720" alt="课件机柜中同时出现企业路由器、以太网交换机和 InfiniBand 交换机。前两者分别承担跨网段路由与局域网帧转发；后者服务计算节点间的低延迟互连。" src="../assets/0706p/rack-network-devices.preview.jpg" data-fullsrc="../assets/0706p/rack-network-devices.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/rack-network-devices.jpg"><img width="1280" height="720" class="lqip" alt="课件机柜中同时出现企业路由器、以太网交换机和 InfiniBand 交换机。前两者分别承担跨网段路由与局域网帧转发；后者服务计算节点间的低延迟互连。" src="../assets/0706p/rack-network-devices.preview.jpg" data-fullsrc="../assets/0706p/rack-network-devices.jpg" /></a></p>
 <p><em>图：同一个机柜可并存业务网络与高性能互连。看到网络时需先分清它连接的是管理访问、普通以太网，还是节点间计算通信。</em></p>
 <details class="info">
 <summary>InfiniBand 是什么</summary>
@@ -3586,7 +3586,7 @@
 ip addr                    # 接口上的 IP 地址
 ip route                   # 默认网关和路由表</code></pre>
 <p><code>ip link</code> 显示接口处于 <code>DOWN</code>，说明问题还在链路层；接口有 IP 但没有默认路由，通常只能访问本地网络。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/network-interface-state.jpg"><img width="1280" height="720" alt="ip link 会同时列出 loopback、物理接口和容器虚拟接口；只有已启用且链路就绪的接口才能承载外部通信。" src="../assets/0706p/network-interface-state.preview.jpg" data-fullsrc="../assets/0706p/network-interface-state.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/network-interface-state.jpg"><img width="1280" height="720" class="lqip" alt="ip link 会同时列出 loopback、物理接口和容器虚拟接口；只有已启用且链路就绪的接口才能承载外部通信。" src="../assets/0706p/network-interface-state.preview.jpg" data-fullsrc="../assets/0706p/network-interface-state.jpg" /></a></p>
 <p><em>图：课件中的接口状态输出。接口存在、处于 <code>UP</code>、获得地址和有路由是不同层次的事实。</em></p>
 <h2 id="ip子网与默认网关">IP、子网与默认网关<a class="headerlink" href="#ip子网与默认网关" title="Permanent link"></a></h2>
 <p>MAC 地址不能承担全球路由的工作。IP 地址给主机一个逻辑位置。IPv4 地址常写作 <code>192.168.1.23</code>，但单看地址不能判断两台主机是否同一子网，还要看子网掩码或 CIDR 前缀。</p>
@@ -3594,10 +3594,10 @@ ip route                   # 默认网关和路由表</code></pre>
 <summary>子网掩码与 CIDR 前缀</summary>
 <p>一台主机属于哪个子网，由 IP 和前缀长度共同决定。CIDR 写法 <code>192.168.1.23/24</code> 里的 <code>/24</code> 表示前 24 位是网络号，主机号占剩下的 8 位。子网掩码只是同一信息的另一种写法，把前 24 位置 1、后 8 位置 0，就是 <code>255.255.255.0</code>。判断两台主机是否同一子网，只要看它们的网络号是否相同：<code>192.168.1.23/24</code> 和 <code>192.168.1.88/24</code> 网络号都是 <code>192.168.1.0</code>，属于同一子网，可本地直接通信；若一台是 <code>/24</code>、另一台是 <code>/16</code>，网络号不同，就要靠路由器转发。前缀长度越大（如 <code>/30</code>），子网越小、可分配的主机越少。</p>
 </details>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/network-layering.jpg"><img width="1060" height="560" alt="课件对比 MAC 与 IP 的分层：MAC 扁平、只在本地网找到网卡；IP 分层，路由器按网络号决定往哪转发。" src="../assets/0706p/network-layering.preview.jpg" data-fullsrc="../assets/0706p/network-layering.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/network-layering.jpg"><img width="1060" height="560" class="lqip" alt="课件对比 MAC 与 IP 的分层：MAC 扁平、只在本地网找到网卡；IP 分层，路由器按网络号决定往哪转发。" src="../assets/0706p/network-layering.preview.jpg" data-fullsrc="../assets/0706p/network-layering.jpg" /></a></p>
 <p><em>图：MAC 负责同一局域网的下一跳，IP 负责跨网段的路由选择；二者各有分工，不能互相替代。</em></p>
 <p>例如 <code>192.168.1.23/24</code> 中 <code>/24</code> 表示前 24 位是网络号，即 <code>192.168.1.0/24</code>。同一前缀内的主机可以在本地二层网络里直接通信：发送方先通过 ARP 找到目标 IP 对应的 MAC，再把帧发出。若目标不在本地子网，发送方不能直接找到目标的 MAC，只能把包交给<strong>默认网关</strong>；网关再根据路由表把包转发出去。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/mac-ip-forwarding.jpg"><img width="1280" height="720" alt="课件用两个节点和交换机说明：局域网内帧按 MAC 地址交给下一跳，跨网络的选择由 IP 地址和路由器完成。" src="../assets/0706p/mac-ip-forwarding.preview.jpg" data-fullsrc="../assets/0706p/mac-ip-forwarding.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/mac-ip-forwarding.jpg"><img width="1280" height="720" class="lqip" alt="课件用两个节点和交换机说明：局域网内帧按 MAC 地址交给下一跳，跨网络的选择由 IP 地址和路由器完成。" src="../assets/0706p/mac-ip-forwarding.preview.jpg" data-fullsrc="../assets/0706p/mac-ip-forwarding.jpg" /></a></p>
 <p><em>图：MAC 地址标识当前二层网络中的接口；IP 地址用于决定包应前往哪个网络。</em></p>
 <details class="info">
 <summary>ARP 在这里做了什么</summary>
@@ -3623,10 +3623,10 @@ ip route                   # 默认网关和路由表</code></pre>
 <li>TCP 建立可靠连接后，SSH 协商加密与身份认证；</li>
 <li>应用数据向下封装为 TCP 段、IP 包、以太网帧；接收端按相反方向解封装。</li>
 </ol>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/ssh-protocol-stack.jpg"><img width="1060" height="560" alt="一次 SSH 连接从 DNS 解析开始，经由 ARP、IP 路由和 TCP 22，最后进入 SSH 的认证与加密阶段。" src="../assets/0706p/ssh-protocol-stack.preview.jpg" data-fullsrc="../assets/0706p/ssh-protocol-stack.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/ssh-protocol-stack.jpg"><img width="1060" height="560" class="lqip" alt="一次 SSH 连接从 DNS 解析开始，经由 ARP、IP 路由和 TCP 22，最后进入 SSH 的认证与加密阶段。" src="../assets/0706p/ssh-protocol-stack.preview.jpg" data-fullsrc="../assets/0706p/ssh-protocol-stack.jpg" /></a></p>
 <p><em>图：SSH 位于应用层；DNS、路由和 TCP 已先完成各自的工作。它解释了为什么域名解析成功仍不保证能登录。</em></p>
 <p>发送端不会把 SSH 数据原样塞进网线。TCP 在它前面加上端口、序号等信息；IP 再加入源和目的 IP；最后的以太网帧只负责当前局域网这一跳，还会带上用于校验的 FCS。路由器转发时会更换链路层帧头，IP 包中的端到端地址仍保留。收到数据后，网卡、内核 TCP 栈和 SSH 进程按相反顺序处理这些层。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/ssh-encapsulation.jpg"><img width="1280" height="720" alt="课件将 SSH 数据依次封装为 TCP 段、IP 包和以太网帧；接收端按相反方向拆开。" src="../assets/0706p/ssh-encapsulation.preview.jpg" data-fullsrc="../assets/0706p/ssh-encapsulation.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/ssh-encapsulation.jpg"><img width="1280" height="720" class="lqip" alt="课件将 SSH 数据依次封装为 TCP 段、IP 包和以太网帧；接收端按相反方向拆开。" src="../assets/0706p/ssh-encapsulation.preview.jpg" data-fullsrc="../assets/0706p/ssh-encapsulation.jpg" /></a></p>
 <p><em>图：同一份 SSH 数据在不同网络层携带不同的控制信息。</em></p>
 <p>DNS 是名字到地址的查询服务。它出问题时，域名连接会失败，但直接使用已知 IP 有时仍能通。可用：</p>
 <pre class="highlight"><code class="language-bash">nslookup host.example.edu
@@ -3648,14 +3648,14 @@ Shell / 库 / 系统调用接口
 Linux 内核（进程、内存、文件系统、网络、驱动）
 CPU、内存、磁盘、网卡、GPU</code></pre>
 <p>这种层次不是多余的。若任意程序都能直接控制硬件，一个错误程序就可能让全机崩溃或读取其他用户数据。内核把错误尽量限制在进程边界内，也把多用户之间的权限规则落实到文件、进程和设备上。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/user-kernel-boundary.jpg"><img width="1280" height="720" alt="课件将普通程序、操作系统与外部硬件资源分开，说明用户程序必须经内核取得受控访问。" src="../assets/0706p/user-kernel-boundary.preview.jpg" data-fullsrc="../assets/0706p/user-kernel-boundary.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/user-kernel-boundary.jpg"><img width="1280" height="720" class="lqip" alt="课件将普通程序、操作系统与外部硬件资源分开，说明用户程序必须经内核取得受控访问。" src="../assets/0706p/user-kernel-boundary.preview.jpg" data-fullsrc="../assets/0706p/user-kernel-boundary.jpg" /></a></p>
 <p><em>图：用户态程序通过系统调用请求内核服务，不能直接读写设备或内核数据。</em></p>
 <p>Linux 发行版把内核、GNU/Coreutils、包管理器、系统服务和默认配置组合成可安装、可维护的系统。Ubuntu、Rocky Linux 或 SUSE 的命令细节会不同，进程、权限、文件系统和系统调用等内核语义仍然相通。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/linux-distribution-stack.jpg"><img width="1280" height="720" alt="Linux 内核与用户空间工具共同组成发行版，不同发行版会选择不同的软件版本、包管理器和维护周期。" src="../assets/0706p/linux-distribution-stack.preview.jpg" data-fullsrc="../assets/0706p/linux-distribution-stack.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/linux-distribution-stack.jpg"><img width="1280" height="720" class="lqip" alt="Linux 内核与用户空间工具共同组成发行版，不同发行版会选择不同的软件版本、包管理器和维护周期。" src="../assets/0706p/linux-distribution-stack.preview.jpg" data-fullsrc="../assets/0706p/linux-distribution-stack.jpg" /></a></p>
 <p><em>图：发行版围绕 Linux 内核组织用户工具、软件包和系统策略，是一种交付方式，并非另一种内核原理。</em></p>
 <h3 id="文件接口">文件接口<a class="headerlink" href="#文件接口" title="Permanent link"></a></h3>
 <p>Linux 用统一的文件接口表示普通文件、目录、设备和很多内核对象。磁盘、终端、网络相关对象常能在 <code>/dev</code>、<code>/proc</code>、<code>/sys</code> 等目录看到；它们可能不是普通文本，但能通过类似的打开、读、写接口访问。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/linux-file-types.jpg"><img width="1280" height="720" alt="ls -l 的第一个字符可区分普通文件、目录、符号链接、设备和 socket。" src="../assets/0706p/linux-file-types.preview.jpg" data-fullsrc="../assets/0706p/linux-file-types.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/linux-file-types.jpg"><img width="1280" height="720" class="lqip" alt="ls -l 的第一个字符可区分普通文件、目录、符号链接、设备和 socket。" src="../assets/0706p/linux-file-types.preview.jpg" data-fullsrc="../assets/0706p/linux-file-types.jpg" /></a></p>
 <p><em>图：统一的路径和读写接口之下仍有不同对象类型；目录保存名字到 inode 的映射，设备和 socket 则连接到内核功能。</em></p>
 <details class="note" open="open">
 <summary>inode 是什么</summary>
@@ -3713,7 +3713,7 @@ head -n 20 file; tail -n 20 file</code></pre>
 <h3 id="路径挂载与工作目录">路径、挂载与工作目录<a class="headerlink" href="#路径挂载与工作目录" title="Permanent link"></a></h3>
 <p><code>/home/alice/project/a.cpp</code> 是绝对路径，从唯一根目录 <code>/</code> 开始；<code>src/a.cpp</code> 是相对路径，含义取决于当前目录。Shell 不会替你猜这个 <code>results</code> 是哪个目录，所以脚本中常先用 <code>cd</code> 进入明确目录，或把输入、输出写成绝对路径。<code>~</code> 只在 shell 展开为当前用户的家目录；程序接收到的是展开后的完整路径，不是字符 <code>~</code>。</p>
 <p>目录树只有一个根，不代表所有路径都在同一块磁盘上。内核会把一个文件系统挂载（mount）到目录树的某个位置：例如本地 SSD 可以挂到 <code>/scratch</code>，网络文件系统可以挂到 <code>/home</code>。路径看起来连续，容量、速度、备份策略和是否随节点变化却可能完全不同。大规模临时输入放在节点本地 scratch 常能减少网络存储压力；要长期保留的代码和结果则应放课程指定的持久目录。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/shared-mounts.jpg"><img width="1280" height="720" alt="登录节点和计算节点可把同一份共享存储挂载到相同路径。" src="../assets/0706p/shared-mounts.preview.jpg" data-fullsrc="../assets/0706p/shared-mounts.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/shared-mounts.jpg"><img width="1280" height="720" class="lqip" alt="登录节点和计算节点可把同一份共享存储挂载到相同路径。" src="../assets/0706p/shared-mounts.preview.jpg" data-fullsrc="../assets/0706p/shared-mounts.jpg" /></a></p>
 <p><em>图：<code>/home</code> 或 <code>/work</code> 在多台机器上名字相同，背后可能是共享文件系统；节点本地 scratch 则通常不会自动出现在别的节点。</em></p>
 <pre class="highlight"><code class="language-bash">pwd                       # 确认脚本当前实际所在位置
 df -h .                   # 当前路径属于哪个文件系统、剩余多少空间
@@ -3730,7 +3730,7 @@ du -sh results            # 结果目录实际占用的空间</code></pre>
 <h2 id="用户用户组和文件权限">用户、用户组和文件权限<a class="headerlink" href="#用户用户组和文件权限" title="Permanent link"></a></h2>
 <p>每个文件有 owner、group 和其他用户三组权限，每组包含 <code>r</code>（读）、<code>w</code>（写）、<code>x</code>（执行/进入目录）。<code>ls -l</code> 的第一列如 <code>-rw-r-----</code> 可分为：owner 可读写，group 可读，others 无权限。</p>
 <p>八进制写法把 <code>r=4,w=2,x=1</code> 相加：<code>640</code> 表示 owner <code>rw-</code>、group <code>r--</code>、others <code>---</code>；<code>755</code> 常用于可进入、可执行的公开目录/脚本；<code>600</code> 常用于私钥。示例：</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/linux-permission-model.jpg"><img width="1280" height="720" alt="文件和目录对 r、w、x 的解释不同，访问检查依次匹配 owner、group 或 others。" src="../assets/0706p/linux-permission-model.preview.jpg" data-fullsrc="../assets/0706p/linux-permission-model.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/linux-permission-model.jpg"><img width="1280" height="720" class="lqip" alt="文件和目录对 r、w、x 的解释不同，访问检查依次匹配 owner、group 或 others。" src="../assets/0706p/linux-permission-model.preview.jpg" data-fullsrc="../assets/0706p/linux-permission-model.jpg" /></a></p>
 <p><em>图：普通文件的 <code>x</code> 表示可执行，目录的 <code>x</code> 表示可以穿过该目录访问其中对象；数字权限来自 <code>r=4</code>、<code>w=2</code>、<code>x=1</code> 的组合。</em></p>
 <pre class="highlight"><code class="language-bash">chmod 600 ~/.ssh/id_ed25519
 chmod 700 ~/.ssh
@@ -3782,7 +3782,7 @@ ssh-keygen -lf ~/.ssh/id_ed25519.pub  # 查看公钥指纹，便于核对</code>
     User your_name
     IdentityFile ~/.ssh/id_ed25519</code></pre>
 <p>之后只需 <code>ssh hpc</code>。配置文件还可声明跳板机、端口转发等，但课程集群的实际地址和策略以通知为准。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/ssh-config.jpg"><img width="1060" height="560" alt="课件示意 ~/.ssh/config：可以用别名集中管理 HostName、User、IdentityFile 等连接参数，ssh hpc 即读取该配置。" src="../assets/0706p/ssh-config.preview.jpg" data-fullsrc="../assets/0706p/ssh-config.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/ssh-config.jpg"><img width="1060" height="560" class="lqip" alt="课件示意 ~/.ssh/config：可以用别名集中管理 HostName、User、IdentityFile 等连接参数，ssh hpc 即读取该配置。" src="../assets/0706p/ssh-config.preview.jpg" data-fullsrc="../assets/0706p/ssh-config.jpg" /></a></p>
 <p><em>图：config 把连接谁、用什么用户名、带哪把私钥集中到一处，避免每次手写长长的参数。</em></p>
 <p><code>Host</code> 是本机别名，不必等于服务器 DNS 名。一个最小配置只描述连接目标、用户名和所用私钥；复杂集群还可能需要 <code>Port</code> 或 <code>ProxyJump</code>。不要把密码、私钥内容或临时 token 写进 <code>config</code>，也不要把他人的配置原样复制后忘记改用户名和密钥路径。</p>
 <details class="example">
@@ -3829,7 +3829,7 @@ git log --oneline --decorate -5</code></pre>
 <p><strong>Git 的本地历史和远程仓库要分开看。</strong><code>git add</code> 将工作区快照放入暂存区，<code>git commit</code> 写入本地历史，<code>git push</code> 才发送到远端；<code>git fetch</code> 只取回远端提交而不改当前文件。提交前分别用 <code>git diff</code> 与 <code>git diff --staged</code> 看工作区和已暂存内容，能避免把调试输出或大文件带进一次本应很小的性能改动。</p>
 </li>
 </ul>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/git-data-flow.jpg"><img width="1280" height="720" alt="工作区、暂存区、本地历史和远程仓库之间由不同 Git 命令连接。" src="../assets/0706p/git-data-flow.preview.jpg" data-fullsrc="../assets/0706p/git-data-flow.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/git-data-flow.jpg"><img width="1280" height="720" class="lqip" alt="工作区、暂存区、本地历史和远程仓库之间由不同 Git 命令连接。" src="../assets/0706p/git-data-flow.preview.jpg" data-fullsrc="../assets/0706p/git-data-flow.jpg" /></a></p>
 <p><em>图：<code>add</code> 和 <code>commit</code> 都只改变本地状态，<code>push</code> 才把提交送到远端；<code>fetch</code> 取回远端历史但不直接覆盖工作区。</em></p>
 <ul>
 <li><strong>分支只是指向某个提交的轻量名字。</strong>把稳定基线留在 <code>main</code>，每个可独立验证的改动放在分支上，比较结果时就可以准确写出两个 commit ID。若发生冲突，先理解两侧分别改了什么，合成一个能编译、能验证的版本，再标记为已解决。</li>
@@ -3883,7 +3883,7 @@ spack spec hdf5 +mpi       # 展开某个依赖/变体的解析结果</code></pr
 <summary>k8s</summary>
 <p>Kubernetes 有 9 个字母，中间 8 个字母是 "ubernete"，所以常被写成 k8s（也是它的官方简称）。Docker、containerd 负责把单个容器跑起来；Kubernetes 负责在<strong>多台机器上</strong>安排哪些容器跑在哪、要几份、坏了自己拉起，两者管的是不同层。课程里常见的轻量版叫 k3s——精简发行版，占用小、装得快，很多每位同学一个容器的平台直接用它。</p>
 </details>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/container-vm-stack.jpg"><img width="1280" height="720" alt="虚拟机在 hypervisor 上运行各自的 Guest OS，容器则通过运行时共享宿主机内核。" src="../assets/0706p/container-vm-stack.preview.jpg" data-fullsrc="../assets/0706p/container-vm-stack.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/container-vm-stack.jpg"><img width="1280" height="720" class="lqip" alt="虚拟机在 hypervisor 上运行各自的 Guest OS，容器则通过运行时共享宿主机内核。" src="../assets/0706p/container-vm-stack.preview.jpg" data-fullsrc="../assets/0706p/container-vm-stack.jpg" /></a></p>
 <p><em>图：容器启动轻、镜像小的根源是没有单独的 Guest OS；共享内核也意味着隔离边界和虚拟机不同。</em></p>
 <p>容器并不天然拥有无限资源。Linux cgroup 可以限制容器的 CPU、内存、GPU 等；namespace 让容器只能看到自己的进程、网络或挂载视图。课程中每位同学一个容器的安排，正是为了让环境相互隔离，又能由平台统一分配硬件。</p>
 <details class="info" open="open">
@@ -3908,7 +3908,7 @@ cat /sys/fs/cgroup/cpu.max 2&gt;/dev/null || true   # cgroup v2 的 CPU 限额�
 <p>NUMA 的全称是 Non-Uniform Memory Access。双路服务器中，每个 CPU socket 附近有本地内存；另一个 socket 访问这块内存要经过处理器间互连，延迟和带宽不同。Linux 往往按 first touch 把页面分给最先写它的 CPU。因此主线程初始化所有大数组、随后让两颗 CPU 平分计算，可能让一半工作长期访问远端内存。后续的线程绑定和并行初始化就是在处理这个数据位置问题。</p>
 </details>
 <p>功率是某一时刻的耗电速率（W），能量是累计消耗（平均功率×时间）。GPU 的额定板卡功率也不等于任意时刻的实际功率：矩阵计算密集时可能接近上限，等待 CPU、磁盘或网络时利用率下降。因而 GPU 功耗不高既可能说明节能，也可能说明程序没有充分利用 GPU，必须与利用率、吞吐量、时间线一起解释。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/server-power-budget.jpg"><img width="1280" height="720" alt="课件的服务器功耗预算示例：GPU 与 CPU 各自按额定功率累加，说明一台节点的供电与散热必须按设备之和来规划。" src="../assets/0706p/server-power-budget.preview.jpg" data-fullsrc="../assets/0706p/server-power-budget.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/server-power-budget.jpg"><img width="1280" height="720" class="lqip" alt="课件的服务器功耗预算示例：GPU 与 CPU 各自按额定功率累加，说明一台节点的供电与散热必须按设备之和来规划。" src="../assets/0706p/server-power-budget.preview.jpg" data-fullsrc="../assets/0706p/server-power-budget.jpg" /></a></p>
 <p><em>图：一台机器由多颗 CPU、GPU、硬盘等共同构成功耗预算；额定功率之和决定了机箱电源与机房散热的上限要求。</em></p>
 <p>GPU 与 CPU/网卡的物理连接同样有拓扑。GPU 之间可能经 NVLink/NVSwitch 通信，GPU 到 CPU 或网卡常经 PCIe；若进程绑在错误 socket，数据可能多绕一次处理器互连。只有在通信、数据传输或 NUMA 指标表明它是瓶颈时才需要调拓扑，普通程序不应一开始就手工绑定所有东西。</p>
 <p>运维人员即使操作系统无法正常启动，也需要查看温度、风扇、电源、硬盘、远程开关机和控制台。这类<strong>带外管理</strong>（out-of-band management，独立于操作系统、单独电路供能的远程硬件管理）通常由 BMC（Baseboard Management Controller）提供，IPMI/Redfish 是常见管理接口。它与业务网络分开，是为了在主机失联时仍能维护硬件。</p>
@@ -3917,7 +3917,7 @@ cat /sys/fs/cgroup/cpu.max 2&gt;/dev/null || true   # cgroup v2 的 CPU 限额�
 <p>BMC 是主板上的独立管理控制器，使用独立网络和供电路径。操作系统死机、普通 SSH 无法连接时，管理员仍能查看温度、风扇、硬件日志和远程控制台，或执行电源控制。它只应向管理网络开放，不是用户提交作业的入口。</p>
 </details>
 <p>Kubernetes 把 Pod 作为常见调度单位；控制器不断比较<strong>期望状态</strong>和<strong>当前状态</strong>。若一个应长期运行的 Pod 退出，控制器会尝试重新创建它。这个<strong>持续收敛</strong>的模型解释了为什么平台能同时维护大量课程容器，但也意味着手工改动可能很快被控制器覆盖。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0706p/kubernetes-control-path.jpg"><img width="1280" height="720" alt="Kubernetes 的控制面把期望状态交给调度器，再由目标 Node 上的 kubelet 创建 Pod。" src="../assets/0706p/kubernetes-control-path.preview.jpg" data-fullsrc="../assets/0706p/kubernetes-control-path.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/kubernetes-control-path.jpg"><img width="1280" height="720" class="lqip" alt="Kubernetes 的控制面把期望状态交给调度器，再由目标 Node 上的 kubelet 创建 Pod。" src="../assets/0706p/kubernetes-control-path.preview.jpg" data-fullsrc="../assets/0706p/kubernetes-control-path.jpg" /></a></p>
 <p><em>图：API Server、Controller、Scheduler 和 kubelet 分工完成状态记录、调度决策与节点执行；Pod 才是被放到 Node 上的工作单元。</em></p>
 <details class="info" open="open">
 <summary>Pod</summary>

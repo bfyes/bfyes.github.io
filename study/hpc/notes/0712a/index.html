@@ -3548,7 +3548,7 @@ for (int i = 0; i &lt; n; ++i) sum += a[i];</code></pre>
 <p>所以并行程序需要<strong>同步</strong>：要么用锁/原子操作把读-改-写串行化或变成一步原子操作，要么让线程各自维护私有变量、最后再归约合并。无论哪种，原则都是：<strong>同一个共享变量，同一时刻只能有一个写者，或者让写互不覆盖</strong>。</p>
 </details>
 <p>另一方面，线程创建、销毁、任务分发、同步、cache 失效和内存带宽争用都是 overhead。一个只执行几十次加法的小循环，开并行域可能比串行更慢。并行粒度应足够大，让计算量盖过管理开销。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/single-vs-multithread.png"><img width="887" height="463" alt="课件对比单线程进程与多线程进程：多线程进程仍只有一个地址空间，线程共享内存，创建与切换成本低于多个独立进程。" src="../assets/0712a/single-vs-multithread.preview.jpg" data-fullsrc="../assets/0712a/single-vs-multithread.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/single-vs-multithread.png"><img width="887" height="463" class="lqip" alt="课件对比单线程进程与多线程进程：多线程进程仍只有一个地址空间，线程共享内存，创建与切换成本低于多个独立进程。" src="../assets/0712a/single-vs-multithread.preview.jpg" data-fullsrc="../assets/0712a/single-vs-multithread.png" /></a></p>
 <p><em>图：进程是地址空间与资源的边界，线程是进程内共享内存的执行单元；开线程比开进程轻，但同步与 cache 开销仍然存在。</em></p>
 <h2 id="openmp-的-fork-join-模型">OpenMP 的 fork-join 模型<a class="headerlink" href="#openmp-的-fork-join-模型" title="Permanent link"></a></h2>
 <p>OpenMP 用 <code>#pragma omp</code> 指示编译器和运行时建立线程组。进入并行域时主线程 fork 出工作线程，离开并行域时 join。最简单的例子：</p>
@@ -3560,9 +3560,9 @@ for (int i = 0; i &lt; n; ++i) sum += a[i];</code></pre>
     int nthreads = omp_get_num_threads();
     // 每个线程都执行这里；输出顺序不保证。
 }</code></pre>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/forkjoin-serial-parallel-region.png"><img width="1027" height="602" alt="课件用 Serial Region 与 Parallel Region 画出 fork-join：程序在串行区域只有主线程，进入并行域 fork 出工作线程，离开时 join 回主线程。" src="../assets/0712a/forkjoin-serial-parallel-region.preview.jpg" data-fullsrc="../assets/0712a/forkjoin-serial-parallel-region.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/forkjoin-serial-parallel-region.png"><img width="1027" height="602" class="lqip" alt="课件用 Serial Region 与 Parallel Region 画出 fork-join：程序在串行区域只有主线程，进入并行域 fork 出工作线程，离开时 join 回主线程。" src="../assets/0712a/forkjoin-serial-parallel-region.preview.jpg" data-fullsrc="../assets/0712a/forkjoin-serial-parallel-region.png" /></a></p>
 <p><em>图：OpenMP 的并行域在进入/离开时做一次 fork 与 join；串行段与并行段交替出现。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/openmp-hello-output.png"><img width="762" height="494" alt="课件给出 hello_openmp 的运行输出：多个线程的 hello/world 交错出现，打印顺序不由线程编号决定。" src="../assets/0712a/openmp-hello-output.preview.jpg" data-fullsrc="../assets/0712a/openmp-hello-output.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/openmp-hello-output.png"><img width="762" height="494" class="lqip" alt="课件给出 hello_openmp 的运行输出：多个线程的 hello/world 交错出现，打印顺序不由线程编号决定。" src="../assets/0712a/openmp-hello-output.preview.jpg" data-fullsrc="../assets/0712a/openmp-hello-output.png" /></a></p>
 <p><em>图：多个线程同时打印，输出行顺序是交错且不保证的；这是没有同步的自然表现。</em></p>
 <p><code>parallel</code> 只说明这段区域由多个线程进入；若要把规则循环的迭代分配给线程，通常写：</p>
 <pre class="highlight"><code class="language-cpp">double dot = 0.0;
@@ -3633,25 +3633,25 @@ for (int i = 0; i &lt; n; ++i)
 <p>矩阵更新常出现另一种情况：每个线程负责一行或一个 tile，内部仍沿连续列访问。此时不必为了让迭代总数看起来更大而随意 <code>collapse</code>。按行切分通常保留了连续写入和较少的共享；按列切分可能让线程同时触碰相邻 cache line。<code>collapse</code> 是改变任务划分的工具，不是并行度不足时的默认开关。</p>
 <h3 id="调度static-还是-dynamic">调度：static 还是 dynamic<a class="headerlink" href="#调度static-还是-dynamic" title="Permanent link"></a></h3>
 <p><code>schedule(static)</code> 在开始时固定分配迭代，开销最小，适合每轮工作量相近。<code>schedule(dynamic, chunk)</code> 让完成当前块的线程再领取下一块，适合不同迭代耗时差异大，但领取任务本身有开销。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/forkjoin-master-threads.png"><img width="1273" height="484" alt="课件展示从进入并行域到离开的线程生命周期：Master thread 反复 fork/join，OMP 工作线程在并行域外休眠、域内被激活。" src="../assets/0712a/forkjoin-master-threads.preview.jpg" data-fullsrc="../assets/0712a/forkjoin-master-threads.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/forkjoin-master-threads.png"><img width="1273" height="484" class="lqip" alt="课件展示从进入并行域到离开的线程生命周期：Master thread 反复 fork/join，OMP 工作线程在并行域外休眠、域内被激活。" src="../assets/0712a/forkjoin-master-threads.preview.jpg" data-fullsrc="../assets/0712a/forkjoin-master-threads.png" /></a></p>
 <p><em>图：主线程（Master）负责 fork/join，工作线程只在并行域内存在；这一生命周期决定了 OpenMP 适合短促、规则的并行段。</em></p>
 <p>例如 <code>f(i)</code> 的计算量随 <code>i</code> 增长，简单地把前半交给线程 0、后半交给线程 1 会导致后者很忙、前者空闲；dynamic 能改善负载均衡。反过来，所有迭代几乎等长时，用 dynamic 只会增加调度成本。选择依据是工作量分布，不是习惯。</p>
 <p>以 <code>c[i] = f(i)</code> 为例，若 <code>f</code> 不是 <span class="arithmatex">\(O(1)\)</span>，循环下标均分并不意味着工作均分。动态调度把迭代切成 chunk，空闲线程再领取下一个 chunk；<code>chunk</code> 太小会提高领取任务的开销，太大又会重新造成不均衡。因此实践中先用 <code>static</code>，只有测到迭代成本差异明显时才比较 <code>dynamic</code> 的不同 chunk 大小。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/openmp-unbalanced-loop.png"><img width="817" height="460" alt="当迭代成本不均匀时，静态分配可能让部分线程早早空闲。" src="../assets/0712a/openmp-unbalanced-loop.preview.jpg" data-fullsrc="../assets/0712a/openmp-unbalanced-loop.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/openmp-unbalanced-loop.png"><img width="817" height="460" class="lqip" alt="当迭代成本不均匀时，静态分配可能让部分线程早早空闲。" src="../assets/0712a/openmp-unbalanced-loop.preview.jpg" data-fullsrc="../assets/0712a/openmp-unbalanced-loop.png" /></a></p>
 <p><em>图：静态切分按迭代编号分块；若后半区每次迭代更重，先完成的线程无法接手剩余工作。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/openmp-dynamic-schedule.png"><img width="817" height="460" alt="动态调度以额外的运行时开销换取更灵活的负载均衡。" src="../assets/0712a/openmp-dynamic-schedule.preview.jpg" data-fullsrc="../assets/0712a/openmp-dynamic-schedule.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/openmp-dynamic-schedule.png"><img width="817" height="460" class="lqip" alt="动态调度以额外的运行时开销换取更灵活的负载均衡。" src="../assets/0712a/openmp-dynamic-schedule.preview.jpg" data-fullsrc="../assets/0712a/openmp-dynamic-schedule.png" /></a></p>
 <p><em>图：动态调度让空闲线程继续领取 chunk；chunk 越小越灵活，运行时分发次数也越多。</em></p>
 <h3 id="criticalatomicbarrier-和-reduction">critical、atomic、barrier 和 reduction<a class="headerlink" href="#criticalatomicbarrier-和-reduction" title="Permanent link"></a></h3>
 <pre class="highlight"><code class="language-cpp">#pragma omp critical
 { shared_queue.push(value); }</code></pre>
 <p><code>critical</code> 使同一时间只有一个线程进入区域，适合较少发生的复合共享操作。<code>atomic</code> 适合简单的读改写；<code>barrier</code> 让所有线程等待最慢者。它们都可能限制并行度。对可交换/可结合的加、乘、最大值等，<code>reduction</code> 应优先；对可拆分的数据，最好让线程不共享可写状态。</p>
 <p>这三种办法的差别不只是 API 名字。<code>critical</code> 由锁保护，能包住多条语句，但竞争时所有线程串行；<code>atomic</code> 直接依赖硬件原子读改写，适用范围较窄；<code>reduction</code> 让每个线程先独立累加，最后只同步一次。最后一种常常最快，但只有运算满足相应的结合/交换语义，且变量确实可私有化时才正确。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/thread-race-write-sum.png"><img width="703" height="444" alt="课件画出一个数据竞争示例：两条线程都执行 Write sum，对同一变量读写并不原子，结果取决于哪个线程先到。" src="../assets/0712a/thread-race-write-sum.preview.jpg" data-fullsrc="../assets/0712a/thread-race-write-sum.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/thread-race-write-sum.png"><img width="703" height="444" class="lqip" alt="课件画出一个数据竞争示例：两条线程都执行 Write sum，对同一变量读写并不原子，结果取决于哪个线程先到。" src="../assets/0712a/thread-race-write-sum.preview.jpg" data-fullsrc="../assets/0712a/thread-race-write-sum.png" /></a></p>
 <p><em>图：对共享变量的“读-改-写”并发执行会产生竞争；用 critical/atomic/reduction 之一把这条路径串行或私有化。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/openmp-synchronization-comparison.png"><img width="817" height="460" alt="课件对 critical、atomic、reduction 等同步方式做对比，说明各自适用的场景与并发度影响。" src="../assets/0712a/openmp-synchronization-comparison.preview.jpg" data-fullsrc="../assets/0712a/openmp-synchronization-comparison.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/openmp-synchronization-comparison.png"><img width="817" height="460" class="lqip" alt="课件对 critical、atomic、reduction 等同步方式做对比，说明各自适用的场景与并发度影响。" src="../assets/0712a/openmp-synchronization-comparison.preview.jpg" data-fullsrc="../assets/0712a/openmp-synchronization-comparison.png" /></a></p>
 <p><em>图：同步方式的选择影响并行度——critical 最通用但串行，atomic 轻量但范围窄，reduction 兼顾正确与快速。</em></p>
 <p>前面几种同步都把访问完全串行化。当读多写少时，还有更细的取舍：读写锁（read-write lock）允许多个线程同时持有读锁并行，只有写锁才独占；<code>std::shared_mutex</code> 在 C++ 里提供了这种能力。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/read-write-lock.png"><img width="1152" height="636" alt="课件画出一条读锁与一条写锁的获取/释放时序：读与读可重叠，写必须独占。" src="../assets/0712a/read-write-lock.preview.jpg" data-fullsrc="../assets/0712a/read-write-lock.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/read-write-lock.png"><img width="1152" height="636" class="lqip" alt="课件画出一条读锁与一条写锁的获取/释放时序：读与读可重叠，写必须独占。" src="../assets/0712a/read-write-lock.preview.jpg" data-fullsrc="../assets/0712a/read-write-lock.png" /></a></p>
 <p><em>图：读写锁让大多数情况下的并发读并行化，写操作仍独占；它不是万能，头写锁等待时也会拖慢普通读者。</em></p>
 <p>用读写锁时，普通 readers 走共享路径、writer 走独占路径，二者互相排斥；没有 writer 时多个 reader 可同时进入。它适合数据经常被多个线程读、很少被改的场景，比如一张频繁查询的大查表。代价是锁本身比普通互斥锁稍重，且 writer 饥饿（一直被读者挤掉）需要额外机制，因此没有必要为每次短临界区都用它。</p>
 <p>不要把 <code>barrier</code> 当作让程序更稳定的开关。它只能保证所有线程都到达同一点，不能修复漏掉的锁、越界写或错误的变量作用域；在循环中多放一个 barrier，往往只是让快线程多等一次。需要同步时，应该能说清楚下一段代码会读取哪份刚写完的数据。</p>
@@ -3660,7 +3660,7 @@ for (int i = 0; i &lt; n; ++i)
 <p>较稳妥的分工是让一个线程长期拥有一个连续的数据块和对应的输出块，尽量少写其他线程会碰到的 cache line。数组初始填充也值得按同样的方式并行做：在 NUMA 机器上，页面常由第一次真正写入它的线程分配到附近内存节点。主线程串行初始化全部大数组，随后再让多个 socket 分块计算，可能从第一步就制造了远端访存。</p>
 <p>OpenMP 的线程数、绑核和调度不应靠默认值猜测。<code>OMP_NUM_THREADS</code> 控制线程数；<code>OMP_PROC_BIND</code>、<code>OMP_PLACES</code> 可限制线程迁移；实际效果仍要用 <code>lscpu</code>、<code>numactl --hardware</code>、<code>perf</code> 或课程中的 NUMA 测量方法核对。线程数超过内存带宽能支撑的并发度后，更多线程只会加剧争用。先让单线程访问连续、正确，再逐步增加线程，通常更容易知道速度为何变化。</p>
 <p>把线程考虑进来后，墙钟时间里的忙与每一步都在做有用工作是两回事。一个真实程序里，不同线程会在初始化、求解、边界处理、求导等阶段切换，某些线程先完成、某些还在等同步；这段时间在时间线里表现为线程没有满负荷推进。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/threads-execution-timeline.png"><img width="1469" height="735" alt="课件画出同一程序多个线程随不同计算阶段并行/交错推进的时间线。" src="../assets/0712a/threads-execution-timeline.preview.jpg" data-fullsrc="../assets/0712a/threads-execution-timeline.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/threads-execution-timeline.png"><img width="1469" height="735" class="lqip" alt="课件画出同一程序多个线程随不同计算阶段并行/交错推进的时间线。" src="../assets/0712a/threads-execution-timeline.preview.jpg" data-fullsrc="../assets/0712a/threads-execution-timeline.png" /></a></p>
 <p><em>图：线程节奏各不相同——有的提前完成、有的卡在同步点；只看总耗时看不出每线程在做什么。</em></p>
 <p>因此衡量并行提升不能只对比两个墙钟数字，还应看 profiler 里的每线程时间线：负载不均的线程会早早空闲等待，同步等待会在时间线上留下明显的空洞。</p>
 <h2 id="c-线程与线程池">C++ 线程与线程池<a class="headerlink" href="#c-线程与线程池" title="Permanent link"></a></h2>
@@ -3683,14 +3683,14 @@ void increment_safe(int iterations) {
 }</code></pre>
 <p><code>std::lock_guard</code> 在构造时加锁、析构时自动解锁，即使中途抛出异常也能保证锁被释放，避免忘了解锁或在异常路径上留下死锁。这是一种常见的 RAII 风格：资源（锁、文件、缓冲区）的获取与释放绑定到对象的生命周期，而不是靠手写配对代码。</p>
 <p>对简单的计数器，<code>std::atomic&lt;int&gt;</code> 往往比互斥锁更轻：它用硬件原子读改写完成自增，没有锁的排队与唤醒开销，也就没有数据竞争。它的适用面比锁窄——只能覆盖简单类型和小操作，复合的读+判断+写仍需在锁下完成。
-<a class="glightbox" data-type="image" href="../assets/0712a/thread-pool.png"><img width="817" height="460" alt="课件示意线程池：一组长命的工作线程常驻，从共享任务队列领取任务，避免大量短任务反复创建线程。" src="../assets/0712a/thread-pool.preview.jpg" data-fullsrc="../assets/0712a/thread-pool.png" /></a></p>
+<a class="glightbox" data-type="image" href="../assets/0712a/thread-pool.png"><img width="817" height="460" class="lqip" alt="课件示意线程池：一组长命的工作线程常驻，从共享任务队列领取任务，避免大量短任务反复创建线程。" src="../assets/0712a/thread-pool.preview.jpg" data-fullsrc="../assets/0712a/thread-pool.png" /></a></p>
 <p><em>图：线程池用固定的一组线程反复处理任务队列；与 OpenMP 按指令 fork/join 不同，线程由你自己管理和分发。</em></p>
 <details class="note" open="open">
 <summary>OpenMP 的 fork-join 和 C++ 线程池是两种模型</summary>
 <p>OpenMP 的 <code>parallel</code> 在进入时把一组线程唤醒、离开时把它们回收，每次并行域都隐式做一次 fork/join；适合规则、短促的循环并行。C++ 线程池则让一组长命的线程常驻，任务从共享队列领取，适合持续有任务、任务长短不一的场景。两者都用一组有限线程执行工作，区别在谁负责创建工作线程、任务如何分发：OpenMP 由运行时按指令划分，线程池由你自己写队列和领取逻辑。</p>
 </details>
 <p>流水线是 C++ 线程在课程中的另一种用法：A、B、C 三个阶段各有一个长期运行的线程，B 从 A 的队列取对象、处理后再交给 C。它增加的是吞吐而不是让同一个对象跳过阶段；队列为空时应等待条件变量，而不是让线程不停轮询占满一个核心。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/cpp-thread-pipeline.png"><img width="817" height="460" alt="流水线的每个阶段由各自长期运行的线程承担，对象在阶段间经队列传递。" src="../assets/0712a/cpp-thread-pipeline.preview.jpg" data-fullsrc="../assets/0712a/cpp-thread-pipeline.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/cpp-thread-pipeline.png"><img width="817" height="460" class="lqip" alt="流水线的每个阶段由各自长期运行的线程承担，对象在阶段间经队列传递。" src="../assets/0712a/cpp-thread-pipeline.preview.jpg" data-fullsrc="../assets/0712a/cpp-thread-pipeline.png" /></a></p>
 <p><em>图：单个对象仍要依次经过 A→B→C，但不同对象可同时处在不同阶段；吞吐因此提升，而单条链的关键路径没有变短。</em></p>
 <h2 id="mpi每个进程有独立地址空间">MPI：每个进程有独立地址空间<a class="headerlink" href="#mpi每个进程有独立地址空间" title="Permanent link"></a></h2>
 <p>MPI（Message Passing Interface）用于多个独立进程间通信，可以跨节点。每个进程有 rank；<code>MPI_COMM_WORLD</code> 是启动时的通信器。程序通常先初始化、查询自己的 rank 和总进程数、完成计算通信、最后结束：</p>
@@ -3715,9 +3715,9 @@ MPI_Recv(buf, n, MPI_DOUBLE, src,  tag, MPI_COMM_WORLD, &amp;status);</code></pr
 <p>阻塞 <code>Send</code>/<code>Recv</code> 的顺序设计不当会死锁。例如两个 rank 都先执行大消息的阻塞 <code>Send</code>，双方都等对方先收。常见处理是约定一边先收、一边先发，使用 <code>MPI_Sendrecv</code>，或用 <code>MPI_Isend</code>/<code>MPI_Irecv</code> 发起非阻塞通信，再 <code>MPI_Waitall</code> 等待完成。</p>
 <p>非阻塞不等于数据立刻可用。在 <code>Wait</code> 完成前，发送缓冲区通常不能随意改，接收缓冲区也不能被当作已经填好。</p>
 <p>死锁例子可以写成两个 rank 都先 <code>MPI_Send</code> 再 <code>MPI_Recv</code>。对于较大的消息，发送可能要等对方先贴出接收，两个进程于是互相等待。可以让一方先收、一方先发，也可以使用 <code>MPI_Sendrecv</code>；<code>MPI_Isend</code>/<code>MPI_Irecv</code> 的正确模式则是先把通信请求发起，再在真正使用缓冲区前 <code>MPI_Wait</code> 或 <code>MPI_Waitall</code>。非阻塞的价值在于避免不必要的等待或让通信和独立计算重叠，不是取消数据依赖。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/mpi-deadlock.png"><img width="817" height="460" alt="两个 rank 都先进行阻塞发送时，会形成相互等待的死锁。" src="../assets/0712a/mpi-deadlock.preview.jpg" data-fullsrc="../assets/0712a/mpi-deadlock.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/mpi-deadlock.png"><img width="817" height="460" class="lqip" alt="两个 rank 都先进行阻塞发送时，会形成相互等待的死锁。" src="../assets/0712a/mpi-deadlock.preview.jpg" data-fullsrc="../assets/0712a/mpi-deadlock.png" /></a></p>
 <p><em>图：两边都等待对方先进入接收，等待关系形成环，因此没有任何 rank 能继续。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/mpi-nonblocking.png"><img width="817" height="460" alt="非阻塞发送先返回一个请求对象；必须在复用发送缓冲区或读取接收缓冲区前等待其完成。" src="../assets/0712a/mpi-nonblocking.preview.jpg" data-fullsrc="../assets/0712a/mpi-nonblocking.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/mpi-nonblocking.png"><img width="817" height="460" class="lqip" alt="非阻塞发送先返回一个请求对象；必须在复用发送缓冲区或读取接收缓冲区前等待其完成。" src="../assets/0712a/mpi-nonblocking.preview.jpg" data-fullsrc="../assets/0712a/mpi-nonblocking.png" /></a></p>
 <p><em>图：请求对象代表尚未完成的通信；<code>Wait</code> 建立缓冲区可再次访问的边界。</em></p>
 <p>一个相邻 halo 交换的骨架通常是下面这样：</p>
 <pre class="highlight"><code class="language-cpp">MPI_Request req[4];
@@ -3780,7 +3780,7 @@ update_boundary();     // 此时才能读取收到的 halo</code></pre>
 </tr>
 </tbody>
 </table>
-<p><a class="glightbox" data-type="image" href="../assets/0712a/mpi-barrier.png"><img width="329" height="333" alt="课件画出 MPI Barrier：所有进程到达同一个 barrier 后才一起继续；它不做数据传输，只是同步点。" src="../assets/0712a/mpi-barrier.preview.jpg" data-fullsrc="../assets/0712a/mpi-barrier.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0712a/mpi-barrier.png"><img width="329" height="333" class="lqip" alt="课件画出 MPI Barrier：所有进程到达同一个 barrier 后才一起继续；它不做数据传输，只是同步点。" src="../assets/0712a/mpi-barrier.preview.jpg" data-fullsrc="../assets/0712a/mpi-barrier.png" /></a></p>
 <p><em>图：Barrier 让各进程对齐到同一点；它不搬运数据，只放大最慢进程的等待时间。</em></p>
 <p>集合通信通常比手写一串 <code>Send/Recv</code> 更清楚，也能让 MPI 库根据网络拓扑选择树形、环形等算法。<code>Barrier</code> 不做数据传输，也不让计算变快；它只保证没有人越过这里，因此过量使用会放大最慢进程的影响。</p>
 <h3 id="mpi-与-openmp-混合并行">MPI 与 OpenMP 混合并行<a class="headerlink" href="#mpi-与-openmp-混合并行" title="Permanent link"></a></h3>

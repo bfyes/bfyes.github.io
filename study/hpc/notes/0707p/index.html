@@ -3670,7 +3670,7 @@
 <p>一条算术指令很少单独决定程序速度。数据抵达执行单元之前会经过 cache 和地址翻译；多个线程又会争用 cache、内存带宽和同步点。理解这些路径，才能解释同一份循环为何会随数据布局和线程数而变化。</p>
 <h2 id="cpu-执行与流水线">CPU 执行与流水线<a class="headerlink" href="#cpu-执行与流水线" title="Permanent link"></a></h2>
 <p>CPU 执行的是指令。编译器把 C/C++ 等源代码翻译成目标指令；程序计数器（PC，在 x86 上常称 RIP）指向下一条指令；控制器取指、译码，把操作送到算术逻辑单元、浮点单元、访存单元等部件。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/cpu-die-abstraction.jpg"><img width="1280" height="720" alt="课件用 CPU die 的抽象说明 CPU 抽象：真正重要的是程序计数器、寄存器文件与算术/访存单元这些可见状态。" src="../assets/0707p/cpu-die-abstraction.preview.jpg" data-fullsrc="../assets/0707p/cpu-die-abstraction.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/cpu-die-abstraction.jpg"><img width="1280" height="720" class="lqip" alt="课件用 CPU die 的抽象说明 CPU 抽象：真正重要的是程序计数器、寄存器文件与算术/访存单元这些可见状态。" src="../assets/0707p/cpu-die-abstraction.preview.jpg" data-fullsrc="../assets/0707p/cpu-die-abstraction.jpg" /></a></p>
 <p><em>图：CPU 的抽象视图——PC 指向下一条指令，寄存器保存中间状态；流水线与 cache 都是在这之上为提吞吐添加的内部结构。</em></p>
 <details class="note" open="open">
 <summary>从单周期 CPU 到流水线</summary>
@@ -3701,9 +3701,9 @@ int y = x * c;</code></pre>
 <p>分支预测则先猜条件结果，并沿猜测路径取指、执行。预测正确时，延迟被隐藏；预测错时，需要撤销错误路径上的推测工作，流水线重新从正确地址开始。随机数据上的阈值判断、间接跳转和难预测的状态机都可能因此变慢。优化前应先测量：有时改数据表示、消除分支或让条件按块集中，比微调某条算术指令更有效。</p>
 <h2 id="存储层级与访存代价">存储层级与访存代价<a class="headerlink" href="#存储层级与访存代价" title="Permanent link"></a></h2>
 <p>寄存器最接近执行单元、容量最小；其次是 L1、L2、L3 cache；再往外是 DRAM。越往外容量越大、单位容量越便宜，但访问延迟和带宽代价也越高。CPU 通常以 <strong>cache line</strong> 为单位搬运一段连续字节，很少单独取一个 <code>double</code>。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-hierarchy-registers.jpg"><img width="1280" height="720" alt="课件的 Memory Hierarchy：从寄存器、cache、主存到外存，越往里越快越小，越往外越大越慢。" src="../assets/0707p/memory-hierarchy-registers.preview.jpg" data-fullsrc="../assets/0707p/memory-hierarchy-registers.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-hierarchy-registers.jpg"><img width="1280" height="720" class="lqip" alt="课件的 Memory Hierarchy：从寄存器、cache、主存到外存，越往里越快越小，越往外越大越慢。" src="../assets/0707p/memory-hierarchy-registers.preview.jpg" data-fullsrc="../assets/0707p/memory-hierarchy-registers.jpg" /></a></p>
 <p><em>图：存储层级是快、小、贵与大、慢、便宜的连续权衡。访存位置决定性能。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-cost.jpg"><img width="1280" height="720" alt="课件用一条对数轴展示各操作的成本（CPU cycles）：寄存器/L1 极快，DRAM 在百周期量级，磁盘更慢好几个数量级。" src="../assets/0707p/memory-cost.preview.jpg" data-fullsrc="../assets/0707p/memory-cost.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-cost.jpg"><img width="1280" height="720" class="lqip" alt="课件用一条对数轴展示各操作的成本（CPU cycles）：寄存器/L1 极快，DRAM 在百周期量级，磁盘更慢好几个数量级。" src="../assets/0707p/memory-cost.preview.jpg" data-fullsrc="../assets/0707p/memory-cost.jpg" /></a></p>
 <p><em>图：不同层级访存代价相差甚远。</em></p>
 <details class="note" open="open">
 <summary>为什么现代 CPU 需要 cache</summary>
@@ -3716,7 +3716,7 @@ int y = x * c;</code></pre>
   L2 cache（每核或小范围共享）
   L3 cache（多个核心共享）
 主内存 DRAM</code></pre>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-latency-x200.jpg"><img width="1280" height="720" alt="课件给出 cache 与内存延迟的相对倍数（这里 ×200 量级）：64KB 以内约一条时间线、4MB 以内约另一条时间线、更大的数据落回更慢的外部内存；工作集越大越容易超出 cache 容量。" src="../assets/0707p/memory-latency-x200.preview.jpg" data-fullsrc="../assets/0707p/memory-latency-x200.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-latency-x200.jpg"><img width="1280" height="720" class="lqip" alt="课件给出 cache 与内存延迟的相对倍数（这里 ×200 量级）：64KB 以内约一条时间线、4MB 以内约另一条时间线、更大的数据落回更慢的外部内存；工作集越大越容易超出 cache 容量。" src="../assets/0707p/memory-latency-x200.preview.jpg" data-fullsrc="../assets/0707p/memory-latency-x200.jpg" /></a></p>
 <p><em>图：工作集可以按三层看——64KB 以内由 L1 cache 承接，4MB 以内由 L2 cache 承接，更大则落到外部内存（DRAM）；每往一层，延迟都会跳高一大截，这正是 cache 命中和 miss 性能相差悬殊的原因。</em></p>
 <p>缓存设计利用两种经验：最近用过的数据可能再用（时间局部性），某个地址附近的数据可能很快也会用（空间局部性）。因此，连续遍历数组往往比随机跳转访问更快；矩阵乘法用小块计算，是为了让一块 A/B/C 数据留在 cache 里被重复使用。</p>
 <pre class="highlight"><code class="language-cpp">// C/C++ 多维数组按行存放；j 在内层时通常是连续访问。
@@ -3727,7 +3727,7 @@ for (int i = 0; i &lt; rows; ++i)
 <h3 id="缓存一致性与-false-sharing">缓存一致性与 false sharing<a class="headerlink" href="#缓存一致性与-false-sharing" title="Permanent link"></a></h3>
 <p>多核机器中，同一内存位置可能被多个核心缓存。硬件通过一致性协议保证一个核心写入后，其他核心最终不会长期读到旧值。代价是写入会让其他缓存中的相关 cache line 失效。</p>
 <p>即使两个线程写的是不同变量，只要变量落在同一 cache line，也会互相使对方的缓存失效。这称为 false sharing。典型例子是多个线程把局部统计量紧挨着放在数组里。常见处理办法是每线程保存私有结果、最后归约，或在确认是热点后做适当填充；不要一开始就到处加 padding。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/cache-line-false-sharing.jpg"><img width="1280" height="720" alt="课件用 cache line 与系统查询命令说明：相邻变量可被装入同一条 line，从而造成 false sharing。" src="../assets/0707p/cache-line-false-sharing.preview.jpg" data-fullsrc="../assets/0707p/cache-line-false-sharing.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/cache-line-false-sharing.jpg"><img width="1280" height="720" class="lqip" alt="课件用 cache line 与系统查询命令说明：相邻变量可被装入同一条 line，从而造成 false sharing。" src="../assets/0707p/cache-line-false-sharing.preview.jpg" data-fullsrc="../assets/0707p/cache-line-false-sharing.jpg" /></a></p>
 <p><em>图：line 大小应在目标机器上查询。课件示例为 64 B；不能把这个数当成所有 CPU 的固定常量。</em></p>
 <div class="admonition warning">
 <p class="admonition-title">把 false sharing 与数据竞争分开</p>
@@ -3747,14 +3747,14 @@ for (int i = 0; i &lt; rows; ++i)
 <p>现代 CPU 多核并行，通常就是在一个进程里开多个线程、或开多个进程各自跑一块，再靠通信把结果合起来。OpenMP 在进程内开线程、MPI 跨进程通信，底子都是这里讲的进程/线程区别。</p>
 </details>
 <p>磁盘上的可执行文件采用 ELF（Executable and Linkable Format）时，文件里既有待加载的代码和数据，也可能有符号表、调试信息等运行时不必装入内存的内容。加载器读取 program header，把若干 section 组合成具有读、写、执行权限的内存 segment。于是文件里有什么和进程地址空间里映射了什么并非一一对应。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/elf-sections.jpg"><img width="1280" height="720" alt="ELF 文件中的 section 会按运行权限组合成代码段和可写数据段，符号及调试信息通常不映射进进程。" src="../assets/0707p/elf-sections.preview.jpg" data-fullsrc="../assets/0707p/elf-sections.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/elf-sections.jpg"><img width="1280" height="720" class="lqip" alt="ELF 文件中的 section 会按运行权限组合成代码段和可写数据段，符号及调试信息通常不映射进进程。" src="../assets/0707p/elf-sections.preview.jpg" data-fullsrc="../assets/0707p/elf-sections.jpg" /></a></p>
 <p><em>图：<code>.text</code>、<code>.rodata</code> 常进入只读/可执行映射，<code>.data</code>、<code>.bss</code> 进入可写映射；section header 主要描述链接视角，program header 服务于加载。</em></p>
 <details class="info">
 <summary>ELF 为什么值得认识</summary>
 <p>编译报错、链接报错和程序启动失败落在不同边界。<code>readelf -h/-S/-l</code> 可分别查看 ELF 头、section 和 segment；<code>nm</code> 看符号；<code>ldd</code> 看动态依赖。源码里有函数却出现 <code>undefined reference</code>，多半是链接器没找到定义；文件已经生成却提示缺少 <code>.so</code>，则是动态加载阶段的问题。</p>
 </details>
 <p>进程运行时至少可粗略分为代码区、全局/静态数据、堆和栈。代码区放机器指令；堆用于动态分配；每个线程有自己的栈。<code>fork</code> 在 Unix 中可创建子进程，常配合 copy-on-write：创建时不急着复制所有内存页，只有某一方修改时才真正复制，以降低启动开销。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/process-address-space.jpg"><img width="1280" height="720" alt="一个常见的进程虚拟地址空间：text、data、heap 向上增长，stack 向下增长。" src="../assets/0707p/process-address-space.preview.jpg" data-fullsrc="../assets/0707p/process-address-space.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/process-address-space.jpg"><img width="1280" height="720" class="lqip" alt="一个常见的进程虚拟地址空间：text、data、heap 向上增长，stack 向下增长。" src="../assets/0707p/process-address-space.preview.jpg" data-fullsrc="../assets/0707p/process-address-space.jpg" /></a></p>
 <p><em>图：这些区域属于进程的虚拟地址视图；实际物理页由页表映射，图中的增长方向也是典型布局而非语言保证。</em></p>
 <p>进程间默认不能直接读写彼此内存。要交换数据，使用文件、管道、socket、共享内存或 MPI 等明确机制。隔离提高安全性，但也让跨进程通信比同进程访问变量更贵。</p>
 <details class="info" open="open">
@@ -3769,7 +3769,7 @@ for (int i = 0; i &lt; rows; ++i)
                          |
                          +--exit--&gt; 退出</code></pre>
 <p>从就绪到运行，由操作系统按某种策略挑选下一个进程，进程自己并不抢占 CPU。课件以 Round Robin（时间片轮转）为例：给每个进程一小段固定时间片，到点后无论是否跑完都被换下，轮给下一个进程。下面图里 P1、P2、P3 在一条时间轴上轮流占 CPU。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/process-schedule-round-robin.png"><img width="1280" height="720" alt="课件以 Round Robin 时间片轮转调度为例：P1、P2、P3 在时间轴上轮流占用 CPU，每个进程的时间片到点就被换下，交给下一个。" src="../assets/0707p/process-schedule-round-robin.preview.jpg" data-fullsrc="../assets/0707p/process-schedule-round-robin.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/process-schedule-round-robin.png"><img width="1280" height="720" class="lqip" alt="课件以 Round Robin 时间片轮转调度为例：P1、P2、P3 在时间轴上轮流占用 CPU，每个进程的时间片到点就被换下，交给下一个。" src="../assets/0707p/process-schedule-round-robin.preview.jpg" data-fullsrc="../assets/0707p/process-schedule-round-robin.png" /></a></p>
 <p><em>图：进程调度有 Non-preemptive（非抢占，跑完才换）与 Preemptive（抢占，可被中断换下）之分；Round Robin 属于后者，靠固定时间片轮流。</em></p>
 <p>I/O 完成、网卡收到包、定时器到期等硬件事件会通过中断通知内核；内核再唤醒相应任务，必要时安排调度。中断处理本身要尽量短，较重的工作会延后处理，否则一个设备事件也可能拖慢整台机器。程序看起来没在使用 CPU，往往是在等待另一项资源，或已经被阻塞在同步点。</p>
 <details class="info" open="open">
@@ -3779,12 +3779,12 @@ for (int i = 0; i &lt; rows; ++i)
 <p><code>ps -o pid,ppid,stat,psr,comm -p &lt;pid&gt;</code> 可查看一个进程的状态、父进程和最近运行的 CPU；<code>top -H -p &lt;pid&gt;</code> 可在系统支持时查看进程中的线程。它们是瞬时观察，不是完整的性能证据：某线程显示为 sleeping，只说明采样时刻它没有运行，仍需结合程序的 I/O、锁和 profiler 事件判断等待原因。</p>
 <h3 id="系统调用页与缺页">系统调用、页与缺页<a class="headerlink" href="#系统调用页与缺页" title="Permanent link"></a></h3>
 <p>用户态代码执行 <code>read</code>、<code>write</code>、<code>mmap</code> 或创建线程时，会经由系统调用陷入内核。这里的陷入，指 CPU 切换到受保护的执行权限，让内核检查参数和权限，再操作文件系统、页表或调度器。系统调用边界有固定成本，因此逐字节调用 <code>read</code>、每次循环都打开文件，常会比按块缓冲处理慢得多；这也是并行文件系统偏好大块、顺序 I/O 的一个微观原因。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/trap-control-flow.jpg"><img width="1280" height="720" alt="异常或系统调用发生后，处理器保存返回位置并转入内核处理函数，处理结束后再恢复用户程序。" src="../assets/0707p/trap-control-flow.preview.jpg" data-fullsrc="../assets/0707p/trap-control-flow.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/trap-control-flow.jpg"><img width="1280" height="720" class="lqip" alt="异常或系统调用发生后，处理器保存返回位置并转入内核处理函数，处理结束后再恢复用户程序。" src="../assets/0707p/trap-control-flow.preview.jpg" data-fullsrc="../assets/0707p/trap-control-flow.jpg" /></a></p>
 <p><em>图：控制流跨过用户态—内核态边界时，程序计数器和寄存器状态必须可恢复；进程没有跳过原程序，只是暂时执行受保护的处理路径。RISC-V 统称这类事件为 trap，涵盖异常与中断；处理器保存现场、执行处理、再恢复原程序，是系统调用与缺页的共同基础。</em></p>
 <p>陷入内核的原因可以分开看。用户态程序想做特权操作（读写文件、分配内存、网络）时，就要通过系统调用请求内核代劳。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/system-call-privileged.jpg"><img width="1280" height="720" alt="课件说明什么时候需要系统调用：用户程序要做特权操作时陷入内核；系统调用是受保护的请求，不是程序本身出错。" src="../assets/0707p/system-call-privileged.preview.jpg" data-fullsrc="../assets/0707p/system-call-privileged.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/system-call-privileged.jpg"><img width="1280" height="720" class="lqip" alt="课件说明什么时候需要系统调用：用户程序要做特权操作时陷入内核；系统调用是受保护的请求，不是程序本身出错。" src="../assets/0707p/system-call-privileged.preview.jpg" data-fullsrc="../assets/0707p/system-call-privileged.jpg" /></a></p>
 <p><em>图：系统调用把特权操作交给内核执行；CPU 切换权限并检查参数是它的固定开销来源。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/system-call-handler.jpg"><img width="1280" height="720" alt="课件画出系统调用处理的路径：用户进程发起调用，CPU 陷入内核，系统调用处理函数执行后返回用户态。" src="../assets/0707p/system-call-handler.preview.jpg" data-fullsrc="../assets/0707p/system-call-handler.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/system-call-handler.jpg"><img width="1280" height="720" class="lqip" alt="课件画出系统调用处理的路径：用户进程发起调用，CPU 陷入内核，系统调用处理函数执行后返回用户态。" src="../assets/0707p/system-call-handler.preview.jpg" data-fullsrc="../assets/0707p/system-call-handler.jpg" /></a></p>
 <p><em>图：从用户态进入、内核处理、返回用户态，这套路径的固定成本，让每次调用尽量多干点活变得重要。</em></p>
 <table>
 <thead>
@@ -3818,7 +3818,7 @@ for (int i = 0; i &lt; rows; ++i)
 </table>
 <p>一次 minor page fault 可以由内核补上页表映射后重试原指令；越界访问若没有合法映射，内核会给进程发送 <code>SIGSEGV</code>。两者在硬件入口上都涉及异常，但软件语义和代价完全不同。（页和缺页的基本含义，后文虚拟内存与页表一节会系统讲解；这里先用得上的两点：页是内存按固定大小切出的块，缺页是访问时该块尚未有物理映射、由内核补上或判定非法。）</p>
 <p>虚拟内存以页为单位管理，常见页大小是 4 KiB（系统也可能使用 huge page）。<code>malloc</code> 成功通常只取得一段虚拟地址，不代表相同数量的 DRAM 已经立即占用。第一次写入某页时，处理器发现页表尚无有效物理映射，内核分配页面并更新页表，这就是按需分配造成的 minor page fault；若数据必须从磁盘换回，才是代价高得多的 major page fault。初始化一个数十 GB 数组也因此是实际工作，不能偷偷排除在端到端计时之外。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/huge-pages-tlb.jpg"><img width="1280" height="720" alt="4 KiB、2 MiB 与 1 GiB 页对 TLB 覆盖范围的影响；大页以更粗粒度减少地址翻译条目压力。" src="../assets/0707p/huge-pages-tlb.preview.jpg" data-fullsrc="../assets/0707p/huge-pages-tlb.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/huge-pages-tlb.jpg"><img width="1280" height="720" class="lqip" alt="4 KiB、2 MiB 与 1 GiB 页对 TLB 覆盖范围的影响；大页以更粗粒度减少地址翻译条目压力。" src="../assets/0707p/huge-pages-tlb.preview.jpg" data-fullsrc="../assets/0707p/huge-pages-tlb.jpg" /></a></p>
 <p><em>图：课件列出常见页大小及其覆盖范围。是否使用 huge page 取决于工作集、分配策略和系统配额，并非默认优化。</em></p>
 <p>地址翻译本身有缓存：TLB 保存最近的虚拟页到物理页映射。连续扫描数组时，一条 TLB 项能覆盖其后一段地址；指针追逐或巨大的随机工作集会更频繁地耗尽 TLB。cache blocking 改善数据复用时，往往也同时改善 TLB 行为，不过页大小、对齐和访问顺序仍需要用测量确认。</p>
 <h3 id="forkexec-与文件描述符"><code>fork</code>、<code>exec</code> 与文件描述符<a class="headerlink" href="#forkexec-与文件描述符" title="Permanent link"></a></h3>
@@ -3827,7 +3827,7 @@ for (int i = 0; i &lt; rows; ++i)
 <p>文件描述符是进程内的小整数，指向内核维护的打开文件、管道、socket 或设备对象。标准输入/输出/错误一般是 0、1、2。fork 后父子会继承描述符，因此重定向、管道和日志输出需要特别注意谁还持有写端：管道读端只有在所有写端关闭后才会读到 EOF。这里的资源所有权，与多线程中谁可以写共享变量，是同一类工程问题。</p>
 <h2 id="线程与共享内存">线程与共享内存<a class="headerlink" href="#线程与共享内存" title="Permanent link"></a></h2>
 <p>线程是 CPU 调度和执行的基本单位。一个进程可包含多个线程：它们共享代码、堆、全局变量和打开文件，但各自拥有寄存器状态、程序计数器和栈。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/thread-lightweight-process.jpg"><img width="1280" height="720" alt="课件把线程称作轻量级进程：每个线程有自己的线程 ID、程序计数器、寄存器组和栈，并与同一进程的其它线程共享代码段、数据段、堆和打开的文件。" src="../assets/0707p/thread-lightweight-process.preview.jpg" data-fullsrc="../assets/0707p/thread-lightweight-process.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/thread-lightweight-process.jpg"><img width="1280" height="720" class="lqip" alt="课件把线程称作轻量级进程：每个线程有自己的线程 ID、程序计数器、寄存器组和栈，并与同一进程的其它线程共享代码段、数据段、堆和打开的文件。" src="../assets/0707p/thread-lightweight-process.preview.jpg" data-fullsrc="../assets/0707p/thread-lightweight-process.jpg" /></a></p>
 <p><em>图：线程作为轻量级进程，私有状态只有执行上下文（PC、寄存器、栈），其余全部共享；共享让线程间通信便宜，也让悬空指针、数据竞争和错误关闭文件影响整个进程。</em></p>
 <table>
 <thead>
@@ -3865,7 +3865,7 @@ for (int i = 0; i &lt; rows; ++i)
 </tr>
 </tbody>
 </table>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/create-threads-openmp.png"><img width="1280" height="720" alt="课件对比两种创建线程的方式：POSIX 线程（pthread）低层显式、需要手工同步，OpenMP 基于编译指令、是 HPC 的事实标准。" src="../assets/0707p/create-threads-openmp.preview.jpg" data-fullsrc="../assets/0707p/create-threads-openmp.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/create-threads-openmp.png"><img width="1280" height="720" class="lqip" alt="课件对比两种创建线程的方式：POSIX 线程（pthread）低层显式、需要手工同步，OpenMP 基于编译指令、是 HPC 的事实标准。" src="../assets/0707p/create-threads-openmp.preview.jpg" data-fullsrc="../assets/0707p/create-threads-openmp.png" /></a></p>
 <p><em>图：pthread_create 是底层建线程接口，啰嗦易错；OpenMP 用 <code>#pragma omp</code> 指令让编译器代劳建线程和同步，代码更接近串行。</em></p>
 <p>共享内存使线程通信方便，也带来数据竞争。<code>count++</code> 并不是一个不可分割的动作，它包含读、加、写。两个线程交错执行，结果可能少加一次：</p>
 <pre class="highlight"><code class="language-cpp">// 错误示例：多个线程同时执行会发生数据竞争。
@@ -3904,7 +3904,7 @@ cv.wait(lock, [] { return ready; });</code></pre>
 </div>
 <h2 id="上下文切换与调度">上下文切换与调度<a class="headerlink" href="#上下文切换与调度" title="Permanent link"></a></h2>
 <p>一颗核心在任一时刻只能执行一个硬件线程。操作系统的调度器在许多可运行线程间切换：保存当前线程的寄存器、程序计数器等上下文，恢复下一个线程，再继续执行。切换本身有成本；更大的损失往往是新线程迁移到另一核心后，原来热的 L1/L2 cache 失效了。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/process-switch.jpg"><img width="1280" height="720" alt="进程切换时，内核把当前寄存器状态保存到 PCB，再恢复另一个进程的状态。" src="../assets/0707p/process-switch.preview.jpg" data-fullsrc="../assets/0707p/process-switch.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/process-switch.jpg"><img width="1280" height="720" class="lqip" alt="进程切换时，内核把当前寄存器状态保存到 PCB，再恢复另一个进程的状态。" src="../assets/0707p/process-switch.preview.jpg" data-fullsrc="../assets/0707p/process-switch.jpg" /></a></p>
 <p><em>图：图中的两条竖线表示两个进程交替运行；保存和恢复期间由操作系统执行，用户进程本身没有推进。</em></p>
 <p>调度器需要同时照顾吞吐、公平、响应时间和优先级。这些目标不能全部最大化。长时间片减少切换开销，却让交互任务等得更久；短时间片响应快，却增加保存状态和 cache 冷启动。HPC 批作业通常依靠作业系统先划定 CPU 集合，再由节点内调度器处理该集合中的线程。程序绑核只能限制允许往哪些核心去，不能让超过配额的线程凭空获得更多执行资源。</p>
 <p>这解释了几个实践现象：</p>
@@ -3931,7 +3931,7 @@ cv.wait(lock, [] { return ready; });</code></pre>
 CPU socket 1 -- 本地内存 1</code></pre>
 <p>Linux 常按 first touch 分配物理页：哪个线程第一次写某块新内存，页面往往就分配到该线程所在 NUMA 节点。若主线程在 socket 0 一次性初始化全部大数组，之后 socket 1 的工作线程处理其中一半数据，就会发生大量远端访问。</p>
 <p>更合理的方式是让各线程初始化并处理自己的数据块；MPI/线程划分也与数据分块保持一致。可用 <code>numactl --hardware</code> 查看节点和距离，用 <code>numastat</code> 观察进程页分布。是否需要强制绑定，要以实际机器和测量为准。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/numa-latency.jpg"><img width="1280" height="720" alt="课件中的延迟矩阵显示：同一 socket 内访问较低，跨 socket 的格子明显更高。" src="../assets/0707p/numa-latency.preview.jpg" data-fullsrc="../assets/0707p/numa-latency.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/numa-latency.jpg"><img width="1280" height="720" class="lqip" alt="课件中的延迟矩阵显示：同一 socket 内访问较低，跨 socket 的格子明显更高。" src="../assets/0707p/numa-latency.preview.jpg" data-fullsrc="../assets/0707p/numa-latency.jpg" /></a></p>
 <p><em>图：线程与页面位于同一 NUMA node 时延迟较低；跨 socket 访问要经过处理器互连。</em></p>
 <h3 id="numa-分配与并行划分">NUMA 分配与并行划分<a class="headerlink" href="#numa-分配与并行划分" title="Permanent link"></a></h3>
 <p>first touch 的含义常被说得过于简单。它只说明页面在第一次实际触碰时倾向分配到执行该操作的 NUMA node；究竟由哪个线程触碰，取决于初始化代码、线程绑定、内核策略和内存压力。只在主线程中 <code>memset</code> 全部数组，再让多个 socket 并行处理，是分布式内存布局和计算布局相反的典型情况。</p>
@@ -3943,18 +3943,18 @@ CPU socket 1 -- 本地内存 1</code></pre>
 <p>程序里的指针是虚拟地址，要想真的去内存取数据，得先把虚拟地址翻译成物理地址。谁来查这个对应关系？就是页表（page table）——一张把虚拟页号 → 物理页框号对应起来的表，进程每访问一个虚拟页，内核/MMU 就查这张表找到它实际落在哪块物理内存。表的每一行叫一个页表项（PTE），除了记录映射到哪个物理页框，还附带这一页的权限位：可读、可写、可执行。每个进程都有自己的一份页表，所以两个进程能各自用看似相同的地址而互不冲突；页表里没有对应条目时，这次访问就会触发缺页（page fault）。</p>
 </details>
 <p>程序里的指针是虚拟地址。CPU 真正发起 DRAM 访问前，需要由 MMU（memory management unit）根据页表把它翻译成物理地址。操作系统按页管理内存；常见页大小是 4 KiB，但系统也可以使用更大的 huge page。页表记录虚拟页号到物理页框的映射，以及该页是否可读、可写、可执行。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/why-virtual-memory.jpg"><img width="1280" height="720" alt="课件说明为什么需要虚拟内存：隔离各进程的地址空间、统一编程模型，并允许按需分页，让可用地址不必受物理磁盘大小限制。" src="../assets/0707p/why-virtual-memory.preview.jpg" data-fullsrc="../assets/0707p/why-virtual-memory.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/why-virtual-memory.jpg"><img width="1280" height="720" class="lqip" alt="课件说明为什么需要虚拟内存：隔离各进程的地址空间、统一编程模型，并允许按需分页，让可用地址不必受物理磁盘大小限制。" src="../assets/0707p/why-virtual-memory.preview.jpg" data-fullsrc="../assets/0707p/why-virtual-memory.jpg" /></a></p>
 <p><em>图：虚拟内存把逻辑地址与物理内存解耦，带来隔离与灵活，也带来地址翻译这一层需要缓存的额外成本。</em></p>
 <p>如果每次读写都要先走内存里的多级页表，地址翻译本身会很慢，因此 CPU 有 TLB（translation lookaside buffer）缓存最近的页表项。一次普通访问大致经历这样的判断：</p>
 <pre class="highlight"><code class="language-text">虚拟地址
   -&gt; TLB 命中：得到物理页号，继续查 L1/L2/L3/DRAM
   -&gt; TLB 未命中：页表遍历，填入 TLB，再继续访问
   -&gt; 页表项不存在：触发 page fault，交给操作系统处理</code></pre>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/paging-page-frame.jpg"><img width="1280" height="720" alt="课件画出分页的基本思想：物理内存被切成页框，虚拟地址空间按页映射到这些页框，未映射或缺页时借助磁盘。" src="../assets/0707p/paging-page-frame.preview.jpg" data-fullsrc="../assets/0707p/paging-page-frame.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/paging-page-frame.jpg"><img width="1280" height="720" class="lqip" alt="课件画出分页的基本思想：物理内存被切成页框，虚拟地址空间按页映射到这些页框，未映射或缺页时借助磁盘。" src="../assets/0707p/paging-page-frame.preview.jpg" data-fullsrc="../assets/0707p/paging-page-frame.jpg" /></a></p>
 <p><em>图：页与页框的映射是虚拟内存的核心；缺页、swap、共享与保护都建立在这张映射之上。</em></p>
 <p>这里的 <code>page fault</code> 并不自动等于程序出错。进程第一次触碰一块按需分配的匿名内存时，内核可能分配物理页并建立映射，这也是一种正常缺页。访问无权限地址、访问已经释放的映射，或系统不得不从磁盘换回被置换的页，才会分别成为异常或非常昂贵的缺页。</p>
 <p>大数组的访问模式会同时影响 cache 与 TLB。若每隔很远访问一个元素，带入的 cache line 很少被用到，TLB 里的页表项也可能频繁被替换。按块连续处理数据能让同一页、同一 cache line 上的内容被多次利用。该原则与后面矩阵分块、向量化课程里的数据布局是连着的。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/tlb-translation-cache.jpg"><img width="1280" height="720" alt="课件说明 TLB 是地址翻译的缓存：每个内存访问都要翻译虚拟地址，TLB 保存最近的映射以加速这一过程。" src="../assets/0707p/tlb-translation-cache.preview.jpg" data-fullsrc="../assets/0707p/tlb-translation-cache.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/tlb-translation-cache.jpg"><img width="1280" height="720" class="lqip" alt="课件说明 TLB 是地址翻译的缓存：每个内存访问都要翻译虚拟地址，TLB 保存最近的映射以加速这一过程。" src="../assets/0707p/tlb-translation-cache.preview.jpg" data-fullsrc="../assets/0707p/tlb-translation-cache.jpg" /></a></p>
 <p><em>图：TLB 缓存虚拟页到物理页的翻译；随机大工作集更容易耗尽 TLB，与 cache miss 是两类不同但相关的开销。</em></p>
 <h3 id="地址空间布局">地址空间布局<a class="headerlink" href="#地址空间布局" title="Permanent link"></a></h3>
 <p>进程地址空间图里常见的 <code>text</code>、<code>data</code>、heap、stack 并非只是教材标记，它们对应不同的分配与保护方式。</p>
@@ -3970,7 +3970,7 @@ CPU socket 1 -- 本地内存 1</code></pre>
 <p>向量化试图让单核在 cache 命中时吞吐更多数据；OpenMP 处理同一节点的线程和同步；MPI 在进程和节点间通信；性能分析工具帮助判断到底在等 DRAM、等锁、等远端 NUMA 内存，还是计算单元本身已满。</p>
 <p>判断一个程序慢时，先确认循环有没有规则访问，数据是否能留在 cache，线程是否争同一份可写数据，任务和内存是否在同一个 NUMA 节点。每一步都能通过实验验证。</p>
 <h3 id="阿姆达尔amdahl定律">阿姆达尔（Amdahl）定律<a class="headerlink" href="#阿姆达尔amdahl定律" title="Permanent link"></a></h3>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/amdahl-law.jpg"><img width="1280" height="720" alt="课件用 Amdahl 定律说明并行加速受串行部分限制：线程级并行（TLP）能并行运行时越多，加速越好，但总有串行段成为上界。" src="../assets/0707p/amdahl-law.preview.jpg" data-fullsrc="../assets/0707p/amdahl-law.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/amdahl-law.jpg"><img width="1280" height="720" class="lqip" alt="课件用 Amdahl 定律说明并行加速受串行部分限制：线程级并行（TLP）能并行运行时越多，加速越好，但总有串行段成为上界。" src="../assets/0707p/amdahl-law.preview.jpg" data-fullsrc="../assets/0707p/amdahl-law.jpg" /></a></p>
 <p><em>图：Amdahl 定律表明，即使并行部分无限加速，串行占比仍决定加速上限；这也是为什么先减少必须串行的部分。</em></p>
 <p>它用一句话概括并行能带来多少收益：<strong>可并行部分可以无限加核提速，不可并行部分却始终占着一段时间</strong>。设一次运行不可并行的时间占比为 <span class="arithmatex">\(s\)</span>（例如 0.05），其余部分在 <span class="arithmatex">\(p\)</span> 个处理器上理想并行，则总加速比为</p>
 <div class="arithmatex">\[

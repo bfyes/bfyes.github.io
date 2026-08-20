@@ -3584,7 +3584,7 @@
 <li><span class="arithmatex">\(H\)</span> 是 hidden size，单个 token 的隐藏向量维度。</li>
 </ul>
 <p>embedding 只给 token 一个可计算的向量表示，并不含词序。位置编码或位置嵌入再把它位于第几个位置补进去。随后张量经过一层又一层 Transformer block；每层由 attention 和 FFN/MLP 等部分组成，最后经输出投影和 softmax 得到词表上的概率分布。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/masked-causal-attention.jpg"><img width="1280" height="720" alt="课件的 Transformer Block 与 Masked (Causal) Attention：attention 只能看到当前及之前的 token，当前 token 之后的位置被遮蔽，保证生成时只依赖已知历史。" src="../assets/0716p/masked-causal-attention.preview.jpg" data-fullsrc="../assets/0716p/masked-causal-attention.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/masked-causal-attention.jpg"><img width="1280" height="720" class="lqip" alt="课件的 Transformer Block 与 Masked (Causal) Attention：attention 只能看到当前及之前的 token，当前 token 之后的位置被遮蔽，保证生成时只依赖已知历史。" src="../assets/0716p/masked-causal-attention.preview.jpg" data-fullsrc="../assets/0716p/masked-causal-attention.jpg" /></a></p>
 <p><em>图：因果（masked）注意力让每个位置只看它之前的 token；这是自回归语言模型能够逐 token 生成的关键结构。</em></p>
 <div class="admonition info">
 <p class="admonition-title">同一模型的两种时间尺度</p>
@@ -3593,7 +3593,7 @@
 <p>训练时的过程比推理多了反向传播。前向传播得到预测分布，与目标 token 算交叉熵损失；反向传播从损失倒着求每个参数的梯度；优化器根据梯度更新参数。以后看到并行训练的代码，先在脑中把它还原成这条链：<code>forward -&gt; loss -&gt; backward -&gt; optimizer.step()</code>。并行策略没有改变这件事，只是把每一步拆到多张卡上。</p>
 <h3 id="prefilldecode-与推理调度">Prefill、Decode 与推理调度<a class="headerlink" href="#prefilldecode-与推理调度" title="Permanent link"></a></h3>
 <p>prefill 对已有 prompt 的所有 token 做前向并建立 KV cache，query-key 交互与矩阵乘法规模较大，通常更接近计算密集；decode 每步只生成一个新 token，却要读取所有历史 KV，常受显存带宽和单请求延迟限制。continuous batching 把不同请求的 decode step 合在一个 batch，并在请求结束时补入新请求。它必须维护每个序列的长度、采样状态和 KV block 映射，不能像训练那样把所有样本简单 padding 到固定长度。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/prefill-decode.jpg"><img width="1280" height="720" alt="课件画出 LLM 推理的两个阶段：Prefill 一次性处理全部输入 token 并建立 KV cache，之后的 decode 每步生成一个新 token、读取已有 KV。" src="../assets/0716p/prefill-decode.preview.jpg" data-fullsrc="../assets/0716p/prefill-decode.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/prefill-decode.jpg"><img width="1280" height="720" class="lqip" alt="课件画出 LLM 推理的两个阶段：Prefill 一次性处理全部输入 token 并建立 KV cache，之后的 decode 每步生成一个新 token、读取已有 KV。" src="../assets/0716p/prefill-decode.preview.jpg" data-fullsrc="../assets/0716p/prefill-decode.jpg" /></a></p>
 <p><em>图：prefill 大而规则、偏计算密集；decode 每步只出一个 token 却反复读 KV，偏带宽/延迟受限。两者决定了推理调度的不同取舍。</em></p>
 <p>KV cache 是按层保存的 K/V 张量，其字节数近似为 <code>layers × tokens × 2 × kv_heads × head_dim × bytes_per_element</code>。若采用 grouped-query attention，<code>kv_heads</code> 小于 query heads，缓存会显著下降；若上下文达到显存上限，调度器必须限制并发、换出、分页管理或拒绝请求。吞吐、首 token 延迟和每 token 延迟互相牵制，单报 token/s 无法描述服务行为。</p>
 <p>系统通常同时关注首 token 时间（TTFT）、后续 token 间延迟（TPOT）和总体吞吐。为了吞吐积累很大的 batch，可能伤害交互请求的首 token 延迟；连续批处理、分页式 KV cache、分开调度 prefill 与 decode，都是在处理这个矛盾。</p>
@@ -3658,9 +3658,9 @@
 </tr>
 </tbody>
 </table>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/scatter-gather.jpg"><img width="1280" height="720" alt="Scatter 将一份输入分给多个进程；Gather 将各进程持有的结果收回。" src="../assets/0716p/scatter-gather.preview.jpg" data-fullsrc="../assets/0716p/scatter-gather.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/scatter-gather.jpg"><img width="1280" height="720" class="lqip" alt="Scatter 将一份输入分给多个进程；Gather 将各进程持有的结果收回。" src="../assets/0716p/scatter-gather.preview.jpg" data-fullsrc="../assets/0716p/scatter-gather.jpg" /></a></p>
 <p><em>图：Scatter 改变数据所有权，Gather 恢复集中表示；每个箭头都对应实际通信量。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/allgather-reducescatter-allreduce.jpg"><img width="1280" height="720" alt="课件对比 Allgather、Reduce-Scatter 与 Allreduce：前者拼接各进程的 shard，后者先规约再让每进程保留一个分块或得到完整结果。" src="../assets/0716p/allgather-reducescatter-allreduce.preview.jpg" data-fullsrc="../assets/0716p/allgather-reducescatter-allreduce.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/allgather-reducescatter-allreduce.jpg"><img width="1280" height="720" class="lqip" alt="课件对比 Allgather、Reduce-Scatter 与 Allreduce：前者拼接各进程的 shard，后者先规约再让每进程保留一个分块或得到完整结果。" src="../assets/0716p/allgather-reducescatter-allreduce.preview.jpg" data-fullsrc="../assets/0716p/allgather-reducescatter-allreduce.jpg" /></a></p>
 <p><em>图：三种集合通信都围绕每个进程持有一块的数据展开，区别在于是拼回去还是规约后分发。</em></p>
 <p>不要把 <code>AllGather</code> 和 <code>AllReduce</code> 当作只差一个字的函数。前者的结果是拼接后的原始数据；后者的结果是逐元素相加、平均等规约后的数据。训练中究竟该用哪一个，取决于你需要的是完整参数、完整激活，还是一致的全局梯度。</p>
 <h3 id="通信延迟与带宽">通信延迟与带宽<a class="headerlink" href="#通信延迟与带宽" title="Permanent link"></a></h3>
@@ -3669,18 +3669,18 @@
 T_{\mathrm{comm}} \approx \alpha + \frac{n}{\mathrm{BW}}
 = \alpha + n\beta
 \]</div>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/comm-cost-model.jpg"><img width="1280" height="720" alt="课件给出通信时间模型 \(\alpha + n\beta\)：\(\alpha\) 是建联/调度延迟，\(n/\mathrm{BW}\) 是传输时间；小消息受 \(\alpha\) 主导，大消息受 \(n\beta\) 主导。" src="../assets/0716p/comm-cost-model.preview.jpg" data-fullsrc="../assets/0716p/comm-cost-model.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/comm-cost-model.jpg"><img width="1280" height="720" class="lqip" alt="课件给出通信时间模型 \(\alpha + n\beta\)：\(\alpha\) 是建联/调度延迟，\(n/\mathrm{BW}\) 是传输时间；小消息受 \(\alpha\) 主导，大消息受 \(n\beta\) 主导。" src="../assets/0716p/comm-cost-model.preview.jpg" data-fullsrc="../assets/0716p/comm-cost-model.jpg" /></a></p>
 <p><em>图：通信时间由固定延迟与随消息大小增长的传输时间组成；据此决定是合并小消息还是用 ring 处理大消息。</em></p>
 <p><span class="arithmatex">\(\alpha\)</span> 是启动延迟，例如建立/调度一次传输的固定开销；<span class="arithmatex">\(n\)</span> 是消息大小；<span class="arithmatex">\(\mathrm{BW}\)</span> 是有效带宽，<span class="arithmatex">\(\beta=1/\mathrm{BW}\)</span>。消息很小时，主要输在 <span class="arithmatex">\(\alpha\)</span>，此时合并小消息、减少调用次数比盯着峰值带宽更重要。消息很大时，<span class="arithmatex">\(n\beta\)</span> 主导，链路带宽、拓扑和传输算法才成为重点。</p>
 <p>例如 AllGather 可以用 ring 实现。把 <span class="arithmatex">\(p\)</span> 个 rank 排成环，每个 rank 先持有自己的第 <span class="arithmatex">\(i\)</span> 块；每一轮把当前块传给下家，同时从上家接收一块。经过 <span class="arithmatex">\(p-1\)</span> 轮，每个 rank 都收到了其余所有块。每轮只搬一块较小的数据，链路可同时工作，因而对大消息常有很好的带宽利用率。Ring AllReduce 通常可理解为一段 ReduceScatter 加一段 AllGather。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/ring-algorithm.jpg"><img width="1280" height="720" alt="课件的 Ring Algorithm：把节点排成逻辑环，每轮每个节点向邻居传一块数据，经过多轮后每个节点都拿到完整结果。" src="../assets/0716p/ring-algorithm.preview.jpg" data-fullsrc="../assets/0716p/ring-algorithm.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/ring-algorithm.jpg"><img width="1280" height="720" class="lqip" alt="课件的 Ring Algorithm：把节点排成逻辑环，每轮每个节点向邻居传一块数据，经过多轮后每个节点都拿到完整结果。" src="../assets/0716p/ring-algorithm.preview.jpg" data-fullsrc="../assets/0716p/ring-algorithm.jpg" /></a></p>
 <p><em>图：ring 让所有链路的带宽同时被利用，适合大消息；多轮交换是它的代价。</em></p>
 <p>这也解释了为什么通信库会按消息大小选算法：小张量未必适合 ring 的多轮启动，大张量又不适合让一个根节点成为瓶颈。实际耗时还会受 PCIe、NVLink/NVSwitch、跨节点网络和物理拓扑影响，不能只用 GPU 数量推断。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/comm-nccl-selection.jpg"><img width="1280" height="720" alt="课件说明 NCCL 会根据 message size 自动选择通信算法：小消息图省启动、大消息图带宽，用户一般不必手工指定。" src="../assets/0716p/comm-nccl-selection.preview.jpg" data-fullsrc="../assets/0716p/comm-nccl-selection.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/comm-nccl-selection.jpg"><img width="1280" height="720" class="lqip" alt="课件说明 NCCL 会根据 message size 自动选择通信算法：小消息图省启动、大消息图带宽，用户一般不必手工指定。" src="../assets/0716p/comm-nccl-selection.preview.jpg" data-fullsrc="../assets/0716p/comm-nccl-selection.jpg" /></a></p>
 <p><em>图：通信库按消息大小在启动开销优先与带宽优先之间切换实现；这正对应 <span class="arithmatex">\(\alpha\)</span> 与 <span class="arithmatex">\(n\beta\)</span> 哪个主导的判断。</em></p>
 <h2 id="数据并行">数据并行<a class="headerlink" href="#数据并行" title="Permanent link"></a></h2>
 <p>数据并行（data parallelism, DP）沿 batch 维切分数据。假设有四张 GPU，GPU 0 处理 mini-batch 的第 0 份，GPU 1 处理第 1 份；每张卡上却都保留完整的模型参数 <span class="arithmatex">\(\theta\)</span>。它们分别执行前向与反向，得到局部梯度 <span class="arithmatex">\(g_0,g_1,g_2,g_3\)</span>。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/data-parallel-basic.jpg"><img width="1280" height="720" alt="课件表明数据并行的前提：单张 GPU 能容纳完整的模型副本，各卡拿不同 batch，通过通信保持参数一致。" src="../assets/0716p/data-parallel-basic.preview.jpg" data-fullsrc="../assets/0716p/data-parallel-basic.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/data-parallel-basic.jpg"><img width="1280" height="720" class="lqip" alt="课件表明数据并行的前提：单张 GPU 能容纳完整的模型副本，各卡拿不同 batch，通过通信保持参数一致。" src="../assets/0716p/data-parallel-basic.preview.jpg" data-fullsrc="../assets/0716p/data-parallel-basic.jpg" /></a></p>
 <p><em>图：每卡都有一份完整模型，输入按 batch 切分；计算是并行的，参数靠通信保持一致。</em></p>
 <p>要让四份模型继续保持一致，更新前需要计算全局平均梯度：</p>
 <div class="arithmatex">\[
@@ -3689,9 +3689,9 @@ g=\frac{1}{p}\sum_{i=0}^{p-1}g_i,\qquad
 \]</div>
 <p>AllReduce 可以同时完成求和和结果分发，所以每张 GPU 得到同一个 <span class="arithmatex">\(g\)</span>，再各自执行同样的 optimizer step，最终参数仍相同。这里的通信发生在反向传播产生梯度之后；没有它，四张卡等价于各自训练四个互不一致的模型。</p>
 <p>较早的做法是 parameter server：多个 worker 把梯度交给服务器，服务器汇总、更新参数后再发回。它的逻辑直接，但服务器既是吞吐瓶颈又是单点故障。现代同步 DP 更常让 worker 直接集合通信，不再保留一个集中式参数服务器。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/parameter-server.jpg"><img width="1280" height="720" alt="课件的 Parameter Server：多个 Worker 把梯度发给集中的 Parameter Server，服务器汇总更新后把新参数发回各 Worker。" src="../assets/0716p/parameter-server.preview.jpg" data-fullsrc="../assets/0716p/parameter-server.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/parameter-server.jpg"><img width="1280" height="720" class="lqip" alt="课件的 Parameter Server：多个 Worker 把梯度发给集中的 Parameter Server，服务器汇总更新后把新参数发回各 Worker。" src="../assets/0716p/parameter-server.preview.jpg" data-fullsrc="../assets/0716p/parameter-server.jpg" /></a></p>
 <p><em>图：集中式参数服务器逻辑直观，但所有梯度都汇集到一点，既是吞吐瓶颈也是单点故障。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/data-parallel-allreduce.jpg"><img width="1280" height="720" alt="课件展示去中心化的 Allreduce DP：每个 worker 与相邻 worker 直接组成环/树做规约，无需集中式服务器。" src="../assets/0716p/data-parallel-allreduce.preview.jpg" data-fullsrc="../assets/0716p/data-parallel-allreduce.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/data-parallel-allreduce.jpg"><img width="1280" height="720" class="lqip" alt="课件展示去中心化的 Allreduce DP：每个 worker 与相邻 worker 直接组成环/树做规约，无需集中式服务器。" src="../assets/0716p/data-parallel-allreduce.preview.jpg" data-fullsrc="../assets/0716p/data-parallel-allreduce.jpg" /></a></p>
 <p><em>图：现代 DP 让 worker 直接通过 AllReduce 交换梯度，去掉了集中式参数服务器这个单点。</em></p>
 <h3 id="global-batch-与梯度累积">Global Batch 与梯度累积<a class="headerlink" href="#global-batch-与梯度累积" title="Permanent link"></a></h3>
 <p>若每卡 batch 为 <span class="arithmatex">\(b\)</span>，数据并行大小为 <span class="arithmatex">\(p\)</span>，没有梯度累积时全局 batch 是 <span class="arithmatex">\(B_{\text{global}}=pb\)</span>。显存不够而又希望维持大 batch 时，可连续跑 <span class="arithmatex">\(k\)</span> 个 micro-batch，只累加梯度、不更新参数，最后再同步/更新；此时全局 batch 为 <span class="arithmatex">\(pkb\)</span>。</p>
@@ -3714,13 +3714,13 @@ g=\frac{1}{P}\sum_{r=0}^{P-1}g_r,
 \]</div>
 <p>对一个 7B 参数模型，这一部分已约为 112 GB，尚未计入 activation、临时 buffer、通信 buffer 和框架开销。具体数值会随混合精度、优化器、是否保存主权重而变，但课上要传达的是：训练显存里最占空间的常常是训练要附带保留的状态，而不只是模型文件有多大。</p>
 <p>以一个 7B 参数模型为例，仅权重和训练附带状态就可能占据极大的显存。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/llama2-param-count.jpg"><img width="1280" height="720" alt="课件以 LLaMA-2 7B 为例拆解参数量来源：embedding、attention 投影、FFN 等的参数加起来，决定模型文件与显存的最小量级。" src="../assets/0716p/llama2-param-count.preview.jpg" data-fullsrc="../assets/0716p/llama2-param-count.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/llama2-param-count.jpg"><img width="1280" height="720" class="lqip" alt="课件以 LLaMA-2 7B 为例拆解参数量来源：embedding、attention 投影、FFN 等的参数加起来，决定模型文件与显存的最小量级。" src="../assets/0716p/llama2-param-count.preview.jpg" data-fullsrc="../assets/0716p/llama2-param-count.jpg" /></a></p>
 <p><em>图：参数量由各层的权重矩阵之和决定；它是显存账本的起点，却只是训练显存的一部分。</em></p>
 <p>这里每个位置用什么精度是有讲究的。权重和梯度在计算过程中可以用 bf16 这类低精度来省显存、省带宽；但优化器状态和主权重往往需要更高的 fp32 精度。原因是梯度要反复累积、更新，低精度累加很容易把很小的更新量损失掉，导致数值不稳定。于是常见的混合精度做法是，前向/反向用 bf16 跑得快，梯度算完后以 fp32 精度更新主权重，优化器的动量、方差也按 fp32 保存。这也是为什么训练显存里会同时出现 bf16 计算副本和 fp32 精度副本，账本要按两种精度分别估算。</p>
 <h3 id="activation-与完整显存账本">Activation 与完整显存账本<a class="headerlink" href="#activation-与完整显存账本" title="Permanent link"></a></h3>
 <p>激活是另一笔账。反向传播要用到前向阶段的中间结果，因此常规训练会保存多层 activation；sequence length、batch、hidden size 和层数一大，activation 也可能反过来成为首要瓶颈。activation checkpointing 的思路是少保存一部分，反向时重算，以额外计算换显存；它与 ZeRO 解决的不是同一笔开销。</p>
 <p>训练与推理的账本也不同：推理主要保存权重和 KV cache，训练还要额外保留梯度、优化器状态和 activation，两者量级不能混用。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/training-vs-inference-memory.jpg"><img width="1280" height="720" alt="课件对比训练与推理的状态内存：训练要保留参数、梯度、优化器状态和 activation，推理则主要是权重与 KV cache，二者账本不同。" src="../assets/0716p/training-vs-inference-memory.preview.jpg" data-fullsrc="../assets/0716p/training-vs-inference-memory.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/training-vs-inference-memory.jpg"><img width="1280" height="720" class="lqip" alt="课件对比训练与推理的状态内存：训练要保留参数、梯度、优化器状态和 activation，推理则主要是权重与 KV cache，二者账本不同。" src="../assets/0716p/training-vs-inference-memory.preview.jpg" data-fullsrc="../assets/0716p/training-vs-inference-memory.jpg" /></a></p>
 <p><em>图：训练显存大头在模型状态与 activation，推理大头在权重与 KV cache；估算先分清在解决哪种负载。</em></p>
 <p>checkpointing（activation recomputation）只保存若干边界 activation，反向时重跑中间前向以换取显存。它减少的是保存量，增加的是计算和可能的通信；不能把它与持久化检查点混为一谈。后者是故障恢复用的模型/优化器快照。选择并行策略前应分别列出参数、梯度、优化器状态、activation 与通信 buffer，而不是只报一个显存占用。</p>
 <h2 id="zero--fsdp把模型状态分片">ZeRO / FSDP：把模型状态分片<a class="headerlink" href="#zero--fsdp把模型状态分片" title="Permanent link"></a></h2>
@@ -3731,18 +3731,18 @@ g=\frac{1}{P}\sum_{r=0}^{P-1}g_r,
 <li><strong>ZeRO-3 / FSDP</strong>：连模型参数也分片。每张卡长期只持有参数、梯度和优化器状态的一个分片。</li>
 </ul>
 <p>分得越彻底，单卡常驻状态越少，但运行时需要更多通信。ZeRO-3 在算某一层之前先 AllGather，把该层的完整参数临时凑齐；用完前向后释放不再需要的完整参数。反向到这一层时再 AllGather 参数，计算出梯度后用 ReduceScatter 把已规约的梯度留在对应 owner 上，由 owner 更新自己的参数分片。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/zero3-fsdp-lifecycle.jpg"><img width="1280" height="720" alt="课件画 ZeRO-3/FSDP 的生命周期：前向前先 AllGather 各参数 shard 拼成完整参数，算完释放；反向后用 ReduceScatter 把梯度留给各自 owner。" src="../assets/0716p/zero3-fsdp-lifecycle.preview.jpg" data-fullsrc="../assets/0716p/zero3-fsdp-lifecycle.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/zero3-fsdp-lifecycle.jpg"><img width="1280" height="720" class="lqip" alt="课件画 ZeRO-3/FSDP 的生命周期：前向前先 AllGather 各参数 shard 拼成完整参数，算完释放；反向后用 ReduceScatter 把梯度留给各自 owner。" src="../assets/0716p/zero3-fsdp-lifecycle.preview.jpg" data-fullsrc="../assets/0716p/zero3-fsdp-lifecycle.jpg" /></a></p>
 <p><em>图：FSDP 在每次用到某层参数前临时 AllGather，算完即释放；通信换取了常驻显存的大幅下降。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/zero-memory.jpg"><img width="1280" height="720" alt="以 GPT-3 175B 为例，课件比较普通 DP 和各级 ZeRO 的单卡状态内存；代价是更多通信。" src="../assets/0716p/zero-memory.preview.jpg" data-fullsrc="../assets/0716p/zero-memory.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/zero-memory.jpg"><img width="1280" height="720" class="lqip" alt="以 GPT-3 175B 为例，课件比较普通 DP 和各级 ZeRO 的单卡状态内存；代价是更多通信。" src="../assets/0716p/zero-memory.preview.jpg" data-fullsrc="../assets/0716p/zero-memory.jpg" /></a></p>
 <p><em>图：ZeRO 依次分片优化器状态、梯度和参数；常驻显存下降，运行时 AllGather/ReduceScatter 增加。</em></p>
 <p>因此 ZeRO 并不等于免费省显存。它选择了用通信换内存：模型因为显存根本无法训练时，这个交换是必要的；网络带宽不足、分片太细或每层过小而频繁 AllGather 时，吞吐反而可能下降。看配置时应区分两类问题：参数状态太大时考虑 ZeRO/FSDP；activation 太大时还要考虑 checkpoint、序列切分或减少 micro-batch。</p>
 <h2 id="流水线并行">流水线并行<a class="headerlink" href="#流水线并行" title="Permanent link"></a></h2>
 <p>流水线并行（pipeline parallelism, PP）沿网络深度切分。若模型有很多层，可以让 GPU 0 负责前几层，GPU 1 负责中间层，GPU 2 负责后几层。前向时 activation 从第一个 stage 依次传到后面；反向时梯度再反向传回。每张卡只放本 stage 的层，因而可容纳单卡放不下的深模型。</p>
 <p>最朴素的排程会产生 pipeline bubble：GPU 0 先忙，其他 stage 在等 activation；前向全部结束后，反向又从最后一个 stage 才开始，前面的卡再次等待。卡的数量越多、每轮只有一个大 batch，空闲比例越明显。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/pipeline-bubble.jpg"><img width="1280" height="720" alt="课件画出 naive pipeline：一次前向/反向交替时，许多 stage 处在等待状态，空闲时间占比即 bubble ratio。" src="../assets/0716p/pipeline-bubble.preview.jpg" data-fullsrc="../assets/0716p/pipeline-bubble.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/pipeline-bubble.jpg"><img width="1280" height="720" class="lqip" alt="课件画出 naive pipeline：一次前向/反向交替时，许多 stage 处在等待状态，空闲时间占比即 bubble ratio。" src="../assets/0716p/pipeline-bubble.preview.jpg" data-fullsrc="../assets/0716p/pipeline-bubble.jpg" /></a></p>
 <p><em>图：朴素流水线里，一个 batch 串行穿过各 stage，前后期的 stage 大量空闲；这种空闲比例叫 bubble。</em></p>
 <p>处理办法是把 batch 切为多个 micro-batch，形成填充流水线。GPU 0 算完 micro-batch 0 后就把它交给 GPU 1，自己立刻开始 micro-batch 1；GPU 1 接到 0 后开始计算，后续 stage 也依次被填满。等流水线稳定下来，多个 stage 可以同时处理不同 micro-batch 的前向或反向。bubble 没有消失，但被更多 micro-batch 摊薄。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/gpipe-microbatch.jpg"><img width="1280" height="720" alt="课件展示 GPipe：把输入 batch 拆成多个 micro-batch，逐块流水推进，让各 stage 尽量保持忙碌。" src="../assets/0716p/gpipe-microbatch.preview.jpg" data-fullsrc="../assets/0716p/gpipe-microbatch.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/gpipe-microbatch.jpg"><img width="1280" height="720" class="lqip" alt="课件展示 GPipe：把输入 batch 拆成多个 micro-batch，逐块流水推进，让各 stage 尽量保持忙碌。" src="../assets/0716p/gpipe-microbatch.preview.jpg" data-fullsrc="../assets/0716p/gpipe-microbatch.jpg" /></a></p>
 <p><em>图：micro-batch 把大 batch 切小，流水线各 stage 因而能同时处理不同 micro-batch，摊薄 bubble。</em></p>
 <p>PP 的通信主要是相邻 stage 间的 activation/gradient P2P 传输，延迟和负载均衡都很重要。如果某个 stage 的层更慢，整条流水线会被它卡住；切层时不能只按层数平均，还要考虑每层计算量、激活大小和显存。</p>
 <h2 id="张量并行">张量并行<a class="headerlink" href="#张量并行" title="Permanent link"></a></h2>
@@ -3759,11 +3759,11 @@ Y=[XW_0\;XW_1\;\cdots\;XW_{p-1}],
 \]</div>
 <p>其中 <span class="arithmatex">\(\phi\)</span> 是逐元素激活函数。第一层把 hidden size 扩到较大的中间维度，第二层再投回去。逐元素激活不会混合不同列，因此可在各 GPU 的局部结果上直接执行；恰当安排 <span class="arithmatex">\(W_1\)</span> 的列切分与 <span class="arithmatex">\(W_2\)</span> 的行切分，可把本来两次的全量通信压缩为较少的同步点。这就是 TP 在代码里常见列并行线性层和行并行线性层配对的原因。</p>
 <p>TP 的通信频率很高，因为几乎每层都要在组内交换中间结果。因此通常把一个 TP group 放在同一台机器、使用 NVLink/NVSwitch 等高速互连；把频繁的 TP 通信跨慢网络，会非常不划算。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/megatron-tp-mlp.jpg"><img width="1280" height="720" alt="课件展示 Megatron-LM 的张量并行 MLP：把 FFN 的矩阵按列/行切到多卡，层内用多次 allreduce 同步中间结果。" src="../assets/0716p/megatron-tp-mlp.preview.jpg" data-fullsrc="../assets/0716p/megatron-tp-mlp.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/megatron-tp-mlp.jpg"><img width="1280" height="720" class="lqip" alt="课件展示 Megatron-LM 的张量并行 MLP：把 FFN 的矩阵按列/行切到多卡，层内用多次 allreduce 同步中间结果。" src="../assets/0716p/megatron-tp-mlp.preview.jpg" data-fullsrc="../assets/0716p/megatron-tp-mlp.jpg" /></a></p>
 <p><em>图：张量并行把一层内的矩阵乘切开，卡间需要频繁 allreduce；因此 TP group 应放在 NVLink 等高速互连内。</em></p>
 <h2 id="多维并行与通信计算重叠">多维并行与通信计算重叠<a class="headerlink" href="#多维并行与通信计算重叠" title="Permanent link"></a></h2>
 <p>真实的大模型训练常把几种策略叠起来：节点内做 TP，按层做 PP，剩余维度做 DP，再用 ZeRO/FSDP 分片状态。这常被称为 3D 并行，但不必被名字吓住。读一组并行度配置时，把总 GPU 数写成各维度的乘积，再逐维问：</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/6d-parallelism-gpt3-config.png"><img width="1280" height="720" alt="课件给出 6D 并行框架：经典的 3D（数据/张量/流水线）之上再叠加序列并行、上下文并行与专家并行，并附一个 GPT-3 175B 的训练配置实例。" src="../assets/0716p/6d-parallelism-gpt3-config.preview.jpg" data-fullsrc="../assets/0716p/6d-parallelism-gpt3-config.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/6d-parallelism-gpt3-config.png"><img width="1280" height="720" class="lqip" alt="课件给出 6D 并行框架：经典的 3D（数据/张量/流水线）之上再叠加序列并行、上下文并行与专家并行，并附一个 GPT-3 175B 的训练配置实例。" src="../assets/0716p/6d-parallelism-gpt3-config.preview.jpg" data-fullsrc="../assets/0716p/6d-parallelism-gpt3-config.png" /></a></p>
 <p><em>图：总 GPU 数等于各并行维度的乘积，例如 GPT-3 的配置 <span class="arithmatex">\(8\times 8\times 60=3840\)</span> 块 A100；维度越多，切分越细，通信模式也越多样。</em></p>
 <p>以 GPT-3 175B 为例，可把 8 块 A100 通过 NVLink 组成一个节点作为 TP 组，8 个节点按层做 PP，再复制 60 份做 DP，得到 3840 块 GPU 的集群配置。每个维度都对应一类通信：TP 在节点内频繁 AllReduce，PP 在相邻 stage 之间传 activation/gradient，DP 需要全局 AllReduce 梯度。多出来的 SP、CP 沿序列维切分，EP 则按专家切分并触发 All-to-All。面对一个具体配置，先算清这些 GPUs 是怎么分组的、组间传什么，比背维度名字有用。</p>
 <ul>
@@ -3773,24 +3773,24 @@ Y=[XW_0\;XW_1\;\cdots\;XW_{p-1}],
 <li>ZeRO 分片后，哪一层前需要临时 AllGather 参数？</li>
 </ul>
 <p>通信不一定必须停在计算之后才开始。反向传播从最后一层往前走，某层梯度就绪后可以立刻启动对应 bucket 的 AllReduce，同时 GPU 继续计算更前面的层。若通信在计算结束前完成，它的耗时被隐藏；若网络仍未完成，GPU 才需要等待。bucket 的大小过小会让启动延迟累积，过大又会推迟通信启动，因而是一个需要实测的折中。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/comm-compute-overlap.jpg"><img width="1280" height="720" alt="课件用反向传播的时间线说明通信-计算重叠：反向算出一部分梯度就立刻发起通信，与继续计算重叠，从而把通信时间藏进计算里。" src="../assets/0716p/comm-compute-overlap.preview.jpg" data-fullsrc="../assets/0716p/comm-compute-overlap.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/comm-compute-overlap.jpg"><img width="1280" height="720" class="lqip" alt="课件用反向传播的时间线说明通信-计算重叠：反向算出一部分梯度就立刻发起通信，与继续计算重叠，从而把通信时间藏进计算里。" src="../assets/0716p/comm-compute-overlap.preview.jpg" data-fullsrc="../assets/0716p/comm-compute-overlap.jpg" /></a></p>
 <p><em>图：梯度按层/按 bucket 就绪即启动集合通信，不等整个反向结束；重叠是否成立要看网络是否在计算完成前清空。</em></p>
 <p>手动把 TP/PP/DP/SP/CP/EP 组合成一套合理配置并不容易，于是有了自动并行。它把怎么切当作问题交给机器：输入模型计算图与硬件拓扑（若干节点、节点内 NVLink、节点间 IB），输出每个算子的切分方式、流水线 stage 划分和 micro-batch 大小。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/alpa-autoparallel.png"><img width="1280" height="720" alt="课件介绍 Alpa 的分层自动并行：先做算子间 stage 划分，再对 stage 内算子选切分策略，最后把逻辑设备网格映射到物理拓扑，可达到手工调好的 Megatron 级性能。" src="../assets/0716p/alpa-autoparallel.preview.jpg" data-fullsrc="../assets/0716p/alpa-autoparallel.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/alpa-autoparallel.png"><img width="1280" height="720" class="lqip" alt="课件介绍 Alpa 的分层自动并行：先做算子间 stage 划分，再对 stage 内算子选切分策略，最后把逻辑设备网格映射到物理拓扑，可达到手工调好的 Megatron 级性能。" src="../assets/0716p/alpa-autoparallel.preview.jpg" data-fullsrc="../assets/0716p/alpa-autoparallel.png" /></a></p>
 <p><em>图：自动并行的关键是分而治之——层间划分、层内切分、设备映射三者解耦，让每一层找局部最优，整体逼近手调结果。</em></p>
 <p>这类工具（Alpa 之外，PyTorch DTensor、OneFlow SBP 也是同类思路）把设备网格抽象出来，统一描述张量在设备间如何分布，从而让同一份模型代码在不同并行度配置下运行。它的价值不在替代工程师手调，而在把可复现、可搜索的并行空间交给算法，减少每次换模型/换集群都要重写配置的负担。</p>
 <h2 id="transformer-层的算力估算">Transformer 层的算力估算<a class="headerlink" href="#transformer-层的算力估算" title="Permanent link"></a></h2>
 <p>要判断长序列到底难在哪，先把一层 Transformer 的算力分清楚。以一层的 MLP 与 attention 为例，以 batch <span class="arithmatex">\(B\)</span>、序列长 <span class="arithmatex">\(S\)</span>、隐宽 <span class="arithmatex">\(H\)</span> 计，各部分计算量大致如下。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/transformer-flops-estimation.png"><img width="1280" height="720" alt="课件给出每层算力估算表：Q/K/V/O 四个投影约 \(8BSH^2\)，attention 的 \(QK^T\) 与 \(Softmax\times V\) 各约 \(2BS^2H\)，FFN（SwiGLU 三个矩阵）约 \(6BSH\)。" src="../assets/0716p/transformer-flops-estimation.preview.jpg" data-fullsrc="../assets/0716p/transformer-flops-estimation.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/transformer-flops-estimation.png"><img width="1280" height="720" class="lqip" alt="课件给出每层算力估算表：Q/K/V/O 四个投影约 \(8BSH^2\)，attention 的 \(QK^T\) 与 \(Softmax\times V\) 各约 \(2BS^2H\)，FFN（SwiGLU 三个矩阵）约 \(6BSH\)。" src="../assets/0716p/transformer-flops-estimation.preview.jpg" data-fullsrc="../assets/0716p/transformer-flops-estimation.png" /></a></p>
 <p><em>图：投影与 FFN 随 <span class="arithmatex">\(S\)</span> 线性增长、随 <span class="arithmatex">\(H\)</span> 平方增长；attention 的两个矩阵运算随 <span class="arithmatex">\(S\)</span> 平方增长、只随 <span class="arithmatex">\(H\)</span> 线性增长。</em></p>
 <p>关键在 attention 的 <span class="arithmatex">\(S^2H\)</span> 项。把这一层的总计算写成 <span class="arithmatex">\(8BSH^2+4BS^2H+6BSH^2\)</span>，当 <span class="arithmatex">\(S\ll H\)</span>（短序列）时，<span class="arithmatex">\(SH^2\)</span> 项占主导，FFN 与投影是瓶颈；当 <span class="arithmatex">\(S&gt;H\)</span>（长序列）时，<span class="arithmatex">\(S^2H\)</span> 项爆炸，attention 变成瓶颈。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/attention-vs-mlp-scale.png"><img width="1280" height="720" alt="课件画出 attention 与 MLP 计算量随序列长 \(S\) 的双对数曲线：attention \(\propto S^2H\) 增长更快，在 \(S\) 超过隐宽附近反超 MLP。" src="../assets/0716p/attention-vs-mlp-scale.preview.jpg" data-fullsrc="../assets/0716p/attention-vs-mlp-scale.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/attention-vs-mlp-scale.png"><img width="1280" height="720" class="lqip" alt="课件画出 attention 与 MLP 计算量随序列长 \(S\) 的双对数曲线：attention \(\propto S^2H\) 增长更快，在 \(S\) 超过隐宽附近反超 MLP。" src="../assets/0716p/attention-vs-mlp-scale.preview.jpg" data-fullsrc="../assets/0716p/attention-vs-mlp-scale.png" /></a></p>
 <p><em>图：横轴是序列长 <span class="arithmatex">\(S\)</span>，纵轴是计算量；attention 的二次增长让它在一段序列长度后反超 MLP，成为长上下文的主要成本。</em></p>
 <p>这正是序列并行、FlashAttention 和 ring attention 要处理的对象：attention 的 <span class="arithmatex">\(S^2\)</span> 项既带来巨大计算量，也让中间 attention 矩阵和 KV cache 无法完整物化或驻留单卡。把范围缩小到 <span class="arithmatex">\(S\ll H\)</span> 或 <span class="arithmatex">\(S&gt;H\)</span> 两种情况，再决定投影/FFN 该切分还是 attention 该分块，比一刀切更有依据。</p>
 <h2 id="长上下文与序列并行">长上下文与序列并行<a class="headerlink" href="#长上下文与序列并行" title="Permanent link"></a></h2>
 <p>长上下文会让 attention 的中间量和 KV cache 迅速增大。即使参数已经由 TP 或 FSDP 分片，单张卡仍可能放不下完整的序列。序列并行（sequence parallelism）和上下文并行（context parallelism）于是沿 sequence 维分割 token 或 K/V 块。</p>
 <p>以 ring attention 为例，每张卡保存一段 Q/K/V。它先拿本地 Q 与本地 K/V 算一块 attention，然后把 K/V 块沿环传给下一个 rank，同时接收上一个 rank 的块；经过若干轮，每个 Q 块都和完整上下文的 K/V 做过计算。这样不必把所有 K/V 同时复制到每张卡，峰值内存随序列分片下降，代价是多轮环形通信。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716p/context-parallelism.jpg"><img width="1280" height="720" alt="上下文并行沿序列维切分 K/V，各 rank 沿环交换分段以覆盖完整上下文。" src="../assets/0716p/context-parallelism.preview.jpg" data-fullsrc="../assets/0716p/context-parallelism.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716p/context-parallelism.jpg"><img width="1280" height="720" class="lqip" alt="上下文并行沿序列维切分 K/V，各 rank 沿环交换分段以覆盖完整上下文。" src="../assets/0716p/context-parallelism.preview.jpg" data-fullsrc="../assets/0716p/context-parallelism.jpg" /></a></p>
 <p><em>图：每张卡只持有部分 K/V 块，通过循环传递与本地 Q 逐步和全局 K/V 交互；通信次数随分片数上升，显存峰值随之下降。</em></p>
 <p>这里有一个数值细节，softmax 不能简单把每一块各自归一化后再相加，因为全局分母依赖所有块。可维护运行中的最大值 <span class="arithmatex">\(m\)</span>、归一化量 <span class="arithmatex">\(l\)</span> 和加权结果，块到来时用新的最大值重新缩放旧累计量。这类 online softmax 保持数值稳定，使得 attention 可以按块流式计算；FlashAttention 等高效实现同样依赖分块计算、不物化巨大注意力矩阵的思想。</p>
 <h2 id="moe-与-expert-parallel">MoE 与 Expert Parallel<a class="headerlink" href="#moe-与-expert-parallel" title="Permanent link"></a></h2>

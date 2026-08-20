@@ -3545,7 +3545,7 @@
 <p>给定输入特征 <span class="arithmatex">\(x\)</span> 和期望输出 <span class="arithmatex">\(y\)</span>，模型 <span class="arithmatex">\(f(x;\theta)\)</span> 用参数 <span class="arithmatex">\(\theta\)</span> 产生预测 <span class="arithmatex">\(\hat y\)</span>。训练通过调整参数，让模型在没有见过的新样本上仍能给出有用的预测，而不是把样本原封不动记下来。</p>
 <p>一个问题至少需要说明三件事：输入是什么、输出是什么、怎样判定预测好坏。房价预测中，面积、位置等可作输入，房价是连续输出；垃圾邮件识别中，邮件内容是输入，类别是离散输出。前者是回归，后者是分类。</p>
 <p>用前两天的温度预测明天温度。把两个温度直接平均，是人先写好的规则；把前两天温度分别乘以待学习的系数 <span class="arithmatex">\(A,B\)</span>，再除以待学习的尺度 <span class="arithmatex">\(C\)</span>，则把哪些历史量更重要交给数据决定。这个小例子已经包含了建模的要害：输入的选择带有人的判断，参数由训练得到，输出是否可信还要由独立数据检验。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/ml-modeling.jpg"><img width="1280" height="720" alt="课件用天气预测说明建模：选择输入与输出，并写出一个从输入到预测值的函数关系。" src="../assets/0716a/ml-modeling.preview.jpg" data-fullsrc="../assets/0716a/ml-modeling.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/ml-modeling.jpg"><img width="1280" height="720" class="lqip" alt="课件用天气预测说明建模：选择输入与输出，并写出一个从输入到预测值的函数关系。" src="../assets/0716a/ml-modeling.preview.jpg" data-fullsrc="../assets/0716a/ml-modeling.jpg" /></a></p>
 <p><em>图：建模先定义输入、输出和参数化函数；训练数据负责估计参数，不能替代任务定义。</em></p>
 <p>模型复杂度要和问题匹配。若输入与输出关系近似线性，堆叠很深的网络只会增加训练成本和过拟合机会；若数据明显弯曲、分段或带有交互关系，一条直线又会留下系统性误差。数据质量、标签定义和评价指标往往比换一个更大模型更早决定结论是否可信。</p>
 <h2 id="数据集划分">数据集划分<a class="headerlink" href="#数据集划分" title="Permanent link"></a></h2>
@@ -3557,19 +3557,19 @@
 <li>应用数据是真实部署时模型将面对的新数据。</li>
 </ul>
 <p>可以把训练集理解为平时练习，验证集是反复模拟考试，测试集是最后不能提前看题的考试。若看着测试集结果不断改模型，测试集事实上已参与训练，报告的分数会过于乐观。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/ml-core-elements.jpg"><img width="1280" height="720" alt="课件给出机器学习核心要素：训练、验证、测试与应用数据四类，以及模型训练在其中的位置。" src="../assets/0716a/ml-core-elements.preview.jpg" data-fullsrc="../assets/0716a/ml-core-elements.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/ml-core-elements.jpg"><img width="1280" height="720" class="lqip" alt="课件给出机器学习核心要素：训练、验证、测试与应用数据四类，以及模型训练在其中的位置。" src="../assets/0716a/ml-core-elements.preview.jpg" data-fullsrc="../assets/0716a/ml-core-elements.jpg" /></a></p>
 <p><em>图：四类数据各司其职；训练集拟合参数、验证集调超参数、测试集只做最后评估、应用数据是部署时真正面临的新输入。</em></p>
 <p>形式上，一个监督学习数据集可写为 <span class="arithmatex">\(D=\{(x_1,y_1),\ldots,(x_n,y_n)\}\)</span>。每个 <span class="arithmatex">\(x_i\)</span> 是一行输入特征，<span class="arithmatex">\(y_i\)</span> 是它的标签。训练集通常占较大部分，因为参数需要足够多的样本来估计；验证集和测试集的比例并没有放之四海皆准的答案。课件给出 60%--80%、10%--20%、10%--20% 的常见范围。数据量很小的时候，硬切出很大的测试集会让训练更不稳定，后面要用交叉验证缓解这种问题。</p>
 <h3 id="数据泄露">数据泄露<a class="headerlink" href="#数据泄露" title="Permanent link"></a></h3>
 <p>训练/测试的样本即使文件名不同，也可能高度相关。例如同一个人的多张相似照片、一段时间序列切出的相邻窗口、同一病人的多次记录，不能随意随机分到两边。模型在训练时已经看过非常接近的信息，测试分数就不代表面对真正新对象的能力。</p>
 <p>划分时要保证独立性，并使训练和应用的分布尽量一致。按人、按设备、按时间或按场景分组，有时比简单随机切分更合理。所谓数据泄露，不只是把标签列放进特征，也包括这种不应跨集合的关联。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/data-split-cautions.jpg"><img width="1280" height="720" alt="课件强调数据划分的注意事项：划分不仅要随机，更要保证训练与应用分布一致、避免跨集合的相关造成数据泄露。" src="../assets/0716a/data-split-cautions.preview.jpg" data-fullsrc="../assets/0716a/data-split-cautions.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/data-split-cautions.jpg"><img width="1280" height="720" class="lqip" alt="课件强调数据划分的注意事项：划分不仅要随机，更要保证训练与应用分布一致、避免跨集合的相关造成数据泄露。" src="../assets/0716a/data-split-cautions.preview.jpg" data-fullsrc="../assets/0716a/data-split-cautions.jpg" /></a></p>
 <p><em>图：划分单位应服从真实部署的新样本；按人、按时间或按场景分组常比简单随机更合理。</em></p>
 <p>一个例子用同一人的不同照片来说明这一点。若训练集中已经有某人的多张正面照，测试集中再放同一个人换角度的照片，模型可能靠背景、脸部细节或拍摄条件取得很高分，实际却没有学会识别新的人。医学数据常要按患者分组，传感器数据常要按设备或采集批次分组，时间序列则通常用过去训练、未来测试。划分单位应当服从部署时真正面对的新样本是什么。</p>
 <h3 id="留出法与交叉验证">留出法与交叉验证<a class="headerlink" href="#留出法与交叉验证" title="Permanent link"></a></h3>
 <p>数据足够多时，可留出一部分，例如 80% 训练、20% 测试，再从训练部分划出验证集。数据很少时，单次划分的偶然性很大，可用 <span class="arithmatex">\(K\)</span> 折交叉验证：分成 <span class="arithmatex">\(K\)</span> 份，每次用一份验证/测试、其余训练，最后平均多个结果。</p>
 <p>交叉验证能更充分利用小数据集，但成本是训练 <span class="arithmatex">\(K\)</span> 次。无论采用哪种方法，最后仍应保留一份完全不参与调参的测试数据，作为最终报告依据。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/holdout-cross-validation.jpg"><img width="1280" height="720" alt="留出法把训练部分继续分出验证集；交叉验证轮流使用各折验证，测试集始终留在最后。" src="../assets/0716a/holdout-cross-validation.preview.jpg" data-fullsrc="../assets/0716a/holdout-cross-validation.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/holdout-cross-validation.jpg"><img width="1280" height="720" class="lqip" alt="留出法把训练部分继续分出验证集；交叉验证轮流使用各折验证，测试集始终留在最后。" src="../assets/0716a/holdout-cross-validation.preview.jpg" data-fullsrc="../assets/0716a/holdout-cross-validation.jpg" /></a></p>
 <p><em>图：交叉验证反复轮换训练/验证折，用于减小小数据集单次划分的偶然性；最终测试集仍不参与调参。</em></p>
 <h2 id="回归">回归<a class="headerlink" href="#回归" title="Permanent link"></a></h2>
 <p>最简单的一元线性回归写成：</p>
@@ -3577,24 +3577,24 @@
 \hat y=wx+b
 \]</div>
 <p><span class="arithmatex">\(w\)</span> 是斜率，<span class="arithmatex">\(b\)</span> 是截距。多特征时写成 <span class="arithmatex">\(\hat y=w^Tx+b\)</span>。真实数据通常不能被一条线穿过；训练的任务是选出一条总体上误差较小的线。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/linear-regression-house-price.jpg"><img width="1280" height="720" alt="课件用房价预测引入线性回归：几套房子的面积与总价构成散点，目标是找一条把这些点总体拟合得最好的线。" src="../assets/0716a/linear-regression-house-price.preview.jpg" data-fullsrc="../assets/0716a/linear-regression-house-price.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/linear-regression-house-price.jpg"><img width="1280" height="720" class="lqip" alt="课件用房价预测引入线性回归：几套房子的面积与总价构成散点，目标是找一条把这些点总体拟合得最好的线。" src="../assets/0716a/linear-regression-house-price.preview.jpg" data-fullsrc="../assets/0716a/linear-regression-house-price.jpg" /></a></p>
 <p><em>图：特征（面积）与标签（价格）成对出现，线性回归找一条使总体误差最小的直线。</em></p>
 <p>这里的 <span class="arithmatex">\(w\)</span> 是训练数据上估出来的参数，它随数据变化，本身没有每平方米绝对值多少钱这类固定含义。若面积单位换成平方厘米，<span class="arithmatex">\(w\)</span> 的数值会相应变化；若加入位置、楼层、建成年份，模型会变为多元回归，每个特征各有一个权重。把不同量纲的特征直接放在一起时，常常还需要标准化，避免某一列的数值范围压过其他特征，也让梯度下降更容易稳定。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/linear-regression-exam-score.jpg"><img width="1280" height="720" alt="课件用预测考试分数的线性回归实例，展示一组学习时间与分数的样本，以及参数优化的目标：让模型预测尽量贴合高分样本。" src="../assets/0716a/linear-regression-exam-score.preview.jpg" data-fullsrc="../assets/0716a/linear-regression-exam-score.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/linear-regression-exam-score.jpg"><img width="1280" height="720" class="lqip" alt="课件用预测考试分数的线性回归实例，展示一组学习时间与分数的样本，以及参数优化的目标：让模型预测尽量贴合高分样本。" src="../assets/0716a/linear-regression-exam-score.preview.jpg" data-fullsrc="../assets/0716a/linear-regression-exam-score.jpg" /></a></p>
 <p><em>图：回归实例把抽象公式落到学习时间 → 考试分数的样本表上，便于对照预测与真实标签。</em></p>
 <p>常用损失为均方误差：</p>
 <div class="arithmatex">\[
 \mathrm{MSE}(w,b)=\frac{1}{n}\sum_{i=1}^n(\hat y_i-y_i)^2
 \]</div>
 <p>误差平方后，大偏差受到更大惩罚，也避免正负误差互相抵消。对线性回归，最小二乘法可直接求解；也可以和更一般的模型一样用梯度下降优化。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/loss-residuals.jpg"><img width="1280" height="720" alt="损失函数把每个样本到直线的残差变成可比较的量；训练就是寻找使总体损失较小的参数。" src="../assets/0716a/loss-residuals.preview.jpg" data-fullsrc="../assets/0716a/loss-residuals.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/loss-residuals.jpg"><img width="1280" height="720" class="lqip" alt="损失函数把每个样本到直线的残差变成可比较的量；训练就是寻找使总体损失较小的参数。" src="../assets/0716a/loss-residuals.preview.jpg" data-fullsrc="../assets/0716a/loss-residuals.jpg" /></a></p>
 <p><em>图：平方损失让较大的残差承担更高代价，并把整批样本压缩成一个可优化标量。</em></p>
 <p>如果只有一个特征和截距，最小二乘法能通过令损失对 <span class="arithmatex">\(w,b\)</span> 的偏导数为零，直接解出一组参数。课堂没有要求手推这套公式，理解它的地位就够了。线性模型结构简单时可以解析求解；模型一复杂，往往就没有这样的闭式解，只能靠后面介绍的迭代优化。两条候选直线看上去都差不多时，损失函数提供了统一的比较标准。</p>
 <p>线性回归不能包办所有曲线问题。作图看数据是必要步骤。若关系是弯曲的，可增加合理的非线性特征，例如 <span class="arithmatex">\(x^2\)</span>，或选择适合的非线性模型。加入 <span class="arithmatex">\(x^2\)</span> 后，对参数仍然是线性的：<span class="arithmatex">\(\hat y=w_1x+w_2x^2+b\)</span>，所以它仍可用线性回归训练。这里的线性指参数以线性方式出现，不要求输入和输出的图形一定是一条直线。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/residual-curvature.jpg"><img width="1280" height="720" alt="散点呈现明显弯曲趋势时，直线会留下有结构的残差；这提醒我们回看特征和模型假设。" src="../assets/0716a/residual-curvature.preview.jpg" data-fullsrc="../assets/0716a/residual-curvature.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/residual-curvature.jpg"><img width="1280" height="720" class="lqip" alt="散点呈现明显弯曲趋势时，直线会留下有结构的残差；这提醒我们回看特征和模型假设。" src="../assets/0716a/residual-curvature.preview.jpg" data-fullsrc="../assets/0716a/residual-curvature.jpg" /></a></p>
 <p><em>图：残差若随输入呈现规律，说明误差并非纯噪声，线性特征可能没有表达真实趋势。</em></p>
 <p>异常值会显著拉动最小二乘拟合的直线。因此应先追问异常点是录入错误、测量噪声、少见但真实的对象，还是任务本来就应覆盖的情形；不能只为了让图更好看而删除它。不同结论会导致不同的数据清洗或鲁棒回归选择。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/linear-regression-outlier.jpg"><img width="1280" height="720" alt="课件以线性回归能解决所有问题么？为引，展示异常值对拟合直线的拉动，说明线性模型有其适用范围。" src="../assets/0716a/linear-regression-outlier.preview.jpg" data-fullsrc="../assets/0716a/linear-regression-outlier.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/linear-regression-outlier.jpg"><img width="1280" height="720" class="lqip" alt="课件以线性回归能解决所有问题么？为引，展示异常值对拟合直线的拉动，说明线性模型有其适用范围。" src="../assets/0716a/linear-regression-outlier.preview.jpg" data-fullsrc="../assets/0716a/linear-regression-outlier.jpg" /></a></p>
 <p><em>图：少数远离主体的异常点会明显改变最小二乘直线；处理前先判断它的来源，再决定清洗还是用鲁棒方法。</em></p>
 <h2 id="分类与概率输出">分类与概率输出<a class="headerlink" href="#分类与概率输出" title="Permanent link"></a></h2>
 <p>二分类常从线性得分开始：<span class="arithmatex">\(z=w^Tx+b\)</span>。但 <span class="arithmatex">\(z\)</span> 可取任意实数，不能直接当概率，因此用 sigmoid 映射：</p>
@@ -3602,12 +3602,12 @@
 \sigma(z)=\frac{1}{1+e^{-z}},\qquad p(y=1\mid x)=\sigma(z)
 \]</div>
 <p>这就是逻辑回归。名字中有回归，任务却是分类：模型先输出属于正类的概率，再按阈值作决定。阈值不必固定为 0.5；漏报和误报的代价不同，阈值就应不同。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/sigmoid-logistic.jpg"><img width="1280" height="720" alt="逻辑回归先给出一个线性得分，再经 sigmoid 压到 0 到 1 的概率范围。" src="../assets/0716a/sigmoid-logistic.preview.jpg" data-fullsrc="../assets/0716a/sigmoid-logistic.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/sigmoid-logistic.jpg"><img width="1280" height="720" class="lqip" alt="逻辑回归先给出一个线性得分，再经 sigmoid 压到 0 到 1 的概率范围。" src="../assets/0716a/sigmoid-logistic.preview.jpg" data-fullsrc="../assets/0716a/sigmoid-logistic.jpg" /></a></p>
 <p><em>图：线性得分没有概率范围，sigmoid 将其映射为正类概率；阈值再把概率转成决策。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/sigmoid-vs-softmax.jpg"><img width="1280" height="720" alt="课件对照 sigmoid 与 softmax：sigmoid 用于二分类，softmax 用于多分类，它们都输出一个可解释的概率分布。" src="../assets/0716a/sigmoid-vs-softmax.preview.jpg" data-fullsrc="../assets/0716a/sigmoid-vs-softmax.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/sigmoid-vs-softmax.jpg"><img width="1280" height="720" class="lqip" alt="课件对照 sigmoid 与 softmax：sigmoid 用于二分类，softmax 用于多分类，它们都输出一个可解释的概率分布。" src="../assets/0716a/sigmoid-vs-softmax.preview.jpg" data-fullsrc="../assets/0716a/sigmoid-vs-softmax.jpg" /></a></p>
 <p><em>图：二分类用 sigmoid 压出单个概率；多分类改由 softmax 对多个类别输出一组和为 1 的概率。</em></p>
 <p>以购买意愿为例，年龄和收入可以组成特征 <span class="arithmatex">\(x=(x_1,x_2)\)</span>，模型计算 <span class="arithmatex">\(z=\theta_0+\theta_1x_1+\theta_2x_2\)</span>，再得到 <span class="arithmatex">\(p=\sigma(z)\)</span>。若业务把 0.5 作为阈值，<span class="arithmatex">\(p\ge0.5\)</span> 判为购买。这个阈值只是一种决策规则，不是概率模型自己决定的。医疗筛查常希望少漏掉阳性样本，会把阈值降低；人工复核昂贵或误报代价很高时，阈值又可能提高。调阈值时必须在验证集上观察精确率、召回率等指标，不能只盯总体准确率。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/logistic-purchase-data.jpg"><img width="1280" height="720" alt="课件的逻辑回归实战数据：用年龄、收入等特征预测购买意愿，这正是线性得分 → sigmoid → 阈值决策的现实例子。" src="../assets/0716a/logistic-purchase-data.preview.jpg" data-fullsrc="../assets/0716a/logistic-purchase-data.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/logistic-purchase-data.jpg"><img width="1280" height="720" class="lqip" alt="课件的逻辑回归实战数据：用年龄、收入等特征预测购买意愿，这正是线性得分 → sigmoid → 阈值决策的现实例子。" src="../assets/0716a/logistic-purchase-data.preview.jpg" data-fullsrc="../assets/0716a/logistic-purchase-data.jpg" /></a></p>
 <p><em>图：真实表格数据进入逻辑回归的形态——一批特征（年龄、收入）对应一个二分类标签（购买意愿）。</em></p>
 <h3 id="决策边界">决策边界<a class="headerlink" href="#决策边界" title="Permanent link"></a></h3>
 <p>对于两个特征，<span class="arithmatex">\(z=\theta_0+\theta_1x_1+\theta_2x_2=0\)</span> 在平面上是一条直线。sigmoid 在 <span class="arithmatex">\(z=0\)</span> 时恰好输出 0.5，所以这条直线就是阈值为 0.5 时的决策边界。边界一侧的点概率大于 0.5，另一侧小于 0.5。特征更多时，人无法把边界画出来，但几何含义不变：线性组合把输入空间划成两个半空间。</p>
@@ -3631,7 +3631,7 @@ L=-[y\log p+(1-y)\log(1-p)]
 \]</div>
 <p>若真实标签是 1、模型给出很小的 <span class="arithmatex">\(p\)</span>，损失会很大；模型对正确类别越自信，损失越小。这个损失与概率模型匹配，且其梯度在 sigmoid 饱和区域的行为通常比 MSE 更适合优化。多分类则使用多类交叉熵。</p>
 <p>对单个正样本 <span class="arithmatex">\(y=1\)</span>，损失化为 <span class="arithmatex">\(-\log p\)</span>。当模型给出 <span class="arithmatex">\(p=0.9\)</span> 时，损失较小；若自信地给出 <span class="arithmatex">\(p=0.01\)</span>，<span class="arithmatex">\(-\log p\)</span> 会很大。负样本的情况正好对应 <span class="arithmatex">\(-\log(1-p)\)</span>。这种设计会特别惩罚方向错而且非常自信的预测，和分类概率的含义吻合。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/cross-entropy-curve.jpg"><img width="1280" height="720" alt="交叉熵在正样本上的曲线：预测概率越靠近真实标签，损失越低；自信地预测错会受到很大惩罚。" src="../assets/0716a/cross-entropy-curve.preview.jpg" data-fullsrc="../assets/0716a/cross-entropy-curve.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/cross-entropy-curve.jpg"><img width="1280" height="720" class="lqip" alt="交叉熵在正样本上的曲线：预测概率越靠近真实标签，损失越低；自信地预测错会受到很大惩罚。" src="../assets/0716a/cross-entropy-curve.preview.jpg" data-fullsrc="../assets/0716a/cross-entropy-curve.jpg" /></a></p>
 <p><em>图：真实类别概率趋近 0 时，负对数损失迅速增大；正确且自信时损失趋近 0。</em></p>
 <p>损失函数不只是用来评分的一个公式。它决定训练时参数朝什么方向更新，也决定模型会重视哪类错误。回归、分类、类别不平衡、异常值敏感的任务，都可能需要不同损失。</p>
 <p>还有个优化上的原因。sigmoid 两端趋于平坦，导数接近零。若对 sigmoid 后的概率使用均方误差，链式求导会额外乘上这个很小的导数；模型即使犯了严重错误，也可能得到很弱的更新信号。二元交叉熵和 sigmoid 配合时，输出层对线性得分的梯度可化简为 <span class="arithmatex">\(p-y\)</span>，错误越大，校正信号通常越直接。这是逻辑回归把交叉熵作为默认损失的原因。</p>
@@ -3648,7 +3648,7 @@ L=-[y\log p+(1-y)\log(1-p)]
 \]</div>
 <p><span class="arithmatex">\(\eta\)</span> 是学习率。训练的基本循环是，取一批训练样本，前向计算预测和损失，反向计算梯度，更新参数，重复直到达到停止条件。批量梯度下降一次用全体样本；随机/小批量梯度下降一次用一个或一小批样本，后者是深度学习的常见做法。</p>
 <p>实际训练会先初始化参数，再重复计算当前 batch 的损失和梯度，按学习率更新，直到达到预定轮数或验证指标不再改善。这里的收敛只是一个停止准则：梯度很小、参数变化很小，或验证集表现已不再提高。对深度网络而言，找到一个足够好的点通常比证明找到了全局最小值更重要。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/gradient-descent-steps.jpg"><img width="1280" height="720" alt="课件列出梯度下降的步骤：先初始化一组参数，计算损失对参数的偏导（梯度），再沿负梯度方向更新，重复直到收敛。" src="../assets/0716a/gradient-descent-steps.preview.jpg" data-fullsrc="../assets/0716a/gradient-descent-steps.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/gradient-descent-steps.jpg"><img width="1280" height="720" class="lqip" alt="课件列出梯度下降的步骤：先初始化一组参数，计算损失对参数的偏导（梯度），再沿负梯度方向更新，重复直到收敛。" src="../assets/0716a/gradient-descent-steps.preview.jpg" data-fullsrc="../assets/0716a/gradient-descent-steps.jpg" /></a></p>
 <p><em>图：梯度下降是初始化 → 算梯度 → 沿负梯度更新 → 重复的迭代，学习率决定每一步走多远。</em></p>
 <h3 id="线性回归的梯度">线性回归的梯度<a class="headerlink" href="#线性回归的梯度" title="Permanent link"></a></h3>
 <p>一元线性回归的预测是 <span class="arithmatex">\(\hat y_i=wx_i+b\)</span>，均方误差是各样本残差平方的平均。对 <span class="arithmatex">\(w,b\)</span> 求导可得：</p>
@@ -3660,13 +3660,13 @@ L=-[y\log p+(1-y)\log(1-p)]
 <p>假如模型对大多数样本都预测得偏低，残差 <span class="arithmatex">\(\hat y-y\)</span> 大多为负，截距的梯度也会偏负；按减去梯度的规则更新后，<span class="arithmatex">\(b\)</span> 会增大，整条线向上移动。斜率的更新还要乘上 <span class="arithmatex">\(x_i\)</span>，它会根据不同位置的误差决定线该变陡还是变缓。这个例子把抽象的沿负梯度走还原成了对预测误差的连续校正。</p>
 <p>训练中常把一个完整遍历训练集称为一个 epoch。全批量梯度下降每个 epoch 只更新一次，梯度很稳定，却要等所有样本算完；随机梯度下降一次拿一个样本，更新频繁但噪声很大；小批量方法介于两者之间。GPU 擅长对一批样本做同形矩阵运算，所以实际深度学习常用几十到几千个样本组成 batch。batch 的选择会同时影响显存、吞吐、梯度噪声和训练轮数，不能孤立判断。</p>
 <p>学习率过大可能越过低点、震荡甚至发散；过小则进展很慢。参数、学习率、网络层数、batch size、训练轮数等需要人为设置的量叫超参数；从数据中经训练得到的权重和偏置才是模型参数。验证集就是用来选择超参数的。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/parameters-vs-hyperparams.jpg"><img width="1280" height="720" alt="课件区分参数与超参数：参数（权重、偏置）由训练数据自动学到，超参数（学习率、轮数、batch 等）由人设定、靠验证集挑选。" src="../assets/0716a/parameters-vs-hyperparams.preview.jpg" data-fullsrc="../assets/0716a/parameters-vs-hyperparams.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/parameters-vs-hyperparams.jpg"><img width="1280" height="720" class="lqip" alt="课件区分参数与超参数：参数（权重、偏置）由训练数据自动学到，超参数（学习率、轮数、batch 等）由人设定、靠验证集挑选。" src="../assets/0716a/parameters-vs-hyperparams.preview.jpg" data-fullsrc="../assets/0716a/parameters-vs-hyperparams.jpg" /></a></p>
 <p><em>图：分清谁由训练决定、谁由人来定，是用好验证集、避免把测试集当验证集的前提。</em></p>
 <p>这一区别很容易混淆。在线性回归 <span class="arithmatex">\(\hat y=wx+b\)</span> 中，<span class="arithmatex">\(w,b\)</span> 是参数，会随着训练数据自动变化；学习率、训练多少轮、使用多大的 batch 是超参数，训练程序不会凭空知道该取什么值。实践中常在验证集上比较几组超参数，确定方案后才在测试集上报告一次结果。反复看测试集再决定学习率，等于把测试集也变成了验证集。</p>
 <p>batch 大小会同时影响显存、吞吐和梯度噪声；训练记录应保存数据版本、随机种子、模型、学习率计划和评估代码。训练损失下降而验证指标不动时，不应继续把它当作进步。</p>
 <h2 id="过拟合与欠拟合">过拟合与欠拟合<a class="headerlink" href="#过拟合与欠拟合" title="Permanent link"></a></h2>
 <p>训练集损失持续下降，不代表模型在新数据上更好。若训练集越来越好、验证集先好后坏，模型开始记住训练样本的偶然细节，这就是过拟合。若训练和验证都不好，则可能是欠拟合：模型表达能力不足、特征不足、训练不够或优化失败。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0716a/overfitting-curves.jpg"><img width="1280" height="720" alt="训练曲线揭示两种不同现象：训练损失继续下降而验证损失回升，是过拟合的典型信号；两边都差则更接近欠拟合。" src="../assets/0716a/overfitting-curves.preview.jpg" data-fullsrc="../assets/0716a/overfitting-curves.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0716a/overfitting-curves.jpg"><img width="1280" height="720" class="lqip" alt="训练曲线揭示两种不同现象：训练损失继续下降而验证损失回升，是过拟合的典型信号；两边都差则更接近欠拟合。" src="../assets/0716a/overfitting-curves.preview.jpg" data-fullsrc="../assets/0716a/overfitting-curves.jpg" /></a></p>
 <p><em>图：训练曲线回答拟合程度，验证曲线回答泛化；两者分离的位置可用于 early stopping。</em></p>
 <p>把训练轮数也看作超参数。训练损失下降、验证损失回升时，模型开始记住训练样本的偶然细节，可用 early stopping 保留验证集最好的 checkpoint。过拟合通常从有效数据、数据划分、模型容量、正则化和训练时长几个方向处理；标签错误和泄露仍要回到数据层修正。</p>
 <p>正则化的形式也能说明它在做什么。L2 正则常写为</p>

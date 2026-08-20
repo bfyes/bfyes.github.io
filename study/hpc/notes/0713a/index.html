@@ -3441,16 +3441,16 @@
 </tbody>
 </table>
 <p>寄存器最快但只属于一个线程；shared memory 由同一 thread block 的线程显式协作使用；global memory 对整个 GPU 可见，容量大但访问代价高。优化矩阵乘法时把输入块放进 shared memory，正是为了让同一块数据被许多线程复用，减少对 global memory 的重复读取。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/memory-hierarchy-ff-sram-dram-ssd.jpg"><img width="1280" height="720" alt="课件把 Flip-Flops、SRAM、DRAM 与 SSD 放在同一张图里：越快的存储越贵、容量越小，从片内寄存器一路到持久磁盘形成明显层级。" src="../assets/0713a/memory-hierarchy-ff-sram-dram-ssd.preview.jpg" data-fullsrc="../assets/0713a/memory-hierarchy-ff-sram-dram-ssd.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/memory-hierarchy-ff-sram-dram-ssd.jpg"><img width="1280" height="720" class="lqip" alt="课件把 Flip-Flops、SRAM、DRAM 与 SSD 放在同一张图里：越快的存储越贵、容量越小，从片内寄存器一路到持久磁盘形成明显层级。" src="../assets/0713a/memory-hierarchy-ff-sram-dram-ssd.preview.jpg" data-fullsrc="../assets/0713a/memory-hierarchy-ff-sram-dram-ssd.jpg" /></a></p>
 <p><em>图：寄存器/缓存（SRAM）在片内快而贵，DRAM 慢而大，SSD 更大但更慢；性能优化的本质是把数据停在更近、更快的层级。</em></p>
 <p>主机内存和 GPU 显存之间通常经 PCIe 或更高速的互连传输。一次频繁的 CPU-GPU 往返很容易吞掉 kernel 加速带来的收益，所以常见做法是把数据一次搬到 device，连续运行多个 kernel，最后再搬回结果；能否这样做取决于算法的依赖关系和显存容量。</p>
 <p>训练大模型时，显存够不够要算的远不止一份参数。以 GPT-3 规模为例，参数、梯度、优化器状态（Adam 的两组动量）和激活值会在显存里同时占份额，加上为反向传播保留的中间张量，预算很快被填满。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/gpt3-activation-checkpoint.png"><img width="1280" height="720" alt="课件给出 GPT-3 规模训练显存的拆账：参数、梯度、Adam 状态与激活各占一份，并对比开启激活重计算前后的峰值占用。" src="../assets/0713a/gpt3-activation-checkpoint.preview.jpg" data-fullsrc="../assets/0713a/gpt3-activation-checkpoint.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/gpt3-activation-checkpoint.png"><img width="1280" height="720" class="lqip" alt="课件给出 GPT-3 规模训练显存的拆账：参数、梯度、Adam 状态与激活各占一份，并对比开启激活重计算前后的峰值占用。" src="../assets/0713a/gpt3-activation-checkpoint.preview.jpg" data-fullsrc="../assets/0713a/gpt3-activation-checkpoint.png" /></a></p>
 <p><em>图：显存里同时住着参数、梯度和优化器状态；激活重计算用少量额外前向计算的代价，换取激活峰值的大幅下降。</em></p>
 <p>激活重计算（activation checkpoint）的思路是不保存每一层前向的激活，用时再临时重算一次。它让训练更省显存、能装下更大 batch 或更大模型，代价是反向阶段多做一遍前向，通常有少量计算开销可接受。这是显存受限时用计算换空间的典型例子，与微基准里牺牲带宽换复用的思路一脉相承。</p>
 <h2 id="cpu-与-gpu-的取舍">CPU 与 GPU 的取舍<a class="headerlink" href="#cpu-与-gpu-的取舍" title="Permanent link"></a></h2>
 <p>一块 GPU 一般比一块 CPU 更适合规则的大规模数值计算、图像处理和矩阵乘法；串行控制逻辑、复杂分支、任务调度、操作系统与 I/O 管理则更适合 CPU。两种硬件的侧重可以这样对照：</p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-core-comparison.jpg"><img width="1280" height="720" alt="课件对比 CPU 与 GPU 的核心构成：CPU 用少量复杂核心、大 cache 与强控制；GPU 用大量简单核心换吞吐。" src="../assets/0713a/cpu-gpu-core-comparison.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-core-comparison.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-core-comparison.jpg"><img width="1280" height="720" class="lqip" alt="课件对比 CPU 与 GPU 的核心构成：CPU 用少量复杂核心、大 cache 与强控制；GPU 用大量简单核心换吞吐。" src="../assets/0713a/cpu-gpu-core-comparison.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-core-comparison.jpg" /></a></p>
 <p><em>图：一侧几个复杂核、一侧几百上千个简单核——这是 CPU 低延迟与 GPU 高吞吐取舍在物理上的直接体现。</em></p>
 <table>
 <thead>
@@ -3484,17 +3484,17 @@
 </tbody>
 </table>
 <p>实际产品的规格把这种取舍落到具体数字上。课件给出 CPU、GPU 与 FPGA 的一页参数对比：不同型号在核心数、频率、FP32/FP16 能力、内存带宽与典型功耗上差异明显，FPGA 则可通过可重构逻辑按需映射电路。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-fpga-specs.png"><img width="1280" height="720" alt="课件用一张表对比 CPU、GPU 与 FPGA 的规格：核心规模、算力、带宽、功耗各有侧重。" src="../assets/0713a/cpu-gpu-fpga-specs.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-fpga-specs.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-fpga-specs.png"><img width="1280" height="720" class="lqip" alt="课件用一张表对比 CPU、GPU 与 FPGA 的规格：核心规模、算力、带宽、功耗各有侧重。" src="../assets/0713a/cpu-gpu-fpga-specs.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-fpga-specs.png" /></a></p>
 <p><em>图：同一列指标在不同硬件上的取舍一目了然——GPU 用高并行远超 CPU 的矩阵吞吐，FPGA 换来灵活性但浮点峰值通常较低。</em></p>
 <p>选择硬件先看瓶颈在哪种资源：访存受限的工作，带宽更高的设备更有利；计算受限的规则矩阵运算，低精度矩阵单元多的设备更有利；需要频繁改动数据通路、又没有成熟等价实现时，才值得考虑 FPGA。</p>
 <h2 id="gpu-的高吞吐设计">GPU 的高吞吐设计<a class="headerlink" href="#gpu-的高吞吐设计" title="Permanent link"></a></h2>
 <p>GPU 由许多个 Streaming Multiprocessor（SM）组成。一个 SM 内有大量标量运算单元、寄存器文件、load/store 单元、共享内存和专门的矩阵计算单元。不同架构的具体数量会变，但思路稳定：同时保留许多可运行线程，用大量并行算术去覆盖存储访问的等待。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/gpu-system-architecture.png"><img width="2500" height="1253" alt="GPU 顶层结构中可看到主机接口、调度控制、HBM 和多个计算单元；数据路径本身是设计重点。" src="../assets/0713a/gpu-system-architecture.preview.jpg" data-fullsrc="../assets/0713a/gpu-system-architecture.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/gpu-system-architecture.png"><img width="2500" height="1253" class="lqip" alt="GPU 顶层结构中可看到主机接口、调度控制、HBM 和多个计算单元；数据路径本身是设计重点。" src="../assets/0713a/gpu-system-architecture.preview.jpg" data-fullsrc="../assets/0713a/gpu-system-architecture.png" /></a></p>
 <p><em>图：计算单元不是孤立的峰值数字；host 接口、全局调度和 HBM 决定数据如何到达各个 SM。</em></p>
 <p>在现代 AI GPU 上，普通 CUDA core 可做常规标量/向量运算，Tensor Core 则面向小矩阵乘加，例如 <span class="arithmatex">\(D=A\times B+C\)</span>。深度学习中的 GEMM、卷积和 attention 经过分块后，能大量调用这种矩阵单元，因此低精度矩阵吞吐远高于一般 CPU 的单核算力。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/sm-functional-units.png"><img width="927" height="1290" alt="一张 SM 内部功能单元示意图：整数/浮点单元、寄存器、load-store 单元与 Tensor Core 并列存在。" src="../assets/0713a/sm-functional-units.preview.jpg" data-fullsrc="../assets/0713a/sm-functional-units.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/sm-functional-units.png"><img width="927" height="1290" class="lqip" alt="一张 SM 内部功能单元示意图：整数/浮点单元、寄存器、load-store 单元与 Tensor Core 并列存在。" src="../assets/0713a/sm-functional-units.preview.jpg" data-fullsrc="../assets/0713a/sm-functional-units.png" /></a></p>
 <p><em>图：同一 SM 内的 warp 共享执行管线、寄存器文件和片上存储，资源用量会限制同时驻留的工作。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/h100-block-diagram.jpg"><img width="1280" height="720" alt="课件的 H100 Block Diagram：SM、Tensor Core、HBM、NVLink 与片上互连的关系一目了然，展示一代旗舰 GPU 的完整构成。" src="../assets/0713a/h100-block-diagram.preview.jpg" data-fullsrc="../assets/0713a/h100-block-diagram.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/h100-block-diagram.jpg"><img width="1280" height="720" class="lqip" alt="课件的 H100 Block Diagram：SM、Tensor Core、HBM、NVLink 与片上互连的关系一目了然，展示一代旗舰 GPU 的完整构成。" src="../assets/0713a/h100-block-diagram.preview.jpg" data-fullsrc="../assets/0713a/h100-block-diagram.jpg" /></a></p>
 <p><em>图：从旗舰卡看，GPU 是一台包含大量 SM、专用矩阵单元、多层存储与高速互连的完整系统，不是孤立的一堆核心。</em></p>
 <p>低精度不是把数值随便截短。FP32 有较大的指数和尾数范围；FP16、BF16、FP8 等格式以更少位数换取更低内存流量和更高矩阵吞吐。训练通常会在速度与数值稳定性之间混合使用多种精度，例如低精度前向/反向、较高精度累积或主权重。格式选择应由误差容忍度、硬件指令和实际测量共同决定。</p>
 <h2 id="simdspmdsimt-与-warp">SIMD、SPMD、SIMT 与 warp<a class="headerlink" href="#simdspmdsimt-与-warp" title="Permanent link"></a></h2>
@@ -3504,9 +3504,9 @@
 <p>单周期 CPU 的 ALU 一次通常只算一对数。<code>a[i] + b[i]</code> 一个时钟做一次。SIMD（Single Instruction, Multiple Data）是给 ALU 配上一组宽寄存器，让<strong>一条</strong>加法指令同时作用在多个数据元素上。比如一个 256 位宽度的向量寄存器可以装 8 个 32 位 <code>float</code>，一条 <code>add</code> 就同时把 8 对数相加。对数组来说，这就是 8 倍的算术吞吐机会——前提是这些元素要能装进同一个寄存器、且循环能连续访问。</p>
 <p>这就是为什么把循环写得规则、连续很重要。SIMD 一次吃一串相邻元素，跳跃访问会让它一条指令只能用到部分 lane。GPU 的底层也是这个思路，只是规模大得多、且用大量线程来组织，于是就有了 SIMT 与 warp 这些进一步的抽象。</p>
 </details>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/sisd-simd-mimd.jpg"><img width="1280" height="720" alt="课件用 SISD、SIMD 等分类说明并行硬件模型：GPU 底层往往是一台 SIMD 引擎，指令管线像 SIMD 管线一样广播到多个数据单元。" src="../assets/0713a/sisd-simd-mimd.preview.jpg" data-fullsrc="../assets/0713a/sisd-simd-mimd.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/sisd-simd-mimd.jpg"><img width="1280" height="720" class="lqip" alt="课件用 SISD、SIMD 等分类说明并行硬件模型：GPU 底层往往是一台 SIMD 引擎，指令管线像 SIMD 管线一样广播到多个数据单元。" src="../assets/0713a/sisd-simd-mimd.preview.jpg" data-fullsrc="../assets/0713a/sisd-simd-mimd.jpg" /></a></p>
 <p><em>图：SISD/SIMD/MIMD 是经典并行分类；理解 GPU 从 SIMD 引擎出发，再叠加 SIMT 的线程语义。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/gpu-simd-engine.jpg"><img width="1280" height="720" alt="课件强调 GPU 本质是 SIMD 引擎：一条指令在同一时刻广播给很多数据单元，构成底层吞吐。" src="../assets/0713a/gpu-simd-engine.preview.jpg" data-fullsrc="../assets/0713a/gpu-simd-engine.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/gpu-simd-engine.jpg"><img width="1280" height="720" class="lqip" alt="课件强调 GPU 本质是 SIMD 引擎：一条指令在同一时刻广播给很多数据单元，构成底层吞吐。" src="../assets/0713a/gpu-simd-engine.preview.jpg" data-fullsrc="../assets/0713a/gpu-simd-engine.jpg" /></a></p>
 <p><em>图：GPU 的指令管线按 SIMD 方式运行；大量相同指令并行推进，是它能做高吞吐的前提。</em></p>
 <ul>
 <li><strong>SIMD</strong>（single instruction, multiple data）指一条向量指令同时处理多个数据元素，常见于 CPU 向量扩展。</li>
@@ -3534,14 +3534,14 @@ if (i &lt; N &amp;&amp; j &lt; N) {
 <p>线程束中的控制流也有成本。warp 的 32 个线程遇到不同 <code>if</code> 分支时，硬件通常分路径依次执行，再以 mask 禁用暂不活跃的线程；这就是 divergence。边界检查造成的少量分歧通常可接受，按随机类别把同一 warp 分到完全不同的大分支则会明显损失吞吐。重排数据、按类别分桶或把分支变成掩码运算，需要与重排开销一并测量。</p>
 <h2 id="地址布局与设备传输">地址、布局与设备传输<a class="headerlink" href="#地址布局与设备传输" title="Permanent link"></a></h2>
 <p>CPU 端数组指针不能被普通 GPU kernel 直接解引用。通常要分配 device memory，再把输入从 host 拷贝到 device，启动 kernel，把结果拷回；统一虚拟地址让指针形式看起来相近，数据是否已迁移、能否被该设备直接访问仍是运行时问题。离散 GPU 上 PCIe/NVLink 的传输比 device DRAM 访问慢得多，反复在每个小 kernel 前后复制数据会淹没计算收益。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-pci-relationship.jpg"><img width="1280" height="720" alt="课件画出 CPU 与 GPU 经 PCI Bus 互连的关系：CPU 控制并把任务/数据交给 GPU，GPU 计算后再返回，系统里两者通过主机内存交换。" src="../assets/0713a/cpu-gpu-pci-relationship.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-pci-relationship.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-pci-relationship.jpg"><img width="1280" height="720" class="lqip" alt="课件画出 CPU 与 GPU 经 PCI Bus 互连的关系：CPU 控制并把任务/数据交给 GPU，GPU 计算后再返回，系统里两者通过主机内存交换。" src="../assets/0713a/cpu-gpu-pci-relationship.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-pci-relationship.jpg" /></a></p>
 <p><em>图：CPU 与 GPU 之间隔着 PCIe/NVLink 等互连；跨这条链路的拷贝比片内访问慢，是决定端到端性能的重要因素。</em></p>
 <p>因此异构程序应把连续的 GPU 工作围在同一段设备驻留期内。输入一次上传，若干 kernel 在 device 上消费和产生中间张量，最后下载需要的输出。逐元素操作融合为一个 kernel、量化权重留在显存并与反量化 GEMM 融合，都会减少往返和中间全局内存流量。数据传输能和计算重叠的前提是独立 buffer、异步 copy、非默认 stream 以及足够的硬件 copy engine；不满足依赖时强行异步只会读到未完成的数据。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/ai-system-dataflow.png"><img width="1988" height="1100" alt="AI 系统中数据在 host 与 device 之间移动的完整路径。" src="../assets/0713a/ai-system-dataflow.preview.jpg" data-fullsrc="../assets/0713a/ai-system-dataflow.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/ai-system-dataflow.png"><img width="1988" height="1100" class="lqip" alt="AI 系统中数据在 host 与 device 之间移动的完整路径。" src="../assets/0713a/ai-system-dataflow.preview.jpg" data-fullsrc="../assets/0713a/ai-system-dataflow.png" /></a></p>
 <p><em>图：输入从 CPU 端上传，kernel 在 GPU 侧消费并产生中间张量，结果再回落主机；传输路径与计算路径共同决定端到端时间。</em></p>
 <h2 id="cpu-与-gpu-的分工边界">CPU 与 GPU 的分工边界<a class="headerlink" href="#cpu-与-gpu-的分工边界" title="Permanent link"></a></h2>
 <p>设备选择由数据规模和依赖决定，而不是由语言决定。一个只有几百个元素的 kernel 可能启动开销大于计算；一个需要按 token 逐步依赖的 decode 阶段也难像巨大 prefill 矩阵那样装满 GPU。性能模型必须把 host 预处理、传输、kernel、同步都计入端到端时间。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-tradeoff.png"><img width="1976" height="1132" alt="CPU 与 GPU 在不同工作负载下的取舍：前者偏向低延迟、控制与缓存，后者偏向大规模吞吐。" src="../assets/0713a/cpu-gpu-tradeoff.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-tradeoff.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-tradeoff.png"><img width="1976" height="1132" class="lqip" alt="CPU 与 GPU 在不同工作负载下的取舍：前者偏向低延迟、控制与缓存，后者偏向大规模吞吐。" src="../assets/0713a/cpu-gpu-tradeoff.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-tradeoff.png" /></a></p>
 <p><em>图：同样的计算任务落在 CPU 或 GPU 上，瓶颈来源不同；选择设备要同时看数据规模、分支复杂度与传输开销。</em></p>
 <h2 id="线程层次与硬件资源">线程层次与硬件资源<a class="headerlink" href="#线程层次与硬件资源" title="Permanent link"></a></h2>
 <p>GPU 程序中的 grid 是一次 kernel 启动的全部线程块，block 是能共享 shared memory 并执行 block 内 barrier 的协作单位，thread 才是一个具体的索引计算实例。block 会被整体分派给一个 SM，block 内线程再按硬件固定宽度组成 warp；一个 block 不能跨 SM，因此需要跨 block 协作的算法不能依赖普通的 block barrier。grid 可以有远多于硬件同时容纳的 block，运行时会在一个 block 完成后把后续 block 调度上来。</p>

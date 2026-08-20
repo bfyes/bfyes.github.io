@@ -3529,7 +3529,7 @@
 <p>大语言模型改变了这一点。Chinchilla/GPT 把海量文本都吃进去，看起来什么都能做；但监督学习（模仿已有数据）得到的模型，无法在已有数据之上再进一步提升。想再进一步，就要把模型放进反馈信号明确的环境里用强化学习继续训练。现在很多编程模型（例如带 agent 的工具）都是强化学习训练出来的，因为代码写完拿去编译、跑测试，对错非常明确；数学这类反馈清楚的领域也落地很快。反馈信号越明确，强化学习越容易学到更强的能力。</p>
 <h3 id="强化学习问题定义">强化学习问题定义<a class="headerlink" href="#强化学习问题定义" title="Permanent link"></a></h3>
 <p>在时刻 <span class="arithmatex">\(t\)</span>，智能体观察到状态或观测 <span class="arithmatex">\(s_t\)</span>，按策略选择动作 <span class="arithmatex">\(a_t\)</span>；环境响应为下一个状态 <span class="arithmatex">\(s_{t+1}\)</span>，并给出奖励 <span class="arithmatex">\(r_{t+1}\)</span>。连续记录下来就是一条轨迹：</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/agent-environment-loop.jpg"><img width="1280" height="720" alt="课件用一张图概括强化学习的循环：智能体与环境反复交互、获得奖励，目标是学习到能最大化累计奖励的策略。" src="../assets/0717p/agent-environment-loop.preview.jpg" data-fullsrc="../assets/0717p/agent-environment-loop.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/agent-environment-loop.jpg"><img width="1280" height="720" class="lqip" alt="课件用一张图概括强化学习的循环：智能体与环境反复交互、获得奖励，目标是学习到能最大化累计奖励的策略。" src="../assets/0717p/agent-environment-loop.preview.jpg" data-fullsrc="../assets/0717p/agent-environment-loop.jpg" /></a></p>
 <p><em>图：agent 选动作、环境返回下一个状态与奖励，构成训练数据；强化学习的循环本质就是这个观察—行动—获奖励的过程。</em></p>
 <div class="arithmatex">\[
 s_0,a_0,r_1,s_1,a_1,r_2,\ldots
@@ -3600,7 +3600,7 @@ y_t=r_{t+1}+\gamma V(s_{t+1}),
 \]</div>
 <p>或在 Q-learning 里使用 <span class="arithmatex">\(r_{t+1}+\gamma\max_aQ(s_{t+1},a)\)</span>。它用当前估计的下一状态价值来更新当前价值，叫 bootstrapping。代价是目标也依赖自己的估计，估计误差会被带入更新。</p>
 <p>TD(<span class="arithmatex">\(\lambda\)</span>) 在 MC 与一步 TD 之间插值。较小的 <span class="arithmatex">\(\lambda\)</span> 更接近短步自举，更新快但目标偏差更多；较大的 <span class="arithmatex">\(\lambda\)</span> 利用更长的真实轨迹，接近 MC，方差也更大。课上强调，固定选一个 <span class="arithmatex">\(\lambda\)</span> 往往很敏感：环境、策略阶段和数据分布变化后，同一个超参数未必仍合适。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/adaptive-td-lambda.jpg"><img width="1280" height="720" alt="课件给出基于异/同策略样本分布密度的自适应 TD(λ) 思路：不把 \(\lambda\) 固定，而按样本来自当前策略还是历史策略来调节计算 target 的权重。" src="../assets/0717p/adaptive-td-lambda.preview.jpg" data-fullsrc="../assets/0717p/adaptive-td-lambda.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/adaptive-td-lambda.jpg"><img width="1280" height="720" class="lqip" alt="课件给出基于异/同策略样本分布密度的自适应 TD(λ) 思路：不把 \(\lambda\) 固定，而按样本来自当前策略还是历史策略来调节计算 target 的权重。" src="../assets/0717p/adaptive-td-lambda.preview.jpg" data-fullsrc="../assets/0717p/adaptive-td-lambda.jpg" /></a></p>
 <p><em>图：TD(λ) 的 λ 不必写死；可根据样本是否贴近当前策略动态选择更像 MC 还是更像一步 TD，正是课上研究的方向。</em></p>
 <h3 id="bellman-目标与终止状态">Bellman 目标与终止状态<a class="headerlink" href="#bellman-目标与终止状态" title="Permanent link"></a></h3>
 <p>价值学习的样本不是独立标签。一步 TD 的目标为</p>
@@ -3612,38 +3612,38 @@ y_t=r_t+\gamma(1-d_t)\max_a Q_{\bar\theta}(s_{t+1},a),
 <h3 id="on-policy-与-off-policy">On-policy 与 Off-policy<a class="headerlink" href="#on-policy-与-off-policy" title="Permanent link"></a></h3>
 <p>行为策略 <span class="arithmatex">\(\mu\)</span> 负责采集轨迹，目标策略 <span class="arithmatex">\(\pi\)</span> 是希望学习或评估的策略。两者相同就是 on-policy；不同则是 off-policy。on-policy 方法通常要求数据接近当前策略，例如一轮更新后再用新策略采样。它概念直接，但旧数据很快不能反复使用。</p>
 <p>off-policy 方法允许利用历史 replay buffer 中的数据。DQN 一类方法把大量过去轨迹放进 buffer，随机抽取 mini-batch，降低相邻样本的相关性并提高样本复用率。问题在于旧数据来自不同策略，分布与当前策略不一致；重要性采样可用概率比修正这种差异，但权重过大时又会带来高方差。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/experience-replay-buffer.jpg"><img width="1280" height="720" alt="课件强调从经验中学习：智能体与环境交互得到的历史经验会存进经验回放缓存，训练时再从中采样决策。" src="../assets/0717p/experience-replay-buffer.preview.jpg" data-fullsrc="../assets/0717p/experience-replay-buffer.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/experience-replay-buffer.jpg"><img width="1280" height="720" class="lqip" alt="课件强调从经验中学习：智能体与环境交互得到的历史经验会存进经验回放缓存，训练时再从中采样决策。" src="../assets/0717p/experience-replay-buffer.preview.jpg" data-fullsrc="../assets/0717p/experience-replay-buffer.jpg" /></a></p>
 <p><em>图：经验回放缓存保存大量过去轨迹，供训练反复采样；它提高了样本复用率，也带来旧数据与当前策略分布不一致的问题。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/offpolicy-distribution-shift.jpg"><img width="1280" height="720" alt="课件说明离策略（off-policy）强化学习不稳定的原因：行为策略（旧）与当前策略（新）的分布差异，会让采样到的数据与当前所学目标错位。" src="../assets/0717p/offpolicy-distribution-shift.preview.jpg" data-fullsrc="../assets/0717p/offpolicy-distribution-shift.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/offpolicy-distribution-shift.jpg"><img width="1280" height="720" class="lqip" alt="课件说明离策略（off-policy）强化学习不稳定的原因：行为策略（旧）与当前策略（新）的分布差异，会让采样到的数据与当前所学目标错位。" src="../assets/0717p/offpolicy-distribution-shift.preview.jpg" data-fullsrc="../assets/0717p/offpolicy-distribution-shift.jpg" /></a></p>
 <p><em>图：旧策略采样的数据分布与当前策略不同，是 off-policy 训练不稳定的根源；重要性采样只是修正手段之一。</em></p>
 <p>课上的一个研究思路是把当前策略采集的数据与历史 off-policy 数据分开管理，再按数据分布和训练阶段调节 TD(<span class="arithmatex">\(\lambda\)</span>) 的权重。新策略附近的数据贴近当前决策，历史数据可能保留了难得的成功轨迹；两类样本需要承担不同作用。</p>
 <h2 id="数据复用探索与多智能体">数据复用、探索与多智能体<a class="headerlink" href="#数据复用探索与多智能体" title="Permanent link"></a></h2>
 <h3 id="多智能体强化学习">多智能体强化学习<a class="headerlink" href="#多智能体强化学习" title="Permanent link"></a></h3>
 <p>多智能体强化学习（MARL）中，多个 agent 同时观察、行动和学习。每个 agent 的动作都会改变其他 agent 看到的环境，所以单个 agent 所面对的环境会随其他策略更新而变化，非平稳性比单智能体更明显。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/marl-training-loop.jpg"><img width="1280" height="720" alt="课件用观测、状态、奖励和模型更新画出传统多智能体强化学习训练循环。" src="../assets/0717p/marl-training-loop.preview.jpg" data-fullsrc="../assets/0717p/marl-training-loop.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/marl-training-loop.jpg"><img width="1280" height="720" class="lqip" alt="课件用观测、状态、奖励和模型更新画出传统多智能体强化学习训练循环。" src="../assets/0717p/marl-training-loop.preview.jpg" data-fullsrc="../assets/0717p/marl-training-loop.jpg" /></a></p>
 <p><em>图：多个智能体从环境收集观测和奖励，再用轨迹更新策略。</em></p>
 <p>合作任务常采用 CTDE（centralized training, decentralized execution）：训练时可使用全局状态、所有 agent 的动作或联合价值函数；执行时，每个 agent 只用自己允许获得的局部观测独立行动。这样训练阶段能减少价值估计歧义，部署时又不要求实时汇集所有信息。</p>
 <p>QMIX 是课上提到的一个值分解方法。每个 agent 先有局部 <span class="arithmatex">\(Q_i\)</span>，再由 mixing network 合成为全局 <span class="arithmatex">\(Q_{tot}\)</span>，并约束全局值对各局部值单调。于是选择各 agent 局部最优动作时，与联合 <span class="arithmatex">\(Q_{tot}\)</span> 的贪心选择能够保持一致。它适合合作且可做这种单调分解的任务，不意味着任何多智能体博弈都能被简单拆成若干独立 Q 函数。</p>
 <p>CTDE 的具体实现还要处理参数共享和训练吞吐。共享参数能提高样本效率，却要求智能体的观测/动作空间兼容，并常需 agent id 或位置编码防止完全对称的策略塌缩。Isaac Gym 等工具可在 GPU 上并行许多环境，但每一步仍包含物理计算、policy inference、状态重置、reward 计算和把 batch 交给学习器。profile 时应分别量环境 step、rollout 传输、前后向和优化器；只把环境数量翻倍，可能先撞到显存、物理 kernel 或 policy batch 的瓶颈。</p>
 <h3 id="探索与经验复用">探索与经验复用<a class="headerlink" href="#探索与经验复用" title="Permanent link"></a></h3>
 <p>稀疏奖励环境中，智能体可能在很长时间内看不到成功反馈。有一个直线方向被墙挡住的例子：反复从起点沿同一方向探索，只会反复撞墙；一条绕开的成功路径却值得被反复利用。探索的重点在于把罕见、有信息量的经验保留下来，而不是一味增加随机动作数量。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/epsilon-greedy-exploration.jpg"><img width="1280" height="720" alt="课件讲 ε-greedy 探索：以概率 ε 随机选动作而非总是贪心，是探索与利用之间最常用的折中。" src="../assets/0717p/epsilon-greedy-exploration.preview.jpg" data-fullsrc="../assets/0717p/epsilon-greedy-exploration.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/epsilon-greedy-exploration.jpg"><img width="1280" height="720" class="lqip" alt="课件讲 ε-greedy 探索：以概率 ε 随机选动作而非总是贪心，是探索与利用之间最常用的折中。" src="../assets/0717p/epsilon-greedy-exploration.preview.jpg" data-fullsrc="../assets/0717p/epsilon-greedy-exploration.jpg" /></a></p>
 <p><em>图：ε-greedy 用一个小概率随机探索、其余按当前最优行动；探索噪声过大或过小都会影响学到什么。</em></p>
 <p>这一思路把历史上表现好的轨迹变成模板。当当前状态与模板匹配时，训练目标可以加入模板对应的价值或动作倾向；偏离模板的部分仍由普通 RL 学习。模板不是硬编码答案：环境变化后盲从旧路径会出错，因而需要状态匹配、置信度或价值比较来决定何时采用。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/template-q-learning.jpg"><img width="1280" height="720" alt="把历史上成功的轨迹当作模板，与当前状态匹配时引导策略，偏离时退回普通强化学习。" src="../assets/0717p/template-q-learning.preview.jpg" data-fullsrc="../assets/0717p/template-q-learning.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/template-q-learning.jpg"><img width="1280" height="720" class="lqip" alt="把历史上成功的轨迹当作模板，与当前状态匹配时引导策略，偏离时退回普通强化学习。" src="../assets/0717p/template-q-learning.preview.jpg" data-fullsrc="../assets/0717p/template-q-learning.jpg" /></a></p>
 <p><em>图：模板保存罕见的成功经验，用于指导到当前状态的行动倾向；是否采用模板由状态匹配或价值比较决定。</em></p>
 <p>蒙特卡洛树搜索（MCTS）提供另一种在当前状态附近多看几步的方式。它反复执行选择、扩展、评估和回传：从根节点按选择公式走到叶子，扩展可行动作，使用 rollout 或价值网络评估叶子，再把回报更新到祖先节点。选择公式会兼顾平均价值与访问次数较少的分支，因此同时利用和探索。它在围棋等可模拟环境中很强，但每一步都展开搜索的代价也很高。</p>
 <h2 id="策略表示规划与优化">策略表示、规划与优化<a class="headerlink" href="#策略表示规划与优化" title="Permanent link"></a></h2>
 <h3 id="神经策略与行为树">神经策略与行为树<a class="headerlink" href="#神经策略与行为树" title="Permanent link"></a></h3>
 <p>深度 RL 策略可以直接把观测映射为动作，却往往难解释、迁移不稳定，需要大量交互数据。一种方向是用大模型生成的行为树或决策树作为元策略。</p>
 <p>行为树将任务写成条件、动作以及顺序/选择/并行等控制节点。例如若手边有物体则抓取、否则先移动到目标附近这样的表述，比一个连续网络输出更容易检查和修改。大模型可以根据任务描述、环境接口和失败记录生成或修改树；RL 则可用于调树中的参数、优先级或局部动作。行为树负责可检查的高层流程，连续控制仍交给合适的低层策略。语言模型可参与生成或修改树，但不直接取代底层控制器。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/behavior-tree-policy.jpg"><img width="1280" height="720" alt="行为树把任务写成条件、动作和分支控制节点，比连续网络输出更易检查与修改。" src="../assets/0717p/behavior-tree-policy.preview.jpg" data-fullsrc="../assets/0717p/behavior-tree-policy.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/behavior-tree-policy.jpg"><img width="1280" height="720" class="lqip" alt="行为树把任务写成条件、动作和分支控制节点，比连续网络输出更易检查与修改。" src="../assets/0717p/behavior-tree-policy.preview.jpg" data-fullsrc="../assets/0717p/behavior-tree-policy.jpg" /></a></p>
 <p><em>图：行为树由顺序/选择/并行等控制节点组织条件与动作；大模型可生成或修改树，低层连续控制仍由策略完成。</em></p>
 <h3 id="基于模型的方法">基于模型的方法<a class="headerlink" href="#基于模型的方法" title="Permanent link"></a></h3>
 <p>无模型强化学习直接学习策略或价值，不显式学习环境如何变化。基于模型的强化学习（model-based RL）还学习或使用一个动力学模型：给定状态和动作，预测下一状态、奖励或观测。这样可在模型里滚动多步，比较候选动作，减少真实环境中的试错。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/model-based-rl-why.jpg"><img width="1280" height="720" alt="课件说明为什么需要基于模型的强化学习：无模型深度强化学习样本效率很低，结合一个环境模型可以减少真实环境中的试错。" src="../assets/0717p/model-based-rl-why.preview.jpg" data-fullsrc="../assets/0717p/model-based-rl-why.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/model-based-rl-why.jpg"><img width="1280" height="720" class="lqip" alt="课件说明为什么需要基于模型的强化学习：无模型深度强化学习样本效率很低，结合一个环境模型可以减少真实环境中的试错。" src="../assets/0717p/model-based-rl-why.preview.jpg" data-fullsrc="../assets/0717p/model-based-rl-why.jpg" /></a></p>
 <p><em>图：在低成本的世界模型里多滚动几步做规划，能减少真实环境中的交互样本，正是 model-based 的动机。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/model-based-rl-rollout.jpg"><img width="1280" height="720" alt="课件画出基于模型 RL 的组成部分：学习 Q(s,a) 或策略 π(a|s)，同时用模型做 rollout，把计划结果反馈给训练。" src="../assets/0717p/model-based-rl-rollout.preview.jpg" data-fullsrc="../assets/0717p/model-based-rl-rollout.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/model-based-rl-rollout.jpg"><img width="1280" height="720" class="lqip" alt="课件画出基于模型 RL 的组成部分：学习 Q(s,a) 或策略 π(a|s)，同时用模型做 rollout，把计划结果反馈给训练。" src="../assets/0717p/model-based-rl-rollout.preview.jpg" data-fullsrc="../assets/0717p/model-based-rl-rollout.jpg" /></a></p>
 <p><em>图：model-based RL 在学策略之外增加用模型规划；两者结合以提高样本效率和探索质量。</em></p>
 <p>模型不准时会出现 model bias：规划过程利用了模型的系统性误差，真实执行反而失败。可用不确定性估计、短视规划、真实数据校正或模型集成减轻，但不能消除模拟器与现实不同的问题。课程中 PaMoRL 等研究关注如何从历史样本构造可用模型并和策略学习结合，目的仍是提高样本效率和探索质量。</p>
 <p>历史经验样本还能以接力的方式降低多智能体训练的早期困难。多智能体强化学习起步阶段 Q 值远未收敛，每一步的自举误差很大，且会沿决策树向根节点回传，让早期决策尤其不可信。一种研究思路是先不急着跑 RL：把经验缓存里的历史轨迹整理成轨迹树，先用有监督的行为克隆把怎么做学出来，决策时先用这个监督策略；等它稳定后，再让基线多智能体强化学习算法接力细化。这样把高噪声的自举阶段交给监督学习，收敛后再交给 RL，本质上是能确定的部分先学、不确定的部分再强化这样的分工。</p>
@@ -3666,10 +3666,10 @@ r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{old}(a_t\mid s_t)}
 <h2 id="具身智能">具身智能<a class="headerlink" href="#具身智能" title="Permanent link"></a></h2>
 <p>机器人是强化学习很自然的应用，但真实机器人采样慢、硬件会磨损、失败可能危险。训练常先在模拟器进行大规模并行交互，再把策略迁移到真实设备。模拟器里可随机化质量、摩擦、光照、传感器噪声和初始位置，减小策略对某一个理想环境参数的依赖。这叫 domain randomization。</p>
 <p>Isaac Gym 的价值在于把物理仿真也放到 GPU 上，一次可并行推进许多环境。若只有一个环境，数百万步交互可能耗时很久；成千上万个并行环境可显著提高采样吞吐。不过并行环境的初始状态、随机种子和数据同步仍要认真处理，否则得到的只是高度相似的大量轨迹。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/isaac-gym.jpg"><img width="1280" height="720" alt="Isaac Gym 在 GPU 上并行推进许多物理环境，显著提高采样吞吐。" src="../assets/0717p/isaac-gym.preview.jpg" data-fullsrc="../assets/0717p/isaac-gym.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/isaac-gym.jpg"><img width="1280" height="720" class="lqip" alt="Isaac Gym 在 GPU 上并行推进许多物理环境，显著提高采样吞吐。" src="../assets/0717p/isaac-gym.preview.jpg" data-fullsrc="../assets/0717p/isaac-gym.jpg" /></a></p>
 <p><em>图：物理仿真放入 GPU 后，多个环境可并行交互；吞吐提升的前提是环境初始状态、随机种子和数据同步处理正确。</em></p>
 <p>模仿学习是另一条常用路线：从人类演示或遥操作轨迹出发，先学一个能完成基本动作的策略，再用 RL 微调。Mobile ALOHA 一类双臂移动操作平台展示的是端到端任务，例如移动、抓取、整理；它的难点不只有抓取精度，还包括长时序误差累积、视觉遮挡、接触不确定性和任务切换。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0717p/mobile-aloha.jpg"><img width="1280" height="720" alt="Mobile ALOHA 一类的双臂移动操作平台执行端到端任务，例如移动、抓取与整理。" src="../assets/0717p/mobile-aloha.preview.jpg" data-fullsrc="../assets/0717p/mobile-aloha.jpg" /></a></p>
+<p><a class="glightbox" data-type="image" href="../assets/0717p/mobile-aloha.jpg"><img width="1280" height="720" class="lqip" alt="Mobile ALOHA 一类的双臂移动操作平台执行端到端任务，例如移动、抓取与整理。" src="../assets/0717p/mobile-aloha.preview.jpg" data-fullsrc="../assets/0717p/mobile-aloha.jpg" /></a></p>
 <p><em>图：端到端机器人任务的长时序误差、视觉遮挡和接触不确定性，比单点抓取精度更考验策略与系统。</em></p>
 <p>具身系统的部署验收至少覆盖下面几项。</p>
 <ul>
