@@ -518,29 +518,12 @@ body.grid-off-active::before {
    左侧导航选中态/hover、右侧 TOC 阅读进度(已读/当前着色)。
    ============================================================================ */
 
-/* ---- 左侧导航选中态 ---- */
+/* ---- 左侧导航选中态：文字默认色 + 灰色背景 ---- */
 .md-sidebar--primary .md-nav__link--active,
-.md-sidebar--primary .md-nav__item--active > .md-nav__container {
-  color: var(--md-accent-fg-color);
-  font-weight: 600;
-  background-color: transparent;
-}
-
-.md-sidebar--primary .md-nav__item--active > .md-nav__link--active {
-  color: var(--md-accent-fg-color);
-  font-weight: 600;
-  background-color: transparent;
-}
-
+.md-sidebar--primary .md-nav__item--active > .md-nav__link--active,
 .md-sidebar--primary .md-nav__item--active > .md-nav__container > .md-nav__link {
-  background-color: transparent;
-}
-
-/* 左侧导航 hover：与右侧 TOC 一致，无背景，蓝色字 */
-.md-nav--primary .md-nav__link[for]:hover:not(.md-nav__link--active),
-.md-nav--primary .md-nav__link[href]:hover:not(.md-nav__link--active) {
-  background-color: transparent;
-  color: var(--md-accent-fg-color);
+  color: var(--md-default-fg-color);
+  background-color: var(--md-default-fg-color--lightest);
 }
 
 /* ---- 右侧 TOC 阅读进度 ---- */

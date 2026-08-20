@@ -295,3 +295,15 @@ static const char *very_long_variable_name_that_exceeds_the_normal_line_width = 
 | :--- | :---: | ---: |
 | left | center | right |
 | 左 | 中 | 右 |
+
+## 主页专属元素
+
+::friends::
+Name | github | https://example.com | Description
+Name | github | https://example.com | Description
+::/friends::
+
+::changelog::
+yyyy.mm.dd: text
+::/changelog::
+

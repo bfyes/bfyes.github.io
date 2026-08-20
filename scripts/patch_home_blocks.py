@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 """patch_home_blocks.py — 构建后把主页自定义语法替换为 HTML。
 
-支持块语法（::terminal:: / ::about:: / ::changelog:: / ::friends:: / ::activity::）：
+支持块语法（::terminal:: / ::changelog:: / ::friends:: / ::activity::）：
 
 ::friends::
 gE | gE0650 | https://0-rangE.cn | Orange
 dreamem0ra1n | dreamem0ra1n | https://dreamem0ra1n.github.io/ISYS/ | ISYS
 ::/friends::
 
-  字段：显示名 | GitHub用户名 | URL | 描述（可选）
-  缺省显示名时取 GitHub 用户名；描述可选，无描述时 meta span 带 --empty class（CSS 隐藏）。
+  字段：显示名 | GitHub用户名 | URL | 描述（可选，无描述留空）
 
 ::changelog::
 2026.08.16: 修复公式问题。重构 css。
@@ -17,8 +16,7 @@ dreamem0ra1n | dreamem0ra1n | https://dreamem0ra1n.github.io/ISYS/ | ISYS
 
   字段：日期: 内容（内容经 Markdown 行内渲染，支持 <url> 与 [text](url)）。
 
-::about::   —— 与 ::friends:: 同结构，标题渲染为 "About"
-::terminal:: / ::activity:: —— 无参数，直接替换为固定 HTML 外壳。
+::activity:: —— 块语法，参数为 GitHub 用户名（::activity::user::/activity::）。
 
 用法: uv run python scripts/patch_home_blocks.py
 """
@@ -68,7 +66,7 @@ def render_avatar(name: str, github: str) -> str:
 
 def parse_block(content: str, tag: str) -> str | None:
     """提取 ::tag:: ... ::/tag:: 块内容。"""
-    m = re.search(rf"::{tag}::\s*\n(.*?)\n\s*::/{tag}::", content, re.DOTALL)
+    m = re.search(rf"::{tag}::\s*(.*?)\s*::/{tag}::", content, re.DOTALL)
     return m.group(1) if m else None
 
 
@@ -115,18 +113,11 @@ def render_friends(lines: str, title: str = "Links", section_id: str = "home-fri
         if not line:
             continue
         parts = [p.strip() for p in line.split("|", 3)]
-        if len(parts) < 2:
+        if len(parts) < 3:
             continue
-        # 显示名 | GitHub用户名 | URL | 描述（可选）
-        # 或 GitHub用户名 | URL | 描述（显示名=GitHub用户名）
-        if len(parts) >= 3 and parts[2].startswith("http"):
-            name, github_id, href = parts[0], parts[1], parts[2]
-            desc = parts[3] if len(parts) > 3 else ""
-        else:
-            github_id = parts[0]
-            href = parts[1]
-            desc = parts[2] if len(parts) > 2 else ""
-            name = github_id
+        # 显示名 | GitHub用户名 | URL | 描述（可选，缺省留空）
+        name, github_id, href = parts[0], parts[1], parts[2]
+        desc = parts[3] if len(parts) > 3 else ""
         attrs = f'href="{html.escape(href)}" target="_blank" rel="noopener"'
         # 头像：构建期生成首字母 + GitHub 头像 img（onerror 移除 img 露出首字母）。
         avatar = render_avatar(name, github_id)
@@ -193,13 +184,14 @@ def render_terminal() -> str:
     )
 
 
-def render_activity() -> str:
+def render_activity(user: str = "") -> str:
+    user_attr = f' data-user="{html.escape(user)}"' if user else ""
     return (
         '<section class="home-section home-section--activity" aria-labelledby="home-activity-title">\n'
         '    <div class="home-section__head">\n'
         '      <h2 id="home-activity-title" class="home-section__title">Activity</h2>\n'
         "    </div>\n"
-        '    <div class="github-calendar-wrap">\n'
+        f'    <div class="github-calendar-wrap"{user_attr}>\n'
         '      <div class="ghc-loading">正在加载 GitHub 贡献图...</div>\n'
         "    </div>\n"
         "</section>"
@@ -208,7 +200,7 @@ def render_activity() -> str:
 
 def process_file(path: Path) -> bool:
     content = path.read_text(encoding="utf-8")
-    if "::terminal::" not in content and "::changelog::" not in content and "::friends::" not in content and "::about::" not in content and "::activity::" not in content:
+    if "::terminal::" not in content and "::changelog::" not in content and "::friends::" not in content and "::activity::" not in content:
         return False
 
     original = content
@@ -225,25 +217,21 @@ def process_file(path: Path) -> bool:
             render_changelog(cl),
         )
 
-    # ::about::
-    ab = parse_block(content, "about")
-    if ab:
-        content = content.replace(
-            re.search(r"::about::.*?::/about::", content, re.DOTALL).group(0),
-            render_friends(ab, "About", "home-about-title"),
-        )
+    # ::friends:: (支持多个块，逐个替换)
+    while True:
+        fr = parse_block(content, "friends")
+        if not fr:
+            break
+        block = re.search(r"::friends::.*?::/friends::", content, re.DOTALL).group(0)
+        content = content.replace(block, render_friends(fr), 1)
 
-    # ::friends::
-    fr = parse_block(content, "friends")
-    if fr:
+    # ::activity:: (块语法 ::activity::user::/activity::)
+    act = parse_block(content, "activity")
+    if act:
         content = content.replace(
-            re.search(r"::friends::.*?::/friends::", content, re.DOTALL).group(0),
-            render_friends(fr),
+            re.search(r"::activity::.*?::/activity::", content, re.DOTALL).group(0),
+            render_activity(act.strip()),
         )
-
-    # ::activity::
-    if "::activity::" in content:
-        content = re.sub(r"::activity::\s*\n?", render_activity(), content)
 
     if content != original:
         path.write_text(content, encoding="utf-8")

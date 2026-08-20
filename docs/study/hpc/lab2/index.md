@@ -1,6 +1,7 @@
 # Lab 2：MoE 的向量化计算
 
-!!! Abstract "写在前面"
+!!! Abstract "写在前面" 
+    
     **实验平台：Intel Sapphire Rapids**（x86，AVX-512，AMX）
 
     [点击查看报告 PDF 版](./lab2.pdf)

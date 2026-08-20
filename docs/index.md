@@ -5,13 +5,13 @@ page_class: home-page rainbow-page
 
 # Welcome
 
-::about::
+::friends::
 Bill Feng | bfyes | https://github.com/bfyes | 嗨，我是BillFeng，来自浙江大学25级信息安全专业。新手小白，多多指教。<br>我热爱骑行、摄影、乒乓球等，欢迎关注我的视频号(BilllFeng)(3个l)，欢迎交流共同爱好，欢迎交流计算机技术。<br>添加友链可以 PR / issue 或联系我。
-::/about::
+::/friends::
 
 ::terminal::
 
-::activity::
+::activity::bfyes::/activity::
 
 ::friends::
 gE | gE0650 | https://0-rangE.cn | Orange
