@@ -549,6 +549,9 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   overflow: hidden;
   max-height: 15rem;
   overflow-y: auto;
+  /* Keep rounded corners while this element is also a scroll container in
+     older WebKit releases. */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 
 .home-log {
@@ -619,6 +622,8 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
+  /* Force filtered descendants to respect the circular clip in old WebKit. */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
   display: inline-flex;
   align-items: center;
   justify-content: center;
