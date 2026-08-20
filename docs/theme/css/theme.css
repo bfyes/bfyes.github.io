@@ -621,6 +621,8 @@ body.grid-off-active::before {
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
+  /* Older WebKit versions can let descendants escape rounded overflow. */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
   background: var(--md-code-bg-color);
   box-shadow: var(--shadow-sm);
   font-family: inherit;
