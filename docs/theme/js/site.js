@@ -241,10 +241,25 @@
     });
   }
 
+function initLqipBlur(root) {
+  var scope = root || document;
+  var imgs = scope.querySelectorAll("img.lqip");
+  for (var i = 0; i < imgs.length; i++) {
+    var img = imgs[i];
+    var m = /zoom\s*:\s*([\d.]+)%/i.exec(img.getAttribute("style") || "");
+    if (m) {
+      var zoom = parseFloat(m[1]) / 100;
+      img.style.setProperty("--lqip-blur", Math.round(6 / zoom) + "px");
+    }
+  }
+}
+
+
   installHeaderlinkFocusFix();
   initPageLifecycle();
   window.site.onPageReady(syncPageState);
   window.site.onPageReady(upgradeImages);
+  window.site.onPageReady(initLqipBlur);
   window.site.onPageReady(initTocFade);
   initParallaxGrid();
   window.site.onPageReady(initGiscus);
