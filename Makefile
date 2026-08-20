@@ -16,7 +16,7 @@ kill: ## 杀掉 8000 端口进程
 
 zensical: metadata previews kill ## 实时预览文档站点（端口 8000）
 	uv run zensical serve -o &
-	@sleep 1.5 && uv run python scripts/patch_home_blocks.py
+	@sleep 1.5 && uv run python scripts/patch_home_blocks.py && uv run python scripts/patch_image_src.py
 	@wait
 
 contributions: ## 抓取 GitHub 贡献图数据烘焙成静态 JSON

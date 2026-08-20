@@ -94,6 +94,17 @@ def read_image_size(path: Path):
     return None
 
 
+def _add_lqip_class(tag: str) -> str:
+    """Ensure the img tag carries the 'lqip' class for blur-up transition."""
+    if re.search(r'\blqip\b', tag, re.IGNORECASE):
+        return tag
+    m_cls = re.search(r'\bclass="([^"]*)"', tag, re.IGNORECASE)
+    if m_cls:
+        existing = m_cls.group(1)
+        return tag.replace(f'class="{existing}"', f'class="{existing} lqip"', 1)
+    return re.sub(r'^(<img\b)', r'\1 class="lqip"', tag, count=1, flags=re.IGNORECASE)
+
+
 def add_dimensions(tag: str, html_dir: Path, original: str) -> str:
     """Insert width/height (from the full image) if not already present.
 
@@ -142,6 +153,13 @@ def process_tag(tag: str, html_dir: Path) -> str:
                 tag,
                 count=1,
             )
+            # Add lqip class for CSS blur-up transition
+            tag = _add_lqip_class(tag)
+
+    # If the image already has data-fullsrc (previously swapped) but no lqip class,
+    # add it now so existing builds also get the blur-up transition.
+    if re.search(r"\bdata-fullsrc=", tag, re.IGNORECASE):
+        tag = _add_lqip_class(tag)
 
     # Reserve the box so the page doesn't shift on image load.
     return add_dimensions(tag, html_dir, original)

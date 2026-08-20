@@ -115,7 +115,10 @@
         var fullSrc = img.getAttribute("data-fullsrc");
         if (!fullSrc) return;
         var full = new Image();
-        full.onload = function () { img.src = fullSrc; };
+        full.onload = function () {
+          img.src = fullSrc;
+          img.classList.remove("lqip");
+        };
         full.src = fullSrc;
       })(imgs[i]);
     }
