@@ -1,4 +1,5 @@
 /**
+ * 此部分暂时没用到。
  * attractor.js — Aizawa 吸引子 WebGL 背景（仅主页）。
  * Zensical 同源方程 + EffectComposer + UnrealBloom。
  * 透明背景方案：bloom 后加自定义 AlphaPass，alpha = max(r,g,b)，
@@ -33,6 +34,8 @@
   // 颜色端点：2 色 lerp
   var DARK_A = 0x3DAAFF, DARK_B = 0x8B6FE8;
   var LIGHT_A = 0x4493F8, LIGHT_B = 0x7B5FE8;
+  var active = null;
+  var runToken = 0;
 
   // ---- 相机运镜关键帧（dur 为帧数）----
   var CAM_KEYS = [
@@ -190,6 +193,8 @@
     var camKeyIdx = 0;
     var camProgress = 0;
     var camTarget = new THREE.Vector3();
+    var stopped = false;
+    var unsubscribeTheme = null;
 
     function updateCamera() {
       var key = CAM_KEYS[camKeyIdx];
@@ -217,6 +222,7 @@
 
     // ---- 动画 ----
     function animate() {
+      if (stopped) return;
       requestAnimationFrame(animate);
       for (var i = 0; i < splines.length; i++) {
         stepSegment(splines[i].position);
@@ -229,17 +235,18 @@
     animate();
 
     // ---- 响应窗口大小 ----
-    window.addEventListener("resize", function () {
+    function onResize() {
       var nw = window.innerWidth, nh = window.innerHeight;
       camera.aspect = nw / nh;
       camera.updateProjectionMatrix();
       renderer.setSize(nw, nh);
       composer.setSize(nw, nh);
-    });
+    }
+    window.addEventListener("resize", onResize);
 
     // ---- 主题切换 ----
     if (window.site && window.site.theme) {
-      window.site.theme.subscribe(function (mode) {
+      unsubscribeTheme = window.site.theme.subscribe(function (mode) {
         var dark = mode === "dark";
         colorA = dark ? DARK_A : LIGHT_A;
         colorB = dark ? DARK_B : LIGHT_B;
@@ -250,17 +257,38 @@
         }
       });
     }
+
+    return function stop() {
+      if (stopped) return;
+      stopped = true;
+      window.removeEventListener("resize", onResize);
+      if (unsubscribeTheme) unsubscribeTheme();
+      for (var i = 0; i < splines.length; i++) {
+        splines[i].geometry.dispose();
+        splines[i].material.dispose();
+      }
+      if (composer.dispose) composer.dispose();
+      if (renderTarget.dispose) renderTarget.dispose();
+      renderer.dispose();
+      if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement);
+    };
   }
 
   function run() {
+    var token = ++runToken;
     var el = document.getElementById("hero");
-    if (!el) return;
-    if (!document.querySelector(".home-page")) { el.style.display = "none"; return; }
+    if (!el) { if (active) { active(); active = null; } return; }
+    if (!document.querySelector(".home-page")) {
+      el.style.display = "none";
+      if (active) { active(); active = null; }
+      return;
+    }
+    if (active) { active(); active = null; }
     el.style.display = "";
     if (!el.querySelector("canvas") && window.WebGLRenderingContext) {
       loadScripts(SCRIPTS, function (err) {
-        if (err || !window.THREE || !window.THREE.EffectComposer) return;
-        start(el);
+        if (token !== runToken || err || !window.THREE || !window.THREE.EffectComposer) return;
+        active = start(el);
       });
     }
   }

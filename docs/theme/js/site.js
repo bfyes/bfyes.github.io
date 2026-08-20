@@ -107,6 +107,55 @@
   mq.addEventListener("change", notifyTheme);
 
   // ---- 图片渐进加载（preview → 全分辨率）----
+  var LQIP_MAX_WAIT = 15000;
+
+  // 所有渐进图片共用同一套收尾逻辑：至少让模糊占位绘制一帧，
+  // 再移除 lqip 触发 CSS 的 blur → clear 过渡。15 秒是最长等待时间，
+  // 避免网络失败时图片永久模糊。
+  function revealLqip(img) {
+    if (!img || !img.classList.contains("lqip")) return;
+    if (img.dataset.lqipTimer) {
+      clearTimeout(Number(img.dataset.lqipTimer));
+      img.dataset.lqipTimer = "";
+    }
+    var frame = window.requestAnimationFrame || function (fn) { return setTimeout(fn, 16); };
+    frame(function () {
+      frame(function () { img.classList.remove("lqip"); });
+    });
+  }
+
+  function scheduleLqipTimeout(img) {
+    if (!img || img.dataset.lqipTimer) return;
+    img.dataset.lqipTimer = String(setTimeout(function () {
+      img.dataset.lqipTimer = "";
+      // 头像失败时回退到首字母占位；正文则保留 preview 并结束模糊状态。
+      if (img.closest && img.closest(".home-friend__avatar")) img.remove();
+      else revealLqip(img);
+    }, LQIP_MAX_WAIT));
+  }
+
+  function initLqip(root) {
+    var scope = root || document;
+    var imgs = scope.querySelectorAll("img.lqip");
+    for (var i = 0; i < imgs.length; i++) {
+      (function (img) {
+        scheduleLqipTimeout(img);
+        // 头像没有 data-fullsrc，由这里接管；complete 覆盖缓存图片
+        // 在监听器注册前已经完成加载的情况。
+        if (img.hasAttribute("data-fullsrc")) return;
+        img.addEventListener("load", function () { revealLqip(img); }, { once: true });
+        img.addEventListener("error", function () {
+          if (img.closest && img.closest(".home-friend__avatar")) img.remove();
+          else revealLqip(img);
+        }, { once: true });
+        if (img.complete) {
+          if (img.naturalWidth > 0) revealLqip(img);
+          else if (img.closest && img.closest(".home-friend__avatar")) img.remove();
+        }
+      })(imgs[i]);
+    }
+  }
+
   function upgradeImages(root) {
     var scope = root || document;
     var imgs = scope.querySelectorAll("img[data-fullsrc]");
@@ -114,11 +163,13 @@
       (function (img) {
         var fullSrc = img.getAttribute("data-fullsrc");
         if (!fullSrc) return;
+        scheduleLqipTimeout(img);
         var full = new Image();
         full.onload = function () {
           img.src = fullSrc;
-          img.classList.remove("lqip");
+          revealLqip(img);
         };
+        full.onerror = function () { revealLqip(img); };
         full.src = fullSrc;
       })(imgs[i]);
     }
@@ -259,9 +310,9 @@ function initLqipBlur(root) {
   initPageLifecycle();
   window.site.onPageReady(syncPageState);
   window.site.onPageReady(upgradeImages);
+  window.site.onPageReady(initLqip);
   window.site.onPageReady(initLqipBlur);
   window.site.onPageReady(initTocFade);
   initParallaxGrid();
   window.site.onPageReady(initGiscus);
 })();
-

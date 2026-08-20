@@ -58,7 +58,7 @@ def render_avatar(name: str, github: str) -> str:
     src = github_avatar_url(github)
     img = (
         f'<img src="{html.escape(src, quote=True)}" alt="" width="96" height="96" '
-        f'class="lqip" loading="lazy" onload="this.classList.remove(\'lqip\')" '
+        f'class="lqip" '
         f'onerror="this.remove()">'
         if src
         else ""
