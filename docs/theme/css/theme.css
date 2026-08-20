@@ -874,6 +874,7 @@ body.grid-off-active::before {
    尺寸不变（不用 scale 放大），避免与 width/height 占位冲突。
    ============================================================================ */
 img {
+  filter: blur(0);
   transition: filter 1s ease;
 }
 img.lqip {
