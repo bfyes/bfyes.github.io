@@ -621,9 +621,8 @@ body.grid-off-active::before {
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  /* Older WebKit versions can let descendants escape rounded overflow. */
-  -webkit-mask-image: -webkit-radial-gradient(white, black);
   background: var(--md-code-bg-color);
+  background-clip: padding-box;
   box-shadow: var(--shadow-sm);
   font-family: inherit;
   margin: 1em 0;
@@ -687,6 +686,7 @@ body.grid-off-active::before {
 .pdf-viewer-native-wrap {
   position: relative;
   overflow: hidden;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   -webkit-overflow-scrolling: touch;
   background: var(--md-code-bg-color);
 }
