@@ -113,7 +113,7 @@
   // 再移除 lqip 触发 CSS 的 blur → clear 过渡。15 秒是最长等待时间，
   // 避免网络失败时图片永久模糊。
   function revealLqip(img) {
-    if (!img || !img.classList.contains("lqip")) return;
+    if (!img) return;
     if (img.dataset.lqipTimer) {
       clearTimeout(Number(img.dataset.lqipTimer));
       img.dataset.lqipTimer = "";
@@ -136,7 +136,7 @@
 
   function initLqip(root) {
     var scope = root || document;
-    var imgs = scope.querySelectorAll("img.lqip");
+    var imgs = scope.querySelectorAll("img.lqip, img[data-fullsrc], .home-friend__avatar img");
     for (var i = 0; i < imgs.length; i++) {
       (function (img) {
         scheduleLqipTimeout(img);

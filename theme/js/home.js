@@ -5,7 +5,7 @@
      home.js —— 主页运行时（仅主页加载）
      ----------------------------------------------------------------------------
      职责（三大块，按 DOM 出现顺序）：
-       1. 友链（friends）        —— 已迁移至构建期，运行时无逻辑（见下注释）
+       1. 友链（friends）        —— 构建期生成，运行时不处理
        2. GitHub 贡献图          —— fetch contributions.json → 渲染表格 + tooltip
        3. 终端打字机              —— 逐字敲入 + 命令解析 + 交互输入
 
@@ -17,11 +17,8 @@
   var htmlEl = window.site.htmlEl;
 
   /* ---- 1. 友链（friends）-------------------------------------------------
-     头像 / handle / 描述已由 scripts/patch_home_blocks.py 在构建期烘焙进 HTML
-     （render_avatar / render_friends），CSS 用 .home-friend flex 单列布局定位。
-     运行时无需补 DOM，故此处无逻辑。
-     已删除的运行时函数：initFriends / buildAvatar / friendInitials / githubAvatarUrl
-     （等价逻辑现存在于 patch_home_blocks.py，保持一致）。 */
+     头像、handle 和描述由 scripts/patch_home_blocks.py 在构建期写入 HTML；
+     运行时只由 home.css 负责布局和样式。 */
 
   /* ---- 2. GitHub 贡献图 --------------------------------------------------
      两步渐进：1) 静态 JSON（本地面板，always）→ 立即渲染；2) CORS 代理实时
