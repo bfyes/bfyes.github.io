@@ -672,6 +672,7 @@ body.grid-off-active::before {
   overflow: hidden;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
   background: var(--md-code-bg-color);
 }
 
@@ -694,6 +695,7 @@ body.grid-off-active::before {
   padding: 12px;
   background: var(--md-code-bg-color);
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
 }
 
 .pdf-viewer-canvases[hidden] {
@@ -891,6 +893,7 @@ img.lqip {
   }
   .md-typeset :is(pre.highlight, pre[class*="language-"]) code {
     -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
   }
 }
 
