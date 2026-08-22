@@ -897,10 +897,9 @@ img.lqip {
 /* ============================================================================
    11. 淡入动画
    ----------------------------------------------------------------------------
-   正文元素 fade-in；右侧 TOC 逐条淡入(nav-index 错开延迟)。
+   右侧 TOC 逐条淡入(nav-index 错开延迟)。
    transform 会干扰 Material 的 toc.follow 滚动运算，故只动 opacity。
    ============================================================================ */
-@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes toc-fade {
   from {
     opacity: 0.4;
@@ -917,8 +916,6 @@ img.lqip {
   to { opacity: 1; }
 }
 /* 如果想要未动画和未浏览一样颜色，则透明度要设置为 0.86*/
-.md-content__inner > *:not(:is(h1, h2, h3, h4, h5, h6)) { animation: fade-in 1s ease both; }
-body.home-active .md-content__inner > * { animation: none; }
 /* 右侧 TOC 逐条淡入：只动 opacity，不动 transform/几何，避免干扰 Material
    的 toc.follow 滚动运算（transform 会改变 offsetTop/getBoundingClientRect）。
    CSS 只声明动画本身；每条链接的 animation-delay（逐步错开）由 site.js 注入，
@@ -927,6 +924,5 @@ body.home-active .md-content__inner > * { animation: none; }
   animation: toc-fade 0.8s ease-out both;
 }
 @media (prefers-reduced-motion: reduce) {
-  .md-content__inner,
   .md-sidebar--secondary [data-md-component="toc"] .md-nav__link { animation: none; }
 }
