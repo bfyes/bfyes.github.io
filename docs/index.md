@@ -23,6 +23,7 @@ chenyuheee | ChenyuHeee | https://hechenyu.xin
 ::/friends::
 
 ::changelog::
+2026.08.22: Zensical 版本更新 (UI 部分修复了我之前的 issue)，关闭动态背景大幅提升流畅性^ ^
 2026.08.19: 终于重构到令我满意！必须滚去做 HPC 了，考虑开学时发布一下我的定制主题！
 2026.08.18: 向 Zensical 提了一个issue <https://github.com/zensical/ui/issues/201>，官方秒回并归档为`bug`。
 2026.08.17: 解决历史遗留问题: mathjax.js 在 instant 模式下加载异常；补发广播解决 giscus 时序问题。新增部分文档。<br>向 HPC101 仓库提出一个 PR <https://github.com/ZJUSCT/HPC101/pull/50>。
