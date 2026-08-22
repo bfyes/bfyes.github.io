@@ -183,19 +183,19 @@ features = [
 [[project.theme.palette]]
 media = "(prefers-color-scheme)"
 toggle.icon = "lucide/sun-moon"
-toggle.name = "切换至浅色模式"
+toggle.name = "跟随系统"
 
 [[project.theme.palette]]
 media = "(prefers-color-scheme: light)"
 scheme = "default"
 toggle.icon = "lucide/sun"
-toggle.name = "切换至深色模式"
+toggle.name = "浅色模式"
 
 [[project.theme.palette]]
 media = "(prefers-color-scheme: dark)"
 scheme = "slate"
 toggle.icon = "lucide/moon-star"
-toggle.name = "根据系统模式切换主题"
+toggle.name = "深色模式"
 
 # --------------------------------------------------------------------------
 # 05. Markdown 扩展
