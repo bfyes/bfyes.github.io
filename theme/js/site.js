@@ -189,7 +189,7 @@
     },
   };
 
-  // ---- 页面状态 + 视差网格（全站功能）----
+  // ---- 页面状态（全站功能）----
   function syncPageState(root) {
     var scope = root || document;
     document.body.classList.toggle("home-active", !!scope.querySelector(".home-page"));
@@ -198,15 +198,8 @@
   }
 
   function initParallaxGrid() {
-    var ratio = 0.1, ticking = false;
-    function update() {
-      document.body.style.setProperty("--grid-y", -(window.scrollY * ratio) + "px");
-      ticking = false;
-    }
-    window.addEventListener("scroll", function () {
-      if (!ticking) { requestAnimationFrame(update); ticking = true; }
-    }, { passive: true });
-    update();
+    // 网格固定：不监听 scroll，--grid-y 恒为 0。
+    document.body.style.setProperty("--grid-y", "0px");
   }
 
   // ---- 右侧 TOC 逐条淡入 ----

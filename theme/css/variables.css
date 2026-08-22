@@ -91,7 +91,7 @@
 
   /* === 网格背景 === */
   --grid-clear-half: 22rem;
-  --grid-fade: 20rem;
+  --grid-fade: 16rem;
   /* 网格 mask：左右显示、正文区挖空（供 theme.css 的 mask-image/-webkit-mask-image 复用） */
   --grid-mask: linear-gradient(
     90deg,
