@@ -41,8 +41,7 @@
 
   function buildViewer(iframe) {
     var src = iframe.getAttribute("src");
-    var height = parseInt(iframe.getAttribute("height"), 10) || 600;
-    height = Math.min(height, Math.round(window.innerHeight * 0.82));
+    var height = 600;
 
     var root = htmlEl("div", { class: "pdf-viewer" });
     root.style.maxWidth = "100%";
