@@ -643,21 +643,17 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   line-height: 1.2;
 }
 
-.home-friend__handle,
-.home-friend__meta {
+.home-friend__handle {
   overflow: hidden;
   line-height: 1.2;
   text-overflow: ellipsis;
-}
 
-.home-friend__handle {
   color: var(--home-softer);
   font-size: var(--home-friend-handle-size);
   font-style: italic;
   margin-left: 0.1rem;
   white-space: nowrap;
 }
-
 .home-friend__meta {
   margin-top: 0.3rem;
   color: var(--home-muted);
