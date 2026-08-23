@@ -269,11 +269,21 @@
     font-size: var(--font-code);
   }
   /* —— 标题 margin：容器 padding 上下为 0，由标题 margin-top/bottom 撑出
-     标题与容器顶边、标题与正文之间的空隙（上下均取标题 margin）。 —— */
+     标题与容器顶边、标题与正文之间的空隙（上下均取标题 margin）。
+     标题强制单行（nowrap），超长用省略号截断；折叠箭头为绝对定位，
+     需在右侧预留 padding 避免遮挡。 —— */
   .md-typeset .admonition-title,
   .md-typeset summary {
     margin-top: var(--admonition-title-margin);
     margin-bottom: var(--admonition-title-margin);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* —— 折叠箭头为绝对定位（right:.4rem, width:1rem），nowrap 下需在右侧
+     预留空间避免文字被箭头遮挡；非折叠的 .admonition-title 无箭头，不加。 —— */
+  .md-typeset summary {
+    padding-right: 2rem;
   }
   /* —— 正文首元素 padding-top：与标题底边留白（取正文 margin，与正文末元素底边对称）。 —— */
   .md-typeset .admonition-title + *,
