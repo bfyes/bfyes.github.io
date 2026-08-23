@@ -12,6 +12,12 @@
     return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   }
 
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / 1048576).toFixed(1) + " MB";
+  }
+
   function iconLink(cls, title, href, svg) {
     var a = htmlEl("a", { class: cls, title: title, href: href, target: "_blank", rel: "noopener" });
     a.innerHTML = svg;
@@ -29,7 +35,7 @@
     var heading = htmlEl("span", { class: "pdf-viewer-heading" });
     var dot = htmlEl("span", { class: "pdf-loader-dot", "aria-hidden": "true" });
     var title = htmlEl("span", { class: "pdf-viewer-title" }, "PDF");
-    var status = htmlEl("span", { class: "pdf-viewer-status" }, "加载中");
+    var status = htmlEl("span", { class: "pdf-viewer-status" }, "准备加载");
     heading.append(dot, title, status);
     toolbar.append(heading,
       iconLink("pdf-viewer-action", "在新标签页打开", src, SVG_EXTERNAL),
@@ -54,22 +60,90 @@
     wrap.style.height = height + "px";
     var frame = htmlEl("iframe", { class: "pdf-viewer-native", title: iframe.getAttribute("title") || "PDF preview", loading: "lazy" });
     frame.setAttribute("allowfullscreen", "");
-    frame.src = src;
-    frame.addEventListener("load", function () {
-      status.textContent = "已加载";
-      dot.classList.add("pdf-loader-dot--done");
-    });
     wrap.appendChild(frame);
     root.appendChild(wrap);
 
-    return { root: root };
+    var overlay = htmlEl("div", { class: "pdf-loader-overlay" });
+    overlay.innerHTML = '<div class="pdf-loader-percent">0.0%</div><div class="pdf-loader-bar-track"><div class="pdf-loader-bar-fill"></div></div><div class="pdf-loader-detail"></div>';
+    root.appendChild(overlay);
+
+    return {
+      root: root, frame: frame, status: status, dot: dot, overlay: overlay,
+      percent: overlay.querySelector(".pdf-loader-percent"),
+      barFill: overlay.querySelector(".pdf-loader-bar-fill"),
+      detail: overlay.querySelector(".pdf-loader-detail"),
+    };
+  }
+
+  function hideOverlay(v) {
+    v.overlay.style.opacity = "0";
+    setTimeout(function () { v.overlay.style.display = "none"; }, 400);
+  }
+
+  function showPdf(v, blob) {
+    var url = URL.createObjectURL(blob);
+    // 先挂 load 再设 src：iframe 的 PDF 查看器加载完成后即 revoke。
+    // 原生查看器此时已把整个 blob 读进内存，revoke 仅使该 URL 失效（不再可被新请求
+    // 引用），不影响已加载内容。不 revoke 会留在 blob URL 注册表里直到文档 unload，
+    // 连看多个 PDF 会累积泄漏。
+    v.frame.addEventListener("load", function () { URL.revokeObjectURL(url); }, { once: true });
+    v.frame.src = url;
+    v.status.textContent = "已加载";
+    v.dot.classList.add("pdf-loader-dot--done");
+    hideOverlay(v);
+  }
+
+  function fallback(v, msg) {
+    v.frame.src = v.root._src;
+    v.status.textContent = msg;
+    v.dot.classList.add("pdf-loader-dot--done");
+    v.barFill.style.width = "100%";
+    hideOverlay(v);
+  }
+
+  function loadPdf(v, src) {
+    v.status.textContent = "下载中…";
+    fetch(src).then(function (resp) {
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      var total = parseInt(resp.headers.get("Content-Length"), 10) || 0;
+      var reader = resp.body.getReader(), received = 0, chunks = [];
+
+      function pump() {
+        return reader.read().then(function (r) {
+          if (r.done) {
+            var blob = new Blob(chunks, { type: "application/pdf" });
+            v.barFill.style.width = "100%";
+            v.percent.textContent = "100.0%";
+            v.detail.textContent = formatSize(total || received);
+            showPdf(v, blob);
+            return;
+          }
+          chunks.push(r.value);
+          received += r.value.length;
+          if (total) {
+            var pct = (received / total * 100).toFixed(1) + "%";
+            v.barFill.style.width = pct;
+            v.percent.textContent = pct;
+            v.detail.textContent = formatSize(received) + " / " + formatSize(total);
+          } else {
+            v.detail.textContent = formatSize(received);
+          }
+          return pump();
+        });
+      }
+      return pump();
+    }).catch(function () {
+      fallback(v, "浏览器加载");
+    });
   }
 
   function scanPdfs(root) {
     (root || document).querySelectorAll("iframe[src*='.pdf']").forEach(function (iframe) {
       if (iframe.parentNode.classList.contains("pdf-viewer")) return;
       var v = buildViewer(iframe);
+      v.root._src = iframe.getAttribute("src");
       iframe.parentNode.replaceChild(v.root, iframe);
+      loadPdf(v, v.root._src);
     });
   }
 
