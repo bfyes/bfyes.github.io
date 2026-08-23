@@ -848,14 +848,6 @@ img.lqip {
   .md-typeset pre[class*="language-"] {
     margin-inline: 0;
   }
-  .md-typeset :is(pre.highlight, pre[class*="language-"]) {
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-x pan-y;
-  }
-  .md-typeset .md-typeset__table {
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-x pan-y;
-  }
 }
 
 /* ============================================================================
