@@ -32,8 +32,10 @@ PREVIEW_RE = re.compile(r"\.(png|jpe?g)(?=[\"?#]|$)", re.IGNORECASE)
 
 
 def preview_path(original: str) -> str:
-    """Return the preview filename for an image, or empty if not an image."""
+    """Return the preview filename for an image, or empty if not a PNG/JPEG."""
     if ".preview." in original:
+        return ""
+    if not PREVIEW_RE.search(original):
         return ""
     return PREVIEW_RE.sub(".preview.jpg", original)
 
