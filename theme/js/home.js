@@ -2,15 +2,17 @@
   "use strict";
 
   /* ============================================================================
-     home.js —— 主页运行时（仅主页加载）
+     home.js —— 主页运行时
      ----------------------------------------------------------------------------
+     全站加载，但所有初始化函数均有 guard（找不到 .home-page / .github-calendar-wrap
+     / .home-terminal 即 return），非主页不执行任何操作。
+
      职责（三大块，按 DOM 出现顺序）：
        1. 友链（friends）        —— 构建期生成，运行时不处理
        2. GitHub 贡献图          —— fetch contributions.json → 渲染表格 + tooltip
        3. 终端打字机              —— 逐字敲入 + 命令解析 + 交互输入
 
      不涉及：友链卡片 DOM/高度/字号（全由 home.css + patch_home_blocks.py 负责）。
-     加载：由主题入口在主页注入，window.site.onPageReady 注册初始化函数。
      ============================================================================ */
 
   window.site = window.site || {};
@@ -18,7 +20,8 @@
 
   /* ---- 1. 友链（friends）-------------------------------------------------
      头像、handle 和描述由 scripts/patch_home_blocks.py 在构建期写入 HTML；
-     运行时只由 home.css 负责布局和样式。 */
+     运行时不处理（头像 img 加载失败由 onerror="this.remove()" 内联处理，
+     露出首字母占位 span）。 */
 
   /* ---- 2. GitHub 贡献图 --------------------------------------------------
      两步渐进：1) 静态 JSON（本地面板，always）→ 立即渲染；2) CORS 代理实时
@@ -230,7 +233,7 @@
       container.innerHTML = "";
       container.appendChild(shell);
       container.setAttribute("data-ghc-state", "ready");
-      bindContributionTooltips(shell);
+      window.site.bindTooltips(shell, ".ContributionCalendar-day[title]", "ghc-tooltip");
     }
 
     /* ---- Step 1: 静态 JSON（本地，极快，始终兜底）---- */
@@ -263,41 +266,9 @@
       .catch(function () { /* 超时或失败 → 静态 JSON 已展示，无操作 */ });
   }
 
-  // 贡献图由 fetch 回调动态渲染，content.tooltips 的初始化扫描已结束，
-  // 这里手动按同一套机制（Material tooltip2）为每个格子补绑 tooltip：
-  //   - DOM 与 .md-tooltip2[role=tooltip] 完全一致，复用主题已加载的 CSS；
-  //   - 激活时写入 --md-tooltip-host-x/y（格子页面坐标）与 --md-tooltip-x/y
-  //     （role=tooltip 偏移：水平居中、下方 8px，对应 Material 的“恒下方”），
-  //     再切 --active 触发出场动画（上滑 + 淡入）；
-  //   - 水平 clamp（规避视口裁切）与出入场过渡全部交给 CSS，不再手写定位。
-  function bindContributionTooltips(root) {
-    root.querySelectorAll(".ContributionCalendar-day[title]").forEach(function (cell) {
-      var text = cell.title;
-      cell.removeAttribute("title");
-      var inner = htmlEl("div", { class: "md-tooltip2__inner md-typeset" }, text);
-      var tip = htmlEl("div", { class: "md-tooltip2 ghc-tooltip", role: "tooltip" });
-      tip.appendChild(inner);
-      tip.style.setProperty("--md-tooltip-tail", "0px");
-      document.body.appendChild(tip);
-
-      function show() {
-        var r = cell.getBoundingClientRect();
-        tip.style.setProperty("--md-tooltip-host-x", (r.left + window.scrollX) + "px");
-        tip.style.setProperty("--md-tooltip-host-y", (r.top + window.scrollY) + "px");
-        tip.style.setProperty("--md-tooltip-x", (r.width / 2) + "px");
-        tip.style.setProperty("--md-tooltip-y", -(8 + inner.offsetHeight) + "px");
-        tip.style.setProperty("--md-tooltip-width", inner.offsetWidth + "px");
-        tip.classList.add("md-tooltip2--top");
-        tip.classList.add("md-tooltip2--active");
-      }
-      function hide() { tip.classList.remove("md-tooltip2--active"); }
-
-      cell.addEventListener("mouseenter", show);
-      cell.addEventListener("mouseleave", hide);
-      cell.addEventListener("touchstart", show, { passive: true });
-      cell.addEventListener("touchend", hide, { passive: true });
-    });
-  }
+  // 贡献图 tooltip：复用 site.js 的通用 bindTooltips（机制与主题 Material
+  // tooltip2 完全一致），fetch 回调内手动补绑——动态创建的 DOM 晚于主题
+  // 原生 tooltip 扫描（onPageReady 经 setTimeout(0) 异步执行）。
 
   // ---- 3. 终端打字机 --------------------------------------------------
   // 终端窗口(.home-terminal)的逐字敲入动画 + 简易命令解析 + 隐藏输入。

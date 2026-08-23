@@ -128,29 +128,21 @@
     if (!img || img.dataset.lqipTimer) return;
     img.dataset.lqipTimer = String(setTimeout(function () {
       img.dataset.lqipTimer = "";
-      // 头像失败时回退到首字母占位；正文则保留 preview 并结束模糊状态。
-      if (img.closest && img.closest(".home-friend__avatar")) img.remove();
-      else revealLqip(img);
+      revealLqip(img);
     }, LQIP_MAX_WAIT));
   }
 
   function initLqip(root) {
     var scope = root || document;
-    var imgs = scope.querySelectorAll("img.lqip, img[data-fullsrc], .home-friend__avatar img");
+    var imgs = scope.querySelectorAll("img.lqip, img[data-fullsrc]");
     for (var i = 0; i < imgs.length; i++) {
       (function (img) {
         scheduleLqipTimeout(img);
-        // 头像没有 data-fullsrc，由这里接管；complete 覆盖缓存图片
-        // 在监听器注册前已经完成加载的情况。
         if (img.hasAttribute("data-fullsrc")) return;
         img.addEventListener("load", function () { revealLqip(img); }, { once: true });
-        img.addEventListener("error", function () {
-          if (img.closest && img.closest(".home-friend__avatar")) img.remove();
-          else revealLqip(img);
-        }, { once: true });
+        img.addEventListener("error", function () { revealLqip(img); }, { once: true });
         if (img.complete) {
           if (img.naturalWidth > 0) revealLqip(img);
-          else if (img.closest && img.closest(".home-friend__avatar")) img.remove();
         }
       })(imgs[i]);
     }
@@ -177,6 +169,7 @@
 
   window.site.onPageReady = onPageReady;
   window.site.htmlEl = htmlEl;
+  window.site.bindTooltips = bindTooltips;
   window.site.theme = {
     get mode() { return themeMode(); },
     subscribe: function (fn) {
@@ -298,6 +291,59 @@ function initLqipBlur(root) {
   }
 }
 
+  // ---- Material tooltip2 绑定（通用，全站共享）----
+  // 贡献图格子、PDF 工具栏按钮等 [title] 元素由 JS 在运行时动态创建，
+  // 晚于主题原生 tooltip 扫描（content.tooltips 在 document$ 上同步触发，
+  // 而 onPageReady 经 setTimeout(0) 异步执行），因此需要手动补绑。
+  // 机制与主题 Ye() 完全一致：移除 title、创建 .md-tooltip2[role=tooltip]
+  // 挂到 body，hover/touch 时写入 --md-tooltip-host-x/y 等定位 CSS 变量，
+  // 切 --md-tooltip2--top（恒上方）+ --active 触发出场动画。
+  function bindTooltips(root, selector, tipClass) {
+    var scope = root || document;
+    var sel = selector || "[title]";
+    var cls = tipClass ? " " + tipClass : "";
+    var nodes = scope.querySelectorAll(sel);
+    for (var i = 0; i < nodes.length; i++) {
+      (function (el) {
+        if (el.dataset.siteTooltip) return;
+        el.dataset.siteTooltip = "1";
+        var text = el.getAttribute("title");
+        if (!text) return;
+        el.removeAttribute("title");
+        var inner = htmlEl("div", { class: "md-tooltip2__inner md-typeset" }, text);
+        var tip = htmlEl("div", { class: "md-tooltip2" + cls, role: "tooltip" });
+        tip.appendChild(inner);
+        tip.style.setProperty("--md-tooltip-tail", "0px");
+        document.body.appendChild(tip);
+
+        function show() {
+          var r = el.getBoundingClientRect();
+          tip.style.setProperty("--md-tooltip-host-x", (r.left + window.scrollX) + "px");
+          tip.style.setProperty("--md-tooltip-host-y", (r.top + window.scrollY) + "px");
+          tip.style.setProperty("--md-tooltip-x", (r.width / 2) + "px");
+          tip.style.setProperty("--md-tooltip-y", -(8 + inner.offsetHeight) + "px");
+          tip.style.setProperty("--md-tooltip-width", inner.offsetWidth + "px");
+          tip.classList.add("md-tooltip2--top");
+          tip.classList.add("md-tooltip2--active");
+        }
+        function hide() { tip.classList.remove("md-tooltip2--active"); }
+
+        el.addEventListener("mouseenter", show);
+        el.addEventListener("mouseleave", hide);
+        el.addEventListener("touchstart", show, { passive: true });
+        el.addEventListener("touchend", hide, { passive: true });
+      })(nodes[i]);
+    }
+    return nodes.length;
+  }
+
+  // 换页时清除上一页残留在 body 的 tooltip（append 到 body 的，不受
+  // container.innerHTML="" 影响，instant 切页会累积）。动态组件（贡献图、PDF
+  // 工具栏）各自创建 tooltip，换页时由这里统一回收。
+  function purgeTooltips() {
+    document.querySelectorAll(".ghc-tooltip, .pdf-tooltip").forEach(function (t) { t.remove(); });
+  }
+
 
   installHeaderlinkFocusFix();
   initPageLifecycle();
@@ -308,4 +354,5 @@ function initLqipBlur(root) {
   window.site.onPageReady(initTocFade);
   initParallaxGrid();
   window.site.onPageReady(initGiscus);
+  window.site.onPageReady(purgeTooltips);
 })();
