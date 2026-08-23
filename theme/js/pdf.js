@@ -9,7 +9,12 @@
 
   function isIOS() {
     var ua = navigator.userAgent;
-    return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    return /iPad|iPhone|iPod/.test(ua)
+      || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  }
+
+  function isAndroid() {
+    return /Android/.test(navigator.userAgent);
   }
 
   function formatSize(bytes) {
@@ -44,12 +49,15 @@
     // 工具栏按钮由 JS 动态创建，晚于主题原生 tooltip 扫描，手动补绑。
     window.site.bindTooltips(toolbar, ".pdf-viewer-action[title]", "pdf-tooltip");
 
-    // iOS 提示
-    if (isIOS()) {
-      var hint = htmlEl("div", { class: "pdf-viewer-ios-hint" });
-      var hintText = htmlEl("span", { class: "pdf-viewer-ios-hint__text" });
-      hintText.textContent = "iOS 内嵌预览受限，建议点击上方「在新标签页打开」查看完整 PDF。";
-      var closeBtn = htmlEl("button", { class: "pdf-viewer-ios-hint__close", type: "button", "aria-label": "关闭提示" });
+    // 移动端提示（iOS / Android 浏览器均不支持 iframe 内嵌 PDF 渲染）
+    var mobileHint = isIOS() ? "iOS Safari 内嵌预览受限，建议点击上方「在新标签页打开」查看完整 PDF。"
+      : isAndroid() ? "Android 浏览器可能不支持内嵌 PDF，建议点击右上方「下载」按钮保存后查看。"
+      : null;
+    if (mobileHint) {
+      var hint = htmlEl("div", { class: "pdf-viewer-mobile-hint" });
+      var hintText = htmlEl("span", { class: "pdf-viewer-mobile-hint__text" });
+      hintText.textContent = mobileHint;
+      var closeBtn = htmlEl("button", { class: "pdf-viewer-mobile-hint__close", type: "button", "aria-label": "关闭提示" });
       closeBtn.innerHTML = SVG_CLOSE;
       closeBtn.addEventListener("click", function () { hint.remove(); });
       hint.append(hintText, closeBtn);
