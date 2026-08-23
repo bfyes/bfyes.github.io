@@ -760,7 +760,7 @@ body.grid-off-active::before {
   background: rgba(255, 255, 255, 0.12);
 }
 
-.pdf-viewer-ios-hint {
+.pdf-viewer-mobile-hint {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -772,11 +772,12 @@ body.grid-off-active::before {
   line-height: 1.4;
 }
 
-.pdf-viewer-ios-hint__text {
+.pdf-viewer-mobile-hint__text {
   flex: 1 1 auto;
+  overflow-wrap: anywhere;
 }
 
-.pdf-viewer-ios-hint__close {
+.pdf-viewer-mobile-hint__close {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
@@ -791,7 +792,7 @@ body.grid-off-active::before {
   cursor: pointer;
 }
 
-.pdf-viewer-ios-hint__close:hover {
+.pdf-viewer-mobile-hint__close:hover {
   color: var(--md-default-fg-color);
   background: var(--md-default-fg-color--lightest);
 }
