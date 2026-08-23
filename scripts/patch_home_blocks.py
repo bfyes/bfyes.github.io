@@ -51,12 +51,16 @@ def github_avatar_url(github: str) -> str:
 
 
 def render_avatar(name: str, github: str) -> str:
-    """构建头像 span：首字母占位 + 叠加 GitHub 头像 img（加载失败由 onerror 移除，露出首字母）。"""
+    """构建头像 span：首字母占位 + 叠加 GitHub 头像 img。
+
+    img 初始 opacity:0（不可见，首字母露出）；加载完成后 onload 设 opacity:1
+    带 blur-up 过渡淡入；加载失败 onerror 移除 img，首字母保持。"""
     initials = html.escape(friend_initials(name, github))
     src = github_avatar_url(github)
     img = (
         f'<img src="{html.escape(src, quote=True)}" alt="" width="96" height="96" '
-        f'class="lqip" '
+        f'class="lqip" style="opacity:0" '
+        f'onload="this.style.opacity=1" '
         f'onerror="this.remove()">'
         if src
         else ""

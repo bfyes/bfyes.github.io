@@ -150,7 +150,7 @@ extra_javascript = [
     "theme/js/highlight.js",
     "theme/js/home.js",
     # "theme/js/attractor.js",  # 动态线条背景难调试，暂时不用
-    "theme/js/pdf-viewer.js",
+    "theme/js/pdf.js",
 ]
 
 # --------------------------------------------------------------------------

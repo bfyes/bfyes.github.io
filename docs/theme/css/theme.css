@@ -688,100 +688,6 @@ body.grid-off-active::before {
   display: none;
 }
 
-.pdf-viewer-canvases {
-  display: block;
-  height: 100%;
-  overflow: auto;
-  padding: 12px;
-  background: var(--md-code-bg-color);
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-x pan-y;
-}
-
-.pdf-viewer-canvases[hidden] {
-  display: none;
-}
-
-.pdf-viewer-page-wrap {
-  width: min(100%, 54rem);
-  margin: 0 auto 12px;
-  background: var(--pdf-page-bg);
-  box-shadow: var(--shadow-sm);
-}
-
-.pdf-viewer-page-wrap:last-child {
-  margin-bottom: 0;
-}
-
-.pdf-viewer-canvas {
-  display: block;
-  width: 100%;
-  height: auto;
-  background: #fff;
-}
-
-.pdf-viewer-external {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  padding: 1.2rem;
-  background: var(--md-default-bg-color);
-  text-align: center;
-}
-
-.pdf-viewer-external[hidden] {
-  display: none;
-}
-
-.pdf-viewer-external__title {
-  color: var(--md-typeset-color);
-  font-size: var(--font-ui);
-  font-weight: 600;
-}
-
-.pdf-viewer-external__text {
-  color: var(--md-default-fg-color--light);
-  font-size: var(--font-ui-sm);
-}
-
-.pdf-viewer-external__button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  min-height: 2rem;
-  padding: 0 0.75rem;
-  border: 1px solid var(--md-accent-fg-color);
-  border-radius: var(--radius-md);
-  background: var(--active-nav-bg);
-  color: var(--md-accent-fg-color);
-  font-size: var(--font-ui-sm);
-  font-weight: 600;
-}
-
-.pdf-viewer-external__button:hover {
-  background: color-mix(in srgb, var(--md-accent-fg-color) 9%, var(--md-default-bg-color));
-}
-
-/* ---- 加载覆盖层 ---- */
-.pdf-loader-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: var(--md-default-bg-color);
-  z-index: 2;
-  transition: opacity 0.4s ease;
-  padding: 24px;
-}
-
 .pdf-loader-dot {
   width: 0.42rem;
   height: 0.42rem;
@@ -801,42 +707,40 @@ body.grid-off-active::before {
   50%, 100% { opacity: 0; }
 }
 
-.pdf-loader-percent {
-  color: var(--md-default-fg-color);
-  font-family: var(--font-mono);
-  font-size: var(--font-ui-sm);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.pdf-loader-bar-track {
-  width: min(320px, 80%);
-  height: 6px;
-  background: var(--md-default-fg-color--lightest);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-}
-
-.pdf-loader-bar-fill {
-  height: 100%;
-  width: 0%;
-  background: var(--md-accent-fg-color);
-  border-radius: var(--radius-sm);
-  transition: width 0.15s linear;
-}
-
-.pdf-loader-detail {
+.pdf-viewer-ios-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
   font-size: var(--font-ui-sm);
   color: var(--md-default-fg-color--light);
-  font-family: var(--font-mono);
+  background: color-mix(in srgb, var(--md-accent-fg-color) 6%, var(--md-default-bg-color));
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  line-height: 1.4;
 }
 
-[data-md-color-scheme="slate"] .pdf-loader-overlay {
-  background: var(--md-default-bg-color);
+.pdf-viewer-ios-hint__text {
+  flex: 1 1 auto;
 }
 
-[data-md-color-scheme="slate"] .pdf-loader-bar-track {
-  background: rgba(255, 255, 255, 0.12);
+.pdf-viewer-ios-hint__close {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--md-default-fg-color--light);
+  cursor: pointer;
+}
+
+.pdf-viewer-ios-hint__close:hover {
+  color: var(--md-default-fg-color);
+  background: var(--md-default-fg-color--lightest);
 }
 
 [data-md-color-scheme="slate"] .pdf-viewer-toolbar,
@@ -845,7 +749,7 @@ body.grid-off-active::before {
   border-color: rgba(255, 255, 255, 0.08);
 }
 
-[data-md-color-scheme="slate"] :is(.pdf-viewer, .pdf-viewer-native-wrap, .pdf-viewer-canvases) {
+[data-md-color-scheme="slate"] :is(.pdf-viewer, .pdf-viewer-native-wrap) {
   background: var(--md-code-bg-color);
 }
 
@@ -861,8 +765,7 @@ body.grid-off-active::before {
    基础规则的 1s 过渡，blur → 0 才做动画，加载失败或超过 15 秒也会收尾。
    尺寸不变（不用 scale 放大），避免与 width/height 占位冲突。
    ============================================================================ */
-img[data-fullsrc],
-.home-friend__avatar img {
+img[data-fullsrc] {
   filter: blur(0);
   transition: filter 1s ease;
 }

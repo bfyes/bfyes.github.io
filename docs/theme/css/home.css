@@ -468,27 +468,6 @@ body.rainbow-active .md-sidebar__inner {
   text-decoration: none;
 }
 
-/* ============================================================================
-   吸引子背景（#hero）
-   ----------------------------------------------------------------------------
-   fixed 全屏 WebGL canvas，z-index: 0 铺在主页内容之下。
-   JS (attractor.js) 在主页初始化，非主页隐藏。
-   ============================================================================ */
-#hero {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-}
-#hero canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
 /* ---- 主页覆盖 theme.css 的全站规则 ---- */
 /* 主页去掉内容区内边距（65rem 全宽）；其他页面保持 padding 1rem（正文 63rem）*/
 body.home-active .md-content__inner { padding-inline: 0; }
@@ -646,6 +625,7 @@ body.home-active .md-typeset h1 > .headerlink { display: none; }
   /* Keep the image aligned with the circular avatar frame, including while
      Safari renders a filtered (blurred) layer. */
   border-radius: 50%;
+  transition: filter 1s ease, opacity 0.3s ease;
 }
 
 /* 文字列：min-width:0 让 flex 子元素能收缩，防止长文本撑破卡片。
