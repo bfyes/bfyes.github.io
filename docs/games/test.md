@@ -256,7 +256,7 @@ curl -fsSL "https://example.com/api?name=${name}" -o response.json
 
 ## 脚注
 
-这是一段带脚注的文字[^1]，还有另一个脚注[^long-note]。
+这是一段带脚注的文字[^1]，还有另一个脚注[^long-note]，带列表的脚注[^note-list]。
 
 [^1]: 这是第一个脚注的内容。
 
@@ -264,6 +264,12 @@ curl -fsSL "https://example.com/api?name=${name}" -o response.json
     这是一个较长的脚注，跨多行书写。
 
     用来检查脚注区域的排版和缩进。
+
+[^note-list]:
+    这是脚注说明。
+
+    - 列表项一；
+    - 列表项二。
 
 ## 行内代码在标题中
 

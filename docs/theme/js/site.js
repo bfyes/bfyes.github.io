@@ -291,6 +291,49 @@ function initLqipBlur(root) {
   }
 }
 
+  // ---- 脚注回跳链接位置修正 ----
+  // Python-Markdown 在脚注最后一块内容是列表时，会生成：
+  // <ul>...</ul><p><a class="footnote-backref">...</a></p>
+  // 这个 <p> 是块级元素，导致回跳链接额外占一行。
+  // 这里把它移动到最后一个列表项末尾，使行为与普通文字脚注一致。
+  function lastFootnoteListTarget(list) {
+    var node = list;
+    while (node) {
+      var child = node.lastElementChild;
+      if (!child) return node;
+      if (child.tagName === "UL" || child.tagName === "OL" || child.tagName === "LI") {
+        node = child;
+        continue;
+      }
+      if (child.tagName === "P") return child;
+      return node;
+    }
+    return null;
+  }
+
+  function normalizeFootnoteBackrefs(root) {
+    var scope = root || document;
+    var items = scope.querySelectorAll(".footnote ol > li");
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var paragraph = item.lastElementChild;
+      if (!paragraph || paragraph.tagName !== "P") continue;
+
+      var link = paragraph.firstElementChild;
+      if (!link || !link.classList.contains("footnote-backref") || paragraph.children.length !== 1) continue;
+
+      var list = paragraph.previousElementSibling;
+      if (!list || (list.tagName !== "UL" && list.tagName !== "OL")) continue;
+
+      var target = lastFootnoteListTarget(list);
+      if (!target) continue;
+
+      target.appendChild(document.createTextNode("\u00A0"));
+      target.appendChild(link);
+      paragraph.remove();
+    }
+  }
+
   // ---- Material tooltip2 绑定（通用，全站共享）----
   // 贡献图格子、PDF 工具栏按钮等 [title] 元素由 JS 在运行时动态创建，
   // 晚于主题原生 tooltip 扫描（content.tooltips 在 document$ 上同步触发，
@@ -347,6 +390,7 @@ function initLqipBlur(root) {
 
   installHeaderlinkFocusFix();
   initPageLifecycle();
+  window.site.onPageReady(normalizeFootnoteBackrefs);
   window.site.onPageReady(syncPageState);
   window.site.onPageReady(upgradeImages);
   window.site.onPageReady(initLqip);
