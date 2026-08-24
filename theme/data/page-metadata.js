@@ -54,7 +54,7 @@ window.__PAGE_META__ = {
     "updated": "2026-07-28T12:37:20+08:00"
   },
   "/study/ctf/": {
-    "updated": "2026-08-24T20:50:10.280685+08:00"
+    "updated": "2026-08-24T20:55:04.097092+08:00"
   },
   "/study/ctf/lab0/": {
     "updated": "2026-07-16T13:01:30+08:00"
@@ -80,10 +80,10 @@ window.__PAGE_META__ = {
   "/study/ctf/lab2/misc/": {
     "updated": "2026-08-07T15:01:54+08:00"
   },
-  "/study/ctf/lab3_crypto/crypto/": {
+  "/study/ctf/lab3/crypto/": {
     "updated": "2026-08-07T15:01:54+08:00"
   },
-  "/study/ctf/lab3_misc/misc/": {
+  "/study/ctf/lab3/misc/": {
     "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/fds/": {
