@@ -141,7 +141,7 @@ $$
 
 ## 代码
 
-行内代码 `#!python squares = [x ** 2 for x in data]`，`#!c #define MAX_LEN 256`，`#!asm assume cs:code, ds:data`，`#!asm repne scasb`，`#!asm les di, dword ptr [bp+2]`，`#!bash cd ~/bfyes`，`#!makefile $(CC) $(CFLAGS) -o hello hello.c`，`int main() (不指定语言)`以及代码块：
+行内代码 `#!python squares = [x ** 2 for x in data]`，`#!asm assume cs:code, ds:data`，`#!asm repne scasb`，`#!asm les di, dword ptr [bp+2]`，`#!bash cd ~/bfyes`，`#!makefile $(CC) $(CFLAGS) -o hello hello.c`，`#!c int main()`，`int main()`，以及代码块：
 
 ```c
 #include <stdio.h>
