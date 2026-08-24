@@ -3397,15 +3397,15 @@
 
 
 <h1 id="07-12-下午性能分析技术基础profiling">07-12 下午：性能分析技术基础（Profiling）<a class="headerlink" href="#07-12-下午性能分析技术基础profiling" title="Permanent link"></a></h1>
-<p>性能工具给出的是迹象，不是结论。一个热点的高 cache miss、低 IPC 或长时间等待，必须回到循环访问、线程分工和数据位置解释；优化后的同一组测量再决定假设是否成立。</p>
+<p>性能工具给出的是迹象，不是结论。一个热点<sup id="fnref:hotspot"><a class="footnote-ref" href="#fn:hotspot">1</a></sup>的高 cache miss、低 IPC<sup id="fnref:ipc"><a class="footnote-ref" href="#fn:ipc">2</a></sup> 或长时间等待，必须回到循环访问、线程分工和数据位置解释；优化后的同一组测量再决定假设是否成立。</p>
 <h2 id="性能测量">性能测量<a class="headerlink" href="#性能测量" title="Permanent link"></a></h2>
 <p>性能数据必须有问题定义。要比较两个版本，至少固定输入规模、数据类型、编译器和优化选项、线程数、CPU 绑核、NUMA 策略、是否包含初始化/I/O。首次运行可能受动态链接、页面分配、缓存预热影响，因此应多次测量，报告中位数/分布，而不是只挑一次最好结果。</p>
 <details class="note" open="open">
 <summary>运行时间的构成</summary>
 <p>单周期 CPU 里，每个指令都是固定的一周期，性能很好算：指令数 × 时钟周期。现代处理器不讲这套，但理解性能仍是在回答同一类问题。一个程序消耗的（处理器）时间大致可以拆成：</p>
-<div class="arithmatex">\[
-\text{时间} \approx \text{指令数}\times \text{CPI}\times \text{时钟周期长}
-\]</div>
+<p>$$
+\text{时间} \approx \text{指令数}\times \text{CPI<sup id="fnref:cpi"><a class="footnote-ref" href="#fn:cpi">3</a></sup>}\times \text{时钟周期长}</p>
+<p>$$</p>
 <p>其中 <strong>CPI</strong>（cycles per instruction）是平均每一条指令花几个时钟周期——理想流水线接近 1，但 cache miss、分支预测错误、依赖等待都会让它远大于 1。反过来看 <strong>IPC</strong>（instructions per cycle）= <span class="arithmatex">\(1/\text{CPI}\)</span>，表示每个时钟完成几条指令。</p>
 <p>所以当你看到 <code>perf stat</code> 里 <code>IPC = 0.65</code>，意思是每个时钟平均只完成 0.65 条指令——处理器有大量周期在<strong>等待</strong>（多半是等内存或等依赖），而不是在算。等内存往往表现为 <code>cache-misses</code> 高、<code>stalled cycles</code> 高。读这些数字的顺序是：先看总时间，再拆出指令数与 CPI，再用 cache/分支事件定位等待具体等在哪。</p>
 </details>
@@ -3418,7 +3418,7 @@
 kernel(a, b, c, n);
 auto end = std::chrono::steady_clock::now();
 double seconds = std::chrono::duration&lt;double&gt;(end - begin).count();</code></pre>
-<p>对矩阵乘法，常把工作量写作约 <span class="arithmatex">\(2N^3\)</span> FLOP（一次乘加计为两次浮点操作），于是：</p>
+<p>对矩阵乘法，常把工作量写作约 <span class="arithmatex">\(2N^3\)</span> FLOP<sup id="fnref:flop"><a class="footnote-ref" href="#fn:flop">4</a></sup>（一次乘加计为两次浮点操作），于是：</p>
 <div class="arithmatex">\[
 \text{GFLOP/s}=\frac{2N^3}{\text{seconds}\times10^9}
 \]</div>
@@ -3433,10 +3433,10 @@ double seconds = std::chrono::duration&lt;double&gt;(end - begin).count();</code
 <h2 id="性能上限与-roofline">性能上限与 Roofline<a class="headerlink" href="#性能上限与-roofline" title="Permanent link"></a></h2>
 <p>CPU 的计算峰值由核心数、频率、每周期可发射的向量 FMA 数量和向量宽度决定；内存系统则有单个 socket、全部 socket 和不同访问模式下的带宽上限。用 microbenchmark 测这些上限，比直接引用产品宣传页更可信。</p>
 <p>程序实际性能受两条上界限制：计算峰值和内存带宽。定义<strong>运算强度</strong>：</p>
-<div class="arithmatex">\[
-I=\frac{\text{FLOPs}}{\text{DRAM bytes transferred}}
-\]</div>
-<p>则 <strong>Roofline</strong> 近似给出：</p>
+<p>$$
+I=\frac{\text{FLOPs<sup id="fnref:flops"><a class="footnote-ref" href="#fn:flops">5</a></sup>}}{\text{DRAM bytes transferred}}</p>
+<p>$$</p>
+<p>则 <strong>Roofline<sup id="fnref:roofline"><a class="footnote-ref" href="#fn:roofline">6</a></sup></strong> 近似给出：</p>
 <div class="arithmatex">\[
 P\le\min(P_{\mathrm{peak}}, B_{\mathrm{memory}}\times I)
 \]</div>
@@ -3444,13 +3444,13 @@ P\le\min(P_{\mathrm{peak}}, B_{\mathrm{memory}}\times I)
 <p>Roofline 还提醒我们区分第三种状态：程序既没有饱和带宽，也离计算屋顶很远，可能是并发度不足、依赖链太长或延迟没有被隐藏。Roofline 的作用是给下一步实验提出可检验的假设，而不是给程序贴上内存型/计算型的静态标签。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0712p/roofline-basics.png"><img width="817" height="460" class="lqip" alt="Roofline 的三种典型位置：带宽受限、计算受限，以及并发度不足导致的延迟受限。" src="../assets/0712p/roofline-basics.preview.jpg" data-fullsrc="../assets/0712p/roofline-basics.png" /></a></p>
 <p><em>图：斜线是带宽上限，水平线是计算峰值；落在两条屋顶下方很远的点还受并发度、依赖或控制流限制。</em></p>
-<p>几个实际 kernel 可以放回同一把尺子上：向量加、点积和 stencil 靠近带宽斜线，优化后的 GEMM 靠近计算屋顶。图中每个点都是测量值，Roofline 的用途正是让这个版本快了变成可检验的判断：它是少搬了数据、提升了运算强度，还是只是离机器上限还很远。</p>
+<p>几个实际 kernel 可以放回同一把尺子上：向量加、点积和 stencil 靠近带宽斜线，优化后的 GEMM<sup id="fnref:gemm"><a class="footnote-ref" href="#fn:gemm">7</a></sup> 靠近计算屋顶。图中每个点都是测量值，Roofline 的用途正是让这个版本快了变成可检验的判断：它是少搬了数据、提升了运算强度，还是只是离机器上限还很远。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0712p/roofline-measured-kernels.png"><img width="817" height="460" class="lqip" alt="课件将 daxpy、dot、stencil 和 GEMM 的实测点放到同一张 Roofline 图上。" src="../assets/0712p/roofline-measured-kernels.preview.jpg" data-fullsrc="../assets/0712p/roofline-measured-kernels.png" /></a></p>
 <p><em>图：同一台机器上，不同算子的性能上限由不同资源决定。</em></p>
 <p>以逐元素 <code>c[i] = a[i] + b[i]</code> 为例，<code>float</code> 数据每个元素至少读入 8 字节、写出 4 字节，只做一次加法，运算强度约为 <span class="arithmatex">\(1/12\)</span> FLOP/byte。即使 CPU 有很高的 FMA 峰值，这个循环也会很快碰到内存带宽屋顶。矩阵乘法则不同，一个读入 cache 的 A 或 B 元素会参与许多次乘加，随着 tile 增大，DRAM 上看到的字节数增长得远慢于 FLOP，点才可能向右移动。</p>
 <p>这也解释了同一段代码换更强 CPU 为何不一定快。如果新 CPU 的计算峰值翻倍、内存带宽几乎不变，带宽受限的点仍停在原来的斜线上；若优化把连续数组改成多次扫描，FLOP 数不变，字节数却增加，点会向左走。Roofline 不是在给程序贴标签，它要求每一次优化说清楚减少了什么搬运，或增加了哪一块数据的复用。</p>
 <h2 id="cpu-利用率与热点">CPU 利用率与热点<a class="headerlink" href="#cpu-利用率与热点" title="Permanent link"></a></h2>
-<p>CPU 利用率低可能是 I/O、网络、锁、页面缺失或负载不均；CPU 利用率高也可能只是忙于做无用工作。需要同时看热点、调用栈和硬件计数器。</p>
+<p>性能分析（profiling）<sup id="fnref:profiling"><a class="footnote-ref" href="#fn:profiling">8</a></sup>把时间、指令和硬件事件对应到具体代码。CPU 利用率低可能是 I/O、网络、锁、页面缺失或负载不均；CPU 利用率高也可能只是忙于做无用工作。需要同时看热点、调用栈和硬件计数器。</p>
 <p>Linux 上可先用：</p>
 <pre class="highlight"><code class="language-bash">perf stat ./matmul 4096
 perf record -g ./matmul 4096
@@ -3606,10 +3606,10 @@ perf report</code></pre>
 <p><em>图：一张表说明分块是否值得可由 <span class="arithmatex">\(8N^2\)</span> 与 L3 容量直接预判，不必等跑完再猜。</em></p>
 <p>B 未溢出 L3 时，<code>blocking</code> 反而略慢（2048 时为 3.71 对 3.98）；B 一超过 L3，<code>ikj</code> 因反复搬运 B 而降到 2.65、2.28，<code>blocked</code> 靠块内复用维持在 3.7 左右。分块是否值得取决于工作集能否放进对应层级，<code>$8N^2$</code> 这个数在运行前就能判断。</p>
 <p>packing 是把原矩阵的一块复制到按微内核访问顺序连续的缓冲区。它增加了一次复制，却能让后续内层循环连续 load，避免跨大步长和复杂边界判断。矩阵足够大、同一 packed 块被反复使用时，复制成本会被摊薄；很小的矩阵或只用一次的块，则可能得不偿失。许多高性能库把这层细节藏起来，理解它能帮助阅读 profiler：看到额外的 copy 函数，不应立刻把它当作无用开销。</p>
-<p>一条完整的优化轨迹也能说明先后次序：仅仅改循环顺序已得到约 <code>7.6x</code>，cache blocking 再得到约 <code>1.6x</code>；自动向量化、手写微内核和多核并行是在此基础上继续提高。访问布局要先于指令级微调，因为布局决定数据是否能被 cache 和带宽系统有效供给。</p>
+<p>一条完整的优化轨迹也能说明先后次序：仅仅改循环顺序已得到约 <code>7.6x</code>，cache blocking<sup id="fnref:cache-blocking"><a class="footnote-ref" href="#fn:cache-blocking">9</a></sup> 再得到约 <code>1.6x</code>；自动向量化<sup id="fnref:vectorization"><a class="footnote-ref" href="#fn:vectorization">10</a></sup>、手写微内核和多核并行是在此基础上继续提高。访问布局要先于指令级微调，因为布局决定数据是否能被 cache 和带宽系统有效供给。</p>
 <details class="note" open="open">
 <summary>为什么先改布局是有因果关系的顺序</summary>
-<p>一条 AVX-512 指令能在一个周期做很多 FMA，但再宽的计算单元也要先把数据从 DRAM 一路搬到寄存器。若程序本身在每个内层迭代都跨大步长访问，访存路径先被浪费掉，给再多的算术 lane 也没有用。先改循环次序/分块，是让已搬上来的数据被尽量复用；只有这一步之后，自动向量化和手写微内核才有足够多的局部数据可算。这不是规定动作的先后顺序，而是瓶颈决定优化点的自然结果。</p>
+<p>一条 AVX-512 指令能在一个周期做很多 FMA，但再宽的计算单元也要先把数据从 DRAM 一路搬到寄存器。若程序本身在每个内层迭代都跨大步长访问，访存路径先被浪费掉，给再多的算术 lane 也没有用。先改循环次序/分块，是让已搬上来的数据被尽量复用；只有这一步之后，自动向量化和手写微内核才有足够多的局部数据可算。顺序由瓶颈决定，不能把它当成固定教条。</p>
 </details>
 <h2 id="自动向量化与查看生成代码">自动向量化与查看生成代码<a class="headerlink" href="#自动向量化与查看生成代码" title="Permanent link"></a></h2>
 <p>当最内层循环连续、迭代独立、指针别名清楚时，编译器可把多个 <code>j</code> 合并成 SIMD 操作。对 Clang：</p>
@@ -3677,7 +3677,7 @@ for (int ii = 0; ii &lt; n; ii += BS) {
 numactl --cpunodebind=0 --membind=0 ./program
 numastat -p PID</code></pre>
 <p>绑定不应变成默认迷信。若任务本身需要跨 socket 共享数据，或调度环境已做了合理绑定，手工绑定未必更快；仍需测量。</p>
-<p>实测把 24 个线程固定在 socket 0 后，访问本地内存约为 <code>42.7 GFLOP/s</code>、平均加载延迟约 <code>230</code> cycles；把内存强制分配在远端节点后，性能约为 <code>31.9 GFLOP/s</code>、延迟约 <code>335</code> cycles。数值随机器改变，但本地性带来的方向性差异正是 NUMA 绑定要验证的东西。</p>
+<p>实测把 24 个线程固定在 socket 0 后，访问本地内存约为 <code>42.7 GFLOP/s</code>、平均加载延迟约 <code>230</code> cycles；把内存强制分配在远端节点后，性能约为 <code>31.9 GFLOP/s</code>、延迟约 <code>335</code> cycles。数值随机器改变，但本地性带来的方向性差异正是 NUMA 绑定<sup id="fnref:numa-binding"><a class="footnote-ref" href="#fn:numa-binding">11</a></sup>要验证的东西。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0712p/numa-measurement.png"><img width="817" height="460" class="lqip" alt="同一程序固定 CPU 后，本地与远端 DRAM 的测量结果差异。" src="../assets/0712p/numa-measurement.preview.jpg" data-fullsrc="../assets/0712p/numa-measurement.png" /></a></p>
 <p><em>图：固定线程位置后只改变页面位置，远端加载延迟上升、吞吐下降；具体数值只代表课件所测机器。</em></p>
 <div class="admonition tip">
@@ -3686,7 +3686,7 @@ numastat -p PID</code></pre>
 </div>
 <h2 id="计时边界与统计量">计时边界与统计量<a class="headerlink" href="#计时边界与统计量" title="Permanent link"></a></h2>
 <p>测量一个 kernel 时，计时器应夹住同一份工作：必要的预热之后开始计时，结束时确保 CPU 线程或 GPU stream 已完成，再读取时钟。把随机数据生成、首次页分配、JIT 编译或文件加载有选择地计入，会改变问题本身；报告必须写清边界。CPU 可用单调时钟，MPI 程序通常取所有 rank 中的最大耗时，因为作业完成由最慢 rank 决定；GPU 异步发射时应使用 CUDA event 或显式同步，不能只量 host 提交 kernel 的微小时间。</p>
-<p>单次运行容易受频率调节、后台负载、首次 cache cold start 和系统噪声影响。对相同输入运行多次，报告中位数或稳定区间，同时保存最小/最大值和线程绑定信息，才能判断一个 3% 的改动是否真实。优化中若校验被移出计时区，仍应在每次候选实现后运行；少做了计算得到的加速不是性能结果。</p>
+<p>单次运行容易受频率调节、后台负载、首次 cache cold start 和系统噪声影响。对相同输入运行多次，报告中位数或稳定区间这些统计量<sup id="fnref:statistics"><a class="footnote-ref" href="#fn:statistics">12</a></sup>，同时保存最小/最大值和线程绑定信息，才能判断一个 3% 的改动是否真实。优化中若校验被移出计时区，仍应在每次候选实现后运行；少做了计算得到的加速不是性能结果。</p>
 <h2 id="从事件到循环">从事件到循环<a class="headerlink" href="#从事件到循环" title="Permanent link"></a></h2>
 <p><code>perf stat</code> 的 IPC 是 retired instructions / cycles，不是 CPU 利用率。IPC 低可能来自 cache miss、分支错误、数据依赖或前端取指受限；IPC 高也可能只是在高效执行不重要的初始化。cache-misses 需要和访问次数、cache line 大小、运行时间一起解释。把计数器与采样 profiler 的热点函数、源码行和汇编对应，才能提出可证伪的假设：例如热点在 <code>B[k*n+j]</code> 且 LLC miss 高，才有理由尝试转置或 packing；改完再测同一事件集和总时间。</p>
 <p>性能上限也可由实际字节流量反查。若一个 SAXPY 每元素读 <code>x</code>、读写 <code>y</code>，理想情况下约搬运 12 字节并做 2 FLOP，运算强度约为 <code>1/6 FLOP/byte</code>；在 200 GB/s 的有效带宽下，即使峰值算力是数 TFLOPS，Roofline 上限也只有约 33 GFLOPS。这个估算的价值在于排除不可能：当实测已接近该数，不应期待把 FMA 再调快十倍。</p>
@@ -3699,6 +3699,47 @@ numastat -p PID</code></pre>
 <p>尤其要分清一个 kernel 的快和程序整体的快。例如 MoE 的专家 GEMM 通过 packing 后可能更快，但 packing、路由索引、结果 scatter 和线程同步也要计入端到端时间；CUDA kernel 的 event 时间也不能代替包含 host-device 传输的服务延迟。局部微基准用于解释某个假设，端到端计时用于判断这项修改是否值得保留，两者缺一不可。</p>
 <p>端到端评测会把初始化、主程序、MPI、CUDA runtime 和必要同步放在同一计时范围内。CPU 侧可用 <code>perf</code> 观察完整 baseline，再分析热点 rank 和线程活动；GPU 侧的主机 profiler 只能显示调用栈与等待，具体 kernel 还要交给 Nsight Systems、Nsight Compute。单独一段循环或一个 kernel 的加速比不能替代完整正确性和端到端时间。</p>
 <p>优化记录中保留命令、机器信息、git 版本、输入尺寸和正确性结果并不繁琐。性能会受 CPU 频率、后台负载、NUMA 放置和库版本影响；缺少这些条件，后来即使看到一组漂亮的 GFLOP/s，也无法知道它与哪一个版本可比。课上 Measure, locate, hypothesize, change one thing 的顺序，最终是为了让每次改动都能被证据支持或推翻。</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:hotspot">
+<p>热点。运行时间或资源消耗占比异常高的代码区域。&#160;<a class="footnote-backref" href="#fnref:hotspot" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:ipc">
+<p>instructions per cycle，每周期平均完成指令数。&#160;<a class="footnote-backref" href="#fnref:ipc" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:cpi">
+<p>cycles per instruction，每条指令平均占用周期数。&#160;<a class="footnote-backref" href="#fnref:cpi" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:flop">
+<p>floating point operation，一次浮点运算。&#160;<a class="footnote-backref" href="#fnref:flop" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:flops">
+<p>floating point operations per second，每秒浮点运算次数。&#160;<a class="footnote-backref" href="#fnref:flops" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:roofline">
+<p>Roofline 模型。结合算力上限和内存带宽上限估计性能。&#160;<a class="footnote-backref" href="#fnref:roofline" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:gemm">
+<p>general matrix multiply，通用矩阵乘法。&#160;<a class="footnote-backref" href="#fnref:gemm" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:profiling">
+<p>profiling，性能分析。测量程序运行特征，找出时间和资源消耗来源。&#160;<a class="footnote-backref" href="#fnref:profiling" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:cache-blocking">
+<p>缓存分块。把循环访问的数据切成能留在缓存中的小块。&#160;<a class="footnote-backref" href="#fnref:cache-blocking" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:vectorization">
+<p>向量化。把多个元素的操作映射为 SIMD 指令。&#160;<a class="footnote-backref" href="#fnref:vectorization" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:numa-binding">
+<p>NUMA 绑定。把线程和内存固定在同一 NUMA 节点附近，减少远端访问。&#160;<a class="footnote-backref" href="#fnref:numa-binding" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+<li id="fn:statistics">
+<p>statistics，统计量。从多次测量中汇总出的数值，例如中位数、均值、最小值和最大值。&#160;<a class="footnote-backref" href="#fnref:statistics" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

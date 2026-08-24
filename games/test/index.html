@@ -3955,7 +3955,7 @@ curl -fsSL "https://example.com/api?name=${name}" -o response.json</code></pre>
 <pre class="highlight"><code class="language-bash">echo "expanded"</code></pre>
 </details>
 <h2 id="脚注">脚注<a class="headerlink" href="#脚注" title="Permanent link"></a></h2>
-<p>这是一段带脚注的文字<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>，还有另一个脚注<sup id="fnref:long-note"><a class="footnote-ref" href="#fn:long-note">2</a></sup>。</p>
+<p>这是一段带脚注的文字<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>，还有另一个脚注<sup id="fnref:long-note"><a class="footnote-ref" href="#fn:long-note">2</a></sup>，带列表的脚注<sup id="fnref:note-list"><a class="footnote-ref" href="#fn:note-list">3</a></sup>。</p>
 <h2 id="行内代码在标题中">行内代码在标题中<a class="headerlink" href="#行内代码在标题中" title="Permanent link"></a></h2>
 <h3 id="标题包含-inline-code-的测试">标题包含 <code>inline code</code> 的测试<a class="headerlink" href="#标题包含-inline-code-的测试" title="Permanent link"></a></h3>
 <h2 id="长行代码横向滚动">长行代码横向滚动<a class="headerlink" href="#长行代码横向滚动" title="Permanent link"></a></h2>
@@ -4036,6 +4036,14 @@ static const char *very_long_variable_name_that_exceeds_the_normal_line_width = 
 <li id="fn:long-note">
 <p>这是一个较长的脚注，跨多行书写。</p>
 <p>用来检查脚注区域的排版和缩进。&#160;<a class="footnote-backref" href="#fnref:long-note" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:note-list">
+<p>这是脚注说明。</p>
+<ul>
+<li>列表项一；</li>
+<li>列表项二。</li>
+</ul>
+<p><a class="footnote-backref" href="#fnref:note-list" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

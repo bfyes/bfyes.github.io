@@ -3485,7 +3485,7 @@
 
 
 <h1 id="07-13-下午cuda-编程基础">07-13 下午：CUDA 编程基础<a class="headerlink" href="#07-13-下午cuda-编程基础" title="Permanent link"></a></h1>
-<p>CUDA 把 CPU 称为 host，把 NVIDIA GPU 称为 device。host 负责组织数据和发射 kernel；device 上有大量线程执行同一段 kernel 代码。写 CUDA 的关键在于把问题拆成大量相似工作，让线程、数据和内存层级相匹配，而不是简单地把普通 C 循环搬到 GPU。</p>
+<p>CUDA<sup id="fnref:cuda"><a class="footnote-ref" href="#fn:cuda">1</a></sup> 把 CPU 称为 host<sup id="fnref:host"><a class="footnote-ref" href="#fn:host">2</a></sup>，把 NVIDIA GPU 称为 device<sup id="fnref:device"><a class="footnote-ref" href="#fn:device">3</a></sup>。host 负责组织数据和发射 kernel<sup id="fnref:kernel"><a class="footnote-ref" href="#fn:kernel">4</a></sup>；device 上有大量线程<sup id="fnref:thread"><a class="footnote-ref" href="#fn:thread">5</a></sup>执行同一段 kernel 代码。写 CUDA 的关键在于把问题拆成大量相似工作，让线程、数据和内存层级相匹配，而不是简单地把普通 C 循环搬到 GPU。</p>
 <h2 id="cuda-程序流程">CUDA 程序流程<a class="headerlink" href="#cuda-程序流程" title="Permanent link"></a></h2>
 <p>最小流程是：host 分配显存，把输入从主存复制到显存，发射 kernel，等待必要的同步，再把结果复制回主存并释放资源。</p>
 <pre class="highlight"><code class="language-cpp">float *d_x = nullptr, *d_y = nullptr;
@@ -3505,9 +3505,9 @@ cudaFree(d_y);</code></pre>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/cuda-program-flow.jpg"><img width="1280" height="720" class="lqip" alt="课件给出一个完整的 vector add CUDA 程序：cudaMalloc 分配、cudaMemcpy 上传、kernel&lt;&lt;&lt;...&gt;&gt;&gt; 发射、cudaDeviceSynchronize 与回拷、cudaFree 释放，完整走一遍 host-device 生命周期。" src="../assets/0713p/cuda-program-flow.preview.jpg" data-fullsrc="../assets/0713p/cuda-program-flow.jpg" /></a></p>
 <p><em>图：CUDA 的最小流程——分配、上传、launch、同步/回拷、释放；中间结果应尽量留在 device。</em></p>
 <h2 id="gridblock-与-thread">Grid、Block 与 Thread<a class="headerlink" href="#gridblock-与-thread" title="Permanent link"></a></h2>
-<p><code>__global__</code> 标记一个由 host 发射、在 GPU 上执行的 kernel。线程组织成 block，block 组织成 grid。三种内建索引给出线程位置：<code>threadIdx</code> 是 block 内坐标，<code>blockIdx</code> 是 block 坐标，<code>blockDim</code> 是 block 尺寸。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0713p/hardware-vs-cuda-model.jpg"><img width="1280" height="720" class="lqip" alt="课件把硬件架构（SM、Streaming Multiprocessor、CUDA Core）与 CUDA 编程模型（Grid、Block、Thread）并列对照，说明硬件单元与逻辑层级不是一一对应的同一套东西。" src="../assets/0713p/hardware-vs-cuda-model.preview.jpg" data-fullsrc="../assets/0713p/hardware-vs-cuda-model.jpg" /></a></p>
-<p><em>图：SM 是硬件里的执行单元，Grid/Block/Thread 是程序里的逻辑组织；前者由硬件调度，后者由程序员用索引描述。</em></p>
+<p><code>__global__</code> 标记一个由 host 发射、在 GPU 上执行的 kernel。线程组织成 block<sup id="fnref:block"><a class="footnote-ref" href="#fn:block">6</a></sup>，block 组织成 grid<sup id="fnref:grid"><a class="footnote-ref" href="#fn:grid">7</a></sup>。三种内建索引给出线程位置：<code>threadIdx</code> 是 block 内坐标，<code>blockIdx</code> 是 block 坐标，<code>blockDim</code> 是 block 尺寸。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0713p/hardware-vs-cuda-model.jpg"><img width="1280" height="720" class="lqip" alt="课件把硬件架构（SM、Streaming Multiprocessor、CUDA Core）与 CUDA 编程模型（Grid、Block、Thread）并列对照，说明硬件单元与逻辑层级不是一一对应的同一套东西。" src="../assets/0713p/hardware-vs-cuda-model.preview.jpg" data-fullsrc="../assets/0713p/hardware-vs-cuda-model.jpg" /></a>
+<em>图：SM 是硬件里的执行单元，Grid/Block/Thread 是程序里的逻辑组织；前者由硬件调度，后者由程序员用索引描述。</em></p>
 <pre class="highlight"><code class="language-cpp">__global__ void saxpy(int n, float a, const float* x, float* y) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i &lt; n) y[i] = a * x[i] + y[i];
@@ -3521,7 +3521,7 @@ cudaFree(d_y);</code></pre>
         y[i] = a * x[i] + y[i];
     }
 }</code></pre>
-<p>这样可以让 block 数按 SM 数量和每个 SM 的并发能力选择，而不是盲目创建极多 block。它还便于调试：把 grid 和 block 暂时设为 1，代码仍按同一索引逻辑串行覆盖全部元素。矩阵、张量的二维或三维情形也是同一原则，先确定一个线程或一个 tile 对应哪块输出，再写出到输入的索引关系。</p>
+<p>这样可以让 block 数按 SM<sup id="fnref:sm"><a class="footnote-ref" href="#fn:sm">8</a></sup> 数量和每个 SM 的并发能力选择，而不是盲目创建极多 block。它还便于调试：把 grid 和 block 暂时设为 1，代码仍按同一索引逻辑串行覆盖全部元素。矩阵、张量的二维或三维情形也是同一原则，先确定一个线程或一个 tile 对应哪块输出，再写出到输入的索引关系。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/cuda-thread-mapping.png"><img width="991" height="482" class="lqip" alt="课件以矩阵相加为例，将二维 block/thread 坐标对应到输出矩阵的位置。" src="../assets/0713a/cuda-thread-mapping.preview.jpg" data-fullsrc="../assets/0713a/cuda-thread-mapping.png" /></a></p>
 <p><em>图：线程索引首先是一种数据划分方式，边界 block 必须保留范围检查。</em></p>
 <h2 id="sm-与-warp-执行">SM 与 Warp 执行<a class="headerlink" href="#sm-与-warp-执行" title="Permanent link"></a></h2>
@@ -3529,8 +3529,8 @@ cudaFree(d_y);</code></pre>
 <pre class="highlight"><code class="language-text">grid
  └── block 0, block 1, ...
        └── warp 0（32 threads）, warp 1, ...</code></pre>
-<p><a class="glightbox" data-type="image" href="../assets/0713p/gpu-hardware-architecture.jpg"><img width="1280" height="720" class="lqip" alt="GPU 硬件层级：Grid 下的 block 被分派到 SM，block 内线程组成 warp，由 warp scheduler 发射并共享 shared memory。" src="../assets/0713p/gpu-hardware-architecture.preview.jpg" data-fullsrc="../assets/0713p/gpu-hardware-architecture.jpg" /></a></p>
-<p><em>图：同一 SM 上驻留多个 block；warp scheduler 把 warp 的一条指令流同时送到多个 CUDA core 的 lane 上，shared memory 供 block 内协作使用。</em></p>
+<p><a class="glightbox" data-type="image" href="../assets/0713p/gpu-hardware-architecture.jpg"><img width="1280" height="720" class="lqip" alt="GPU 硬件层级：Grid 下的 block 被分派到 SM，block 内线程组成 warp，由 warp scheduler 发射并共享 shared memory。" src="../assets/0713p/gpu-hardware-architecture.preview.jpg" data-fullsrc="../assets/0713p/gpu-hardware-architecture.jpg" /></a>
+<em>图：同一 SM 上驻留多个 block；warp scheduler 把 warp 的一条指令流同时送到多个 CUDA core 的 lane 上，shared memory 供 block 内协作使用。</em></p>
 <p>若同一 warp 中部分线程走 <code>if</code>，另一部分走 <code>else</code>，硬件需要分别执行两条路径，只在对应线程上启用结果。这叫 branch divergence。分支不是绝对禁止；只是在大规模、数据相关的分支中，应特别注意它是否使 warp 大量串行化。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/warp-divergence.jpg"><img width="1280" height="720" class="lqip" alt="warp 遇到不同分支时，硬件先执行 path A（屏蔽另一半），再执行 path B，有效并行度下降。" src="../assets/0713p/warp-divergence.preview.jpg" data-fullsrc="../assets/0713p/warp-divergence.jpg" /></a></p>
 <p><em>图：<code>if (threadIdx.x &lt; 16) path_A(); else path_B();</code> 会让同一 warp 分两次跑，两边各只利用一半 lane。</em></p>
@@ -3570,17 +3570,17 @@ cudaFree(d_y);</code></pre>
 </table>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/l1-vs-shared-memory.jpg"><img width="1280" height="720" class="lqip" alt="课件对比 L1 cache 与 shared memory：L1 由硬件自动工作、对程序不透明；shared memory 由程序员显式管理，还可配合 LDGSTS 一类指令异步预取下一块数据。" src="../assets/0713p/l1-vs-shared-memory.preview.jpg" data-fullsrc="../assets/0713p/l1-vs-shared-memory.jpg" /></a></p>
 <p><em>图：同样的片上有过 storage，L1 cache 自动缓存、shared memory 显式管理；高性能 GEMM 常把后者当作可预取、可复用的手工 buffer。</em></p>
-<p>寄存器最快，但每线程寄存器用得太多会降低一个 SM 可同时驻留的线程数，甚至 spill 到所谓 local memory（物理上常在显存）。shared memory 很快、由程序员管理、容量有限；多个线程需要读写同一块 shared memory 时，必须用 <code>__syncthreads()</code> 确保写入完成。</p>
+<p>寄存器最快，但每线程寄存器用得太多会降低一个 SM 可同时驻留的线程数，甚至 spill 到所谓 local memory（物理上常在显存）。shared memory<sup id="fnref:shared-memory"><a class="footnote-ref" href="#fn:shared-memory">9</a></sup> 很快、由程序员管理、容量有限；多个线程需要读写同一块 shared memory 时，必须用 <code>__syncthreads()</code> 确保写入完成。</p>
 <pre class="highlight"><code class="language-cpp">__shared__ float tile[256];
 tile[threadIdx.x] = x[global_i];
 __syncthreads();
 // 现在可安全读取同一 block 中其他线程写入的 tile</code></pre>
 <p><code>__syncthreads()</code> 必须由 block 中所有尚存活线程以一致方式到达；把它放在仅部分线程会进入的条件分支中，可能死锁。</p>
 <h2 id="合并访问和-bank-conflict">合并访问和 bank conflict<a class="headerlink" href="#合并访问和-bank-conflict" title="Permanent link"></a></h2>
-<p>global memory 的带宽很高，但前提是一个 warp 的线程访问规则地址。若 thread 0、1、2... 分别访问连续元素，硬件可把请求合并为少量内存事务，称为 coalesced access。若每个线程相隔很远、随机跳跃，事务数量增多，有效带宽下降。</p>
+<p>global memory 的带宽很高，但前提是一个 warp 的线程访问规则地址。若 thread 0、1、2... 分别访问连续元素，硬件可把请求合并为少量内存事务，称为 coalesced access<sup id="fnref:coalesced"><a class="footnote-ref" href="#fn:coalesced">10</a></sup>。若每个线程相隔很远、随机跳跃，事务数量增多，有效带宽下降。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/memory-coalescing.jpg"><img width="1280" height="720" class="lqip" alt="合并访问让一个 warp 的一次地址请求落进少量内存事务；strided 访问则拆成多个事务。" src="../assets/0713p/memory-coalescing.preview.jpg" data-fullsrc="../assets/0713p/memory-coalescing.jpg" /></a></p>
 <p><em>图：连续元素可被合并成极少的 32B sector 事务；一个 warp 跨大步长跳转时，会变成多个事务、搬更多无用字节。让 warp 内线程访问连续地址，是合并访问的核心。</em></p>
-<p>shared memory 又被分成 bank。若一个 warp 中多个线程同时访问同一 bank 的不同地址，访问可能序列化，这称为 bank conflict；访问同一地址的广播情形另当别论。布局、转置和 padding 常用于避免冲突。优化前先确认它真是 profiler 里的瓶颈，不能把所有 shared 数组都机械加 padding。</p>
+<p>shared memory 又被分成 bank。若一个 warp 中多个线程同时访问同一 bank 的不同地址，访问可能序列化，这称为 bank conflict<sup id="fnref:bank-conflict"><a class="footnote-ref" href="#fn:bank-conflict">11</a></sup>；访问同一地址的广播情形另当别论。布局、转置和 padding 常用于避免冲突。优化前先确认它真是 profiler 里的瓶颈，不能把所有 shared 数组都机械加 padding。</p>
 <p>以行主序矩阵为例，最自然的线程映射是同一 warp 的线程沿列递增：</p>
 <pre class="highlight"><code class="language-cpp">int row = blockIdx.y * blockDim.y + threadIdx.y;
 int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -3590,7 +3590,7 @@ float x = input[row * width + col];</code></pre>
 <p>layout 里还有一类技巧叫 swizzle：不改变硬件结构，只把逻辑地址重新映射到物理 bank，让原本集中在一组的访问散开。典型做法是 128B XOR swizzle，把每行的物理 sector 序号与行号做异或。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/smem-xor-swizzle.png"><img width="1280" height="720" class="lqip" alt="课件对比未 swizzle 与 128B XOR swizzle 两种布局：前者整行落到同一组 bank 上、触发 8-way conflict，后者把请求展开到全部 32 个 bank。" src="../assets/0713p/smem-xor-swizzle.preview.jpg" data-fullsrc="../assets/0713p/smem-xor-swizzle.png" /></a></p>
 <p><em>图：bank 编号由地址与行号异或得到后，同一 warp 的访问从 8 个 round 的冲突降到 1 个 round；代价只是多一条地址异或。</em></p>
-<p>swizzle 常用在 Tensor Core 的 shared memory tile 布局上，配合 TMA 等硬件搬运让数据以兼容格式落位。它不是银弹：只有在 profiler 证实 warp 因 bank 冲突停顿、且访存模式规则时才值得尝试；随机访问没有稳定模式可重新映射，压不住。</p>
+<p>swizzle 常用在 Tensor Core<sup id="fnref:tensor-core"><a class="footnote-ref" href="#fn:tensor-core">12</a></sup> 的 shared memory tile 布局上，配合 TMA 等硬件搬运让数据以兼容格式落位。它不是银弹：只有在 profiler 证实 warp 因 bank 冲突停顿、且访存模式规则时才值得尝试；随机访问没有稳定模式可重新映射，压不住。</p>
 <h2 id="矩阵乘法与-tiling">矩阵乘法与 Tiling<a class="headerlink" href="#矩阵乘法与-tiling" title="Permanent link"></a></h2>
 <p>朴素矩阵乘法中，每个线程算一个 <code>C[row, col]</code>：</p>
 <div class="arithmatex">\[
@@ -3619,7 +3619,7 @@ store(C_tile)</code></pre>
 <p>这通常用双缓冲实现：shared memory 开辟两个（或更多）stage，一份正在被计算单元消费，另一份正被异步加载。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/gemm-double-buffering.png"><img width="1280" height="720" class="lqip" alt="课件画出双缓冲 steady state：计算端从 SMEM stage 0 消费当前 K 块，同时另一 stage 异步加载下一块 A/B tile，两件事重叠进行。" src="../assets/0713p/gemm-double-buffering.preview.jpg" data-fullsrc="../assets/0713p/gemm-double-buffering.png" /></a></p>
 <p><em>图：计算与搬运交错后，访存等待被计算隐藏；若只有单缓冲，每一轮都得停下来等数据装满，吞吐会明显下降。</em></p>
-<p>流水线分三段：prologue 先异步装好第一块；steady state 让算当前块与装下一块一直重叠；drain 处理已无新输入的最后一轮。stage 数越多、每块越小，重叠越平滑，但 shared memory 占用与调度复杂度也越高。能用 double buffering 的前提是有独立的异步 copy 路径（如 <code>LDGSTS</code>/TMA），否则仍会退化为同步等数据。</p>
+<p>流水线分三段：prologue 先异步装好第一块；steady state 让算当前块与装下一块一直重叠；drain 处理已无新输入的最后一轮。stage 数越多、每块越小，重叠越平滑，但 shared memory 占用与调度复杂度也越高。能用 double buffering 的前提是有独立的异步 copy<sup id="fnref:async-copy"><a class="footnote-ref" href="#fn:async-copy">13</a></sup> 路径（如 <code>LDGSTS</code>/TMA），否则仍会退化为同步等数据。</p>
 <p>读现代 GEMM kernel（或 Nsight Compute 里的 kernel 分析）时，还会遇到几个和 CTA、WGMMA、TMA、epilogue 有关的术语，它们和 Ampere 时代的手写 WMMA 不同。</p>
 <ul>
 <li><strong>CTA</strong>（cooperative thread array）是 CUDA 中一个 thread block 的另一种叫法；一块 CTA 自己的那块 C tile 常被称为 CTA tile。</li>
@@ -3640,7 +3640,7 @@ store(C_tile)</code></pre>
 cudaError_t err = cudaGetLastError();
 if (err != cudaSuccess) { /* 统一错误处理 */ }
 cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 后滥用</code></pre>
-<p>stream 是 GPU 的工作队列。不同 stream 中、没有依赖的传输和 kernel 有机会重叠；同一 stream 内保持顺序。真正的 overlap 需要硬件支持、足够独立的工作和正确的 pinned memory/事件依赖，不能只因为创建了多个 stream 就自动发生。</p>
+<p>stream<sup id="fnref:stream"><a class="footnote-ref" href="#fn:stream">14</a></sup> 是 GPU 的工作队列。不同 stream 中、没有依赖的传输和 kernel 有机会重叠；同一 stream 内保持顺序。真正的 overlap 需要硬件支持、足够独立的工作和正确的 pinned memory/事件依赖，不能只因为创建了多个 stream 就自动发生。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/cuda-runtime-async.jpg"><img width="1280" height="720" class="lqip" alt="课件展示 CUDA Runtime API 的执行路径：cudaMalloc/cudaMemcpy/kernel launch/cudaDeviceSynchronize/cudaFree 把 host、device 与异步 kernel 串成一条流水；kernel launch 默认异步，只有在同步或回拷边界才真正等待 GPU。" src="../assets/0713p/cuda-runtime-async.preview.jpg" data-fullsrc="../assets/0713p/cuda-runtime-async.jpg" /></a></p>
 <p><em>图：拷贝阻塞、上传/回拷会等待，kernel launch 默认异步；CPU 提交工作后继续运行，直到同步点才等待 GPU 完成。</em></p>
 <h3 id="数据传输与算子融合">数据传输与算子融合<a class="headerlink" href="#数据传输与算子融合" title="Permanent link"></a></h3>
@@ -3671,7 +3671,7 @@ cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 
 <p>CUDA API 许多调用只是把工作排入队列，非法访存经常在后续同步、下一次 API 调用甚至程序结束时才报告。定位时可在可疑 kernel 后临时加入 <code>cudaGetLastError()</code> 和同步，再用 Compute Sanitizer 检查越界、未初始化和 race；确认后移除不必要同步恢复真实性能。编译 debug 版本时保留符号和较低优化，性能版本再单独测量，不能拿调试模式速度评价 kernel。</p>
 <p>并行归约的输出顺序、Tensor Core 的低精度乘加和不同 GPU 架构都可能改变最后若干位。验证应包含小尺寸可人工检查的案例、非方阵/非整除边界、随机输入和与参考实现的误差界；还应测量多次运行是否稳定。只在 <code>n</code> 恰为 block size 倍数、矩阵恰为方阵的输入上通过，不能说明 indexing 和 mask 已正确。</p>
 <h2 id="triton-与高层-kernel-工具">Triton 与高层 Kernel 工具<a class="headerlink" href="#triton-与高层-kernel-工具" title="Permanent link"></a></h2>
-<p>Triton 允许用 Python 风格的语言表达 GPU kernel。程序员关注 block/tile、张量索引和数据布局，再由编译器生成低层代码。它不消除 CUDA 的基本规律：程序实例如何分工、global memory 是否合并、数据是否在更近层级复用、资源是否过量，仍然决定性能。</p>
+<p>Triton<sup id="fnref:triton"><a class="footnote-ref" href="#fn:triton">15</a></sup> 允许用 Python 风格的语言表达 GPU kernel。程序员关注 block/tile、张量索引和数据布局，再由编译器生成低层代码。它不消除 CUDA 的基本规律：程序实例如何分工、global memory 是否合并、数据是否在更近层级复用、资源是否过量，仍然决定性能。</p>
 <p>对于标准矩阵乘法、卷积、attention 等，框架和库已经高度优化。手写 kernel 的合理场景是算子融合、特殊形状、特殊数据布局或 profiler 证明的热点。否则最可靠的优化是减少不必要的数据搬运并调用正确的库。</p>
 <p>prefill 一次处理整段 prompt，序列维度提供了并行空间；某些状态更新却仍沿 token 有因果依赖，不能把所有位置当作独立元素。课后的 GDN（Gated DeltaNet 一类）prefill 就同时面对这两种约束，常见的优化手段都围绕如何在不破坏依赖的前提下把 sequence 也并行起来：</p>
 <ul>
@@ -3685,6 +3685,56 @@ cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 
 <summary>把一次 kernel 测量放回程序时间线</summary>
 <p>event 显示 kernel 为 0.4 ms，调用它的 host 循环却每次耗时 2 ms。时间线若显示 1.5 ms 在同步前等待上一轮 H2D copy，优化该 kernel 的 20% 只能节省 0.08 ms；先消除往返或建立 copy/compute 重叠才会改变总时间。</p>
 </details>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:cuda">
+<p>compute unified device architecture，NVIDIA 提出的 GPU 通用并行计算平台和编程模型。&#160;<a class="footnote-backref" href="#fnref:cuda" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:host">
+<p>host，主机。CUDA 程序中负责组织数据、发射 kernel 的 CPU 侧。&#160;<a class="footnote-backref" href="#fnref:host" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:device">
+<p>device，设备。执行 kernel 的 GPU 侧。&#160;<a class="footnote-backref" href="#fnref:device" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:kernel">
+<p>GPU kernel，在 GPU 上由大量线程并行执行的一段函数。&#160;<a class="footnote-backref" href="#fnref:kernel" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:thread">
+<p>thread，CUDA 中的最小执行单位，拥有自己的线程编号和寄存器状态。&#160;<a class="footnote-backref" href="#fnref:thread" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:block">
+<p>block，grid 内的一组线程，可共享 shared memory 并同步。&#160;<a class="footnote-backref" href="#fnref:block" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:grid">
+<p>grid，一次 kernel 启动的所有 block 组成的网格。&#160;<a class="footnote-backref" href="#fnref:grid" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:sm">
+<p>streaming multiprocessor，GPU 中调度和执行 block 的硬件模块。&#160;<a class="footnote-backref" href="#fnref:sm" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:shared-memory">
+<p>shared memory，同一个 block 内线程共享的高速片上存储。&#160;<a class="footnote-backref" href="#fnref:shared-memory" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:coalesced">
+<p>coalesced access，合并访问。相邻线程访问相邻内存，硬件可合并成少数事务。&#160;<a class="footnote-backref" href="#fnref:coalesced" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:bank-conflict">
+<p>bank conflict，shared memory 的多个请求落在同一 bank，需要串行处理。&#160;<a class="footnote-backref" href="#fnref:bank-conflict" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+<li id="fn:tensor-core">
+<p>Tensor Core，加速矩阵乘加的专用计算单元。&#160;<a class="footnote-backref" href="#fnref:tensor-core" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+<li id="fn:async-copy">
+<p>asynchronous copy，异步复制。数据搬运与计算或其他拷贝重叠执行。&#160;<a class="footnote-backref" href="#fnref:async-copy" title="Jump back to footnote 13 in the text">&#8617;</a></p>
+</li>
+<li id="fn:stream">
+<p>stream，CUDA 中按序执行的一组操作，不同 stream 可并行或重叠。&#160;<a class="footnote-backref" href="#fnref:stream" title="Jump back to footnote 14 in the text">&#8617;</a></p>
+</li>
+<li id="fn:triton">
+<p>Triton，用类似 Python 的语言编写 GPU kernel 的高层编程工具。&#160;<a class="footnote-backref" href="#fnref:triton" title="Jump back to footnote 15 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
 
 

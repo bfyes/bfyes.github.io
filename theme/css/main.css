@@ -260,10 +260,16 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 /* 表格（排除 GitHub 贡献图表格 .ContributionCalendar-grid，保持组件原样）
    宽表自动收紧：容器被限制在内容区宽度内，超宽表格在其内部横向滚动，
    不溢出页面；窄表仍按内容贴合。单元格长内容可断行，避免撑破。 */
+.md-typeset .md-typeset__scrollwrap {
+  margin-top: 0;
+  margin-bottom: var(--base-size-16, 1rem);
+}
 .md-typeset .md-typeset__table {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
+  margin-bottom: 0;
+  vertical-align: bottom;
 }
 .md-typeset table:not(.ContributionCalendar-grid) {
   border-spacing: 0;
@@ -272,6 +278,9 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   width: max-content;
   max-width: 100%;
   font-variant: tabular-nums;
+}
+.md-typeset .md-typeset__table > table:not(.ContributionCalendar-grid) {
+  margin-bottom: 0;
 }
 .md-typeset table:not(.ContributionCalendar-grid) th {
   font-weight: var(--base-text-weight-semibold, 600);
@@ -447,13 +456,26 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 }
 
 /* ---- 脚注（GitHub 观感补足） ---- */
-.md-typeset .footnotes {
+/* 脚注 HTML 自带 <hr>；这里用容器边线替代它，避免出现两条横线。 */
+.md-typeset .footnote {
+  margin-top: var(--base-size-24, 1.5rem);
+  padding-top: var(--base-size-16, 1rem);
+  border-top: 1px solid var(--borderColor-default);
   font-size: var(--font-footnote);
   color: var(--fgColor-muted);
-  border-top: 1px solid var(--borderColor-default);
 }
-.md-typeset .footnotes ol {
+.md-typeset .footnote > hr {
+  display: none;
+}
+.md-typeset .footnote ol {
   padding-left: var(--base-size-16, 1rem);
+}
+
+/* 脚注内的嵌套列表不再继承正文列表的 2em 缩进，
+   否则会叠在脚注编号的缩进之后，看起来多出一层。 */
+.md-typeset .footnote ol > li > ul,
+.md-typeset .footnote ol > li > ol {
+  padding-left: 1.25em;
 }
 
 /* ---- 行间距：统一块级元素 top/bottom 边距 ----
@@ -466,8 +488,16 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 .md-typeset dl,
 .md-typeset table:not(.ContributionCalendar-grid),
 .md-typeset pre,
-.md-typeset details {
+.md-typeset details,
+.md-typeset div.arithmatex {
   margin-top: 0;
   margin-bottom: var(--base-size-16, 1rem);
   letter-spacing: normal;
+}
+
+/* MathJax 独立公式：垂直间距交给外层 .arithmatex，
+   避免 MathJax 自带 margin 与段落 margin 叠加。 */
+.md-typeset div.arithmatex > mjx-container[display] {
+  margin-top: 0;
+  margin-bottom: 0;
 }

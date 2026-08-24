@@ -3386,8 +3386,8 @@
 <p>同一个 AI 任务可以从不同层面优化。算法层决定模型结构、训练目标和数据；框架层把模型表达为算子图；运行时负责调度、内存和通信；编译器与库把算子变成具体 kernel；最后才由 GPU、CPU、内存和网络执行。任何一层成为瓶颈，其他层做得再好也无法把端到端时间降下来。</p>
 <p>训练时，参数、梯度和激活常分散在各处。部分状态在 GPU 高带宽内存中参与前向和反向，优化器状态或不常用数据可能在主机内存中；每一次移动都要花时间。于是显存够不够、带宽够不够、一个 kernel 算得快不快相互牵连，需要一起看。</p>
 <h2 id="cpu-的低延迟设计">CPU 的低延迟设计<a class="headerlink" href="#cpu-的低延迟设计" title="Permanent link"></a></h2>
-<p>通用 CPU 的首要目标是低延迟地执行复杂、分支多、数据访问难以预测的程序。它需要强大的控制逻辑：取指、译码、分支预测、乱序执行、缓存层次、寄存器重命名等。一个核心能把单条指令流跑得很快，但这些控制部件占用了大量晶体管和功耗。</p>
-<p>流水线是理解 CPU 的第一步。把一条指令分成取指、译码、执行、访存、写回等阶段后，不同指令可同时处在不同阶段。这样提升的是吞吐，不是让单条指令瞬间完成。若后续指令依赖前一条的结果，或分支预测错误，流水线就要等待或清空。</p>
+<p>通用 CPU 的首要目标是低延迟<sup id="fnref:latency"><a class="footnote-ref" href="#fn:latency">1</a></sup>地执行复杂、分支多、数据访问难以预测的程序。它需要强大的控制逻辑：取指、译码、分支预测、乱序执行、缓存层次、寄存器重命名等。一个核心能把单条指令流跑得很快，但这些控制部件占用了大量晶体管和功耗。</p>
+<p>流水线是理解 CPU 的第一步。把一条指令分成取指、译码、执行、访存、写回等阶段后，不同指令可同时处在不同阶段。这样提升的是吞吐<sup id="fnref:throughput"><a class="footnote-ref" href="#fn:throughput">2</a></sup>，不是让单条指令瞬间完成。若后续指令依赖前一条的结果，或分支预测错误，流水线就要等待或清空。</p>
 <p>CPU 会继续挖掘指令级并行。超标量处理器可在一个周期发射多条独立指令；乱序执行会在不改变程序可见结果的前提下，先执行准备好的指令；多级 cache 尽量避免主存访问把核心停住。它们非常适合控制密集、依赖复杂、工作量不规则的代码，但实现成本也高。</p>
 <p>GPU 采取了另一种取舍。把晶体管优先用于大量更简单的计算单元，让大量相同结构的线程同时工作。当一批线程在等内存时，硬件切换到另一批就绪线程。它偏向吞吐量，而非单线程延迟。</p>
 <h2 id="存储层次与性能">存储层次与性能<a class="headerlink" href="#存储层次与性能" title="Permanent link"></a></h2>
@@ -3443,7 +3443,7 @@
 <p>寄存器最快但只属于一个线程；shared memory 由同一 thread block 的线程显式协作使用；global memory 对整个 GPU 可见，容量大但访问代价高。优化矩阵乘法时把输入块放进 shared memory，正是为了让同一块数据被许多线程复用，减少对 global memory 的重复读取。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/memory-hierarchy-ff-sram-dram-ssd.jpg"><img width="1280" height="720" class="lqip" alt="课件把 Flip-Flops、SRAM、DRAM 与 SSD 放在同一张图里：越快的存储越贵、容量越小，从片内寄存器一路到持久磁盘形成明显层级。" src="../assets/0713a/memory-hierarchy-ff-sram-dram-ssd.preview.jpg" data-fullsrc="../assets/0713a/memory-hierarchy-ff-sram-dram-ssd.jpg" /></a></p>
 <p><em>图：寄存器/缓存（SRAM）在片内快而贵，DRAM 慢而大，SSD 更大但更慢；性能优化的本质是把数据停在更近、更快的层级。</em></p>
-<p>主机内存和 GPU 显存之间通常经 PCIe 或更高速的互连传输。一次频繁的 CPU-GPU 往返很容易吞掉 kernel 加速带来的收益，所以常见做法是把数据一次搬到 device，连续运行多个 kernel，最后再搬回结果；能否这样做取决于算法的依赖关系和显存容量。</p>
+<p>主机内存和 GPU 显存之间通常经 PCIe<sup id="fnref:pcie"><a class="footnote-ref" href="#fn:pcie">3</a></sup> 或更高速的互连传输。一次频繁的 CPU-GPU 往返很容易吞掉 kernel 加速带来的收益，所以常见做法是把数据一次搬到 device，连续运行多个 kernel，最后再搬回结果；能否这样做取决于算法的依赖关系和显存容量。</p>
 <p>训练大模型时，显存够不够要算的远不止一份参数。以 GPT-3 规模为例，参数、梯度、优化器状态（Adam 的两组动量）和激活值会在显存里同时占份额，加上为反向传播保留的中间张量，预算很快被填满。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/gpt3-activation-checkpoint.png"><img width="1280" height="720" class="lqip" alt="课件给出 GPT-3 规模训练显存的拆账：参数、梯度、Adam 状态与激活各占一份，并对比开启激活重计算前后的峰值占用。" src="../assets/0713a/gpt3-activation-checkpoint.preview.jpg" data-fullsrc="../assets/0713a/gpt3-activation-checkpoint.png" /></a></p>
 <p><em>图：显存里同时住着参数、梯度和优化器状态；激活重计算用少量额外前向计算的代价，换取激活峰值的大幅下降。</em></p>
@@ -3488,21 +3488,21 @@
 <p><em>图：同一列指标在不同硬件上的取舍一目了然——GPU 用高并行远超 CPU 的矩阵吞吐，FPGA 换来灵活性但浮点峰值通常较低。</em></p>
 <p>选择硬件先看瓶颈在哪种资源：访存受限的工作，带宽更高的设备更有利；计算受限的规则矩阵运算，低精度矩阵单元多的设备更有利；需要频繁改动数据通路、又没有成熟等价实现时，才值得考虑 FPGA。</p>
 <h2 id="gpu-的高吞吐设计">GPU 的高吞吐设计<a class="headerlink" href="#gpu-的高吞吐设计" title="Permanent link"></a></h2>
-<p>GPU 由许多个 Streaming Multiprocessor（SM）组成。一个 SM 内有大量标量运算单元、寄存器文件、load/store 单元、共享内存和专门的矩阵计算单元。不同架构的具体数量会变，但思路稳定：同时保留许多可运行线程，用大量并行算术去覆盖存储访问的等待。</p>
+<p>GPU 由许多个 Streaming Multiprocessor（SM<sup id="fnref:sm"><a class="footnote-ref" href="#fn:sm">4</a></sup>）组成。一个 SM 内有大量标量运算单元、寄存器文件、load/store 单元、共享内存和专门的矩阵计算单元。不同架构的具体数量会变，但思路稳定：同时保留许多可运行线程，用大量并行算术去覆盖存储访问的等待。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/gpu-system-architecture.png"><img width="2500" height="1253" class="lqip" alt="GPU 顶层结构中可看到主机接口、调度控制、HBM 和多个计算单元；数据路径本身是设计重点。" src="../assets/0713a/gpu-system-architecture.preview.jpg" data-fullsrc="../assets/0713a/gpu-system-architecture.png" /></a></p>
 <p><em>图：计算单元不是孤立的峰值数字；host 接口、全局调度和 HBM 决定数据如何到达各个 SM。</em></p>
-<p>在现代 AI GPU 上，普通 CUDA core 可做常规标量/向量运算，Tensor Core 则面向小矩阵乘加，例如 <span class="arithmatex">\(D=A\times B+C\)</span>。深度学习中的 GEMM、卷积和 attention 经过分块后，能大量调用这种矩阵单元，因此低精度矩阵吞吐远高于一般 CPU 的单核算力。</p>
+<p>在现代 AI GPU 上，普通 CUDA core 可做常规标量/向量运算，Tensor Core<sup id="fnref:tensor-core"><a class="footnote-ref" href="#fn:tensor-core">5</a></sup> 则面向小矩阵乘加，例如 <span class="arithmatex">\(D=A\times B+C\)</span>。深度学习中的 GEMM、卷积和 attention 经过分块后，能大量调用这种矩阵单元，因此低精度矩阵吞吐远高于一般 CPU 的单核算力。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/sm-functional-units.png"><img width="927" height="1290" class="lqip" alt="一张 SM 内部功能单元示意图：整数/浮点单元、寄存器、load-store 单元与 Tensor Core 并列存在。" src="../assets/0713a/sm-functional-units.preview.jpg" data-fullsrc="../assets/0713a/sm-functional-units.png" /></a></p>
-<p><em>图：同一 SM 内的 warp 共享执行管线、寄存器文件和片上存储，资源用量会限制同时驻留的工作。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0713a/h100-block-diagram.jpg"><img width="1280" height="720" class="lqip" alt="课件的 H100 Block Diagram：SM、Tensor Core、HBM、NVLink 与片上互连的关系一目了然，展示一代旗舰 GPU 的完整构成。" src="../assets/0713a/h100-block-diagram.preview.jpg" data-fullsrc="../assets/0713a/h100-block-diagram.jpg" /></a></p>
-<p><em>图：从旗舰卡看，GPU 是一台包含大量 SM、专用矩阵单元、多层存储与高速互连的完整系统，不是孤立的一堆核心。</em></p>
+<p><em>图：同一 SM 内的 warp 共享执行管线、寄存器文件和片上存储，资源用量会限制同时驻留的工作。</em>
+<a class="glightbox" data-type="image" href="../assets/0713a/h100-block-diagram.jpg"><img width="1280" height="720" class="lqip" alt="课件的 H100 Block Diagram：SM、Tensor Core、HBM、NVLink 与片上互连的关系一目了然，展示一代旗舰 GPU 的完整构成。" src="../assets/0713a/h100-block-diagram.preview.jpg" data-fullsrc="../assets/0713a/h100-block-diagram.jpg" /></a>
+<em>图：从旗舰卡看，GPU 是一台包含大量 SM、专用矩阵单元、多层存储与高速互连的完整系统，不是孤立的一堆核心。</em></p>
 <p>低精度不是把数值随便截短。FP32 有较大的指数和尾数范围；FP16、BF16、FP8 等格式以更少位数换取更低内存流量和更高矩阵吞吐。训练通常会在速度与数值稳定性之间混合使用多种精度，例如低精度前向/反向、较高精度累积或主权重。格式选择应由误差容忍度、硬件指令和实际测量共同决定。</p>
 <h2 id="simdspmdsimt-与-warp">SIMD、SPMD、SIMT 与 warp<a class="headerlink" href="#simdspmdsimt-与-warp" title="Permanent link"></a></h2>
 <p>这几个缩写都牵扯同时做很多相近事情，但含义并不相同。</p>
 <details class="note" open="open">
 <summary>SIMD：一条指令同时算很多个数</summary>
-<p>单周期 CPU 的 ALU 一次通常只算一对数。<code>a[i] + b[i]</code> 一个时钟做一次。SIMD（Single Instruction, Multiple Data）是给 ALU 配上一组宽寄存器，让<strong>一条</strong>加法指令同时作用在多个数据元素上。比如一个 256 位宽度的向量寄存器可以装 8 个 32 位 <code>float</code>，一条 <code>add</code> 就同时把 8 对数相加。对数组来说，这就是 8 倍的算术吞吐机会——前提是这些元素要能装进同一个寄存器、且循环能连续访问。</p>
-<p>这就是为什么把循环写得规则、连续很重要。SIMD 一次吃一串相邻元素，跳跃访问会让它一条指令只能用到部分 lane。GPU 的底层也是这个思路，只是规模大得多、且用大量线程来组织，于是就有了 SIMT 与 warp 这些进一步的抽象。</p>
+<p>单周期 CPU 的 ALU<sup id="fnref:alu"><a class="footnote-ref" href="#fn:alu">6</a></sup> 一次通常只算一对数。<code>a[i] + b[i]</code> 一个时钟做一次。SIMD<sup id="fnref:simd"><a class="footnote-ref" href="#fn:simd">7</a></sup>（Single Instruction, Multiple Data）是给 ALU 配上一组宽寄存器，让<strong>一条</strong>加法指令同时作用在多个数据元素上。比如一个 256 位宽度的向量寄存器可以装 8 个 32 位 <code>float</code>，一条 <code>add</code> 就同时把 8 对数相加。对数组来说，这就是 8 倍的算术吞吐机会——前提是这些元素要能装进同一个寄存器、且循环能连续访问。</p>
+<p>这就是为什么把循环写得规则、连续很重要。SIMD 一次吃一串相邻元素，跳跃访问会让它一条指令只能用到部分 lane。GPU 的底层也是这个思路，只是规模大得多、且用大量线程来组织，于是就有了 SIMT<sup id="fnref:simt"><a class="footnote-ref" href="#fn:simt">8</a></sup> 与 warp<sup id="fnref:warp"><a class="footnote-ref" href="#fn:warp">9</a></sup> 这些进一步的抽象。</p>
 </details>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/sisd-simd-mimd.jpg"><img width="1280" height="720" class="lqip" alt="课件用 SISD、SIMD 等分类说明并行硬件模型：GPU 底层往往是一台 SIMD 引擎，指令管线像 SIMD 管线一样广播到多个数据单元。" src="../assets/0713a/sisd-simd-mimd.preview.jpg" data-fullsrc="../assets/0713a/sisd-simd-mimd.jpg" /></a></p>
 <p><em>图：SISD/SIMD/MIMD 是经典并行分类；理解 GPU 从 SIMD 引擎出发，再叠加 SIMT 的线程语义。</em></p>
@@ -3520,7 +3520,7 @@ int j = blockIdx.y * blockDim.y + threadIdx.y;
 if (i &lt; N &amp;&amp; j &lt; N) {
     C[i + j * N] = A[i + j * N] + B[i + j * N];
 }</code></pre>
-<p>确定自己负责的元素。<code>blockIdx</code> 与 <code>threadIdx</code> 不是普通变量，而是 CUDA 提供的内建索引。边界判断不能省，因为为了方便常把 grid 向上取整，最边缘 block 的一部分线程会落在有效矩阵外。</p>
+<p>确定自己负责的元素。<code>blockIdx</code> 与 <code>threadIdx</code> 是 CUDA 提供的内建索引，不属于普通变量。边界判断不能省，因为为了方便常把 grid 向上取整，最边缘 block 的一部分线程会落在有效矩阵外。</p>
 <p><strong>warp</strong> 是调度和执行时更关键的粒度。通常一个 warp 有 32 个线程；同一 warp 遇到 <code>if/else</code> 的不同分支时，硬件往往要分别执行两条路径，并屏蔽不属于当前路径的线程。这叫<strong>分支发散（divergence）</strong>。发散并非语法错误，但会降低该 warp 的有效并行度；按数据布局和任务划分让同一 warp 内线程走相同分支，是 GPU 编程的常见考虑。</p>
 <h2 id="gpu-的延迟隐藏">GPU 的延迟隐藏<a class="headerlink" href="#gpu-的延迟隐藏" title="Permanent link"></a></h2>
 <p>GPU 核心并不靠把单个标量指令的延迟压到极低来获得吞吐。一个 SM 同时驻留许多 warp；某个 warp 等待 global memory 时，warp scheduler 立刻挑选另一个已就绪 warp 发射指令。要有足够多的可驻留 warp，称为 <strong>occupancy</strong>；它受每个 block 的线程数、寄存器使用量、shared memory 用量和硬件上限共同约束。occupancy 高只说明有更多可切换工作，若算术单元或 DRAM 带宽已饱和，继续提高它未必更快。</p>
@@ -3533,7 +3533,7 @@ if (i &lt; N &amp;&amp; j &lt; N) {
 <p>一个很生活化的比喻是：GPU 的调度颗粒度从来没有落到一个线程个人，而是一条 warp，就像大学里很多活动是按班级、按寝室整体安排的，而不是逐个同学单独处理。写 CUDA 时你只需要感觉到每个线程大概在干什么，调度和优化的粒度交给硬件以 warp 为单位处理。这也是为什么编 CUDA 常常比手写 CPU 的 SIMD intrinsic 轻松——你不必记一堆指令，只需把循环拆到每个 thread。</p>
 <p>线程束中的控制流也有成本。warp 的 32 个线程遇到不同 <code>if</code> 分支时，硬件通常分路径依次执行，再以 mask 禁用暂不活跃的线程；这就是 divergence。边界检查造成的少量分歧通常可接受，按随机类别把同一 warp 分到完全不同的大分支则会明显损失吞吐。重排数据、按类别分桶或把分支变成掩码运算，需要与重排开销一并测量。</p>
 <h2 id="地址布局与设备传输">地址、布局与设备传输<a class="headerlink" href="#地址布局与设备传输" title="Permanent link"></a></h2>
-<p>CPU 端数组指针不能被普通 GPU kernel 直接解引用。通常要分配 device memory，再把输入从 host 拷贝到 device，启动 kernel，把结果拷回；统一虚拟地址让指针形式看起来相近，数据是否已迁移、能否被该设备直接访问仍是运行时问题。离散 GPU 上 PCIe/NVLink 的传输比 device DRAM 访问慢得多，反复在每个小 kernel 前后复制数据会淹没计算收益。</p>
+<p>CPU 端数组指针不能被普通 GPU kernel 直接解引用。通常要分配 device memory，再把输入从 host 拷贝到 device，启动 kernel，把结果拷回；统一虚拟地址让指针形式看起来相近，数据是否已迁移、能否被该设备直接访问仍是运行时问题。离散 GPU 上 PCIe/NVLink<sup id="fnref:nvlink"><a class="footnote-ref" href="#fn:nvlink">10</a></sup> 的传输比 device DRAM 访问慢得多，反复在每个小 kernel 前后复制数据会淹没计算收益。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-pci-relationship.jpg"><img width="1280" height="720" class="lqip" alt="课件画出 CPU 与 GPU 经 PCI Bus 互连的关系：CPU 控制并把任务/数据交给 GPU，GPU 计算后再返回，系统里两者通过主机内存交换。" src="../assets/0713a/cpu-gpu-pci-relationship.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-pci-relationship.jpg" /></a></p>
 <p><em>图：CPU 与 GPU 之间隔着 PCIe/NVLink 等互连；跨这条链路的拷贝比片内访问慢，是决定端到端性能的重要因素。</em></p>
 <p>因此异构程序应把连续的 GPU 工作围在同一段设备驻留期内。输入一次上传，若干 kernel 在 device 上消费和产生中间张量，最后下载需要的输出。逐元素操作融合为一个 kernel、量化权重留在显存并与反量化 GEMM 融合，都会减少往返和中间全局内存流量。数据传输能和计算重叠的前提是独立 buffer、异步 copy、非默认 stream 以及足够的硬件 copy engine；不满足依赖时强行异步只会读到未完成的数据。</p>
@@ -3547,7 +3547,8 @@ if (i &lt; N &amp;&amp; j &lt; N) {
 <p>GPU 程序中的 grid 是一次 kernel 启动的全部线程块，block 是能共享 shared memory 并执行 block 内 barrier 的协作单位，thread 才是一个具体的索引计算实例。block 会被整体分派给一个 SM，block 内线程再按硬件固定宽度组成 warp；一个 block 不能跨 SM，因此需要跨 block 协作的算法不能依赖普通的 block barrier。grid 可以有远多于硬件同时容纳的 block，运行时会在一个 block 完成后把后续 block 调度上来。</p>
 <p>资源限制可用一个小例子理解。若 SM 最多驻留 2048 个线程、每个 block 256 线程，线程数上限允许 8 个 block；但若每个 block 申请大量 shared memory，或每线程使用很多寄存器，实际可能只能驻留 2 个 block。编译器生成的寄存器数、launch 的 block 大小和动态 shared memory 大小一起决定这个上限。调 block size 时要保持 warp 的整数倍、观察寄存器 spill、测量吞吐，不存在所有 kernel 通用的 256 最快。</p>
 <h2 id="算术强度与-gpu-roofline">算术强度与 GPU Roofline<a class="headerlink" href="#算术强度与-gpu-roofline" title="Permanent link"></a></h2>
-<p>同一块 GPU 同时有极高的计算峰值和有限的 HBM 带宽。逐元素 <code>y=f(x)</code> 每加载/存储若干字节只做少量运算，常在带宽屋顶下；GEMM 则让一块 A、B 元素参与许多次乘加，算术强度随 tile 复用提升，才有机会受 tensor core 峰值限制。把两个逐元素 kernel 融合，会少一次把中间张量写到/读回 HBM，因此即使总 FLOP 不变也可能更快。</p>
+<p>把计算峰值和访存带宽放到同一张图上，就得到 GPU Roofline<sup id="fnref:roofline"><a class="footnote-ref" href="#fn:roofline">11</a></sup>。同一块 GPU 同时有极高的计算峰值和有限的 HBM<sup id="fnref:hbm"><a class="footnote-ref" href="#fn:hbm">12</a></sup> 带宽。</p>
+<p>逐元素 <code>y=f(x)</code> 每加载/存储若干字节只做少量运算，常在带宽屋顶下；GEMM 则让一块 A、B 元素参与许多次乘加，算术强度<sup id="fnref:arithmetic-intensity"><a class="footnote-ref" href="#fn:arithmetic-intensity">13</a></sup>随 tile 复用提升，才有机会受 tensor core 峰值限制。把两个逐元素 kernel 融合，会少一次把中间张量写到/读回 HBM，因此即使总 FLOP 不变也可能更快。</p>
 <p>这也是判断优化方向的约束：被 HBM 限制的 kernel 优先减少全局字节、合并访问和提高复用；被计算限制的 GEMM 才更关心 MMA tile、指令吞吐和流水。若 Nsight 显示两种资源都远未用满，原因可能是问题太小、warp 太少、频繁同步或 host 端出现空洞，而不是某条内层指令还不够快。</p>
 <p>一个最基本的异构程序有四步：在主机端分配内存；分配 device memory 并把输入复制过去；启动 kernel；把结果复制回来并释放资源。kernel 函数用 <code>__global__</code> 标记，从 CPU 端通过 <code>&lt;&lt;&lt;grid, block&gt;&gt;&gt;</code> 发射。主机代码与设备代码处在不同地址空间中，指针和数据的位置必须分清。</p>
 <p>GPU 一启动就一定更快这种说法经常是错的。如果问题很小，kernel launch 和数据传输的固定开销可能比实际计算还大；如果每个线程只做几次运算却读写很多 global memory，也常常是带宽受限；如果线程数不够，SM 无法被填满。GPU 的高吞吐需要足够多的独立工作、规则的并行划分和合理的数据复用。</p>
@@ -3555,6 +3556,50 @@ if (i &lt; N &amp;&amp; j &lt; N) {
 <div class="admonition tip">
 <p class="admonition-title">把问题画成数据流</p>
 <p>为每个输入、输出和中间张量标出所在设备、字节数、生产者与消费者。若某个中间结果只被下一个 GPU 算子使用，回传 host 通常没有意义；若下一步依赖前一步的标量决定分支，就应把这个同步点明确放进关键路径。</p>
+</div>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:latency">
+<p>延迟。一个请求或一次操作从发出到完成的时间。&#160;<a class="footnote-backref" href="#fnref:latency" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:throughput">
+<p>吞吐量。单位时间完成的任务量或数据量。&#160;<a class="footnote-backref" href="#fnref:throughput" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:pcie">
+<p>PCIe，CPU 与 GPU 等设备间常用的主机总线接口。&#160;<a class="footnote-backref" href="#fnref:pcie" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:sm">
+<p>streaming multiprocessor，GPU 内承担大量线程调度和计算的模块。&#160;<a class="footnote-backref" href="#fnref:sm" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:tensor-core">
+<p>Tensor Core，NVIDIA GPU 中加速矩阵乘加的专用单元。&#160;<a class="footnote-backref" href="#fnref:tensor-core" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:alu">
+<p>arithmetic logic unit，算术逻辑单元，执行整数和逻辑运算的部件。&#160;<a class="footnote-backref" href="#fnref:alu" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:simd">
+<p>single instruction multiple data，一条指令处理多个数据元素。&#160;<a class="footnote-backref" href="#fnref:simd" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:simt">
+<p>single instruction multiple threads，单指令多线程，GPU 线程组的执行方式。&#160;<a class="footnote-backref" href="#fnref:simt" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:warp">
+<p>warp，GPU 最小线程调度单位，通常由若干线程同时执行同一条指令。&#160;<a class="footnote-backref" href="#fnref:warp" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:nvlink">
+<p>NVLink，GPU 之间以及 GPU 与 CPU 之间的高带宽互连。&#160;<a class="footnote-backref" href="#fnref:nvlink" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:roofline">
+<p>Roofline 模型。结合计算峰值和内存带宽，估计程序能达到的性能上限。&#160;<a class="footnote-backref" href="#fnref:roofline" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+<li id="fn:hbm">
+<p>high bandwidth memory，高带宽显存，靠近 GPU 的堆叠存储器件。&#160;<a class="footnote-backref" href="#fnref:hbm" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+<li id="fn:arithmetic-intensity">
+<p>算术强度，计算量与访存量的比值。&#160;<a class="footnote-backref" href="#fnref:arithmetic-intensity" title="Jump back to footnote 13 in the text">&#8617;</a></p>
+</li>
+</ol>
 </div>
 
 
