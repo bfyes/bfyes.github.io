@@ -54,30 +54,30 @@ window.__PAGE_META__ = {
     "updated": "2026-07-28T12:37:20+08:00"
   },
   "/study/ctf/": {
-    "updated": "2026-08-07T20:19:45+08:00"
+    "updated": "2026-08-24T20:50:10.280685+08:00"
   },
   "/study/ctf/lab0/": {
     "updated": "2026-07-16T13:01:30+08:00"
   },
-  "/study/ctf/lab1_crypto/crypto/": {
+  "/study/ctf/lab1/crypto/": {
     "updated": "2026-08-07T15:01:54+08:00"
   },
-  "/study/ctf/lab1_misc/misc/": {
+  "/study/ctf/lab1/misc/": {
     "updated": "2026-08-07T15:01:54+08:00"
   },
-  "/study/ctf/lab1_pwn/pwn/": {
+  "/study/ctf/lab1/pwn/": {
     "updated": "2026-08-07T15:01:54+08:00"
   },
-  "/study/ctf/lab1_rev/rev/": {
+  "/study/ctf/lab1/rev/": {
     "updated": "2026-08-07T15:01:54+08:00"
   },
-  "/study/ctf/lab1_web/web/": {
+  "/study/ctf/lab1/web/": {
     "updated": "2026-08-07T15:01:54+08:00"
   },
-  "/study/ctf/lab2_crypto/crypto/": {
+  "/study/ctf/lab2/crypto/": {
     "updated": "2026-08-07T15:01:54+08:00"
   },
-  "/study/ctf/lab2_misc/misc/": {
+  "/study/ctf/lab2/misc/": {
     "updated": "2026-08-07T15:01:54+08:00"
   },
   "/study/ctf/lab3_crypto/crypto/": {
