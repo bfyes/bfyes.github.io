@@ -5,7 +5,9 @@ CTF课程文档 <https://courses.zjusec.com>
 !!! warning "声明"
     笔记/报告仅供记录学习历程、方便复习回顾之用，请勿抄袭。
 
+选做了 misc、crypto。
 可能会随缘更新一些感想和经验。
+课程笔记可能随缘更新。
 
 
 [部分回放链接(智云课堂)](https://classroom.zju.edu.cn/coursedetail?course_id=85726&tenant_code=112)
@@ -20,5 +22,5 @@ CTF课程文档 <https://courses.zjusec.com>
 - [Lab1: Web](lab1/web.md)
 - [Lab2: Crypto](lab2/crypto.md)
 - [Lab2: Misc](lab2/misc.md)
-- [Lab3: Crypto](lab3_crypto/crypto.md)
-- [Lab3: Misc](lab3_misc/misc.md)
+- [Lab3: Crypto](lab3/crypto.md)
+- [Lab3: Misc](lab3/misc.md)
