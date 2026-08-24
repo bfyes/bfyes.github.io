@@ -80,15 +80,15 @@ nav = [
             "study/ctf/index.md",
             { "lab0" = "study/ctf/lab0/index.md" },
             { "lab1" = [
-                { "Crypto" = "study/ctf/lab1_crypto/crypto.md" },
-                { "Misc" = "study/ctf/lab1_misc/misc.md" },
-                { "Pwn" = "study/ctf/lab1_pwn/pwn.md" },
-                { "Reverse" = "study/ctf/lab1_rev/rev.md" },
-                { "Web" = "study/ctf/lab1_web/web.md" },
+                { "Crypto" = "study/ctf/lab1/crypto.md" },
+                { "Misc" = "study/ctf/lab1/misc.md" },
+                { "Pwn" = "study/ctf/lab1/pwn.md" },
+                { "Reverse" = "study/ctf/lab1/rev.md" },
+                { "Web" = "study/ctf/lab1/web.md" },
             ] },
             { "lab2" = [
-                { "Crypto" = "study/ctf/lab2_crypto/crypto.md" },
-                { "Misc" = "study/ctf/lab2_misc/misc.md" },
+                { "Crypto" = "study/ctf/lab2/crypto.md" },
+                { "Misc" = "study/ctf/lab2/misc.md" },
             ] },
             { "lab3" = [
                 { "Crypto" = "study/ctf/lab3_crypto/crypto.md" },
