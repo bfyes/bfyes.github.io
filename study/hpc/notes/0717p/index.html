@@ -64,7 +64,7 @@
     
       <link rel="stylesheet" href="../../../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../../../theme/css/theme.css">
+      <link rel="stylesheet" href="../../../../theme/css/features.css">
     
       <link rel="stylesheet" href="../../../../theme/css/home.css">
     
@@ -3518,6 +3518,7 @@
 
 
 
+
 <h1 id="07-17-下午强化学习多智能体与具身智能">07-17 下午：强化学习、多智能体与具身智能<a class="headerlink" href="#07-17-下午强化学习多智能体与具身智能" title="Permanent link"></a></h1>
 <p>强化学习处理带反馈的连续决策。监督学习的样本通常直接给出输入与正确输出；强化学习里的动作会改变之后遇到的状态，奖励也可能隔很多步才出现。智能体<sup id="fnref:agent"><a class="footnote-ref" href="#fn:agent">1</a></sup>要在已知的好做法与未试过的路径之间分配尝试。课上由此讨论多智能体、历史经验、模型方法和机器人任务。</p>
 <p>先把术语落到一个具体场景。设机器人站在 3×3 网格中，左下角是起点，右上角是目标。状态可以写成坐标<sup id="fnref:state"><a class="footnote-ref" href="#fn:state">2</a></sup> <span class="arithmatex">\((x,y)\)</span>；动作是上、下、左、右<sup id="fnref:action"><a class="footnote-ref" href="#fn:action">3</a></sup>；每走一步奖励<sup id="fnref:reward"><a class="footnote-ref" href="#fn:reward">4</a></sup>为 <span class="arithmatex">\(-1\)</span>，到达目标奖励为 <span class="arithmatex">\(10\)</span>。策略是<sup id="fnref:policy"><a class="footnote-ref" href="#fn:policy">5</a></sup>“在某状态下选择各动作的概率”，例如在起点以 0.7 的概率向右、0.2 向上、0.1 向下。强化学习以长期累计奖励为目标，单步奖励只是构成这个目标的一项。</p>
@@ -4142,7 +4143,7 @@ r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{old}(a_t\mid s_t)}
   })();
 </script>
 
-  <!-- Giscus 评论区（加载与主题同步逻辑见 site.js 的 giscus 模块）
+  <!-- Giscus 评论区（加载与主题同步逻辑见 features/enhancements.js 的 Giscus 模块）
      本文件只负责在需要评论的页面放置容器并声明 giscus 配置。 -->
 
 <div class="giscus"></div>
@@ -4232,7 +4233,7 @@ r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{old}(a_t\mid s_t)}
     
       <script src="../../../../assets/javascripts/bundle.49251538.min.js"></script>
       
-        <script src="../../../../theme/js/site.js"></script>
+        <script src="../../../../theme/js/core.js"></script>
       
         <script src="../../../../theme/js/mathjax.js"></script>
       
@@ -4246,9 +4247,11 @@ r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{old}(a_t\mid s_t)}
       
         <script src="../../../../theme/js/highlight.js"></script>
       
-        <script src="../../../../theme/js/home.js"></script>
+        <script src="../../../../theme/js/features/content.js"></script>
       
-        <script src="../../../../theme/js/pdf.js"></script>
+        <script src="../../../../theme/js/features/pdf.js"></script>
+      
+        <script src="../../../../theme/js/features/enhancements.js"></script>
       
     
   </body>

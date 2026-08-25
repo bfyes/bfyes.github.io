@@ -64,7 +64,7 @@
     
       <link rel="stylesheet" href="../../../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../../../theme/css/theme.css">
+      <link rel="stylesheet" href="../../../../theme/css/features.css">
     
       <link rel="stylesheet" href="../../../../theme/css/home.css">
     
@@ -3666,6 +3666,7 @@
 
 
 
+
 <h1 id="07-07-下午hpc-中的计算机系统-i">07-07 下午：HPC 中的计算机系统 I<a class="headerlink" href="#07-07-下午hpc-中的计算机系统-i" title="Permanent link"></a></h1>
 <p>一条算术指令很少单独决定程序速度。数据抵达执行单元之前会经过 cache<sup id="fnref:cache"><a class="footnote-ref" href="#fn:cache">1</a></sup> 和地址翻译；多个线程<sup id="fnref:thread"><a class="footnote-ref" href="#fn:thread">2</a></sup>又会争用 cache、内存带宽和同步点。理解这些路径，才能解释同一份循环为何会随数据布局和线程数而变化。</p>
 <h2 id="cpu-执行与流水线">CPU 执行与流水线<a class="headerlink" href="#cpu-执行与流水线" title="Permanent link"></a></h2>
@@ -4251,7 +4252,7 @@ S=\frac{1}{s+(1-s)/p}.
   })();
 </script>
 
-  <!-- Giscus 评论区（加载与主题同步逻辑见 site.js 的 giscus 模块）
+  <!-- Giscus 评论区（加载与主题同步逻辑见 features/enhancements.js 的 Giscus 模块）
      本文件只负责在需要评论的页面放置容器并声明 giscus 配置。 -->
 
 <div class="giscus"></div>
@@ -4341,7 +4342,7 @@ S=\frac{1}{s+(1-s)/p}.
     
       <script src="../../../../assets/javascripts/bundle.49251538.min.js"></script>
       
-        <script src="../../../../theme/js/site.js"></script>
+        <script src="../../../../theme/js/core.js"></script>
       
         <script src="../../../../theme/js/mathjax.js"></script>
       
@@ -4355,9 +4356,11 @@ S=\frac{1}{s+(1-s)/p}.
       
         <script src="../../../../theme/js/highlight.js"></script>
       
-        <script src="../../../../theme/js/home.js"></script>
+        <script src="../../../../theme/js/features/content.js"></script>
       
-        <script src="../../../../theme/js/pdf.js"></script>
+        <script src="../../../../theme/js/features/pdf.js"></script>
+      
+        <script src="../../../../theme/js/features/enhancements.js"></script>
       
     
   </body>

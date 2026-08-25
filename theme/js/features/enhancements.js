@@ -1,112 +1,11 @@
 (function () {
   "use strict";
-
-  console.log("welcome to bfyes");
-
-  // 核心：页面生命周期与共享工具。各功能模块通过 window.site.onPageReady 注册。
-  window.site = window.site || {};
-
-  function pageRoot() {
-    return document.querySelector(".md-content__inner") || document.querySelector(".md-content") || document.body;
-  }
-
-  function pageKey(root) {
-    return location.pathname + location.search + "::" + (root ? root.textContent.length : 0);
-  }
-
-  var pageHandlers = [];
-  var scheduled = false;
-  var lastKey = "";
-  var lastRoot = null;
-
-  function onPageReady(fn) {
-    pageHandlers.push(fn);
-  }
-
-  // 点击标题书签后，浏览器可能保留链接焦点，使书签一直显示。
-  // 失焦不影响锚点跳转；键盘 Tab 导航产生的 focus-visible 仍由 CSS 保留。
-  function installHeaderlinkFocusFix() {
-    if (document.documentElement.dataset.headerlinkFocusFix) return;
-    document.documentElement.dataset.headerlinkFocusFix = "1";
-    document.addEventListener("click", function (event) {
-      var link = event.target && event.target.closest
-        ? event.target.closest(".headerlink")
-        : null;
-      if (!link) return;
-      setTimeout(function () {
-        if (document.activeElement === link) link.blur();
-      }, 0);
-    });
-  }
-
-  function schedulePageReady() {
-    if (scheduled) return;
-    scheduled = true;
-    setTimeout(function () {
-      scheduled = false;
-      var root = pageRoot();
-      var key = pageKey(root);
-      if (key === lastKey && root === lastRoot) return;
-      lastKey = key;
-      lastRoot = root;
-      for (var i = 0; i < pageHandlers.length; i++) {
-        try {
-          pageHandlers[i](root);
-        } catch (e) {
-          console.error("[site]", e);
-        }
-      }
-    }, 0);
-  }
-
-  function initPageLifecycle() {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", schedulePageReady, { once: true });
-    } else {
-      schedulePageReady();
-    }
-
-    if (window.document$) {
-      window.document$.subscribe(schedulePageReady);
-    }
-  }
-
-  // 共享 DOM 工具（github / friends / pdf 模块使用）
-  function htmlEl(name, attrs, text) {
-    var node = document.createElement(name);
-    if (attrs) {
-      for (var k in attrs) {
-        if (attrs[k] != null) node.setAttribute(k, attrs[k]);
-      }
-    }
-    if (text != null) node.textContent = text;
-    return node;
-  }
-
-  // ---- 主题同步（highlight.js / giscus 订阅）----
-  var mq = matchMedia("(prefers-color-scheme: dark)");
-  var themeListeners = [];
-
-  function isDark() {
-    var attr = document.body.getAttribute("data-md-color-scheme");
-    if (attr) return attr === "slate";
-    return mq.matches;
-  }
-
-  function themeMode() { return isDark() ? "dark" : "light"; }
-
-  function notifyTheme() {
-    var m = themeMode();
-    themeListeners.forEach(function (fn) { try { fn(m); } catch (e) {} });
-  }
-
-  new MutationObserver(notifyTheme).observe(document.body, {
-    attributes: true,
-    attributeFilter: ["data-md-color-scheme"],
-  });
-  mq.addEventListener("change", notifyTheme);
-
-  // ---- 图片渐进加载（preview → 全分辨率）----
+  /* ============================================================================
+     features/enhancements.js —— 站点增强
+     ----------------------------------------------------------------------------
+     LQIP、页面状态、TOC、Giscus、脚注修正，以及瞬时导航后的 tooltip 回收。
+     ============================================================================ */
+  // ---- LQIP：预览图 → 全分辨率 ------------------------------------------
   var LQIP_MAX_WAIT = 15000;
 
   // 所有渐进图片共用同一套收尾逻辑：至少让模糊占位绘制一帧，
@@ -166,33 +65,12 @@
       })(imgs[i]);
     }
   }
-
-  window.site.onPageReady = onPageReady;
-  window.site.htmlEl = htmlEl;
-  window.site.bindTooltips = bindTooltips;
-  window.site.theme = {
-    get mode() { return themeMode(); },
-    subscribe: function (fn) {
-      themeListeners.push(fn);
-      try { fn(themeMode()); } catch (e) {}
-      return function () {
-        var i = themeListeners.indexOf(fn);
-        if (i >= 0) themeListeners.splice(i, 1);
-      };
-    },
-  };
-
   // ---- 页面状态（全站功能）----
   function syncPageState(root) {
     var scope = root || document;
     document.body.classList.toggle("home-active", !!scope.querySelector(".home-page"));
     document.body.classList.toggle("rainbow-active", !!scope.querySelector(".rainbow-page"));
     document.body.classList.toggle("grid-off-active", !!scope.querySelector(".grid-off"));
-  }
-
-  function initParallaxGrid() {
-    // 网格固定：不监听 scroll，--grid-y 恒为 0。
-    document.body.style.setProperty("--grid-y", "0px");
   }
 
   // ---- 右侧 TOC 逐条淡入 ----
@@ -278,24 +156,20 @@
     });
   }
 
-function initLqipBlur(root) {
-  var scope = root || document;
-  var imgs = scope.querySelectorAll("img.lqip");
-  for (var i = 0; i < imgs.length; i++) {
-    var img = imgs[i];
-    var m = /zoom\s*:\s*([\d.]+)%/i.exec(img.getAttribute("style") || "");
-    if (m) {
-      var zoom = parseFloat(m[1]) / 100;
-      img.style.setProperty("--lqip-blur", Math.round(6 / zoom) + "px");
+  function initLqipBlur(root) {
+    var scope = root || document;
+    var imgs = scope.querySelectorAll("img.lqip");
+    for (var i = 0; i < imgs.length; i++) {
+      var img = imgs[i];
+      var m = /zoom\s*:\s*([\d.]+)%/i.exec(img.getAttribute("style") || "");
+      if (m) {
+        var zoom = parseFloat(m[1]) / 100;
+        img.style.setProperty("--lqip-blur", Math.round(6 / zoom) + "px");
+      }
     }
   }
-}
 
-  // ---- 脚注回跳链接位置修正 ----
-  // Python-Markdown 在脚注最后一块内容是列表时，会生成：
-  // <ul>...</ul><p><a class="footnote-backref">...</a></p>
-  // 这个 <p> 是块级元素，导致回跳链接额外占一行。
-  // 这里把它移动到最后一个列表项末尾，使行为与普通文字脚注一致。
+  // ---- Python-Markdown 脚注回跳修正 --------------------------------------
   function lastFootnoteListTarget(list) {
     var node = list;
     while (node) {
@@ -334,69 +208,18 @@ function initLqipBlur(root) {
     }
   }
 
-  // ---- Material tooltip2 绑定（通用，全站共享）----
-  // 贡献图格子、PDF 工具栏按钮等 [title] 元素由 JS 在运行时动态创建，
-  // 晚于主题原生 tooltip 扫描（content.tooltips 在 document$ 上同步触发，
-  // 而 onPageReady 经 setTimeout(0) 异步执行），因此需要手动补绑。
-  // 机制与主题 Ye() 完全一致：移除 title、创建 .md-tooltip2[role=tooltip]
-  // 挂到 body，hover/touch 时写入 --md-tooltip-host-x/y 等定位 CSS 变量，
-  // 切 --md-tooltip2--top（恒上方）+ --active 触发出场动画。
-  function bindTooltips(root, selector, tipClass) {
-    var scope = root || document;
-    var sel = selector || "[title]";
-    var cls = tipClass ? " " + tipClass : "";
-    var nodes = scope.querySelectorAll(sel);
-    for (var i = 0; i < nodes.length; i++) {
-      (function (el) {
-        if (el.dataset.siteTooltip) return;
-        el.dataset.siteTooltip = "1";
-        var text = el.getAttribute("title");
-        if (!text) return;
-        el.removeAttribute("title");
-        var inner = htmlEl("div", { class: "md-tooltip2__inner md-typeset" }, text);
-        var tip = htmlEl("div", { class: "md-tooltip2" + cls, role: "tooltip" });
-        tip.appendChild(inner);
-        tip.style.setProperty("--md-tooltip-tail", "0px");
-        document.body.appendChild(tip);
-
-        function show() {
-          var r = el.getBoundingClientRect();
-          tip.style.setProperty("--md-tooltip-host-x", (r.left + window.scrollX) + "px");
-          tip.style.setProperty("--md-tooltip-host-y", (r.top + window.scrollY) + "px");
-          tip.style.setProperty("--md-tooltip-x", (r.width / 2) + "px");
-          tip.style.setProperty("--md-tooltip-y", -(8 + inner.offsetHeight) + "px");
-          tip.style.setProperty("--md-tooltip-width", inner.offsetWidth + "px");
-          tip.classList.add("md-tooltip2--top");
-          tip.classList.add("md-tooltip2--active");
-        }
-        function hide() { tip.classList.remove("md-tooltip2--active"); }
-
-        el.addEventListener("mouseenter", show);
-        el.addEventListener("mouseleave", hide);
-        el.addEventListener("touchstart", show, { passive: true });
-        el.addEventListener("touchend", hide, { passive: true });
-      })(nodes[i]);
-    }
-    return nodes.length;
-  }
-
   // 换页时清除上一页残留在 body 的 tooltip（append 到 body 的，不受
   // container.innerHTML="" 影响，instant 切页会累积）。动态组件（贡献图、PDF
   // 工具栏）各自创建 tooltip，换页时由这里统一回收。
   function purgeTooltips() {
     document.querySelectorAll(".ghc-tooltip, .pdf-tooltip").forEach(function (t) { t.remove(); });
   }
-
-
-  installHeaderlinkFocusFix();
-  initPageLifecycle();
-  window.site.onPageReady(normalizeFootnoteBackrefs);
   window.site.onPageReady(syncPageState);
   window.site.onPageReady(upgradeImages);
   window.site.onPageReady(initLqip);
   window.site.onPageReady(initLqipBlur);
   window.site.onPageReady(initTocFade);
-  initParallaxGrid();
   window.site.onPageReady(initGiscus);
+  window.site.onPageReady(normalizeFootnoteBackrefs);
   window.site.onPageReady(purgeTooltips);
 })();

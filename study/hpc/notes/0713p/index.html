@@ -64,7 +64,7 @@
     
       <link rel="stylesheet" href="../../../../theme/css/main.css">
     
-      <link rel="stylesheet" href="../../../../theme/css/theme.css">
+      <link rel="stylesheet" href="../../../../theme/css/features.css">
     
       <link rel="stylesheet" href="../../../../theme/css/home.css">
     
@@ -3484,6 +3484,7 @@
 
 
 
+
 <h1 id="07-13-下午cuda-编程基础">07-13 下午：CUDA 编程基础<a class="headerlink" href="#07-13-下午cuda-编程基础" title="Permanent link"></a></h1>
 <p>CUDA<sup id="fnref:cuda"><a class="footnote-ref" href="#fn:cuda">1</a></sup> 把 CPU 称为 host<sup id="fnref:host"><a class="footnote-ref" href="#fn:host">2</a></sup>，把 NVIDIA GPU 称为 device<sup id="fnref:device"><a class="footnote-ref" href="#fn:device">3</a></sup>。host 负责组织数据和发射 kernel<sup id="fnref:kernel"><a class="footnote-ref" href="#fn:kernel">4</a></sup>；device 上有大量线程<sup id="fnref:thread"><a class="footnote-ref" href="#fn:thread">5</a></sup>执行同一段 kernel 代码。写 CUDA 的关键在于把问题拆成大量相似工作，让线程、数据和内存层级相匹配，而不是简单地把普通 C 循环搬到 GPU。</p>
 <h2 id="cuda-程序流程">CUDA 程序流程<a class="headerlink" href="#cuda-程序流程" title="Permanent link"></a></h2>
@@ -3968,7 +3969,7 @@ cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 
   })();
 </script>
 
-  <!-- Giscus 评论区（加载与主题同步逻辑见 site.js 的 giscus 模块）
+  <!-- Giscus 评论区（加载与主题同步逻辑见 features/enhancements.js 的 Giscus 模块）
      本文件只负责在需要评论的页面放置容器并声明 giscus 配置。 -->
 
 <div class="giscus"></div>
@@ -4058,7 +4059,7 @@ cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 
     
       <script src="../../../../assets/javascripts/bundle.49251538.min.js"></script>
       
-        <script src="../../../../theme/js/site.js"></script>
+        <script src="../../../../theme/js/core.js"></script>
       
         <script src="../../../../theme/js/mathjax.js"></script>
       
@@ -4072,9 +4073,11 @@ cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 
       
         <script src="../../../../theme/js/highlight.js"></script>
       
-        <script src="../../../../theme/js/home.js"></script>
+        <script src="../../../../theme/js/features/content.js"></script>
       
-        <script src="../../../../theme/js/pdf.js"></script>
+        <script src="../../../../theme/js/features/pdf.js"></script>
+      
+        <script src="../../../../theme/js/features/enhancements.js"></script>
       
     
   </body>

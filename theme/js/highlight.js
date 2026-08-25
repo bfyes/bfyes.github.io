@@ -1,6 +1,6 @@
 /**
  * highlight.js 运行时语法高亮（CDN + 本脚本控制渲染）。
- * 主题切换复用 site.js，导航后重新高亮。
+ * 主题切换复用 core.js 的共享主题总线，导航后重新高亮。
  */
 (function () {
   "use strict";
