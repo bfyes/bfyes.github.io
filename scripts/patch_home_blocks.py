@@ -9,6 +9,7 @@ dreamem0ra1n | dreamem0ra1n | https://dreamem0ra1n.github.io/ISYS/ | ISYS
 ::/friends::
 
   字段：显示名 | GitHub用户名 | URL | 描述（可选，无描述留空）
+  标题来自紧邻块上方的 Markdown H2；没有 H2 时渲染无标题分区。
 
 ::changelog::
 2026.08.16: 修复公式问题。重构 css。
@@ -82,7 +83,55 @@ def render_inline_markdown(text: str) -> str:
     return rendered
 
 
-def render_changelog(lines: str) -> str:
+def heading_block_pattern(tag: str) -> re.Pattern[str]:
+    """匹配“Markdown H2 + 自定义块”的整段 HTML。"""
+    return re.compile(
+        rf'<h2(?P<attrs>[^>]*)>(?P<title>(?:(?!</h2>).)*?)</h2>\s*'
+        rf'<p>::{tag}::(?P<content>.*?)::/{tag}::</p>',
+        re.DOTALL,
+    )
+
+
+def plain_block_pattern(tag: str) -> re.Pattern[str]:
+    """匹配没有标题的自定义块。"""
+    return re.compile(rf"<p>::{tag}::(.*?)::/{tag}::</p>", re.DOTALL)
+
+
+def parse_heading(match: re.Match[str]) -> tuple[str, str | None]:
+    """从 Markdown 生成的 H2 中提取纯文本标题和 id。"""
+    attrs = match.group("attrs")
+    raw_title = re.sub(
+        r'<a\s+class="headerlink"[^>]*>.*?</a>\s*$',
+        "",
+        match.group("title"),
+        flags=re.DOTALL,
+    ).strip()
+    title = html.unescape(re.sub(r"<[^>]+>", "", raw_title)).strip()
+    id_match = re.search(r'id="([^"]+)"', attrs)
+    return title, id_match.group(1) if id_match else None
+
+
+def section_shell(
+    title: str | None,
+    section_id: str | None,
+    body: str,
+    extra_class: str = "",
+) -> str:
+    """生成主页分区外壳；标题为空时不输出标题栏。"""
+    classes = "home-section" + (f" {extra_class}" if extra_class else "")
+    aria = f' aria-labelledby="{html.escape(section_id)}"' if section_id else ""
+    head = ""
+    if title:
+        heading_id = f' id="{html.escape(section_id)}"' if section_id else ""
+        head = (
+            '    <div class="home-section__head">\n'
+            f'      <h2{heading_id} class="home-section__title">{html.escape(title)}</h2>\n'
+            "    </div>\n"
+        )
+    return f'<section class="{classes}"{aria}>\n{head}{body}</section>'
+
+
+def render_changelog(lines: str, title: str | None = None, section_id: str | None = None) -> str:
     items = []
     for line in lines.strip().split("\n"):
         line = line.strip()
@@ -98,19 +147,11 @@ def render_changelog(lines: str) -> str:
             f"        <span>{rendered}</span>\n"
             f"      </div>"
         )
-    return (
-        '<section class="home-section" aria-labelledby="home-log-title">\n'
-        '    <div class="home-section__head">\n'
-        '      <h2 id="home-log-title" class="home-section__title">Changelog</h2>\n'
-        "    </div>\n"
-        '    <div class="home-log-list">\n'
-        + "\n".join(items) + "\n"
-        + "    </div>\n"
-        + "</section>"
-    )
+    body = '    <div class="home-log-list">\n' + "\n".join(items) + "\n    </div>\n"
+    return section_shell(title, section_id, body)
 
 
-def render_friends(lines: str, title: str = "Links", section_id: str = "home-friends-title") -> str:
+def render_friends(lines: str, title: str | None = None, section_id: str | None = None) -> str:
     items = []
     for line in lines.strip().split("\n"):
         line = line.strip()
@@ -147,16 +188,8 @@ def render_friends(lines: str, title: str = "Links", section_id: str = "home-fri
             f"        </span>\n"
             f"      </a>"
         )
-    return (
-        f'<section class="home-section" aria-labelledby="{section_id}">\n'
-        f'    <div class="home-section__head">\n'
-        f'      <h2 id="{section_id}" class="home-section__title">{title}</h2>\n'
-        f"    </div>\n"
-        f'    <div class="home-link-grid">\n'
-        + "\n".join(items) + "\n"
-        + "    </div>\n"
-        + "</section>"
-    )
+    body = '    <div class="home-link-grid">\n' + "\n".join(items) + "\n    </div>\n"
+    return section_shell(title, section_id, body)
 
 
 def render_terminal() -> str:
@@ -188,60 +221,53 @@ def render_terminal() -> str:
     )
 
 
-def render_activity(user: str = "") -> str:
+def render_activity(user: str = "", title: str | None = None, section_id: str | None = None) -> str:
     user_attr = f' data-user="{html.escape(user)}"' if user else ""
-    return (
-        '<section class="home-section home-section--activity" aria-labelledby="home-activity-title">\n'
-        '    <div class="home-section__head">\n'
-        '      <h2 id="home-activity-title" class="home-section__title">Activity</h2>\n'
-        "    </div>\n"
+    body = (
         f'    <div class="github-calendar-wrap"{user_attr}>\n'
         '      <div class="ghc-loading">正在加载 GitHub 贡献图...</div>\n'
         "    </div>\n"
-        "</section>"
     )
+    return section_shell(title, section_id, body, extra_class="home-section--activity")
+
+
+def replace_home_blocks(content: str) -> str:
+    """先替换带 Markdown H2 的块，再兜底替换无标题块。"""
+    content = re.sub(r"<p>::terminal::</p>", render_terminal(), content)
+
+    renderers = {
+        "friends": render_friends,
+        "changelog": render_changelog,
+        "activity": lambda content, title=None, section_id=None: render_activity(
+            content.strip(), title, section_id
+        ),
+    }
+
+    for tag, renderer in renderers.items():
+        def replace_heading(match: re.Match[str]) -> str:
+            title, section_id = parse_heading(match)
+            return renderer(match.group("content"), title, section_id)
+
+        content = heading_block_pattern(tag).sub(replace_heading, content)
+        content = plain_block_pattern(tag).sub(
+            lambda match: renderer(match.group(1)), content
+        )
+
+    return content
 
 
 def process_file(path: Path) -> bool:
     content = path.read_text(encoding="utf-8")
-    if "::terminal::" not in content and "::changelog::" not in content and "::friends::" not in content and "::activity::" not in content:
+    if not any(tag in content for tag in ("::terminal::", "::changelog::", "::friends::", "::activity::")):
         return False
 
-    original = content
+    patched = replace_home_blocks(content)
+    if patched == content:
+        return False
 
-    # ::terminal::
-    if "::terminal::" in content:
-        content = re.sub(r"::terminal::\s*\n?", render_terminal(), content)
-
-    # ::changelog::
-    cl = parse_block(content, "changelog")
-    if cl:
-        content = content.replace(
-            re.search(r"::changelog::.*?::/changelog::", content, re.DOTALL).group(0),
-            render_changelog(cl),
-        )
-
-    # ::friends:: (支持多个块，逐个替换)
-    while True:
-        fr = parse_block(content, "friends")
-        if not fr:
-            break
-        block = re.search(r"::friends::.*?::/friends::", content, re.DOTALL).group(0)
-        content = content.replace(block, render_friends(fr), 1)
-
-    # ::activity:: (块语法 ::activity::user::/activity::)
-    act = parse_block(content, "activity")
-    if act:
-        content = content.replace(
-            re.search(r"::activity::.*?::/activity::", content, re.DOTALL).group(0),
-            render_activity(act.strip()),
-        )
-
-    if content != original:
-        path.write_text(content, encoding="utf-8")
-        print(f"  patched: {path.relative_to(SITE)}")
-        return True
-    return False
+    path.write_text(patched, encoding="utf-8")
+    print(f"  patched: {path.relative_to(SITE)}")
+    return True
 
 
 def main() -> None:

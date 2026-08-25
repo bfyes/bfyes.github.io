@@ -5,13 +5,19 @@ page_class: home-page rainbow-page
 
 # Welcome
 
+## About me
+
 ::friends::
 Bill Feng | bfyes | https://github.com/bfyes | 嗨，我是BillFeng，来自浙江大学25级信息安全专业。新手小白，多多指教。<br>我热爱骑行、摄影、乒乓球等，欢迎关注我的视频号(BilllFeng)(3个l)，欢迎交流共同爱好，欢迎交流计算机技术。<br>添加友链可以 PR / issue 或联系我。
 ::/friends::
 
 ::terminal::
 
+## Activity
+
 ::activity::bfyes::/activity::
+
+## Links
 
 ::friends::
 gE | gE0650 | https://0-rangE.cn | Orange
@@ -21,6 +27,8 @@ Evelina | evelina-is | https://evelina-is.github.io/Evelina_personal_web/
 Pastwithin | Pastwithin | https://pastwithin.github.io/Pastwithin-Zensical/ | 我的舍友，电科大佬
 chenyuheee | ChenyuHeee | https://hechenyu.xin
 ::/friends::
+
+## Changelog
 
 ::changelog::
 2026.08.23: 增加导航切换时正文区宽度的平滑过渡，解决困扰我很久的宽度跳变问题。
