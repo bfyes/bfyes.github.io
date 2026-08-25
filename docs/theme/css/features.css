@@ -358,10 +358,13 @@
   border: 1px solid var(--component-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  background: var(--component-panel);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
 }
 
-/* Keep the rounded border out of the scrolling compositing layer.  Older
-   Safari can otherwise paint the border square and then clip its corners. */
+/* Keep the rounded border and panel fill out of the scrolling compositing
+   layer. Older Safari can otherwise let square row layers cover its corners. */
 .site-changelog__scroller {
   max-height: 15rem;
   overflow-x: hidden;
@@ -374,9 +377,6 @@
   align-items: center;
   gap: 0.8rem;
   padding: 0.64rem 0.8rem;
-  background: var(--component-panel);
-  backdrop-filter: blur(var(--blur-radius));
-  -webkit-backdrop-filter: blur(var(--blur-radius));
 }
 
 .site-changelog__entry + .site-changelog__entry {
