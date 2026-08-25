@@ -3667,6 +3667,7 @@
 
 
 
+
 <h1 id="07-07-下午hpc-中的计算机系统-i">07-07 下午：HPC 中的计算机系统 I<a class="headerlink" href="#07-07-下午hpc-中的计算机系统-i" title="Permanent link"></a></h1>
 <p>一条算术指令很少单独决定程序速度。数据抵达执行单元之前会经过 cache<sup id="fnref:cache"><a class="footnote-ref" href="#fn:cache">1</a></sup> 和地址翻译；多个线程<sup id="fnref:thread"><a class="footnote-ref" href="#fn:thread">2</a></sup>又会争用 cache、内存带宽和同步点。理解这些路径，才能解释同一份循环为何会随数据布局和线程数而变化。</p>
 <h2 id="cpu-执行与流水线">CPU 执行与流水线<a class="headerlink" href="#cpu-执行与流水线" title="Permanent link"></a></h2>

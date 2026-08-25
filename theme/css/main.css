@@ -501,25 +501,25 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
    图标和 :target 行为（zensical 默认 :target 显示，此处改为隐藏）。
    ============================================================================ */
 
-.md-content__inner { counter-reset: section-counter; }
-.md-content__inner h2:not(#__comments):not(.ghc-title):not(.home-section__title) {
+body[data-page-counter="true"] .md-content__inner { counter-reset: section-counter; }
+body[data-page-counter="true"] .md-content__inner h2:not(#__comments):not(.ghc-title) {
   counter-increment: section-counter;
   counter-reset: subsection-counter;
 }
-.md-content__inner h2:not(#__comments):not(.ghc-title):not(.home-section__title)::before {
+body[data-page-counter="true"] .md-content__inner h2:not(#__comments):not(.ghc-title)::before {
   content: counter(section-counter);
 }
-.md-content__inner h3 {
+body[data-page-counter="true"] .md-content__inner h3 {
   counter-increment: subsection-counter;
   counter-reset: subsubsection-counter;
 }
-.md-content__inner h3::before {
+body[data-page-counter="true"] .md-content__inner h3::before {
   content: counter(section-counter) "." counter(subsection-counter);
 }
-.md-content__inner h4 {
+body[data-page-counter="true"] .md-content__inner h4 {
   counter-increment: subsubsection-counter;
 }
-.md-content__inner h4::before {
+body[data-page-counter="true"] .md-content__inner h4::before {
   content: counter(section-counter) "." counter(subsection-counter) "." counter(subsubsection-counter);
 }
 
