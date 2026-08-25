@@ -3458,6 +3458,22 @@
 <p><a class="glightbox" data-type="image" href="../assets/0717a/mlsys-compute-mem-comm-triangle.jpg"><img width="1280" height="720" class="lqip" alt="课件的 MLSys 三角：Compute、Memory、Communication 三者互相牵制，任何一方成为瓶颈都会进入系统设计的视野。" src="../assets/0717a/mlsys-compute-mem-comm-triangle.preview.jpg" data-fullsrc="../assets/0717a/mlsys-compute-mem-comm-triangle.jpg" /></a></p>
 <p><em>图：算力、显存与互连构成系统三角；协同设计是在三者之间找平衡，而不是只盯峰值算力。</em></p>
 <p>一个具体的判断方式是先问瓶颈落在哪里。训练时，参数状态可能放不进显存，activation 也可能更大；长上下文服务时，瓶颈常转向 KV cache 的容量与访存；MoE 则会把 token 路由和 All-to-All 通信推到前台。原因不同，优先动作也不同。将所有问题统称为显卡不够会掩盖真正的约束。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>长上下文服务中 KV cache 放不下，为什么只换更大显存不是完整答案？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>更早需要判断瓶颈是容量、带宽还是调度。可以通过 GQA/MQA/MLA 压缩 KV、分页管理、前缀复用、冷块换出或限制并发来改善。只增加显存可能仍被带宽和尾延迟限制，还会改变并发与成本。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>一个方案在模型结构上减少了 attention 计算量，却让每层都必须额外做一次跨卡 AllGather。为什么不能只看 FLOPs 就下结论？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>端到端时间由算力、显存容量、访存带宽、通信和调度共同决定。FLOPs 减少只说明理论计算量变少，若额外通信不能被计算覆盖，实际延迟可能上升。协同设计要比较完整负载下的时间和显存，而不是只比较某一个算子的算术量。</p>
+</details>
+</div>
 <h2 id="scaling-law-与数据">Scaling Law 与数据<a class="headerlink" href="#scaling-law-与数据" title="Permanent link"></a></h2>
 <p>大模型能力提升可以分成预训练、后训练和测试时推理三个阶段。预训练常讨论 scaling law<sup id="fnref:scaling-law"><a class="footnote-ref" href="#fn:scaling-law">9</a></sup>：在模型参数量、训练 token 数和训练计算量增加时，训练损失怎样下降。它给的是经验上的资源分配规律，不是保证能力线性增长的承诺。数据质量、重复率、模型结构和训练稳定性都会改变实际曲线。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717a/scaling-law-data-flywheel.jpg"><img width="1280" height="720" class="lqip" alt="课件说明 scaling law 与数据飞轮：更多算力与更好的数据可用性相互促进，形成持续改进的循环。" src="../assets/0717a/scaling-law-data-flywheel.preview.jpg" data-fullsrc="../assets/0717a/scaling-law-data-flywheel.jpg" /></a></p>
@@ -3471,6 +3487,30 @@
 \]</div>
 <p>交叉熵只要求模型拟合训练分布，并不会直接告诉它哪一种回答对用户更有用。所以预训练之后还需要监督微调、偏好优化或强化学习。代码、数学、可执行工具等场景有一个特点：编译是否通过、测试是否通过、工具调用是否成功都是相对明确的反馈，这类反馈可以继续变成训练数据。</p>
 <p>测试时计算是另一条尺度轴。对同一个基座模型，系统可以让它生成更长的推理过程、并行采样多个候选、调用检索或工具、进行验证和反思。这样会提高单次请求的计算和延迟，是否划算要看任务是否能从额外搜索中稳定获益。不能把多想几步当成免费能力。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>模型变大一定效果更好吗？为什么还要同时讨论数据量、训练计算和质量？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>不一定。经验上的 scaling law 通常把参数量、数据量和计算预算放在一起看。若数据不足或重复严重，大模型容易过拟合；数据质量差也会让目标本身不可靠。同一计算预算下，模型规模和数据量之间存在较优配比，不是单方面无限放大参数。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>测试时让模型并行采样多个候选，为什么不一定带来更好结果？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>多采样增加计算和延迟，还需要选择、验证或投票机制。若任务没有可靠判别器，错误候选可能被保留；若候选高度相似，额外计算收益有限。测试时计算只有在能稳定提升最终决策时才划算。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>若训练预算固定，参数量增加 4 倍而训练 token 数不变，为什么不一定比同时调整两者更划算？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>固定预算下，参数量、数据量和可达损失之间存在经验上的配比。参数很多而数据不足时，模型容易记住或过拟合训练分布，损失下降受到限制；数据多而参数不足时，模型容量又可能不够。Chinchilla 类结论强调的就是在预算内寻找参数与 token 数的较优比例。</p>
+</details>
+</div>
 <h2 id="预训练状态与并行策略">预训练状态与并行策略<a class="headerlink" href="#预训练状态与并行策略" title="Permanent link"></a></h2>
 <p>一次训练 step 至少包含前向、反向和优化器更新。显存里同时存在参数、梯度、优化器状态和激活。前向为了输出损失而保留部分 activation；反向需要它们求导；Adam 等优化器还会保存额外状态。对大模型而言，参数文件的大小只是这笔账的一部分。</p>
 <p>这四类对象可以用 7B 参数的 AdamW 训练粗算一遍。BF16 参数约 14GB，同形状 BF16 梯度约 14GB，FP32 主权重约 28GB，一阶动量和二阶动量各约 28GB，模型状态合计约 112GB。activation 另由 batch、序列长度、层数和 checkpointing 决定。检查显存时把这几项分开列，比只报“模型是 7B”更能说明单卡为何放不下，也能说明 ZeRO、FSDP、activation checkpointing 各自减少的是哪一笔。</p>
@@ -3493,6 +3533,30 @@
 <p><a class="glightbox" data-type="image" href="../assets/0717a/adamw-to-muon.png"><img width="1280" height="720" class="lqip" alt="课件对比 AdamW 与 Muon：AdamW 维护一阶/二阶动量，Muon 是面向矩阵的更新，宣称以约一半的训练 FLOPs 达到 AdamW 级 loss。" src="../assets/0717a/adamw-to-muon.preview.jpg" data-fullsrc="../assets/0717a/adamw-to-muon.png" /></a></p>
 <p><em>图：更好的优化器等同一笔免费算力——若新优化器在更少 step 里达到相同 loss，就直接省下整段训练时间。</em></p>
 <p>以 Muon 为代表的矩阵感知优化器利用参数是矩阵的结构做更新，在部分实验中明显降低达到目标 loss 所需的 FLOPs。它是否适用取决于模型与超参，不能想当然替换；但优化器质量确实是训练成本方程里的一个自由变量，和并行策略、精度选择一样值得在动手堆硬件前先尝试。实际判断仍靠同输入、同 loss 目标下的收敛曲线对比。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>从 checkpoint 恢复训练时，为什么不能只看参数张量，还要记录优化器状态、数据位置和并行切分？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>训练状态包含参数、梯度、Adam 的一阶二阶动量、学习率调度、随机数状态和数据进度。并行训练还涉及张量如何切到各 rank，恢复时布局不一致会导致张量无法直接加载或语义错位。完整 checkpoint 才能保证继续训练与原轨迹尽可能一致。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>MFU 很高，为什么仍不能说明训练系统已经没有浪费？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>MFU 主要衡量计算单元利用率。训练时间还包括通信等待、流水线 bubble、数据加载、checkpoint、重启和同步。某些卡可能空闲而另一些卡高负载，端到端时间仍可能明显超过理想计算时间。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>FSDP 训练一段全连接层时，为什么要先 AllGather 分片参数，计算后又释放完整参数？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>分片保存降低常驻显存，但当前计算可能需要这一层的完整权重。AllGather 临时凑出完整张量，前向或反向用完就释放，显存峰值只保留必要层的完整副本。代价是每次使用分片参数都要通信，因此需要通信计算重叠和合理的分块粒度。</p>
+</details>
+</div>
 <h2 id="高效-attention-与内存访问">高效 Attention 与内存访问<a class="headerlink" href="#高效-attention-与内存访问" title="Permanent link"></a></h2>
 <p>标准 attention 写为</p>
 <p>先给 Q、K、V 一个具体读法。query 是当前 token 用来查询其他 token 的向量，key 是每个 token 用来被查询的向量，value 是被选中后实际贡献给输出的内容向量。三者由同一批隐藏向量乘不同投影矩阵得到。注意力分数来自 query 与 key 的点积，分数经 softmax 变成权重，再对 value 加权求和。</p>
@@ -3527,6 +3591,14 @@
 <p>长上下文再继续增大时，context parallelism 会把 token 或 K/V 块分到多张 GPU。Ring Attention 让 K/V 块在设备间循环传递，每张卡依次处理自己的 Q 与到达的 K/V 块；这把单卡峰值内存降下来，但把问题变成计算与环形通信如何重叠。</p>
 <p>传输并不必等到所有计算结束。一个 K/V 块参与本轮 attention 后，可以在当前设备继续算后续 FFN 的同时送往下一张卡；另一侧也可以边接收边准备下一块。通信若能被这段计算遮住，端到端时间就不会简单等于计算时间加通信时间。实际能否重叠取决于块大小、网络带宽、kernel 排程和各阶段负载，写代码时仍要从 timeline 验证。</p>
 <p>线性 attention 和稀疏 attention 则试图改变随序列长度增长的代价。线性 attention 用特征映射近似或重写相似度，使某些计算可按结合律重排，避免显式构造全部 <span class="arithmatex">\(S\times S\)</span> 关系；因果场景中，它可维护随 token 更新的状态。代价是表示能力、训练稳定性和现有推理缓存机制都要重新评估。稀疏 attention 只让一个 query 关注部分 token，固定窗口、块稀疏和动态选 token 是常见做法；动态选择本身也会引入索引和不规则访存的成本。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>FlashAttention 类方法为什么能降低显存占用？它改变的是注意力数学，还是计算和访存组织？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>核心是不再把完整 <code>S×S</code> 注意力矩阵作为中间结果落回显存，而是分块计算、在线更新 softmax 分母，并让 tile 留在高速存储中逐步完成加权求和。近似数学上仍是注意力，但改变了计算顺序和访存模式，减少大中间矩阵的读写，也更适合 GPU。</p>
+</details>
+</div>
 <h2 id="moe-路由与执行">MoE 路由与执行<a class="headerlink" href="#moe-路由与执行" title="Permanent link"></a></h2>
 <p>Transformer block 里有 attention 和 FFN 两块主要计算。attention 让 token 之间交换信息；普通 FFN 则对每个 token 的隐藏向量单独做两次矩阵投影和一次激活。MoE 没有把整个 Transformer 换掉，它只是用很多个参数不同的 FFN 取代原来的一个 FFN。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717a/transformer-moe-architecture.jpg"><img width="1280" height="720" class="lqip" alt="课件将 Transformer block 中的 FFN 展开为 DeepSeekMoE：router 为每个 token 选出少数 routed experts，结果再合并回原 token。" src="../assets/0717a/transformer-moe-architecture.preview.jpg" data-fullsrc="../assets/0717a/transformer-moe-architecture.jpg" /></a></p>
@@ -3545,6 +3617,22 @@ token C: expert0 0.20, expert1 0.10, expert2 0.45, expert3 0.25</code></pre>
 <p>A 选择 expert0 和 expert1，B 选择 expert1 和 expert2，C 选择 expert2 和 expert0。dispatch 阶段把这些 token 重新排成 expert0 的 <code>[A,C]</code>、expert1 的 <code>[A,B]</code>、expert2 的 <code>[B,C]</code>，各 expert 对自己的小矩阵执行 FFN，最后按原 token 位置 scatter 回去并加权相加。系统真正处理的正是这种不规则重排。</p>
 <p>从系统角度看，困难不在这个公式本身。router 选出的 token 往往散落在 batch 的不同位置，而同一个 expert 的权重希望服务一小批连续 token。实现通常要先记录 <code>(token_id, expert_id, gate)</code>，按 expert 重排 token，完成专家内部的批量 GEMM，再按 <code>token_id</code> scatter 回输出。单机上这是索引、缓冲区和数据布局问题；多卡 expert parallel 中，它会进一步变成 All-to-All。若少数 expert 被频繁选中，计算和通信都会失衡，因此容量控制和负载均衡也进入训练设计。</p>
 <p>route、dispatch、专家矩阵乘法和 weighted merge 分别有自己的数据布局与计时边界。token 按 expert 重排后，矩阵单元才会看到足够规则的小批量；重排本身、索引和 scatter 也必须计入总时间。这里的性能判断依赖矩阵形状、低精度算术和内存访问，而不是只看某一条 GEMM 指令。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>top-k 路由和负载均衡目标为什么可能冲突？系统上如何缓解？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>top-k 只关心每个 token 选质量最好的 expert，容易造成热门 expert 被过度选中；系统希望各 GPU 的工作量均衡。容量限制、辅助均衡损失、expert 复制或重排调度都在这个矛盾上折中。设计目标要同时看模型质量和吞吐，不能只看路由精度。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>FlashAttention 减少 HBM 读写，为什么这常常比减少 FLOPs 更重要？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>attention 的大 <span class="arithmatex">\(S\times S\)</span> 中间矩阵写入显存再读回，会消耗大量带宽。分块计算让 tile 留在 shared memory 或寄存器中完成乘加、softmax 累计和输出更新，中间矩阵不必完整写回 HBM。计算总量近似不变，但访存次数显著减少，GPU 空等数据的时间下降。</p>
+</details>
+</div>
 <h2 id="参数高效微调">参数高效微调<a class="headerlink" href="#参数高效微调" title="Permanent link"></a></h2>
 <details class="note" open="open">
 <summary>什么是量化成低比特：用整数近似浮点权重</summary>
@@ -3563,6 +3651,22 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 <p><a class="glightbox" data-type="image" href="../assets/0717a/lora-low-rank-ba.jpg"><img width="1280" height="720" class="lqip" alt="课件直接给出 LoRA 的公式：冻结预训练权重 \(W_0\)，只学习一个低秩更新 \(\Delta W = BA\)，训练时只保存和更新小矩阵。" src="../assets/0717a/lora-low-rank-ba.preview.jpg" data-fullsrc="../assets/0717a/lora-low-rank-ba.jpg" /></a></p>
 <p><em>图：低秩分解 <span class="arithmatex">\(BA\)</span> 让可训练参数量大幅下降；部署时把 <span class="arithmatex">\(BA\)</span> 合并回 <span class="arithmatex">\(W_0\)</span> 或不保留 adapter 均可。</em></p>
 <p>Q-LoRA 再把冻结的基座量化到低比特，以更少显存加载大模型，同时让 LoRA 分支保持可训练精度。量化并不等于所有张量都直接截成相同格式。权重、激活、梯度和 KV cache 对误差的敏感度不同；缩放因子的粒度、异常值、累积精度和硬件指令都会影响最终效果。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>原线性层是 <code>[4096, 4096]</code>，LoRA 取秩 <span class="arithmatex">\(r=16\)</span>。为什么可训练参数远少于全量微调？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>全量微调要更新约 1678 万个权重。LoRA 用 <code>B [4096,16]</code> 和 <code>A [16,4096]</code> 表示低秩增量，可训练参数约 13.1 万，不到 1%。基座权重冻结，训练状态和梯度的显存也相应减少。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>LoRA 把 <span class="arithmatex">\(\Delta W\)</span> 写成 <span class="arithmatex">\(BA\)</span>，训练时冻结 <span class="arithmatex">\(W\)</span>。为什么这仍能改变模型行为？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>前向输出变成 <span class="arithmatex">\(Wx+BAx\)</span>。<span class="arithmatex">\(W\)</span> 固定，但低秩矩阵 <span class="arithmatex">\(B\)</span> 和 <span class="arithmatex">\(A\)</span> 参与每次计算，等价于给原线性层增加一个可学习的增量。微调更新的是这个增量，而不是重写整个权重矩阵。参数少、训练和保存成本低，代价是表达能力受秩 <span class="arithmatex">\(r\)</span> 限制。</p>
+</details>
+</div>
 <h2 id="kv-cache-与推理内存">KV Cache 与推理内存<a class="headerlink" href="#kv-cache-与推理内存" title="Permanent link"></a></h2>
 <p>自回归推理分为 prefill 和 decode。prefill 一次处理完整 prompt，计算所有输入 token 的 K/V 并建立 cache；decode 每步生成一个 token，要读取前文 cache、计算新 token 的 Q/K/V，再把新的 K/V 追加进去。</p>
 <p>设有 <span class="arithmatex">\(L\)</span> 层、<span class="arithmatex">\(H_{kv}\)</span> 个 KV head、每个 head 维度为 <span class="arithmatex">\(d\)</span>、上下文长度为 <span class="arithmatex">\(S\)</span>，单请求 KV cache 大小近似随</p>
@@ -3587,6 +3691,22 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 <p><a class="glightbox" data-type="image" href="../assets/0717a/mha-mqa-gqa-mla-comparison.png"><img width="1280" height="720" class="lqip" alt="课件给出 MHA、MQA、GQA 与 MLA 的对照：缓存大小、效果与显存占用各有倾斜，MLA 靠低秩压缩拿到接近 MQA 的缓存、接近 MHA 的效果。" src="../assets/0717a/mha-mqa-gqa-mla-comparison.preview.jpg" data-fullsrc="../assets/0717a/mha-mqa-gqa-mla-comparison.png" /></a></p>
 <p><em>图：MHA 效果最好但缓存最大，MQA 缓存最小但效果有损，GQA 是折中；MLA 把 K/V 压缩成共享潜变量，避开缓存小与效果好之间的两难。</em></p>
 <p>MLA（Multi-head Latent Attention）更进一步，不直接共享完整 K/V，而是把 KV 低秩联合压缩成一个较小的潜变量 <span class="arithmatex">\(c_t\)</span>，推理时只缓存这个潜向量，再在线还原。它的缓存量（如论文中 <span class="arithmatex">\(d_c+d_r\)</span>）与 head 数无关，却能保留接近 MHA 的表达能力。正因为 KV cache 是长上下文推理的显存与带宽瓶颈，压缩 KV 这件事既是模型架构选择，也是系统能在多长上下文、多大并发下运行的变量。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>batch size 为 1，序列长度 4096，层数 32，head 数 8，head dim 128，K 和 V 均为 FP16。KV Cache 大约是多少字节？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>每个 token 每层需要 K 和 V 各 <code>8×128</code> 个元素，共 <code>2×8×128=2048</code> 个 FP16 值。32 层就是 <code>2048×32=65536</code> 个值，每值 2 B，单 token 约 131072 B。4096 个 token 约为 <code>131072×4096=536870912 B</code>，即约 512 MiB。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>MHA、GQA、MQA 的 KV cache 大小为什么不同？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>MHA 为每个 query head 保存一份 K/V；GQA 让一组 query head 共享一份 K/V；MQA 让所有 query head 共用一份 K/V。因此同样 head 数下，MQA 缓存最小，MHA 最大，GQA 位于两者之间。</p>
+</details>
+</div>
 <h2 id="量化推理与服务调度">量化推理与服务调度<a class="headerlink" href="#量化推理与服务调度" title="Permanent link"></a></h2>
 <p>低比特权重减少容量和带宽压力，校准误差、反量化路径与服务调度决定这部分节省能否转化成端到端收益。</p>
 <p>对称量化和非对称量化的区别可以用同一组数看清楚。对称 INT4 通常把整数范围取为 <span class="arithmatex">\([-7,7]\)</span>，若一组权重最大绝对值是 1.0，scale 为 <span class="arithmatex">\(1/7\)</span>。权重 <span class="arithmatex">\([-1.0,0.2,0.8]\)</span> 量化为 <span class="arithmatex">\([-7,1,6]\)</span>，反量化为 <span class="arithmatex">\([-1.0,0.143,0.857]\)</span>，误差分别为 <span class="arithmatex">\([0,0.057,0.057]\)</span>。</p>
@@ -3628,6 +3748,30 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 <p class="admonition-title">量化正确性不是能生成一句通顺文本</p>
 <p>输出文本受采样随机性影响，难以比较。固定 token 序列、tokenizer、mask 与 logit 处理后计算 NLL，才能判断误差来自量化还是输入前处理。融合 kernel 改了权重布局时，也要先确认 dequant 后的数值语义未变。</p>
 </div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么量化误差常常不只是“把浮点改成整数”这一步？计算路径中还有哪些误差来源？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>权重和激活要先用 scale 映射到低比特范围，超出表示范围的值会被截断或饱和。整数矩阵乘后的累加类型、反量化顺序、scale 精度、激活异常值和 GEMM 融合方式都会影响结果。若逐层误差被后续非线性放大，最终输出差异可能明显，因此要做端到端校验。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>INT4 权重文件变小了，为什么推理速度不一定按 4 倍提升？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>速度取决于反量化、解包、scale 读取、矩阵形状、tensor core 利用率、KV cache 和调度。若 batch 很小或 kernel 需要频繁解包，固定开销可能占主导。文件大小只反映存储，不自动等于端到端吞吐。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>speculative decoding 的草稿模型接受率很低时，为什么可能比普通 decode 更慢？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>目标模型仍要验证整批草稿 token，还会为被拒绝的位置做回退。接受率低意味着多数额外前向没有换来有效输出，同时草稿模型本身的生成也有开销。收益取决于每次接受的 token 数、草稿长度和并行验证实现，不是固定加速比。</p>
+</details>
+</div>
 <h2 id="agent-与-harness">Agent 与 Harness<a class="headerlink" href="#agent-与-harness" title="Permanent link"></a></h2>
 <p>上面讲的训练、推理、显存和调度，最终都要被一段干活的代码编排起来。课程把这类编排概括成一个公式：Agent = Model + Harness<sup id="fnref:harness"><a class="footnote-ref" href="#fn:harness">14</a></sup>。</p>
 <ul>
@@ -3640,6 +3784,14 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 <p>环境、工具、记忆和状态机是 harness 的四个基本部件。环境提供观察结果，例如文件内容或命令输出；工具是模型可以调用的函数，例如读文件、搜索代码、运行测试；记忆保存跨轮可用的信息；控制流决定什么时候停止、重试或请求人工确认。模型输出的只是文本或结构化调用意图，真正执行动作、检查返回值和处理异常的是 harness。</p>
 <p>多模态模型又把输入扩展为图像、视频、音频或动作。视觉编码器把图像变成视觉 token，再与文本 token 在语言模型中融合；生成任务可能使用自回归、扩散或两者混合的架构。图像 token 数、视频帧数和跨模态 attention 都会直接放大上下文与推理成本。</p>
 <p>性能分析先把瓶颈落到算力、显存、带宽、通信或请求调度中的某一项，再决定改模型、kernel、精度还是系统。笼统地说模型跑得慢无法导出可验证的优化实验。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>同一个大模型接上不同 harness，为什么表现可能差别很大？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>harness 决定如何组织 prompt、调用工具、保存状态、处理错误和停止任务。模型只输出文本或调用意图，真正执行动作和检查结果的是外围代码。工具选择、上下文管理和重试策略不同，任务成功率也会不同。</p>
+</details>
+</div>
 <div class="footnote">
 <hr />
 <ol>

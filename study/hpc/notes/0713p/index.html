@@ -3524,6 +3524,14 @@ cudaFree(d_y);</code></pre>
 <p>这样可以让 block 数按 SM<sup id="fnref:sm"><a class="footnote-ref" href="#fn:sm">8</a></sup> 数量和每个 SM 的并发能力选择，而不是盲目创建极多 block。它还便于调试：把 grid 和 block 暂时设为 1，代码仍按同一索引逻辑串行覆盖全部元素。矩阵、张量的二维或三维情形也是同一原则，先确定一个线程或一个 tile 对应哪块输出，再写出到输入的索引关系。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/cuda-thread-mapping.png"><img width="991" height="482" class="lqip" alt="课件以矩阵相加为例，将二维 block/thread 坐标对应到输出矩阵的位置。" src="../assets/0713a/cuda-thread-mapping.preview.jpg" data-fullsrc="../assets/0713a/cuda-thread-mapping.png" /></a></p>
 <p><em>图：线程索引首先是一种数据划分方式，边界 block 必须保留范围检查。</em></p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>一个 kernel 需要 100 万个线程，为什么不建议全部放进一个 block？block 和 grid 各解决什么问题？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>block 的线程数受硬件上限、寄存器、共享内存和调度粒度限制；一个 block 通常放在同一个 SM 上，内部还能同步和共享内存。grid 把许多 block 分给多个 SM，让 GPU 同时调度大量工作。大任务应拆成许多 block，每个 block 再包含合适数量的线程。</p>
+</details>
+</div>
 <h2 id="sm-与-warp-执行">SM 与 Warp 执行<a class="headerlink" href="#sm-与-warp-执行" title="Permanent link"></a></h2>
 <p>GPU 由多个 SM（Streaming Multiprocessor）组成。block 被调度到某个 SM；同一 block 内线程可以协作。硬件实际以 32 个线程为一组的 warp 发射指令。一个 warp 的所有线程执行同一条指令，但每个 lane 使用不同数据（遇到分支发散时才分路径执行）。</p>
 <pre class="highlight"><code class="language-text">grid
@@ -3535,6 +3543,14 @@ cudaFree(d_y);</code></pre>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/warp-divergence.jpg"><img width="1280" height="720" class="lqip" alt="warp 遇到不同分支时，硬件先执行 path A（屏蔽另一半），再执行 path B，有效并行度下降。" src="../assets/0713p/warp-divergence.preview.jpg" data-fullsrc="../assets/0713p/warp-divergence.jpg" /></a></p>
 <p><em>图：<code>if (threadIdx.x &lt; 16) path_A(); else path_B();</code> 会让同一 warp 分两次跑，两边各只利用一半 lane。</em></p>
 <p>block 是可协作的边界。不同 block 的执行顺序不保证，也不能在普通 kernel 内做全局 barrier；若需要全局同步，通常拆成两个 kernel，或使用专门的协作组机制并满足其启动条件。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么 block 大小是 32 的倍数常常有帮助？如果尾块只有 1 个有效线程，会发生什么？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>NVIDIA GPU 通常以 32 个线程为一个 warp 调度。block 大小是 32 的倍数可以减少尾 warp。若最后一个 warp 只有 1 个有效线程，硬件仍要为这个 warp 发出指令，但 31 条 lane 无效，指令利用率大幅下降。边界处理可用掩码，但也要尽量避免大量半空 warp。</p>
+</details>
+</div>
 <h2 id="gpu-内存层级">GPU 内存层级<a class="headerlink" href="#gpu-内存层级" title="Permanent link"></a></h2>
 <p>每种内存决定了可见范围、容量和速度：</p>
 <table>
@@ -3576,6 +3592,14 @@ tile[threadIdx.x] = x[global_i];
 __syncthreads();
 // 现在可安全读取同一 block 中其他线程写入的 tile</code></pre>
 <p><code>__syncthreads()</code> 必须由 block 中所有尚存活线程以一致方式到达；把它放在仅部分线程会进入的条件分支中，可能死锁。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么同一 block 的线程可以用 shared memory 协作，不同 block 通常不能这样做？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>shared memory 属于某个 block，生命周期和可见范围也限于此。不同 block 的调度顺序不保证，普通 kernel 中也没有全局 barrier，因此不能假设两个 block 同时到达某一点。跨 block 共享要使用 global memory、原子操作、协作组或拆成多个 kernel。</p>
+</details>
+</div>
 <h2 id="合并访问和-bank-conflict">合并访问和 bank conflict<a class="headerlink" href="#合并访问和-bank-conflict" title="Permanent link"></a></h2>
 <p>global memory 的带宽很高，但前提是一个 warp 的线程访问规则地址。若 thread 0、1、2... 分别访问连续元素，硬件可把请求合并为少量内存事务，称为 coalesced access<sup id="fnref:coalesced"><a class="footnote-ref" href="#fn:coalesced">10</a></sup>。若每个线程相隔很远、随机跳跃，事务数量增多，有效带宽下降。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/memory-coalescing.jpg"><img width="1280" height="720" class="lqip" alt="合并访问让一个 warp 的一次地址请求落进少量内存事务；strided 访问则拆成多个事务。" src="../assets/0713p/memory-coalescing.preview.jpg" data-fullsrc="../assets/0713p/memory-coalescing.jpg" /></a></p>
@@ -3591,6 +3615,14 @@ float x = input[row * width + col];</code></pre>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/smem-xor-swizzle.png"><img width="1280" height="720" class="lqip" alt="课件对比未 swizzle 与 128B XOR swizzle 两种布局：前者整行落到同一组 bank 上、触发 8-way conflict，后者把请求展开到全部 32 个 bank。" src="../assets/0713p/smem-xor-swizzle.preview.jpg" data-fullsrc="../assets/0713p/smem-xor-swizzle.png" /></a></p>
 <p><em>图：bank 编号由地址与行号异或得到后，同一 warp 的访问从 8 个 round 的冲突降到 1 个 round；代价只是多一条地址异或。</em></p>
 <p>swizzle 常用在 Tensor Core<sup id="fnref:tensor-core"><a class="footnote-ref" href="#fn:tensor-core">12</a></sup> 的 shared memory tile 布局上，配合 TMA 等硬件搬运让数据以兼容格式落位。它不是银弹：只有在 profiler 证实 warp 因 bank 冲突停顿、且访存模式规则时才值得尝试；随机访问没有稳定模式可重新映射，压不住。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>同一 warp 的 32 个线程分别读取相邻的 4 B 数据，为什么通常比 32 次分散读取快？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>相邻 4 B 数据合起来正好是连续 128 B，可以合并成少量内存事务，充分使用总线和 cache line。分散地址可能落到许多不同 cache line，硬件要发起更多事务，带宽浪费在未使用的数据上。合并访存的关键是同一 warp 的访问地址连续且对齐。</p>
+</details>
+</div>
 <h2 id="矩阵乘法与-tiling">矩阵乘法与 Tiling<a class="headerlink" href="#矩阵乘法与-tiling" title="Permanent link"></a></h2>
 <p>朴素矩阵乘法中，每个线程算一个 <code>C[row, col]</code>：</p>
 <div class="arithmatex">\[
@@ -3609,6 +3641,14 @@ C_{row,col}=\sum_kA_{row,k}B_{k,col}
     __syncthreads()
 store(C_tile)</code></pre>
 <p>两次同步分别保护 tile 已全部装完和旧 tile 已无人使用这两个状态。若某些线程因为边界条件提前返回，其他线程再到达 <code>__syncthreads()</code> 就可能挂住；边界线程应参与同步，只把无效 load 填为零、无效 store 跳过。小矩阵时也要防止 block 太大：很多线程没有足够工作，会把启动和同步成本放大。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>tiled GEMM 为什么要把 tile 放进 shared memory？它主要提高哪一层的复用？</p>
+<details class="tip">
+<summary>答案</summary>
+<p><code>C</code> 的一个 tile 需要反复使用 <code>A</code> 的多行和 <code>B</code> 的多列。把它们先读入 shared memory，可以让一个 block 内的线程复用这些数据，减少 global memory 访问，也减少寄存器压力。tile 大小要在 shared memory 容量、线程数和并行度之间折中；过大 occupancy 下降，过小复用不足。</p>
+</details>
+</div>
 <h2 id="tensor-core-与矩阵乘加">Tensor Core 与矩阵乘加<a class="headerlink" href="#tensor-core-与矩阵乘加" title="Permanent link"></a></h2>
 <p>Tensor Core 面向小矩阵乘加，例如 <span class="arithmatex">\(D=A\times B+C\)</span>。它能以低精度输入（FP16、BF16、TF32、INT8 等，取决于架构）实现很高吞吐。WMMA、CUTLASS 和 cuBLAS 等接口把这类能力封装起来。</p>
 <p>使用 Tensor Core 不只是把普通 <code>float</code> 改成低精度：矩阵形状、对齐、布局和精度累加方式都有要求。深度学习常允许输入低精度、累加用更高精度；科学计算能否接受相应误差，必须由算法需求决定。先用 cuBLAS/cuBLASLt 或框架高层算子，只有需要专门 kernel 时再考虑 WMMA/CUTLASS。</p>
@@ -3647,6 +3687,14 @@ cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 
 <p>把一个公式拆成许多小 kernel 很直观，例如先算线性层、再单独加 bias、再单独激活、再写出临时张量。但每个 kernel 都要从 global memory 读输入、写中间结果，后一个 kernel 又立刻把它读回来。若这些步骤之间没有其他使用者，把它们融合进同一 kernel，往往能省下多次显存往返和 launch 开销。</p>
 <p>融合也有边界。kernel 太大可能让寄存器数量上升、occupancy 下降，代码可维护性和数值检查也会变差；而 cuBLAS、cuDNN、FlashAttention 等库可能已经把常见模式做得很强。合理的顺序是先用 profiler 看中间张量搬运和小 kernel 是否真的占时，再比较框架已有的 fused 实现、库调用与自定义 kernel。不能因为少启动几个 kernel 听起来合理，就跳过测量。</p>
 <p>对推理或训练的一个连续阶段，尽量把输入一次送到 GPU，让中间激活、KV cache 或工作 buffer 留在 device，最后再取回真正需要的结果。CPU 仍负责准备请求、提交工作和处理不规则控制；把能够连续执行的规则数据流切成频繁的 host-device 往返，通常会得不偿失。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么 CUDA kernel 启动后立即在 CPU 侧计时不可靠？异步 stream 的正确计时应该怎么做？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>kernel 启动通常是异步的，CPU 提交后可能立即继续执行，计时结束点可能早于 GPU 完成。应使用事件记录同一 stream 中的开始和结束，或显式同步后再读时间。若涉及数据传输和多个 stream，还要说明计时是否包含 H2D/D2H，以及是否等待全部任务完成。</p>
+</details>
+</div>
 <h2 id="cuda-正确性与性能工程">CUDA 正确性与性能工程<a class="headerlink" href="#cuda-正确性与性能工程" title="Permanent link"></a></h2>
 <p>每个 kernel launch 后至少检查 <code>cudaGetLastError()</code>；需要定位异步错误时调用 <code>cudaDeviceSynchronize()</code>。用小尺寸输入与 CPU 参考实现逐元素比较，先证明结果正确，再测大规模性能。越界、未初始化、竞争和错误同步常常在大规模才表现为随机错误。</p>
 <p>Nsight Systems 适合看 CPU、GPU、传输和 stream 的时间线；Nsight Compute 适合看某个 kernel 的访存、占用率、warp 效率和指令吞吐。所谓 occupancy 是一个 SM 上活跃 warp 相对可支持上限的比例；它有助于隐藏延迟，但不是越高越好。一个寄存器更多、occupancy 较低却减少访存的 kernel，可能实际更快。</p>
@@ -3670,6 +3718,14 @@ cudaDeviceSynchronize();  // 调试/边界处需要；不要在每个小 kernel 
 <h3 id="错误传播与确定性">错误传播与确定性<a class="headerlink" href="#错误传播与确定性" title="Permanent link"></a></h3>
 <p>CUDA API 许多调用只是把工作排入队列，非法访存经常在后续同步、下一次 API 调用甚至程序结束时才报告。定位时可在可疑 kernel 后临时加入 <code>cudaGetLastError()</code> 和同步，再用 Compute Sanitizer 检查越界、未初始化和 race；确认后移除不必要同步恢复真实性能。编译 debug 版本时保留符号和较低优化，性能版本再单独测量，不能拿调试模式速度评价 kernel。</p>
 <p>并行归约的输出顺序、Tensor Core 的低精度乘加和不同 GPU 架构都可能改变最后若干位。验证应包含小尺寸可人工检查的案例、非方阵/非整除边界、随机输入和与参考实现的误差界；还应测量多次运行是否稳定。只在 <code>n</code> 恰为 block size 倍数、矩阵恰为方阵的输入上通过，不能说明 indexing 和 mask 已正确。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>CUDA API 没有立刻报错，是否说明 kernel 计算正确？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>不能。很多调用是异步的，错误可能延迟到后续同步或拷贝时出现。即使执行成功，也可能有越界索引、同步缺失、race condition 或精度问题。需要检查返回值、调用 <code>cudaGetLastError</code>、同步并在边界验证结果。</p>
+</details>
+</div>
 <h2 id="triton-与高层-kernel-工具">Triton 与高层 Kernel 工具<a class="headerlink" href="#triton-与高层-kernel-工具" title="Permanent link"></a></h2>
 <p>Triton<sup id="fnref:triton"><a class="footnote-ref" href="#fn:triton">15</a></sup> 允许用 Python 风格的语言表达 GPU kernel。程序员关注 block/tile、张量索引和数据布局，再由编译器生成低层代码。它不消除 CUDA 的基本规律：程序实例如何分工、global memory 是否合并、数据是否在更近层级复用、资源是否过量，仍然决定性能。</p>
 <p>对于标准矩阵乘法、卷积、attention 等，框架和库已经高度优化。手写 kernel 的合理场景是算子融合、特殊形状、特殊数据布局或 profiler 证明的热点。否则最可靠的优化是减少不必要的数据搬运并调用正确的库。</p>

@@ -3699,6 +3699,14 @@ int y = x * c;</code></pre>
 <h3 id="乱序推测与提交">乱序、推测与提交<a class="headerlink" href="#乱序推测与提交" title="Permanent link"></a></h3>
 <p>乱序执行让处理器在等待某条慢指令时，先发射已经具备输入的其他指令。为了让程序对外仍像按顺序运行，现代 CPU 会给寄存器重命名，记录指令真正依赖的是哪一个临时物理寄存器；计算结果可以先完成，但通常按程序顺序提交到架构可见状态。</p>
 <p>分支预测则先猜条件结果，并沿猜测路径取指、执行。预测正确时，延迟被隐藏；预测错时，需要撤销错误路径上的推测工作，流水线重新从正确地址开始。随机数据上的阈值判断、间接跳转和难预测的状态机都可能因此变慢。优化前应先测量：有时改数据表示、消除分支或让条件按块集中，比微调某条算术指令更有效。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么一条指令的执行可以被拆成取指、译码、执行、访存、写回？流水线提高吞吐的前提是什么？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>一条指令完成的是一串不同阶段的工作，硬件可以把这些阶段做成流水段，让各段同时处理不同指令。这样单条指令的完成时间不一定缩短，但稳态下可以在每个周期推出一条结果。前提是指令流能连续供给，阶段之间不会长期互相等待；一旦出现数据依赖、分支方向不明或 cache miss，流水线就要停顿、冲刷或等待。</p>
+</details>
+</div>
 <h2 id="存储层级与访存代价">存储层级与访存代价<a class="headerlink" href="#存储层级与访存代价" title="Permanent link"></a></h2>
 <p>寄存器最接近执行单元、容量最小；其次是 L1、L2、L3 cache；再往外是 DRAM<sup id="fnref:dram"><a class="footnote-ref" href="#fn:dram">5</a></sup>。越往外容量越大、单位容量越便宜，但访问延迟和带宽代价也越高。CPU 通常以 <strong>cache line</strong> 为单位搬运一段连续字节，很少单独取一个 <code>double</code>。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0707p/memory-hierarchy-registers.jpg"><img width="1280" height="720" class="lqip" alt="课件的 Memory Hierarchy：从寄存器、cache、主存到外存，越往里越快越小，越往外越大越慢。" src="../assets/0707p/memory-hierarchy-registers.preview.jpg" data-fullsrc="../assets/0707p/memory-hierarchy-registers.jpg" /></a></p>
@@ -3737,6 +3745,14 @@ for (int i = 0; i &lt; rows; ++i)
 <p>cache 以缓存行（line）为单位填充，x86 常见一行 64 字节。读一个 <code>float x[i]</code> 可能把相邻 15 个 float 一并带入 L1；这正是连续访问容易快的物理原因，也是伪共享（false sharing）会发生在不同变量上的原因。若每次跨很大的固定步长访问，只用到每行的一个元素，内存带宽会被无效字节消耗。结构体里只使用少数热点字段时，改用结构体数组（SoA）有时能避免把无关字段也带进缓存行（上一节那张图已画出缓存行的这一行为，并用查询命令给出当前机器的行大小）。</p>
 <p>cache 是有限且按组组织的。地址中的一部分位选择缓存组（cache set），同一组能同时容纳的行数由相联度（associativity）决定。多个频繁访问的地址若恰好映射到同一组，会相互驱逐，即使总工作集小于 cache 容量也会发生冲突未命中（conflict miss）。大多数程序无需手工计算组，但矩阵行列访问、固定步长数组和多数组同步遍历出现反常性能时，填充（padding）或改变分块（tile）尺寸可能消除冲突；它应由硬件计数器和尺寸扫描验证。</p>
 <p>硬件预取器（prefetcher）会尝试预测线性或规则步长流，在真正读入（load）前把后续缓存行拉近。它对顺序数组极有效，对随机指针链、哈希表或数据相关间接索引帮助很小。软件预取（prefetch）也不是通用加速器：预取得太早会被挤出，太晚来不及，错误预取还会占用带宽。先让布局和循环顺序规律，通常比插入预取指令更可靠。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>两个线程分别频繁写同一个 cache line 里的不同变量，为什么程序会变慢？这叫什么问题？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>这叫 false sharing。变量虽然逻辑上不相干，但落在同一个 cache line，硬件维护一致性时会让两边的 cache line 反复失效。一个线程写完，另一个线程再写，通信量被放大，性能下降。把两个变量按 cache line 对齐分开，或让每个线程写自己连续的区域，可以缓解。</p>
+</details>
+</div>
 <h2 id="进程与地址空间">进程与地址空间<a class="headerlink" href="#进程与地址空间" title="Permanent link"></a></h2>
 <p>进程是操作系统分配<sup id="fnref:process"><a class="footnote-ref" href="#fn:process">6</a></sup>和保护资源的基本单位。一个进程拥有自己的虚拟地址空间<sup id="fnref:vas"><a class="footnote-ref" href="#fn:vas">7</a></sup>、打开的文件、权限和运行状态。它看见的地址是虚拟地址，不等于物理内存条上的地址；这使两个进程都可以使用看似相同的地址而互不干扰。</p>
 <details class="note" open="open">
@@ -3825,6 +3841,14 @@ for (int i = 0; i &lt; rows; ++i)
 <p>Unix 进程创建常见于 <code>fork()</code>。子进程最初得到父进程地址空间和文件描述符表的逻辑副本，但内核不会立刻复制全部物理页，先把双方页面标为 <strong>copy-on-write</strong>。只有父或子尝试写某页时，内核才复制该页。这让创建后立刻 <code>exec</code> 新程序的模式不必浪费复制整段内存的时间。</p>
 <p><code>execve()</code> 不创建新进程，它把当前进程的地址空间替换为目标可执行文件及其依赖库；PID 通常不变。shell 执行外部命令的基本过程便是 fork 一个子进程、在子进程中 exec、父进程按需要等待。作业系统启动 MPI rank、Python 的多进程库和管道也会建立在相似的进程机制上。</p>
 <p>文件描述符是进程内的小整数，指向内核维护的打开文件、管道、socket 或设备对象。标准输入/输出/错误一般是 0、1、2。fork 后父子会继承描述符，因此重定向、管道和日志输出需要特别注意谁还持有写端：管道读端只有在所有写端关闭后才会读到 EOF。这里的资源所有权，与多线程中谁可以写共享变量，是同一类工程问题。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么两个进程可以都使用地址 <code>0x400000</code>，而它们实际访问的数据不同？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>进程看到的是虚拟地址。CPU 通过页表把虚拟地址翻译成物理地址，每个进程有独立的地址空间和页表，因此同一个虚拟地址可以映射到不同物理页。这也让地址空间隔离、按需分配和权限控制成为可能。</p>
+</details>
+</div>
 <h2 id="线程与共享内存">线程与共享内存<a class="headerlink" href="#线程与共享内存" title="Permanent link"></a></h2>
 <p>线程是 CPU 调度和执行的基本单位。一个进程可包含多个线程：它们共享代码、堆、全局变量和打开文件，但各自拥有寄存器状态、程序计数器和栈。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0707p/thread-lightweight-process.jpg"><img width="1280" height="720" class="lqip" alt="课件把线程称作轻量级进程：每个线程有自己的线程 ID、程序计数器、寄存器组和栈，并与同一进程的其它线程共享代码段、数据段、堆和打开的文件。" src="../assets/0707p/thread-lightweight-process.preview.jpg" data-fullsrc="../assets/0707p/thread-lightweight-process.jpg" /></a></p>
@@ -3902,6 +3926,14 @@ cv.wait(lock, [] { return ready; });</code></pre>
 <p class="admonition-title">把共享对象的所有权写下来</p>
 <p>对每个数组或队列标明：哪个线程/进程创建它，哪些执行单元可以读，谁可以写，写完后如何通知读者。这个约定同时指导正确性和性能：独占写入避免锁，分块所有权减少 false sharing，明确的合并点也让计时边界更清楚。</p>
 </div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>线程共享地址空间带来了便利，也带来了什么新问题？原子性、可见性和互斥分别对应哪类困难？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>共享让数据传递很容易，也让多个线程可能同时修改同一块内存。原子性关心一个操作是否会被中间状态打断，例如读改写 <code>sum += x</code>；可见性关心一个线程的写入何时能被另一个线程看到；互斥则保证关键区同一时间只有一个线程进入。锁、原子操作、内存屏障和条件变量就是围绕这些问题设计的。</p>
+</details>
+</div>
 <h2 id="上下文切换与调度">上下文切换与调度<a class="headerlink" href="#上下文切换与调度" title="Permanent link"></a></h2>
 <p>一颗核心在任一时刻只能执行一个硬件线程。操作系统的调度器在许多可运行线程间切换<sup id="fnref:context-switch"><a class="footnote-ref" href="#fn:context-switch">10</a></sup>：保存当前线程的寄存器、程序计数器等上下文，恢复下一个线程，再继续执行。切换本身有成本；更大的损失往往是新线程迁移到另一核心后，原来热的 L1/L2 cache 失效了。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0707p/process-switch.jpg"><img width="1280" height="720" class="lqip" alt="进程切换时，内核把当前寄存器状态保存到 PCB，再恢复另一个进程的状态。" src="../assets/0707p/process-switch.preview.jpg" data-fullsrc="../assets/0707p/process-switch.jpg" /></a></p>
@@ -3937,6 +3969,14 @@ CPU socket 1 -- 本地内存 1</code></pre>
 <p>first touch 的含义常被说得过于简单。它只说明页面在第一次实际触碰时倾向分配到执行该操作的 NUMA node；究竟由哪个线程触碰，取决于初始化代码、线程绑定、内核策略和内存压力。只在主线程中 <code>memset</code> 全部数组，再让多个 socket 并行处理，是分布式内存布局和计算布局相反的典型情况。</p>
 <p>更可靠的写法是让未来负责某块数据的线程先初始化这块数据。例如并行初始化数组，再用相同分块进入计算循环。对于 MPI，每个 rank 通常只申请并初始化自己的局部数组；对于共享内存程序，则需要把 OpenMP 的初始化、计算调度和 CPU affinity 放在一起考虑。</p>
 <p><code>numactl --hardware</code> 可查看节点、CPU 与距离矩阵；<code>numastat -p &lt;pid&gt;</code> 可粗略观察一个进程页面分布；<code>taskset -cp &lt;pid&gt;</code> 可查看或设置 CPU 亲和性。这些工具回答的是数据和线程实际上在哪里，不能替代对算法的数据划分判断。发现远端访问高以后，还要确认它是否恰好是程序需要共享的数据，别机械地把所有内存绑到一个节点。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么“第一次触碰数据”会影响 NUMA 系统上后续访存性能？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>许多系统默认把页面分配在首次触碰它的线程所在 NUMA 节点上。若数据先由单线程初始化，之后再由另一个节点上的线程访问，数据可能长期放在远端内存，访问延迟和带宽都会变差。先按并行访问模式初始化，或显式绑定线程和内存，可以把数据放在使用它的节点附近。</p>
+</details>
+</div>
 <h2 id="虚拟内存与页表">虚拟内存与页表<a class="headerlink" href="#虚拟内存与页表" title="Permanent link"></a></h2>
 <details class="note" open="open">
 <summary>页表（page table）是什么</summary>
@@ -3966,6 +4006,14 @@ CPU socket 1 -- 本地内存 1</code></pre>
 <li>共享库、文件映射和匿名映射通常落在专门的 mmap 区域。</li>
 </ul>
 <p>局部大数组放在栈上很容易触发 stack overflow；把大量互不相关的小对象逐个堆分配，也可能让分配器开销和访问碎片变大。HPC 程序常一次分配连续的大块数组，并明确数据布局，原因既包括易于并行，也包括对页面和 cache 更友好。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>两个进程都使用虚拟地址 <code>0x400000</code>，它们一定访问同一个物理字节吗？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>不一定。每个进程有自己的页表，同一个虚拟地址可以映射到不同物理页。只有显式建立的共享映射才可能落到同一物理页。虚拟地址是进程内的编号，物理地址才是内存中的实际位置。</p>
+</details>
+</div>
 <h2 id="性能优化基础">性能优化基础<a class="headerlink" href="#性能优化基础" title="Permanent link"></a></h2>
 <p>向量化试图让单核在 cache 命中时吞吐更多数据；OpenMP 处理同一节点的线程和同步；MPI 在进程和节点间通信；性能分析工具帮助判断到底在等 DRAM、等锁、等远端 NUMA 内存，还是计算单元本身已满。</p>
 <p>判断一个程序慢时，先确认循环有没有规则访问，数据是否能留在 cache，线程是否争同一份可写数据，任务和内存是否在同一个 NUMA 节点。每一步都能通过实验验证。</p>
@@ -3977,6 +4025,14 @@ CPU socket 1 -- 本地内存 1</code></pre>
 S=\frac{1}{s+(1-s)/p}.
 \]</div>
 <p>当处理器数趋于无穷，<span class="arithmatex">\((1-s)/p\)</span> 趋于 0，加速上限就收敛到 <span class="arithmatex">\(1/s\)</span>。所以 5% 的串行时间，无论加多少核，加速都不会超过 20 倍。加核是否划算，取决于并行部分是否真占大头、能否被有效切分。反过来，若读文件、初始化、汇总输出这些串行步骤很重，先压缩它们，往往比继续加核更见效。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>把程序的某一部分加速 10 倍，整个程序一定加速 10 倍吗？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>不一定。整体收益受该部分原来的时间占比限制。若它占 90%，理论上限约是 6.9 倍；若只占 10%，即便这部分几乎消失，整体也最多约 1.11 倍。这就是 Amdahl 定律的日常含义。</p>
+</details>
+</div>
 <div class="footnote">
 <hr />
 <ol>

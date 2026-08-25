@@ -3604,6 +3604,22 @@ p(s_{t+1},r_{t+1}\mid s_t,a_t).
 <summary>折扣因子改变了什么</summary>
 <p>两条路径的即时奖励分别为 1 和 0；后一条在 10 步后额外得到 100。若 <span class="arithmatex">\(\gamma=0.9\)</span>，远期回报折为约 34.9，后一条仍优；若 <span class="arithmatex">\(\gamma=0.5\)</span>，只剩约 0.098，策略会偏向即时奖励。折扣同时表达任务偏好，并控制无限期回报的数值尺度。</p>
 </details>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>MDP 的马尔可夫性要求什么？它为什么不是说现实世界没有历史？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>它要求当前状态已经包含决定下一步转移和奖励所需的信息。若历史仍影响结果，可以把相关历史并入状态，用记忆网络或状态估计补足。马尔可夫性是建模选择，现实系统可以带着历史信息去满足它。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>折扣因子 <span class="arithmatex">\(\gamma\)</span> 从 0.90 调到 0.99，策略会更重视眼前奖励还是长期奖励？可能带来什么代价？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>更接近 1 的折扣因子让远处奖励在当前价值中衰减更慢，策略更重视长期后果。代价是有效时间跨度变长，估计方差更大，训练也需要覆盖更长的轨迹。若环境会在近期终止，过大的 <span class="arithmatex">\(\gamma\)</span> 对结果影响有限。</p>
+</details>
+</div>
 <h3 id="价值函数">价值函数<a class="headerlink" href="#价值函数" title="Permanent link"></a></h3>
 <p>策略价值函数<sup id="fnref:value-function"><a class="footnote-ref" href="#fn:value-function">11</a></sup> <span class="arithmatex">\(V^\pi(s)\)</span> 表示从状态 <span class="arithmatex">\(s\)</span> 出发、之后按策略 <span class="arithmatex">\(\pi\)</span> 行动能得到的期望回报。动作价值函数<sup id="fnref:q-function"><a class="footnote-ref" href="#fn:q-function">12</a></sup> <span class="arithmatex">\(Q^\pi(s,a)\)</span> 则把当前动作也固定下来：先做 <span class="arithmatex">\(a\)</span>，再按 <span class="arithmatex">\(\pi\)</span> 行动。选择动作时，若有了 <span class="arithmatex">\(Q\)</span>，可以偏向值更大的动作。</p>
 <p>给两个假想的估计值，就能看清 <span class="arithmatex">\(V\)</span> 与 <span class="arithmatex">\(Q\)</span> 的关系。设在状态 <span class="arithmatex">\(s_1\)</span>，向右一步奖励为 <span class="arithmatex">\(-1\)</span>，到达 <span class="arithmatex">\(s_2\)</span>；向上一步奖励为 <span class="arithmatex">\(-1\)</span>，到达 <span class="arithmatex">\(s_3\)</span>。若 <span class="arithmatex">\(V^\pi(s_2)=6\)</span>、<span class="arithmatex">\(V^\pi(s_3)=4\)</span>、<span class="arithmatex">\(\gamma=0.9\)</span>，则</p>
@@ -3618,6 +3634,22 @@ Q^\pi(s_t,a_t)=\mathbb{E}[r_{t+1}+\gamma V^\pi(s_{t+1})].
 \]</div>
 <p>贝尔曼关系提供了可递推估计的目标。值函数近似、策略梯度、actor-critic 等方法分别用不同参数化和更新方式处理它。</p>
 <p>真实任务常把状态、动作和策略交给神经网络表示。网络带来表达能力，也带来不稳定性：采样数据相关、奖励有噪声、目标随着策略更新不断变化。强化学习曲线波动大并不只是实现粗糙，问题本身就包含探索和自举造成的不稳定来源。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么状态价值函数和动作价值函数可以互补？如果只有 <span class="arithmatex">\(Q(s,a)\)</span>，选择动作时可以怎么用？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>状态价值 <span class="arithmatex">\(V(s)\)</span> 评估从状态出发、之后按某策略行动的期望回报，动作价值 <span class="arithmatex">\(Q(s,a)\)</span> 固定当前动作再评估。只有 <span class="arithmatex">\(Q\)</span> 时，可以直接比较当前状态下各动作的 <span class="arithmatex">\(Q\)</span>，偏向值更大的动作。<span class="arithmatex">\(V\)</span> 常作为 baseline 或 critic 的一部分，<span class="arithmatex">\(Q\)</span> 更直接用于动作选择。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>target network 为什么不能让预测网络和目标网络每一步都完全相同？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>TD 目标里包含下一状态的价值估计。若同一个网络同时给出预测和目标，参数更新会追着不断变化的目标走，形成容易发散的反馈。target network 在一段时间内保持旧参数，让目标相对稳定，再通过硬更新或滑动平均逐渐跟随训练网络。</p>
+</details>
+</div>
 <h3 id="蒙特卡洛时间差分与-lambda">蒙特卡洛、时间差分与 <span class="arithmatex">\(\lambda\)</span><a class="headerlink" href="#蒙特卡洛时间差分与-lambda" title="Permanent link"></a></h3>
 <p>一条轨迹结束后，可以直接把实际得到的 <span class="arithmatex">\(G_t\)</span> 当作状态或状态动作对的学习目标。这是蒙特卡洛<sup id="fnref:mc"><a class="footnote-ref" href="#fn:mc">13</a></sup>（MC）思想。它不需要估计下一状态价值，但必须等到后续回报出现；长任务中方差也可能很大。</p>
 <p>时间差分（TD）不必等整条轨迹结束。最简单的一步 TD target 是：</p>
@@ -3637,6 +3669,22 @@ y_0=0+0.9V(s_1).
 <p>TD(<span class="arithmatex">\(\lambda\)</span>) 在 MC 与一步 TD 之间插值。较小的 <span class="arithmatex">\(\lambda\)</span> 更接近短步自举，更新快但目标偏差更多；较大的 <span class="arithmatex">\(\lambda\)</span> 利用更长的真实轨迹，接近 MC，方差也更大。课上强调，固定选一个 <span class="arithmatex">\(\lambda\)</span> 往往很敏感：环境、策略阶段和数据分布变化后，同一个超参数未必仍合适。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717p/adaptive-td-lambda.jpg"><img width="1280" height="720" class="lqip" alt="课件给出基于异/同策略样本分布密度的自适应 TD(λ) 思路：不把 \(\lambda\) 固定，而按样本来自当前策略还是历史策略来调节计算 target 的权重。" src="../assets/0717p/adaptive-td-lambda.preview.jpg" data-fullsrc="../assets/0717p/adaptive-td-lambda.jpg" /></a></p>
 <p><em>图：TD(λ) 的 λ 不必写死；可根据样本是否贴近当前策略动态选择更像 MC 还是更像一步 TD，正是课上研究的方向。</em></p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>蒙特卡洛和一步 TD 的学习目标有什么差别？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>蒙特卡洛等完整轨迹结束，用实际回报 <span class="arithmatex">\(G_t\)</span> 作为目标，偏差小但方差大。一步 TD 用 <span class="arithmatex">\(r_{t+1}+\gamma V(s_{t+1})\)</span>，可以在线更新，但目标依赖当前估计，会引入自举偏差。TD(<span class="arithmatex">\(\lambda\)</span>) 在两者之间折中。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>TD(<span class="arithmatex">\(\lambda\)</span>) 里的 <span class="arithmatex">\(\lambda\)</span> 从 0 变到 1，学习目标会怎样移动？</p>
+<details class="tip">
+<summary>答案</summary>
+<p><span class="arithmatex">\(\lambda=0\)</span> 接近一步 TD，依赖下一状态的当前估计，偏差较高但方差较低。<span class="arithmatex">\(\lambda=1\)</span> 接近完整蒙特卡洛回报，依赖整条轨迹的真实奖励，偏差较低但方差较高。中间值按多步目标加权，在两者之间折中。</p>
+</details>
+</div>
 <h3 id="bellman-目标与终止状态">Bellman 目标与终止状态<a class="headerlink" href="#bellman-目标与终止状态" title="Permanent link"></a></h3>
 <p>价值学习的样本不是独立标签。一步 TD 的目标为</p>
 <div class="arithmatex">\[
@@ -3657,6 +3705,30 @@ y_t=r_t+\gamma(1-d_t)\max_a Q_{\bar\theta}(s_{t+1},a),
 <p><a class="glightbox" data-type="image" href="../assets/0717p/offpolicy-distribution-shift.jpg"><img width="1280" height="720" class="lqip" alt="课件说明离策略（off-policy）强化学习不稳定的原因：行为策略（旧）与当前策略（新）的分布差异，会让采样到的数据与当前所学目标错位。" src="../assets/0717p/offpolicy-distribution-shift.preview.jpg" data-fullsrc="../assets/0717p/offpolicy-distribution-shift.jpg" /></a></p>
 <p><em>图：旧策略采样的数据分布与当前策略不同，是 off-policy 训练不稳定的根源；重要性采样只是修正手段之一。</em></p>
 <p>课上的一个研究思路是把当前策略采集的数据与历史 off-policy 数据分开管理，再按数据分布和训练阶段调节 TD(<span class="arithmatex">\(\lambda\)</span>) 的权重。新策略附近的数据贴近当前决策，历史数据可能保留了难得的成功轨迹；两类样本需要承担不同作用。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>监督学习和强化学习的训练信号有什么本质差别？为什么这个差别会带来探索问题？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>监督学习每个输入旁边有正确标签，错误可以立刻从预测和标签比较出来。强化学习通常只看到动作后的奖励，同一状态的不同动作可能都要试过才知道好坏，而且奖励可能延迟出现。若策略总是选已知动作，就无法发现更优动作，因此需要探索。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么 on-policy 方法不能随意复用旧数据，而 off-policy 方法常常能使用 replay buffer？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>on-policy 的估计和更新假设数据来自当前目标策略，或与它足够接近。策略更新后，旧轨迹的分布不再代表新策略，继续使用会引入偏差。off-policy 明确区分采样策略和目标策略，通过重要性采样或 Q-learning 类目标修正，因此可以复用更多历史数据。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>重要性采样权重 <span class="arithmatex">\(\pi(a|s)/\mu(a|s)\)</span> 很大时，会带来什么问题？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>说明目标策略很愿意选择某个动作，而采样策略很少选它。少数旧样本会被赋予很大权重，估计方差急剧上升，训练不稳定。需要裁剪、限制重采样范围或重新采样更接近目标策略的数据。</p>
+</details>
+</div>
 <h2 id="数据复用探索与多智能体">数据复用、探索与多智能体<a class="headerlink" href="#数据复用探索与多智能体" title="Permanent link"></a></h2>
 <h3 id="多智能体强化学习">多智能体强化学习<a class="headerlink" href="#多智能体强化学习" title="Permanent link"></a></h3>
 <p>多智能体强化学习（MARL）中，多个 agent 同时观察、行动和学习。每个 agent 的动作都会改变其他 agent 看到的环境，所以单个 agent 所面对的环境会随其他策略更新而变化，非平稳性比单智能体更明显。</p>
@@ -3679,12 +3751,37 @@ y_t=r_t+\gamma(1-d_t)\max_a Q_{\bar\theta}(s_{t+1},a),
 <p><a class="glightbox" data-type="image" href="../assets/0717p/template-q-learning.jpg"><img width="1280" height="720" class="lqip" alt="把历史上成功的轨迹当作模板，与当前状态匹配时引导策略，偏离时退回普通强化学习。" src="../assets/0717p/template-q-learning.preview.jpg" data-fullsrc="../assets/0717p/template-q-learning.jpg" /></a></p>
 <p><em>图：模板保存罕见的成功经验，用于指导到当前状态的行动倾向；是否采用模板由状态匹配或价值比较决定。</em></p>
 <p>蒙特卡洛树搜索（MCTS）提供另一种在当前状态附近多看几步的方式。它反复执行选择、扩展、评估和回传：从根节点按选择公式走到叶子，扩展可行动作，使用 rollout 或价值网络评估叶子，再把回报更新到祖先节点。选择公式会兼顾平均价值与访问次数较少的分支，因此同时利用和探索。它在围棋等可模拟环境中很强，但每一步都展开搜索的代价也很高。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p><span class="arithmatex">\(\epsilon\)</span>-greedy 探索有什么优缺点？为什么复杂任务还需要更系统的探索方法？</p>
+<details class="tip">
+<summary>答案</summary>
+<p><span class="arithmatex">\(\epsilon\)</span>-greedy 以概率 $
+arepsilon$ 随机选动作，其余时间选当前最优动作，实现简单。但随机探索不区分哪些动作更有信息量，稀疏奖励下可能长期碰不到成功轨迹。参数噪声、计数 bonus、内在奖励和树搜索等方法会更有目的性地尝试未知区域。</p>
+</details>
+</div>
 <h2 id="策略表示规划与优化">策略表示、规划与优化<a class="headerlink" href="#策略表示规划与优化" title="Permanent link"></a></h2>
 <h3 id="神经策略与行为树">神经策略与行为树<a class="headerlink" href="#神经策略与行为树" title="Permanent link"></a></h3>
 <p>深度 RL 策略可以直接把观测映射为动作，却往往难解释、迁移不稳定，需要大量交互数据。一种方向是用大模型生成的行为树或决策树作为元策略。</p>
 <p>行为树将任务写成条件、动作以及顺序/选择/并行等控制节点。例如若手边有物体则抓取、否则先移动到目标附近这样的表述，比一个连续网络输出更容易检查和修改。大模型可以根据任务描述、环境接口和失败记录生成或修改树；RL 则可用于调树中的参数、优先级或局部动作。行为树负责可检查的高层流程，连续控制仍交给合适的低层策略。语言模型可参与生成或修改树，但不直接取代底层控制器。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717p/behavior-tree-policy.jpg"><img width="1280" height="720" class="lqip" alt="行为树把任务写成条件、动作和分支控制节点，比连续网络输出更易检查与修改。" src="../assets/0717p/behavior-tree-policy.preview.jpg" data-fullsrc="../assets/0717p/behavior-tree-policy.jpg" /></a></p>
 <p><em>图：行为树由顺序/选择/并行等控制节点组织条件与动作；大模型可生成或修改树，低层连续控制仍由策略完成。</em></p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么很多机器人系统不把所有决策都交给端到端神经网络？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>安全边界、急停、限位和任务状态机需要可验证的确定性规则。神经网络擅长感知和控制等复杂映射，但失败模式难以穷举。工程系统常用行为树或状态机管理边界，再调用学习到的策略完成局部决策。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>行为树中的高层控制由人写规则，低层动作由神经网络输出。这种混合结构比纯端到端策略多了什么保障，又少了什么灵活性？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>行为树把顺序、条件、失败回退等控制流显式写出来，容易检查、修改和设置安全边界。低层策略仍能处理连续控制和感知变化。代价是高层流程不如端到端学习灵活，环境任务改变时需要维护树结构或重新设计分支。</p>
+</details>
+</div>
 <h3 id="基于模型的方法">基于模型的方法<a class="headerlink" href="#基于模型的方法" title="Permanent link"></a></h3>
 <p>无模型强化学习直接学习策略或价值，不显式学习环境如何变化。基于模型的强化学习（model-based RL）还学习或使用一个动力学模型：给定状态和动作，预测下一状态、奖励或观测。这样可在模型里滚动多步，比较候选动作，减少真实环境中的试错。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0717p/model-based-rl-why.jpg"><img width="1280" height="720" class="lqip" alt="课件说明为什么需要基于模型的强化学习：无模型深度强化学习样本效率很低，结合一个环境模型可以减少真实环境中的试错。" src="../assets/0717p/model-based-rl-why.preview.jpg" data-fullsrc="../assets/0717p/model-based-rl-why.jpg" /></a></p>
@@ -3693,6 +3790,22 @@ y_t=r_t+\gamma(1-d_t)\max_a Q_{\bar\theta}(s_{t+1},a),
 <p><em>图：model-based RL 在学策略之外增加用模型规划；两者结合以提高样本效率和探索质量。</em></p>
 <p>模型不准时会出现 model bias：规划过程利用了模型的系统性误差，真实执行反而失败。可用不确定性估计、短视规划、真实数据校正或模型集成减轻，但不能消除模拟器与现实不同的问题。课程中 PaMoRL 等研究关注如何从历史样本构造可用模型并和策略学习结合，目的仍是提高样本效率和探索质量。</p>
 <p>历史经验样本还能以接力的方式降低多智能体训练的早期困难。多智能体强化学习起步阶段 Q 值远未收敛，每一步的自举误差很大，且会沿决策树向根节点回传，让早期决策尤其不可信。一种研究思路是先不急着跑 RL：把经验缓存里的历史轨迹整理成轨迹树，先用有监督的行为克隆把怎么做学出来，决策时先用这个监督策略；等它稳定后，再让基线多智能体强化学习算法接力细化。这样把高噪声的自举阶段交给监督学习，收敛后再交给 RL，本质上是能确定的部分先学、不确定的部分再强化这样的分工。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>基于模型的强化学习为什么可能样本效率更高，但也会学得更不可靠？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>它训练环境模型来生成额外 rollout，减少真实交互次数。若模型预测误差被策略利用，规划出的动作在真实环境中可能失败。通常需要区分模型 rollout 和真实数据，并限制模型的使用范围。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>学习的环境模型有误差时，为什么 planner 反而可能做出很差的动作？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>规划会主动寻找模型认为回报高的动作序列。若模型在某些区域系统性高估回报或低估风险，这些错误会被规划放大，智能体可能选择现实中不可行的路径。基于模型的方法需要处理模型不确定度，限制规划范围，并用真实交互校准。</p>
+</details>
+</div>
 <h3 id="策略梯度的采样路径">策略梯度的采样路径<a class="headerlink" href="#策略梯度的采样路径" title="Permanent link"></a></h3>
 <p>随机策略 <span class="arithmatex">\(\pi_\theta(a\mid s)\)</span> 的目标梯度可写为</p>
 <div class="arithmatex">\[
@@ -3713,6 +3826,14 @@ y_t=r_t+\gamma(1-d_t)\max_a Q_{\bar\theta}(s_{t+1},a),
 <p>状态 <span class="arithmatex">\(s\)</span> 有两个动作，logits 为 <span class="arithmatex">\([0,1]\)</span>。采样到第二个动作，优势为 <span class="arithmatex">\(-1\)</span>。判断更新方向。</p>
 <p>先算概率，<span class="arithmatex">\(\pi=[0.269,0.731]\)</span>。对数概率梯度为 <span class="arithmatex">\(\mathrm{onehot}(a_2)-\pi=[-0.269,0.269]\)</span>，乘以 <span class="arithmatex">\(A=-1\)</span> 后得到 <span class="arithmatex">\([0.269,-0.269]\)</span>。梯度上升会降低第二个动作的 logit、提高第一个动作的 logit。</p>
 </details>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么策略梯度通常要减去 baseline？baseline 改变了期望梯度吗？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>原始梯度方差很大，很多采样到的回报可能只反映状态本身好坏。baseline 例如 <span class="arithmatex">\(V(s)\)</span> 提供一个比较基准，只保留动作相对优势。只要 baseline 不依赖动作，理论上不改变期望梯度，却能降低方差，让训练更稳定。</p>
+</details>
+</div>
 <h3 id="ppo-的近端更新">PPO 的近端更新<a class="headerlink" href="#ppo-的近端更新" title="Permanent link"></a></h3>
 <p>PPO<sup id="fnref:ppo"><a class="footnote-ref" href="#fn:ppo">17</a></sup> 在采样策略 <span class="arithmatex">\(\pi_{old}\)</span> 产生的 rollout 上多轮更新新策略，使用概率比值</p>
 <div class="arithmatex">\[
@@ -3726,6 +3847,14 @@ r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{old}(a_t\mid s_t)}
 <p><span class="arithmatex">\(r=1.1\)</span> 位于 <span class="arithmatex">\([0.8,1.2]\)</span> 内，目标为 <span class="arithmatex">\(rA=2.2\)</span>。<span class="arithmatex">\(r=1.5\)</span> 时裁剪为 1.2，目标为 <span class="arithmatex">\(1.2\times2=2.4\)</span>。优势为正时，概率继续提高超过 1.2 倍后，目标不再随之增加。</p>
 </details>
 <p>rollout buffer 还要保留连续的时间维度，因为 GAE 要从 episode 末尾向前递推 TD 残差。拼接多个环境时，done mask 要在各环境各自的终点截断递推；把一个环境终点的 value 泄漏到另一个环境开头，是批处理维度处理错误，不是算法随机性。优势常在一个 batch 内标准化以改善优化尺度，但 reward 的物理含义和终止奖励仍应在标准化前检查。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>PPO 的 clip 目标为什么能限制单次更新幅度？ratio 离 1 很远时会发生什么？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>ratio 表示新策略与采样策略的概率比值。若优势为正，更新希望增大该动作概率，clip 会把过大的 ratio 截在上界；优势为负时则截在下界。这样单次更新不会让策略离采样分布太远。ratio 异常大或小也提示数据分布和目标策略差距过大，应减小步长或重新采样。</p>
+</details>
+</div>
 <h3 id="奖励观测与部署偏移">奖励、观测与部署偏移<a class="headerlink" href="#奖励观测与部署偏移" title="Permanent link"></a></h3>
 <p>强化学习优化的是实现给出的 reward，不是人心中未写出的任务。奖励中某项权重大、某个失败状态遗漏惩罚、终止条件可以被钻空子，策略就可能学到看似怪异却能提高回报的行为。调试应同时记录分项 reward、成功率、episode 长度、动作幅度和关键状态，而不是只看总回报曲线。总回报上升而真实任务失败，通常需要回到环境语义和观测/动作变换检查。</p>
 <p>奖励漏洞的一个常见形式是代理指标替代真实目标。若清洁机器人的奖励是传感器看到的灰尘减少量，它可能学会把灰尘扫到传感器看不到的角落；若机器人抓取任务的奖励只按末端高度计算，它可能把杯子举高而不稳定抓握。奖励上升只说明优化器找到了实现定义的最大值，不能自动说明任务完成。调试时应记录分项奖励、真实成功率、动作幅度和终止原因，再检查奖励函数是否遗漏了失败状态。</p>
@@ -3735,6 +3864,22 @@ r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{old}(a_t\mid s_t)}
 <p>漏洞在于 height 是代理指标，终点匹配和稳定放置没有进入奖励。至少应加入目标距离、姿态稳定、碰撞惩罚和成功终止条件，并在日志里分开记录真实成功率和各项奖励。</p>
 </div>
 <p>仿真到真实设备还存在观测延迟、摩擦、传感器噪声和执行器饱和的偏移。domain randomization 在训练时随机这些参数，目的是让策略学到对变化更稳健的控制规律；随机范围若脱离真实设备，可能让训练任务不必要地困难。部署前需要在受限动作、急停和日志条件下逐步验证，不能把仿真中的高回报直接当作实机安全保证。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>domain randomization 能减小仿真到真实差异，为什么随机范围越大并不一定越好？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>范围过窄会让策略只适合理想参数，迁移时容易失败。范围过大又会把大量无关或不可能的环境交给策略学习，任务难度上升，甚至学出过度保守的动作。随机项和范围应参考真实设备的观测、摩擦、延迟和执行器约束来设定。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>总回报上升但真实任务成功率下降，应该先检查什么？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>先检查奖励函数是否被钻空子，分项 reward、终止条件和观测是否遗漏了关键约束。再核对成功率、动作幅度、episode 长度和终止原因。总回报只是优化目标，不自动等价于任务完成。</p>
+</details>
+</div>
 <h2 id="具身智能">具身智能<a class="headerlink" href="#具身智能" title="Permanent link"></a></h2>
 <p>具身智能（embodied AI）<sup id="fnref:embodied-ai"><a class="footnote-ref" href="#fn:embodied-ai">18</a></sup>关心的是让智能体通过身体与环境交互来完成任务。机器人是强化学习很自然的应用，但真实机器人采样慢、硬件会磨损、失败可能危险。</p>
 <p>训练常先在模拟器进行大规模并行交互，再把策略迁移到真实设备。模拟器里可随机化质量、摩擦、光照、传感器噪声和初始位置，减小策略对某一个理想环境参数的依赖。这叫 domain randomization。</p>
@@ -3753,6 +3898,14 @@ r_t(\theta)=\frac{\pi_\theta(a_t\mid s_t)}{\pi_{old}(a_t\mid s_t)}
 <li>急停、限位和日志是否独立于学习策略工作。</li>
 </ul>
 <p>强化学习只覆盖从交互数据改进决策这一部分；数据采集、仿真吞吐、控制回路和系统可靠性同样决定机器人是否可用。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>行为克隆为什么会在小错误后越错越远？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>训练数据多来自专家轨迹，专家很少进入偏离后的状态。模型一旦犯小错，后续观测落在训练分布之外，策略没有学过如何恢复，误差可能继续累积。需要加入扰动恢复数据、失败案例或在线强化学习。</p>
+</details>
+</div>
 <div class="footnote">
 <hr />
 <ol>

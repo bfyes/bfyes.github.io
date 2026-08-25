@@ -3487,6 +3487,14 @@
 <p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-fpga-specs.png"><img width="1280" height="720" class="lqip" alt="课件用一张表对比 CPU、GPU 与 FPGA 的规格：核心规模、算力、带宽、功耗各有侧重。" src="../assets/0713a/cpu-gpu-fpga-specs.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-fpga-specs.png" /></a></p>
 <p><em>图：同一列指标在不同硬件上的取舍一目了然——GPU 用高并行远超 CPU 的矩阵吞吐，FPGA 换来灵活性但浮点峰值通常较低。</em></p>
 <p>选择硬件先看瓶颈在哪种资源：访存受限的工作，带宽更高的设备更有利；计算受限的规则矩阵运算，低精度矩阵单元多的设备更有利；需要频繁改动数据通路、又没有成熟等价实现时，才值得考虑 FPGA。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>CPU 和 GPU 的控制逻辑、延迟设计、线程设计有什么差别？为什么它们适合不同工作负载？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>CPU 每个核有较强的控制、缓存和乱序能力，目标是让单线程或少量线程尽快完成，适合分支复杂、依赖强、延迟敏感的任务。GPU 用大量简单线程和宽向量单元换吞吐，通过成千上万可切换线程隐藏延迟，适合数据并行、计算规则、访存模式可预测的任务。</p>
+</details>
+</div>
 <h2 id="gpu-的高吞吐设计">GPU 的高吞吐设计<a class="headerlink" href="#gpu-的高吞吐设计" title="Permanent link"></a></h2>
 <p>GPU 由许多个 Streaming Multiprocessor（SM<sup id="fnref:sm"><a class="footnote-ref" href="#fn:sm">4</a></sup>）组成。一个 SM 内有大量标量运算单元、寄存器文件、load/store 单元、共享内存和专门的矩阵计算单元。不同架构的具体数量会变，但思路稳定：同时保留许多可运行线程，用大量并行算术去覆盖存储访问的等待。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/gpu-system-architecture.png"><img width="2500" height="1253" class="lqip" alt="GPU 顶层结构中可看到主机接口、调度控制、HBM 和多个计算单元；数据路径本身是设计重点。" src="../assets/0713a/gpu-system-architecture.preview.jpg" data-fullsrc="../assets/0713a/gpu-system-architecture.png" /></a></p>
@@ -3497,6 +3505,14 @@
 <a class="glightbox" data-type="image" href="../assets/0713a/h100-block-diagram.jpg"><img width="1280" height="720" class="lqip" alt="课件的 H100 Block Diagram：SM、Tensor Core、HBM、NVLink 与片上互连的关系一目了然，展示一代旗舰 GPU 的完整构成。" src="../assets/0713a/h100-block-diagram.preview.jpg" data-fullsrc="../assets/0713a/h100-block-diagram.jpg" /></a>
 <em>图：从旗舰卡看，GPU 是一台包含大量 SM、专用矩阵单元、多层存储与高速互连的完整系统，不是孤立的一堆核心。</em></p>
 <p>低精度不是把数值随便截短。FP32 有较大的指数和尾数范围；FP16、BF16、FP8 等格式以更少位数换取更低内存流量和更高矩阵吞吐。训练通常会在速度与数值稳定性之间混合使用多种精度，例如低精度前向/反向、较高精度累积或主权重。格式选择应由误差容忍度、硬件指令和实际测量共同决定。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>GPU 有很多 ALU，为什么一个内存延迟高的 kernel 仍然跑不满？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>ALU 只有在有足够可执行指令时才能忙。若线程并行度不足、寄存器或共享内存限制 active warps，内存等待期间没有其他 warp 可切换，计算单元就会空闲。此外不合并访存、分支分歧和依赖链也会降低有效指令供给。</p>
+</details>
+</div>
 <h2 id="simdspmdsimt-与-warp">SIMD、SPMD、SIMT 与 warp<a class="headerlink" href="#simdspmdsimt-与-warp" title="Permanent link"></a></h2>
 <p>这几个缩写都牵扯同时做很多相近事情，但含义并不相同。</p>
 <details class="note" open="open">
@@ -3522,6 +3538,14 @@ if (i &lt; N &amp;&amp; j &lt; N) {
 }</code></pre>
 <p>确定自己负责的元素。<code>blockIdx</code> 与 <code>threadIdx</code> 是 CUDA 提供的内建索引，不属于普通变量。边界判断不能省，因为为了方便常把 grid 向上取整，最边缘 block 的一部分线程会落在有效矩阵外。</p>
 <p><strong>warp</strong> 是调度和执行时更关键的粒度。通常一个 warp 有 32 个线程；同一 warp 遇到 <code>if/else</code> 的不同分支时，硬件往往要分别执行两条路径，并屏蔽不属于当前路径的线程。这叫<strong>分支发散（divergence）</strong>。发散并非语法错误，但会降低该 warp 的有效并行度；按数据布局和任务划分让同一 warp 内线程走相同分支，是 GPU 编程的常见考虑。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>一个 warp 内的两个分支走向不同路径时，硬件通常如何执行？这会带来什么性能影响？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>常见做法是 SIMT 执行分支的不同路径时先屏蔽不参与的线程，分别执行，再汇合。功能上结果正确，但两个路径都要执行时，这个 warp 的执行时间近似相加，部分线程每条指令阶段都在等待。若分支条件与线程编号高度相关，应尽量让同一 warp 的线程走同一分支。</p>
+</details>
+</div>
 <h2 id="gpu-的延迟隐藏">GPU 的延迟隐藏<a class="headerlink" href="#gpu-的延迟隐藏" title="Permanent link"></a></h2>
 <p>GPU 核心并不靠把单个标量指令的延迟压到极低来获得吞吐。一个 SM 同时驻留许多 warp；某个 warp 等待 global memory 时，warp scheduler 立刻挑选另一个已就绪 warp 发射指令。要有足够多的可驻留 warp，称为 <strong>occupancy</strong>；它受每个 block 的线程数、寄存器使用量、shared memory 用量和硬件上限共同约束。occupancy 高只说明有更多可切换工作，若算术单元或 DRAM 带宽已饱和，继续提高它未必更快。</p>
 <details class="note" open="open">
@@ -3532,6 +3556,14 @@ if (i &lt; N &amp;&amp; j &lt; N) {
 </details>
 <p>一个很生活化的比喻是：GPU 的调度颗粒度从来没有落到一个线程个人，而是一条 warp，就像大学里很多活动是按班级、按寝室整体安排的，而不是逐个同学单独处理。写 CUDA 时你只需要感觉到每个线程大概在干什么，调度和优化的粒度交给硬件以 warp 为单位处理。这也是为什么编 CUDA 常常比手写 CPU 的 SIMD intrinsic 轻松——你不必记一堆指令，只需把循环拆到每个 thread。</p>
 <p>线程束中的控制流也有成本。warp 的 32 个线程遇到不同 <code>if</code> 分支时，硬件通常分路径依次执行，再以 mask 禁用暂不活跃的线程；这就是 divergence。边界检查造成的少量分歧通常可接受，按随机类别把同一 warp 分到完全不同的大分支则会明显损失吞吐。重排数据、按类别分桶或把分支变成掩码运算，需要与重排开销一并测量。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>CPU 用 cache 隐藏访存延迟，GPU 用大量线程切换隐藏延迟。这两种策略对程序设计各有什么要求？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>CPU 更强调局部性，让数据留在 cache，减少等待；程序应连续访问、提高复用。GPU 则需要暴露足够多的独立工作，当某些 warp 等内存时，其他 warp 可以继续执行；程序要有足够并行度、合理资源占用和可预测的访存模式。两者并不对立，GPU 也有 cache，但设计重心不同。</p>
+</details>
+</div>
 <h2 id="地址布局与设备传输">地址、布局与设备传输<a class="headerlink" href="#地址布局与设备传输" title="Permanent link"></a></h2>
 <p>CPU 端数组指针不能被普通 GPU kernel 直接解引用。通常要分配 device memory，再把输入从 host 拷贝到 device，启动 kernel，把结果拷回；统一虚拟地址让指针形式看起来相近，数据是否已迁移、能否被该设备直接访问仍是运行时问题。离散 GPU 上 PCIe/NVLink<sup id="fnref:nvlink"><a class="footnote-ref" href="#fn:nvlink">10</a></sup> 的传输比 device DRAM 访问慢得多，反复在每个小 kernel 前后复制数据会淹没计算收益。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-pci-relationship.jpg"><img width="1280" height="720" class="lqip" alt="课件画出 CPU 与 GPU 经 PCI Bus 互连的关系：CPU 控制并把任务/数据交给 GPU，GPU 计算后再返回，系统里两者通过主机内存交换。" src="../assets/0713a/cpu-gpu-pci-relationship.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-pci-relationship.jpg" /></a></p>
@@ -3539,10 +3571,26 @@ if (i &lt; N &amp;&amp; j &lt; N) {
 <p>因此异构程序应把连续的 GPU 工作围在同一段设备驻留期内。输入一次上传，若干 kernel 在 device 上消费和产生中间张量，最后下载需要的输出。逐元素操作融合为一个 kernel、量化权重留在显存并与反量化 GEMM 融合，都会减少往返和中间全局内存流量。数据传输能和计算重叠的前提是独立 buffer、异步 copy、非默认 stream 以及足够的硬件 copy engine；不满足依赖时强行异步只会读到未完成的数据。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/ai-system-dataflow.png"><img width="1988" height="1100" class="lqip" alt="AI 系统中数据在 host 与 device 之间移动的完整路径。" src="../assets/0713a/ai-system-dataflow.preview.jpg" data-fullsrc="../assets/0713a/ai-system-dataflow.png" /></a></p>
 <p><em>图：输入从 CPU 端上传，kernel 在 GPU 侧消费并产生中间张量，结果再回落主机；传输路径与计算路径共同决定端到端时间。</em></p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>GPU 显存带宽很高，为什么每步都把小数组从 CPU 复制到 GPU 仍可能很慢？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>host-device 拷贝走 PCIe 或 NVLink，并伴随 API、驱动和队列开销。小数组的传输量小，固定延迟占比高；若每次拷贝后只做很少计算，传输和启动开销会淹没计算。应尽量把数据留在 GPU 并合并传输。</p>
+</details>
+</div>
 <h2 id="cpu-与-gpu-的分工边界">CPU 与 GPU 的分工边界<a class="headerlink" href="#cpu-与-gpu-的分工边界" title="Permanent link"></a></h2>
 <p>设备选择由数据规模和依赖决定，而不是由语言决定。一个只有几百个元素的 kernel 可能启动开销大于计算；一个需要按 token 逐步依赖的 decode 阶段也难像巨大 prefill 矩阵那样装满 GPU。性能模型必须把 host 预处理、传输、kernel、同步都计入端到端时间。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713a/cpu-gpu-tradeoff.png"><img width="1976" height="1132" class="lqip" alt="CPU 与 GPU 在不同工作负载下的取舍：前者偏向低延迟、控制与缓存，后者偏向大规模吞吐。" src="../assets/0713a/cpu-gpu-tradeoff.preview.jpg" data-fullsrc="../assets/0713a/cpu-gpu-tradeoff.png" /></a></p>
 <p><em>图：同样的计算任务落在 CPU 或 GPU 上，瓶颈来源不同；选择设备要同时看数据规模、分支复杂度与传输开销。</em></p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>一个任务只有 1000 个元素，放到 GPU 上一定更快吗？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>不一定。GPU 需要 launch kernel、传输数据并组织足够多的线程。数据量小时，这些固定开销可能比 CPU 直接循环更高。GPU 适合大批量、规则、可并行的计算，小任务是否迁移要实测端到端时间。</p>
+</details>
+</div>
 <h2 id="线程层次与硬件资源">线程层次与硬件资源<a class="headerlink" href="#线程层次与硬件资源" title="Permanent link"></a></h2>
 <p>GPU 程序中的 grid 是一次 kernel 启动的全部线程块，block 是能共享 shared memory 并执行 block 内 barrier 的协作单位，thread 才是一个具体的索引计算实例。block 会被整体分派给一个 SM，block 内线程再按硬件固定宽度组成 warp；一个 block 不能跨 SM，因此需要跨 block 协作的算法不能依赖普通的 block barrier。grid 可以有远多于硬件同时容纳的 block，运行时会在一个 block 完成后把后续 block 调度上来。</p>
 <p>资源限制可用一个小例子理解。若 SM 最多驻留 2048 个线程、每个 block 256 线程，线程数上限允许 8 个 block；但若每个 block 申请大量 shared memory，或每线程使用很多寄存器，实际可能只能驻留 2 个 block。编译器生成的寄存器数、launch 的 block 大小和动态 shared memory 大小一起决定这个上限。调 block size 时要保持 warp 的整数倍、观察寄存器 spill、测量吞吐，不存在所有 kernel 通用的 256 最快。</p>
@@ -3556,6 +3604,14 @@ if (i &lt; N &amp;&amp; j &lt; N) {
 <div class="admonition tip">
 <p class="admonition-title">把问题画成数据流</p>
 <p>为每个输入、输出和中间张量标出所在设备、字节数、生产者与消费者。若某个中间结果只被下一个 GPU 算子使用，回传 host 通常没有意义；若下一步依赖前一步的标量决定分支，就应把这个同步点明确放进关键路径。</p>
+</div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么提高占用率不一定提高 kernel 性能？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>占用率表示 SM 上可驻留 warp 数相对上限的比例。它有助于隐藏延迟，但如果瓶颈是内存带宽、指令吞吐或同步，继续提高占用率只会增加竞争。寄存器和共享内存用量也可能为了高占用率被迫降低，导致 tile 变小或溢出。应结合 Roofline、内存事务数和指令比例判断。</p>
+</details>
 </div>
 <div class="footnote">
 <hr />

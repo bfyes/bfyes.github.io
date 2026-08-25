@@ -3430,6 +3430,14 @@ double seconds = std::chrono::duration&lt;double&gt;(end - begin).count();</code
 </ul>
 <p>延迟由依赖链和串行等待决定，吞吐受并行宽度和资源上限决定。这里有一句很贴切的玩笑——“永远不要低估一辆装满磁带、在高速公路上狂奔的面包车的带宽”（Andrew Tanenbaum）🚐💨。它想说的是，一次运送大量数据时，总吞吐可以非常可观，但逐次往返的延迟依然糟糕。现实中 AWS Snowball、阿里云闪电立方这类“卡车搬迁数据”的服务，正是把这个思路用到了极致。</p>
 <p>so，高带宽不等于低延迟。小消息同步受延迟支配，大块搬运受带宽限制。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么计时边界不清会导致“优化后更快”的假象？举例说明哪些时间可能混进来？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>如果计时包含初始化、文件读取、内存分配、进程启动或 CUDA 初始化，而优化只影响计算内核，测到的变化可能来自无关部分。反过来，若计时结束前没有等待异步设备或子进程，也会漏掉真实耗时。应把准备阶段、计算阶段和收尾阶段分开，明确每个测量对象。</p>
+</details>
+</div>
 <h2 id="性能上限与-roofline">性能上限与 Roofline<a class="headerlink" href="#性能上限与-roofline" title="Permanent link"></a></h2>
 <p>CPU 的计算峰值由核心数、频率、每周期可发射的向量 FMA 数量和向量宽度决定；内存系统则有单个 socket、全部 socket 和不同访问模式下的带宽上限。用 microbenchmark 测这些上限，比直接引用产品宣传页更可信。</p>
 <p>程序实际性能受两条上界限制：计算峰值和内存带宽。定义<strong>运算强度</strong>：</p>
@@ -3449,6 +3457,14 @@ P\le\min(P_{\mathrm{peak}}, B_{\mathrm{memory}}\times I)
 <p><em>图：同一台机器上，不同算子的性能上限由不同资源决定。</em></p>
 <p>以逐元素 <code>c[i] = a[i] + b[i]</code> 为例，<code>float</code> 数据每个元素至少读入 8 字节、写出 4 字节，只做一次加法，运算强度约为 <span class="arithmatex">\(1/12\)</span> FLOP/byte。即使 CPU 有很高的 FMA 峰值，这个循环也会很快碰到内存带宽屋顶。矩阵乘法则不同，一个读入 cache 的 A 或 B 元素会参与许多次乘加，随着 tile 增大，DRAM 上看到的字节数增长得远慢于 FLOP，点才可能向右移动。</p>
 <p>这也解释了同一段代码换更强 CPU 为何不一定快。如果新 CPU 的计算峰值翻倍、内存带宽几乎不变，带宽受限的点仍停在原来的斜线上；若优化把连续数组改成多次扫描，FLOP 数不变，字节数却增加，点会向左走。Roofline 不是在给程序贴标签，它要求每一次优化说清楚减少了什么搬运，或增加了哪一块数据的复用。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>一个 kernel 每次执行 1000 次浮点运算，读写字节共 400 B。若机器峰值是 50 GFLOPS、带宽是 25 GB/s，理论上限大约是多少？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>算术强度是 <code>1000 / 400 = 2.5 FLOP/B</code>。机器的平衡点是 <code>50 / 25 = 2 FLOP/B</code>，该 kernel 强度低于平衡点，属于带宽受限。理论上限约为 <code>25 GFLOPS × 2.5 = 62.5 GFLOPS</code>，但不会超过硬件峰值，因此以 50 GFLOPS 为上限。实际值还会因访存效率、并行度和其他开销更低。</p>
+</details>
+</div>
 <h2 id="cpu-利用率与热点">CPU 利用率与热点<a class="headerlink" href="#cpu-利用率与热点" title="Permanent link"></a></h2>
 <p>性能分析（profiling）<sup id="fnref:profiling"><a class="footnote-ref" href="#fn:profiling">8</a></sup>把时间、指令和硬件事件对应到具体代码。CPU 利用率低可能是 I/O、网络、锁、页面缺失或负载不均；CPU 利用率高也可能只是忙于做无用工作。需要同时看热点、调用栈和硬件计数器。</p>
 <p>Linux 上可先用：</p>
@@ -3499,6 +3515,14 @@ perf report</code></pre>
 <p><em>图：计数器先描述整段运行。只有把它与采样到的热点和源码访问模式对应，才能区分内存、分支、依赖或锁等待。</em></p>
 <p><a class="glightbox" data-type="image" href="../assets/0712p/perf-tools.png"><img width="817" height="460" class="lqip" alt="课件给出 perf 工具族的分工：perf stat 问硬件在做什么、perf record/report 找时间花在哪、perf top 看实时热点。" src="../assets/0712p/perf-tools.preview.jpg" data-fullsrc="../assets/0712p/perf-tools.png" /></a></p>
 <p><em>图：先 stat 看整体计数器，再 record+report 采样定位热点源码，最后 top 看实时分布——这是基本流程。</em></p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>profiler 显示某函数占 80% CPU 时间。把它优化 2 倍，程序最多能加速多少？为什么“热点百分比”不等于同样的整体收益？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>设原程序时间为 1，该函数占 0.8。优化 2 倍后这部分降到 0.4，其余仍为 0.2，总时间 0.6，整体加速约 <code>1 / 0.6 ≈ 1.67</code>。百分比说明时间在哪里，整体收益还要看这段能优化多少，以及优化后是否暴露新的瓶颈。</p>
+</details>
+</div>
 <h2 id="朴素矩阵乘法">朴素矩阵乘法<a class="headerlink" href="#朴素矩阵乘法" title="Permanent link"></a></h2>
 <p>对行主序 C/C++ 数组，最直观的三重循环可能是：</p>
 <pre class="highlight"><code class="language-cpp">for (int i = 0; i &lt; n; ++i)
@@ -3550,6 +3574,14 @@ perf report</code></pre>
 <a class="glightbox" data-type="image" href="../assets/0712p/cacheline-row-column-walk.png"><img width="908" height="511" class="lqip" alt="课件画出 Mem moves in 64-byte lines：行 walk 取一条 line 服务 8 次迭代，列 walk（跨 8KB 步长）每取一条 line 只用其中一个 double。" src="../assets/0712p/cacheline-row-column-walk.preview.jpg" data-fullsrc="../assets/0712p/cacheline-row-column-walk.png" /></a></p>
 <p><em>图：一次内存访问搬入 64B（8 个 double）；行方向能被整条 line 覆盖，列方向则每条 line 大多浪费。</em></p>
 <p>改动前后可以用 <code>perf stat</code> 直接对照。<code>naive(ijk)</code> 与 <code>ikj</code>（都是 <code>-O2</code>）指令数几乎相同（约 75 亿条），cycles 却从约 117 亿降到约 14 亿，IPC 从 <code>0.65</code> 升到 <code>5.37</code>，cache-references 也从约 9.7 亿降到约 1.4 亿。同样的指令、少得多的等待，就是访问模式改变带来的。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>矩阵乘法的三层循环顺序没有改变浮点乘加次数，为什么速度可能差很多？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>不同顺序对 A、B、C 的访问步长不同。连续访问更容易命中 cache，跳跃访问会放大内存事务。矩阵乘的算术强度较高，但只有数据复用落在寄存器和 cache 中时，计算单元才可能持续有操作数。</p>
+</details>
+</div>
 <h2 id="cache-blocking">Cache blocking<a class="headerlink" href="#cache-blocking" title="Permanent link"></a></h2>
 <p>即使循环顺序改善，整个矩阵仍可能远大于 cache。<strong>分块（blocking）</strong>把矩阵切成 <code>BS×BS</code> 的 tile：一次只处理几个能放进 cache 的小块，在块内反复使用 A、B、C 数据。</p>
 <pre class="highlight"><code class="language-cpp">for (int ii = 0; ii &lt; n; ii += BS)
@@ -3611,6 +3643,14 @@ perf report</code></pre>
 <summary>为什么先改布局是有因果关系的顺序</summary>
 <p>一条 AVX-512 指令能在一个周期做很多 FMA，但再宽的计算单元也要先把数据从 DRAM 一路搬到寄存器。若程序本身在每个内层迭代都跨大步长访问，访存路径先被浪费掉，给再多的算术 lane 也没有用。先改循环次序/分块，是让已搬上来的数据被尽量复用；只有这一步之后，自动向量化和手写微内核才有足够多的局部数据可算。顺序由瓶颈决定，不能把它当成固定教条。</p>
 </details>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>为什么优化矩阵乘法时常先做数据布局或分块，再看向量化指令？顺序颠倒会有什么问题？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>向量化只能提高每条指令处理的数据量，若数据仍频繁从低层存储重复搬运，计算单元还是等数据。分块和布局先提高局部性和复用，让寄存器与 cache 能持续供给操作数，之后向量和 FMA 才有机会发挥作用。若先手工写复杂指令，代码可读性下降，后续改布局也更难。</p>
+</details>
+</div>
 <h2 id="自动向量化与查看生成代码">自动向量化与查看生成代码<a class="headerlink" href="#自动向量化与查看生成代码" title="Permanent link"></a></h2>
 <p>当最内层循环连续、迭代独立、指针别名清楚时，编译器可把多个 <code>j</code> 合并成 SIMD 操作。对 Clang：</p>
 <pre class="highlight"><code class="language-bash">clang++ -O3 -march=native -Rpass=loop-vectorize matmul.cpp</code></pre>
@@ -3684,9 +3724,25 @@ numastat -p PID</code></pre>
 <p class="admonition-title">NUMA 要分清三个位置</p>
 <p>测 NUMA 时要区分线程在哪个 socket、页面在哪个 socket、以及线程实际访问哪块页面。只把进程绑到 node 0、却由 node 1 的线程先初始化数组，仍可能得到远端页面。可先让每个线程并行初始化自己后续处理的块，再保持相同的线程划分进入主循环；改变一个条件后重跑，才能把差异归因于数据位置而不是随机波动。</p>
 </div>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>多线程矩阵初始化由主线程完成，计算时各线程访问对应区域。为什么显式绑定后性能可能仍不理想？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>绑定只约束线程在哪里运行，不自动迁移已经分配的数据。如果页面在初始化时都落在主线程所在节点，其他节点的线程仍会远端访问。应按未来的访问者执行 first touch，或显式设置内存策略；还要检查绑定是否与线程调度、库线程和 I/O 冲突。</p>
+</details>
+</div>
 <h2 id="计时边界与统计量">计时边界与统计量<a class="headerlink" href="#计时边界与统计量" title="Permanent link"></a></h2>
 <p>测量一个 kernel 时，计时器应夹住同一份工作：必要的预热之后开始计时，结束时确保 CPU 线程或 GPU stream 已完成，再读取时钟。把随机数据生成、首次页分配、JIT 编译或文件加载有选择地计入，会改变问题本身；报告必须写清边界。CPU 可用单调时钟，MPI 程序通常取所有 rank 中的最大耗时，因为作业完成由最慢 rank 决定；GPU 异步发射时应使用 CUDA event 或显式同步，不能只量 host 提交 kernel 的微小时间。</p>
 <p>单次运行容易受频率调节、后台负载、首次 cache cold start 和系统噪声影响。对相同输入运行多次，报告中位数或稳定区间这些统计量<sup id="fnref:statistics"><a class="footnote-ref" href="#fn:statistics">12</a></sup>，同时保存最小/最大值和线程绑定信息，才能判断一个 3% 的改动是否真实。优化中若校验被移出计时区，仍应在每次候选实现后运行；少做了计算得到的加速不是性能结果。</p>
+<div class="admonition question">
+<p class="admonition-title">思考题</p>
+<p>同一个程序跑三次，时间分别是 9.8s、10.1s、12.4s，只报告最快值合理吗？</p>
+<details class="tip">
+<summary>答案</summary>
+<p>一般不合理。应说明计时边界、是否预热、输入是否一致，并报告均值、标准差或分位数。只挑最快值会掩盖系统噪声、缓存冷热和首次分配等影响，重复实验的意义正是估计波动范围。</p>
+</details>
+</div>
 <h2 id="从事件到循环">从事件到循环<a class="headerlink" href="#从事件到循环" title="Permanent link"></a></h2>
 <p><code>perf stat</code> 的 IPC 是 retired instructions / cycles，不是 CPU 利用率。IPC 低可能来自 cache miss、分支错误、数据依赖或前端取指受限；IPC 高也可能只是在高效执行不重要的初始化。cache-misses 需要和访问次数、cache line 大小、运行时间一起解释。把计数器与采样 profiler 的热点函数、源码行和汇编对应，才能提出可证伪的假设：例如热点在 <code>B[k*n+j]</code> 且 LLC miss 高，才有理由尝试转置或 packing；改完再测同一事件集和总时间。</p>
 <p>性能上限也可由实际字节流量反查。若一个 SAXPY 每元素读 <code>x</code>、读写 <code>y</code>，理想情况下约搬运 12 字节并做 2 FLOP，运算强度约为 <code>1/6 FLOP/byte</code>；在 200 GB/s 的有效带宽下，即使峰值算力是数 TFLOPS，Roofline 上限也只有约 33 GFLOPS。这个估算的价值在于排除不可能：当实测已接近该数，不应期待把 FMA 再调快十倍。</p>
