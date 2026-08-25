@@ -3144,21 +3144,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#代码" class="md-nav__link">
+  <a href="#代码命令行" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        代码
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#命令行" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        命令行
+        代码&amp;命令行
       </span>
     </span>
   </a>
@@ -3495,21 +3484,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#代码" class="md-nav__link">
+  <a href="#代码命令行" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        代码
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#命令行" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        命令行
+        代码&amp;命令行
       </span>
     </span>
   </a>
@@ -3808,6 +3786,8 @@
 </blockquote>
 </blockquote>
 <h2 id="列表">列表<a class="headerlink" href="#列表" title="Permanent link"></a></h2>
+<p>间距对照。</p>
+<p>间距对照。</p>
 <ul>
 <li>无序列表项目</li>
 <li>第二项包含一些较长文字，用来检查换行和列表缩进是否自然。<ul>
@@ -3842,6 +3822,19 @@
 <div class="arithmatex">\[
 \frac{\partial f}{\partial x} = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}
 \]</div>
+<p>超长公式</p>
+<div class="arithmatex">\[
+\begin{aligned}
+F(x)
+&amp;= \sum_{n=1}^{N} \frac{(-1)^{n+1} x^{2n-1}}{(2n-1)!}
++ \sum_{n=0}^{N} \frac{x^n}{n!}
++ \int_0^x \frac{\sin t}{t}\,dt
++ \int_0^x \frac{1-\cos t}{t}\,dt
++ \prod_{n=1}^{N} \left(1+\frac{x^2}{n^2}\right)
++ \log\!\left(1+x+x^2+x^3+x^4+x^5+x^6+x^7+x^8+x^9+x^{10}\right)
+\end{aligned}
+\]</div>
+<p>用来测试滚动条位置。</p>
 <h2 id="表格">表格<a class="headerlink" href="#表格" title="Permanent link"></a></h2>
 <table>
 <thead>
@@ -3874,7 +3867,8 @@
 </tr>
 </tbody>
 </table>
-<h2 id="代码">代码<a class="headerlink" href="#代码" title="Permanent link"></a></h2>
+<p>间距测试。</p>
+<h2 id="代码命令行">代码&amp;命令行<a class="headerlink" href="#代码命令行" title="Permanent link"></a></h2>
 <p>行内代码 <code class="language-python highlight">squares = [x ** 2 for x in data]</code>，<code class="language-asm highlight">assume cs:code, ds:data</code>，<code class="language-asm highlight">repne scasb</code>，<code class="language-asm highlight">les di, dword ptr [bp+2]</code>，<code class="language-bash highlight">cd ~/bfyes</code>，<code class="language-makefile highlight">$(CC) $(CFLAGS) -o hello hello.c</code>，<code class="language-c highlight">int main()</code>，<code>int main()</code>，以及代码块：</p>
 <pre class="highlight"><code class="language-c">#include &lt;stdio.h&gt;
 #define MAX_LEN 256
@@ -3917,7 +3911,6 @@ CFLAGS = -O2 -Wall
 all: hello
 hello: hello.c
     $(CC) $(CFLAGS) -o hello hello.c</code></pre>
-<h2 id="命令行">命令行<a class="headerlink" href="#命令行" title="Permanent link"></a></h2>
 <pre class="highlight"><code class="language-bash">#!/usr/bin/env bash
 set -euo pipefail
 name="bfyes"
