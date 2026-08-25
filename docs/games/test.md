@@ -20,7 +20,8 @@ page_info: true
 
 说明：
 - 这五项都是独立布尔开关；省略时采用上面写明的默认值。
-- rainbow-page、home-page、grid-off 是模板内部 class，不再写进页面 front matter。
+- home-page、rainbow-page 是模板内部样式 class；运行时 body 会得到
+  data-page-home / data-page-rainbow / data-page-grid="true|false"，均不写进页面 front matter。
 - Zensical 自带的 hide 仍照原样使用：hide: [toc] 隐藏页内目录，
   hide: [navigation] 隐藏侧边导航；可组合为 hide: [toc, navigation]。
   它不再负责本站网格开关。
