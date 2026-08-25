@@ -5,6 +5,9 @@
      ----------------------------------------------------------------------------
      LQIP、页面状态、TOC、Giscus、脚注修正，以及瞬时导航后的 tooltip 回收。
      ============================================================================ */
+  // ---- TOC：逐条淡入的时间间隔 ------------------------------------------
+  var TOC_DELAY_STEP_MS = 100;
+
   // ---- LQIP：预览图 → 全分辨率 ------------------------------------------
   var LQIP_MAX_WAIT = 15000;
 
@@ -75,23 +78,20 @@
     setPageState("home", !!scope.querySelector(".home-page"));
     setPageState("rainbow", !!scope.querySelector(".rainbow-page"));
     setPageState("grid", !scope.querySelector('[data-page-grid="false"]'));
+    setPageState("counter", !scope.querySelector('[data-page-counter="false"]'));
+    setPageState("fold-toc", !!scope.querySelector('[data-page-fold-toc="true"]'));
   }
 
-  // ---- 右侧 TOC 逐条淡入 ----
-  // 由 JS 按实际条数给每条链接注入递增的 animation-delay（inline style），
-  // 替代 CSS 里手写的 nth-child 规则，任意条数都自适应、无需维护上限。
-  // data-md-component="toc" 位于 <ul class="md-nav__list"> 上（即 TOC 容器本身）；
-  // 页面里主侧边栏也存在同名标记，因此必须限定在 .md-sidebar--secondary 内。
-  // querySelectorAll 返回深度优先文档序，父级标题在前、子级紧随，
-  // 注入的序号即"视觉从上到下"的线性顺序，不受目录嵌套层级影响。
-  function initTocFade(root) {
+  // ---- 右侧 TOC：统一绝对时间轴的逐条淡入 ----
+  // 折叠状态完全交给 CSS 处理；这里只负责按完整 TOC 顺序注入 animation-delay。
+  function initToc() {
     var sidebar = document.querySelector(".md-sidebar--secondary");
     var toc = sidebar && sidebar.querySelector('[data-md-component="toc"]');
     if (!toc) return;
+
     var links = toc.querySelectorAll(".md-nav__link");
-    toc.style.setProperty("--nav-count", String(links.length));
     for (var i = 0; i < links.length; i++) {
-      links[i].style.animationDelay = (i * 100) + "ms";
+      links[i].style.animationDelay = (i * TOC_DELAY_STEP_MS) + "ms";
     }
   }
 
@@ -222,7 +222,7 @@
   window.site.onPageReady(upgradeImages);
   window.site.onPageReady(initLqip);
   window.site.onPageReady(initLqipBlur);
-  window.site.onPageReady(initTocFade);
+  window.site.onPageReady(initToc);
   window.site.onPageReady(initGiscus);
   window.site.onPageReady(normalizeFootnoteBackrefs);
   window.site.onPageReady(purgeTooltips);

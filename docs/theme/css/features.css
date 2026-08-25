@@ -1109,6 +1109,28 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
    ============================================================================ */
 .md-nav--secondary [data-md-component="toc"] .md-nav__link { transition: color 0.15s ease, opacity 0.15s ease; }
 
+/* fold_toc: true 时直接复用官方 .md-nav__link--active：
+   active 项自身的子目录，以及包含 active 项的祖先目录展开。
+   隐藏层不用 display:none，保证所有 TOC 项仍按统一绝对时间轴执行淡入动画。
+   不支持 :has 的浏览器保持整棵 TOC 展开，作为降级方案。 */
+@supports selector(:has(*)) {
+  body[data-page-fold-toc="true"] .md-sidebar--secondary .md-nav > .md-nav__list > .md-nav__item > .md-nav {
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    margin: 0;
+  }
+
+  body[data-page-fold-toc="true"] .md-sidebar--secondary .md-nav > .md-nav__list > .md-nav__item > .md-nav__link--active + .md-nav,
+  body[data-page-fold-toc="true"] .md-sidebar--secondary .md-nav > .md-nav__list > .md-nav__item > .md-nav:has(.md-nav__link--active) {
+    height: auto;
+    overflow: visible;
+    visibility: visible;
+    margin-top: 0.2rem;
+  }
+}
+
 .rainbow-page::before { animation: rainbow-local-aurora 18s ease-in-out infinite alternate; }
 .rainbow-page::after { animation: rainbow-beam-c 27s ease-in-out infinite alternate; }
 .rainbow-backdrop::before { animation: rainbow-band-pass 16s ease-in-out infinite alternate; }
@@ -1137,7 +1159,8 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
   to { opacity: 1; }
 }
 .md-sidebar--secondary [data-md-component="toc"] .md-nav__link {
-  animation: toc-fade 0.8s ease-out both;
+  --toc-fade-duration: 0.8s;
+  animation: toc-fade var(--toc-fade-duration) ease-out both;
 }
 @media (prefers-reduced-motion: reduce) {
   .rainbow-page::before,

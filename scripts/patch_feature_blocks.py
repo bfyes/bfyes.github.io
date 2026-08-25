@@ -276,8 +276,9 @@ def process_file(path: Path) -> bool:
     if not any(tag in content for tag in ("::terminal::", "::changelog::", "::friends::", "::activity::")):
         return False
 
-    # 首页由 content.html 根据 front matter 的 page_class 包装为 .home-page。
-    is_home_page = bool(re.search(r'<div class="[^"]*\bhome-page\b[^"]*">', content))
+    # 首页由 content.html 根据 front matter 包装为 .home-page；该 div 还可带
+    # data-page-counter 等状态属性，不能假定 class 后立刻闭合标签。
+    is_home_page = bool(re.search(r'<div\b[^>]*\bclass="[^"]*\bhome-page\b[^"]*"', content))
     patched = replace_home_blocks(content, is_home_page)
     if patched == content:
         return False

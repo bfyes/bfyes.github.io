@@ -1,3 +1,7 @@
+---
+fold_toc: true
+---
+
 <!--
 本站自定义的页面级 front matter（写在文件最顶部的 --- 区块中）：
 
@@ -11,6 +15,12 @@ rainbow: false
 # 虚线网格背景。默认 true；写 false 才关闭。
 grid: true
 
+# 标题自动编号（H2/H3/H4）。默认 true；写 false 才关闭。
+counter: true
+
+# 右侧目录按一级标题折叠。默认 false；写 true 才开启。
+fold_toc: false
+
 # Giscus 评论区。默认 true；写 false 才关闭。
 comments: true
 
@@ -19,13 +29,14 @@ page_info: true
 ---
 
 说明：
-- 这五项都是独立布尔开关；省略时采用上面写明的默认值。
+- 这七项都是独立布尔开关；省略时采用上面写明的默认值。
 - home-page、rainbow-page 是模板内部样式 class；运行时 body 会得到
-  data-page-home / data-page-rainbow / data-page-grid="true|false"，均不写进页面 front matter。
+  data-page-home / data-page-rainbow / data-page-grid / data-page-counter /
+  data-page-fold-toc="true|false"，均不写进页面 front matter。
 - Zensical 自带的 hide 仍照原样使用：hide: [toc] 隐藏页内目录，
   hide: [navigation] 隐藏侧边导航；可组合为 hide: [toc, navigation]。
   它不再负责本站网格开关。
-- 本页只保留说明，不实际启用以上 front matter，因此不会改变样式测试页。
+- 本页实际启用 fold_toc: true，用于预览折叠目录；其余项目仅作说明。
 -->
 
 # 样式测试

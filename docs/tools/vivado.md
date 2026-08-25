@@ -1,3 +1,7 @@
+---
+fold_toc: true
+---
+
 # Vivado（含可用的Batch模式） 2022.2 on Ubuntu with Rosetta（不完善）
 
 ### 引用文章来自CSDN：利用 Rosetta 在 M 系列 Mac 上高效运行 x86 Linux 应用的完整指南[[点击跳转至整理归档](rosetta.md)]

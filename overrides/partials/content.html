@@ -3,6 +3,9 @@
   because main.html already places page-info + comments at the bottom.
 -#}
 {% include "partials/actions.html" %}
+{% if page.meta.fold_toc %}
+  <script>document.body.setAttribute("data-page-fold-toc", "true");</script>
+{% endif %}
 {% set page_class = "" %}
 {% if page.meta.home %}
   {% set page_class = "home-page" %}
@@ -10,9 +13,9 @@
 {% if page.meta.rainbow %}
   {% set page_class = (page_class ~ " rainbow-page") | trim %}
 {% endif %}
-{% set has_page_state = page_class or page.meta.grid == false %}
+{% set has_page_state = page_class or page.meta.grid == false or page.meta.counter == false or page.meta.fold_toc %}
 {% if has_page_state %}
-  <div{% if page_class %} class="{{ page_class }}"{% endif %}{% if page.meta.grid == false %} data-page-grid="false"{% endif %}>
+  <div{% if page_class %} class="{{ page_class }}"{% endif %}{% if page.meta.grid == false %} data-page-grid="false"{% endif %}{% if page.meta.counter == false %} data-page-counter="false"{% endif %}{% if page.meta.fold_toc %} data-page-fold-toc="true"{% endif %}>
     {% if page.meta.rainbow %}
       <div class="rainbow-backdrop" aria-hidden="true"></div>
     {% endif %}

@@ -1,3 +1,7 @@
+---
+fold_toc: true
+---
+
 # 利用 Rosetta 在 M 系列 Mac 上高效运行 x86 Linux 应用的完整指南
 
 > 原文链接 [https://blog.csdn.net/weixin_29305313/article/details/159103754](https://blog.csdn.net/weixin_29305313/article/details/159103754)
