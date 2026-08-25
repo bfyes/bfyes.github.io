@@ -2,28 +2,27 @@
   "use strict";
 
   /* ============================================================================
-     home.js —— 主页运行时
+     features/content.js —— 内容组件运行时
      ----------------------------------------------------------------------------
-     全站加载，但所有初始化函数均有 guard（找不到 .home-page / .github-calendar-wrap
-     / .home-terminal 即 return），非主页不执行任何操作。
+     全站加载；目标 DOM 不存在时直接返回。
 
-     职责（三大块，按 DOM 出现顺序）：
-       1. 友链（friends）        —— 构建期生成，运行时不处理
-       2. GitHub 贡献图          —— fetch contributions.json → 渲染表格 + tooltip
-       3. 终端打字机              —— 逐字敲入 + 命令解析 + 交互输入
+     目录
+     01. 内容组件
+         1.1 GitHub 贡献图：本地数据兜底 + 实时刷新 + tooltip
+         1.2 终端：打字机、命令输入与快捷跳转
 
-     不涉及：友链卡片 DOM/高度/字号（全由 home.css + patch_home_blocks.py 负责）。
+     友链 DOM 由 patch_feature_blocks.py 构建；样式均由 features.css 负责。
      ============================================================================ */
 
   window.site = window.site || {};
   var htmlEl = window.site.htmlEl;
 
-  /* ---- 1. 友链（friends）-------------------------------------------------
-     头像、handle 和描述由 scripts/patch_home_blocks.py 在构建期写入 HTML；
+  /* ---- 构建期友链内容 ------------------------------------------------------
+     头像、handle 和描述由 scripts/patch_feature_blocks.py 在构建期写入 HTML；
      运行时不处理（头像 img 加载失败由 onerror="this.remove()" 内联处理，
      露出首字母占位 span）。 */
 
-  /* ---- 2. GitHub 贡献图 --------------------------------------------------
+  /* ---- 01.1 GitHub 贡献图 ------------------------------------------------
      两步渐进：1) 静态 JSON（本地面板，always）→ 立即渲染；2) CORS 代理实时
      抓取贡献页（8s 超时，成功则替换刷新）。渲染为 GitHub 风格 53×7 日方格
      表格，并为每个格子绑定 Material tooltip。 */
@@ -266,14 +265,14 @@
       .catch(function () { /* 超时或失败 → 静态 JSON 已展示，无操作 */ });
   }
 
-  // 贡献图 tooltip：复用 site.js 的通用 bindTooltips（机制与主题 Material
+  // 贡献图 tooltip：复用 core.js 的通用 bindTooltips（机制与主题 Material
   // tooltip2 完全一致），fetch 回调内手动补绑——动态创建的 DOM 晚于主题
   // 原生 tooltip 扫描（onPageReady 经 setTimeout(0) 异步执行）。
 
-  // ---- 3. 终端打字机 --------------------------------------------------
-  // 终端窗口(.home-terminal)的逐字敲入动画 + 简易命令解析 + 隐藏输入。
-  // DOM 由 patch_home_blocks.py render_terminal() 烘焙；此处只驱动文字。
-  // 字号/高度/布局全在 home.css，JS 不修改任何尺寸。
+  // ---- 01.2 终端 ------------------------------------------------------
+  // 终端窗口(.site-terminal)的逐字敲入动画 + 简易命令解析 + 隐藏输入。
+  // DOM 由 patch_feature_blocks.py render_terminal() 烘焙；此处只驱动文字。
+  // 字号/高度/布局全在 features.css，JS 不修改任何尺寸。
   var typewriterTimers = [], typewriterRun = 0;
 
   function rememberTimer(id) { typewriterTimers.push(id); return id; }
@@ -286,10 +285,10 @@
     typewriterTimers = [];
     document.querySelectorAll(".typed-cursor").forEach(function (e) { e.remove(); });
     document.querySelectorAll(".typed-text").forEach(function (e) { e.textContent = ""; e.style.display = "none"; });
-    document.querySelectorAll(".home-terminal__line--prompt, .terminal-hidden-input, .home-terminal-keys").forEach(function (e) { e.style.display = "none"; });
+    document.querySelectorAll(".site-terminal__line--prompt, .terminal-hidden-input, .site-terminal__keys").forEach(function (e) { e.style.display = "none"; });
   }
 
-  function startHomeTypewriter(root) {
+  function startTerminalTypewriter(root) {
     clearTypewriter();
     var scope = root || document;
     var line1Host = scope.querySelector("#typed-line-1-host");
@@ -298,7 +297,7 @@
     var line1Command = scope.querySelector("#typed-line-1-command");
     var el2 = scope.querySelector("#typed-line-2");
     var el3 = scope.querySelector("#typed-line-3");
-    var finalPrompt = scope.querySelector(".home-terminal__line--prompt");
+    var finalPrompt = scope.querySelector(".site-terminal__line--prompt");
     var finalCommand = scope.querySelector("#typed-line-4-command");
     if (!line1Host || !line1Command || !el2 || !el3 || !finalPrompt || !finalCommand) return;
 
@@ -326,18 +325,18 @@
       if (done) delay(hold, function () { if (showCursor !== false) c.remove(); done(); });
     }
 
-    var HOME_SECTIONS = [
+    var SITE_SECTIONS = [
       { id: 1, name: "study", label: "学习", path: "/study/" },
       { id: 2, name: "tools", label: "工具", path: "/tools/" },
       { id: 3, name: "diaries", label: "随笔", path: "/diaries/" },
       { id: 4, name: "games", label: "游戏", path: "/games/" }
     ];
-    var terminalScreen = scope.querySelector(".home-terminal__screen");
+    var terminalScreen = scope.querySelector(".site-terminal__screen");
     var currentCmd = null, hiddenInput = null;
 
     function addOutput(text) {
       if (!terminalScreen) return;
-      var line = htmlEl("div", { class: "home-terminal__line home-terminal__line--output" });
+      var line = htmlEl("div", { class: "site-terminal__line site-terminal__line--output" });
       line.appendChild(htmlEl("span", { class: "typed-text" }, text));
       terminalScreen.appendChild(line);
     }
@@ -346,17 +345,17 @@
     }
     function addSectionLinks() {
       if (!terminalScreen) return;
-      var line = htmlEl("div", { class: "home-terminal__line home-terminal__line--output" });
-      var keys = htmlEl("span", { class: "home-terminal-keys", role: "group", "aria-label": "快速跳转数字链接" });
-      for (var i = 0; i < HOME_SECTIONS.length; i++) {
-        var s = HOME_SECTIONS[i];
-        keys.appendChild(htmlEl("a", { href: s.path, class: "home-terminal-link", "data-goto": String(s.id) }, s.id + ":" + s.label));
+      var line = htmlEl("div", { class: "site-terminal__line site-terminal__line--output" });
+      var keys = htmlEl("span", { class: "site-terminal__keys", role: "group", "aria-label": "快速跳转数字链接" });
+      for (var i = 0; i < SITE_SECTIONS.length; i++) {
+        var s = SITE_SECTIONS[i];
+        keys.appendChild(htmlEl("a", { href: s.path, class: "site-terminal__link", "data-goto": String(s.id) }, s.id + ":" + s.label));
       }
       line.appendChild(keys); terminalScreen.appendChild(line);
     }
     function spawnPrompt(dir) {
       removeCurrentCursor();
-      var line = htmlEl("div", { class: "home-terminal__line home-terminal__line--prompt" });
+      var line = htmlEl("div", { class: "site-terminal__line site-terminal__line--prompt" });
       line.appendChild(htmlEl("span", { class: "typed-text--host" }, "bfyes@ZJU"));
       line.appendChild(htmlEl("span", { class: "typed-text--separator" }, ":"));
       line.appendChild(htmlEl("span", { class: "typed-text--prompt" }, dir ? "~/site/" + dir + "$ " : "~/site$ "));
@@ -378,15 +377,15 @@
       if (text === "ls") { addSectionLinks(); spawnPrompt(); return; }
       if (text === "help" || text === "?") { addOutput("输入编号进入对应页面 (移动端可点击)"); addSectionLinks(); spawnPrompt(); return; }
       var num = parseInt(text, 10);
-      if (num >= 1 && num <= HOME_SECTIONS.length) { gotoSection(HOME_SECTIONS[num - 1]); return; }
+      if (num >= 1 && num <= SITE_SECTIONS.length) { gotoSection(SITE_SECTIONS[num - 1]); return; }
       var cdMatch = text.match(/^cd(?:\s+(.+))?$/);
       if (cdMatch) {
         var target = cdMatch[1] ? cdMatch[1].trim() : "";
         if (!target) { addOutput("当前目录 ~/site"); removeCurrentCursor(); spawnPrompt(); return; }
         var norm = target.replace(/^~\/site\/?/, "").replace(/^~\/?/, "").replace(/^\//, "").replace(/\/+$/, "");
-        for (var i = 0; i < HOME_SECTIONS.length; i++) { if (HOME_SECTIONS[i].name === norm || String(HOME_SECTIONS[i].id) === norm) { gotoSection(HOME_SECTIONS[i]); return; } }
+        for (var i = 0; i < SITE_SECTIONS.length; i++) { if (SITE_SECTIONS[i].name === norm || String(SITE_SECTIONS[i].id) === norm) { gotoSection(SITE_SECTIONS[i]); return; } }
         addOutput("cd: no such directory: " + target);
-        addOutput(HOME_SECTIONS.map(function (s) { return s.id + ":" + s.name; }).join("  "));
+        addOutput(SITE_SECTIONS.map(function (s) { return s.id + ":" + s.name; }).join("  "));
         spawnPrompt(); return;
       }
       addOutput("command not found: " + text); addOutput("try \"ls\""); spawnPrompt();
@@ -423,7 +422,7 @@
     function bindTerminalKeys() {
       if (!terminalScreen) return;
       terminalScreen.addEventListener("click", function (e) {
-        var link = e.target && e.target.closest ? e.target.closest(".home-terminal-link") : null;
+        var link = e.target && e.target.closest ? e.target.closest(".site-terminal__link") : null;
         if (!link) return;
         e.preventDefault();
         var num = parseInt(link.getAttribute("data-goto"), 10);
@@ -452,5 +451,5 @@
 
   // ---- init ----
   window.site.onPageReady(initGithubCalendar);
-  window.site.onPageReady(startHomeTypewriter);
+  window.site.onPageReady(startTerminalTypewriter);
 })();

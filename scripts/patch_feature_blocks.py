@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""patch_home_blocks.py — 构建后把主页自定义语法替换为 HTML。
+"""patch_feature_blocks.py — 构建后把主页自定义语法替换为 HTML。
 
 支持块语法（::terminal:: / ::changelog:: / ::friends:: / ::activity::）：
 
@@ -19,7 +19,7 @@ dreamem0ra1n | dreamem0ra1n | https://dreamem0ra1n.github.io/ISYS/ | ISYS
 
 ::activity:: —— 块语法，参数为 GitHub 用户名（::activity::user::/activity::）。
 
-用法: uv run python scripts/patch_home_blocks.py
+用法: uv run python scripts/patch_feature_blocks.py
 """
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ SITE = Path(__file__).resolve().parents[1] / "site"
 
 
 def friend_initials(name: str, github: str) -> str:
-    """与原 home.js friendInitials 一致：中文取首字；多词取前两词首字母；单词取前两字符。"""
+    """与 features/content.js 的友链显示逻辑一致：中文取首字；多词取前两词首字母；单词取前两字符。"""
     source = (name or github or "?").strip()
     if not source:
         return "?"
@@ -47,7 +47,7 @@ def friend_initials(name: str, github: str) -> str:
 
 
 def github_avatar_url(github: str) -> str:
-    """与原 home.js githubAvatarUrl 一致（encodeURIComponent → quote(safe='')）。"""
+    """与 features/content.js 的头像 URL 逻辑一致（encodeURIComponent → quote(safe='')）。"""
     return f"https://avatars.githubusercontent.com/{quote(github, safe='')}?size=160" if github else ""
 
 
@@ -66,7 +66,7 @@ def render_avatar(name: str, github: str) -> str:
         if src
         else ""
     )
-    return f'<span class="home-friend__avatar">{initials}{img}</span>'
+    return f'<span class="site-friend-card__avatar">{initials}{img}</span>'
 
 
 def parse_block(content: str, tag: str) -> str | None:
@@ -142,12 +142,18 @@ def render_changelog(lines: str, title: str | None = None, section_id: str | Non
         date, text = line.split(":", 1)
         rendered = render_inline_markdown(text)
         items.append(
-            f'      <div class="home-log">\n'
-            f'        <span class="home-log__date">{html.escape(date.strip())}</span>\n'
+            f'      <div class="site-changelog__entry">\n'
+            f'        <span class="site-changelog__date">{html.escape(date.strip())}</span>\n'
             f"        <span>{rendered}</span>\n"
             f"      </div>"
         )
-    body = '    <div class="home-log-list">\n' + "\n".join(items) + "\n    </div>\n"
+    body = (
+        '    <div class="site-changelog">\n'
+        '      <div class="site-changelog__scroller">\n'
+        + "\n".join(items)
+        + "\n      </div>\n"
+        + "    </div>\n"
+    )
     return section_shell(title, section_id, body)
 
 
@@ -168,7 +174,7 @@ def render_friends(lines: str, title: str | None = None, section_id: str | None 
         avatar = render_avatar(name, github_id)
         # handle：仅当有 GitHub 用户名时输出 @用户名。
         handle = (
-            f'\n        <span class="home-friend__handle">@{html.escape(github_id)}</span>'
+            f'\n        <span class="site-friend-card__handle">@{html.escape(github_id)}</span>'
             if github_id
             else ""
         )
@@ -178,41 +184,41 @@ def render_friends(lines: str, title: str | None = None, section_id: str | None 
         # 2 行（name + handle）和 3 行（+ meta）均适用。
         has_desc = bool(desc)
         meta_content = render_inline_markdown(desc) if has_desc else "\xa0"
-        meta_cls = "home-friend__meta" + ("" if has_desc else " home-friend__meta--empty")
+        meta_cls = "site-friend-card__meta" + ("" if has_desc else " site-friend-card__meta--empty")
         meta = f'\n        <span class="{meta_cls}">{meta_content}</span>'
         items.append(
-            f'      <a class="home-friend" {attrs}>\n'
+            f'      <a class="site-friend-card" {attrs}>\n'
             f"        {avatar}\n"
-            f'        <span class="home-friend__body">\n'
+            f'        <span class="site-friend-card__body">\n'
             f"          <strong>{html.escape(name)}</strong>{handle}{meta}\n"
             f"        </span>\n"
             f"      </a>"
         )
-    body = '    <div class="home-link-grid">\n' + "\n".join(items) + "\n    </div>\n"
+    body = '    <div class="site-friend-list">\n' + "\n".join(items) + "\n    </div>\n"
     return section_shell(title, section_id, body)
 
 
 def render_terminal() -> str:
     return (
         '<section aria-label="homepage intro">\n'
-        '      <div class="home-terminal" aria-label="bfyes terminal intro">\n'
-        '        <div class="home-terminal__bar">\n'
-        '          <span class="home-terminal__dot home-terminal__dot--red"></span>\n'
-        '          <span class="home-terminal__dot home-terminal__dot--yellow"></span>\n'
-        '          <span class="home-terminal__dot home-terminal__dot--green"></span>\n'
-        '          <span class="home-terminal__title">bfyes@ZJU:~</span>\n'
+        '      <div class="site-terminal" aria-label="bfyes terminal intro">\n'
+        '        <div class="site-terminal__bar">\n'
+        '          <span class="site-terminal__dot site-terminal__dot--red"></span>\n'
+        '          <span class="site-terminal__dot site-terminal__dot--yellow"></span>\n'
+        '          <span class="site-terminal__dot site-terminal__dot--green"></span>\n'
+        '          <span class="site-terminal__title">bfyes@ZJU:~</span>\n'
         '        </div>\n'
-        '        <div class="home-terminal__screen">\n'
-        '          <div class="home-terminal__line">\n'
+        '        <div class="site-terminal__screen">\n'
+        '          <div class="site-terminal__line">\n'
         '            <span id="typed-line-1-host" class="typed-text typed-text--host" style="display:none;"></span><span id="typed-line-1-separator" class="typed-text typed-text--separator" style="display:none;"></span><span id="typed-line-1-prompt" class="typed-text typed-text--prompt" style="display:none;"></span><span id="typed-line-1-command" class="typed-text typed-text--command" style="display:none;"></span>\n'
         '          </div>\n'
-        '          <div class="home-terminal__line home-terminal__line--user">\n'
+        '          <div class="site-terminal__line site-terminal__line--user">\n'
         '            <span id="typed-line-2" class="typed-text" style="display:none;"></span>\n'
         '          </div>\n'
-        '          <div class="home-terminal__line home-terminal__line--flag">\n'
+        '          <div class="site-terminal__line site-terminal__line--flag">\n'
         '            <span id="typed-line-3" class="typed-text" style="display:none;"></span>\n'
         '          </div>\n'
-        '          <div class="home-terminal__line home-terminal__line--prompt" style="display:none;">\n'
+        '          <div class="site-terminal__line site-terminal__line--prompt" style="display:none;">\n'
         '            <span class="typed-text--host">bfyes@ZJU</span><span class="typed-text--separator">:</span><span class="typed-text--prompt">~/site$ </span><span id="typed-line-4-command" class="typed-text typed-text--command" style="display:none;"></span>\n'
         '          </div>\n'
         '        </div>\n'
@@ -228,12 +234,18 @@ def render_activity(user: str = "", title: str | None = None, section_id: str | 
         '      <div class="ghc-loading">正在加载 GitHub 贡献图...</div>\n'
         "    </div>\n"
     )
-    return section_shell(title, section_id, body, extra_class="home-section--activity")
+    return section_shell(title, section_id, body, extra_class="site-component--activity")
 
 
-def replace_home_blocks(content: str) -> str:
-    """先替换带 Markdown H2 的块，再兜底替换无标题块。"""
+def replace_home_blocks(content: str, is_home_page: bool) -> str:
+    """展开自定义块；仅首页将紧邻 H2 变为首页分区标题。"""
     content = re.sub(r"<p>::terminal::</p>", render_terminal(), content)
+
+    def render_block(renderer, block: str, title: str | None = None, section_id: str | None = None) -> str:
+        rendered = renderer(block, title, section_id)
+        if not is_home_page:
+            rendered = rendered.replace('class="home-section', 'class="site-component', 1)
+        return rendered
 
     renderers = {
         "friends": render_friends,
@@ -246,11 +258,14 @@ def replace_home_blocks(content: str) -> str:
     for tag, renderer in renderers.items():
         def replace_heading(match: re.Match[str]) -> str:
             title, section_id = parse_heading(match)
-            return renderer(match.group("content"), title, section_id)
+            if is_home_page:
+                return render_block(renderer, match.group("content"), title, section_id)
+            heading = f'<h2{match.group("attrs")}>{match.group("title")}</h2>\n'
+            return heading + render_block(renderer, match.group("content"))
 
         content = heading_block_pattern(tag).sub(replace_heading, content)
         content = plain_block_pattern(tag).sub(
-            lambda match: renderer(match.group(1)), content
+            lambda match: render_block(renderer, match.group(1)), content
         )
 
     return content
@@ -261,7 +276,9 @@ def process_file(path: Path) -> bool:
     if not any(tag in content for tag in ("::terminal::", "::changelog::", "::friends::", "::activity::")):
         return False
 
-    patched = replace_home_blocks(content)
+    # 首页由 content.html 根据 front matter 的 page_class 包装为 .home-page。
+    is_home_page = bool(re.search(r'<div class="[^"]*\bhome-page\b[^"]*">', content))
+    patched = replace_home_blocks(content, is_home_page)
     if patched == content:
         return False
 

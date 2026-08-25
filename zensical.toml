@@ -130,15 +130,18 @@ nav = [
 # --------------------------------------------------------------------------
 # 03. 资源（须在 [project.theme] 等之前）
 # --------------------------------------------------------------------------
+# CSS 依赖顺序：全局变量 → Zensical 原生结构调整 → 新增功能 → 首页专属覆盖。
 extra_css = [
     "theme/css/variables.css",
     "theme/css/main.css",
-    "theme/css/theme.css",
+    "theme/css/features.css",
     "theme/css/home.css",
 ]
 
+# JS 依赖顺序：core.js 先建立 window.site；highlight.js 与 features/ 下的独立模块
+# 都通过该共享生命周期、主题总线或 DOM 工具运行。
 extra_javascript = [
-    "theme/js/site.js",
+    "theme/js/core.js",
     "theme/js/mathjax.js",
     # highlight.js 运行时语法高亮（用法与 MathJax 相同：直接引 CDN + theme/js/highlight.js 控制渲染）
     "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
@@ -148,9 +151,10 @@ extra_javascript = [
     "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js",
     "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js",
     "theme/js/highlight.js",
-    "theme/js/home.js",
+    "theme/js/features/content.js",
+    "theme/js/features/pdf.js",
+    "theme/js/features/enhancements.js",
     # "theme/js/attractor.js",  # 动态线条背景难调试，暂时不用
-    "theme/js/pdf.js",
 ]
 
 # --------------------------------------------------------------------------

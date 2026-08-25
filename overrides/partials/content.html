@@ -3,11 +3,14 @@
   because main.html already places page-info + comments at the bottom.
 -#}
 {% include "partials/actions.html" %}
-{% set page_class = page.meta.page_class | d("", true) %}
+{% set page_class = "" %}
+{% if page.meta.home %}
+  {% set page_class = "home-page" %}
+{% endif %}
 {% if page.meta.rainbow %}
   {% set page_class = (page_class ~ " rainbow-page") | trim %}
 {% endif %}
-{% if "grid" in (page.meta.hide | default([])) %}
+{% if page.meta.grid == false %}
   {% set page_class = (page_class ~ " grid-off") | trim %}
 {% endif %}
 {% if page_class %}

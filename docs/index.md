@@ -1,6 +1,7 @@
 ---
 # 改此文件后 zensical serve 不会自动 patch，请手动重新 make
-page_class: home-page rainbow-page
+home: true
+rainbow: true
 ---
 
 # Welcome
@@ -31,6 +32,7 @@ chenyuheee | ChenyuHeee | https://hechenyu.xin
 ## Changelog
 
 ::changelog::
+2026.08.25: 重构，由于看不惯一些逻辑。
 2026.08.23: 增加导航切换时正文区宽度的平滑过渡，解决困扰我很久的宽度跳变问题。
 2026.08.22: Zensical 版本更新 (UI 部分修复了我之前的 issue)，关闭动态背景大幅提升流畅性^ ^
 2026.08.19: 终于重构到令我满意！必须滚去做 HPC 了，考虑开学时发布一下我的定制主题！

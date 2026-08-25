@@ -5,9 +5,9 @@
   https://github.com/users/<user>/contributions （无需认证）
 
 浏览器无法跨域读取该来源，故在构建期预先爬取，前端直接读本地 JSON 文件。
-解析逻辑与 docs/theme/js/home.js 的 parseHtml 保持一致（同一套正则）。
+解析逻辑与 docs/theme/js/features/content.js 的 parseHtml 保持一致（同一套正则）。
 
-等级与总数由前端 home.js 的 packageCells 实时计算，Python 只负责传输原始 {date, count}。
+等级与总数由前端 features/content.js 的 packageCells 实时计算，Python 只负责传输原始 {date, count}。
 """
 
 from __future__ import annotations

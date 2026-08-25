@@ -1,3 +1,32 @@
+<!--
+本站自定义的页面级 front matter（写在文件最顶部的 --- 区块中）：
+
+---
+# 首页专属布局、首页 H2 分区标题。默认 false。
+home: false
+
+# 彩虹背景与动画。默认 false。
+rainbow: false
+
+# 虚线网格背景。默认 true；写 false 才关闭。
+grid: true
+
+# Giscus 评论区。默认 true；写 false 才关闭。
+comments: true
+
+# 顶部更新时间/字数，以及页底 Star/浏览量信息。默认 true；写 false 才关闭。
+page_info: true
+---
+
+说明：
+- 这五项都是独立布尔开关；省略时采用上面写明的默认值。
+- rainbow-page、home-page、grid-off 是模板内部 class，不再写进页面 front matter。
+- Zensical 自带的 hide 仍照原样使用：hide: [toc] 隐藏页内目录，
+  hide: [navigation] 隐藏侧边导航；可组合为 hide: [toc, navigation]。
+  它不再负责本站网格开关。
+- 本页只保留说明，不实际启用以上 front matter，因此不会改变样式测试页。
+-->
+
 # 样式测试
 
 这个页面用于预览正文排版、提示块、代码块和常见 Markdown 元素的显示效果。
@@ -331,5 +360,5 @@ Name | github | https://example.com | Description
 
 ::changelog::
 yyyy.mm.dd: text
+yyyy.mm.dd: text
 ::/changelog::
-
