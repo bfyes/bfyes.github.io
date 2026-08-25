@@ -66,11 +66,15 @@
     }
   }
   // ---- 页面状态（全站功能）----
+  function setPageState(name, value) {
+    document.body.setAttribute("data-page-" + name, value ? "true" : "false");
+  }
+
   function syncPageState(root) {
     var scope = root || document;
-    document.body.classList.toggle("home-active", !!scope.querySelector(".home-page"));
-    document.body.classList.toggle("rainbow-active", !!scope.querySelector(".rainbow-page"));
-    document.body.classList.toggle("grid-off-active", !!scope.querySelector(".grid-off"));
+    setPageState("home", !!scope.querySelector(".home-page"));
+    setPageState("rainbow", !!scope.querySelector(".rainbow-page"));
+    setPageState("grid", !scope.querySelector('[data-page-grid="false"]'));
   }
 
   // ---- 右侧 TOC 逐条淡入 ----

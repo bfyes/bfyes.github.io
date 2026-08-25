@@ -12,7 +12,7 @@
        1.3 友链
        1.4 终端
    02. 页面背景
-       网格、单页 grid-off 开关、彩虹层与 z 轴
+       网格、单页 data-page-grid 开关、彩虹层与 z 轴
    03. 页面信息（顶部更新时间、底部统计）
    04. PDF 阅读器
    05. 响应式适配
@@ -631,10 +631,10 @@ body::before {
   -webkit-mask-image: var(--grid-mask);
 }
 
-body.rainbow-active::before,
-/* 单页关闭网格：front matter 里 grid: false → content.html 输出 .grid-off
-   → features/enhancements.js 给 body 加 grid-off-active → 隐藏虚线网格背景（保留普通背景）。 */
-body.grid-off-active::before {
+body[data-page-rainbow="true"]::before,
+/* 单页关闭网格：front matter 里 grid: false → content.html 输出 data-page-grid="false"
+   → features/enhancements.js 同步到 body → 隐藏虚线网格背景（保留普通背景）。 */
+body[data-page-grid="false"]::before {
   content: none;
 }
 
@@ -671,7 +671,7 @@ body.grid-off-active::before {
   isolation: isolate;
 }
 
-body.rainbow-active .md-sidebar__inner {
+body[data-page-rainbow="true"] .md-sidebar__inner {
   background-color: transparent !important;
 }
 

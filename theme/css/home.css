@@ -18,11 +18,11 @@
 .home-page a { text-decoration: none; }
 
 /* 首页覆盖基础正文层。 */
-body.home-active .md-content__inner { padding-inline: 0; }
-body.home-active .md-content,
-body.home-active .md-content > .md-typeset { background-color: transparent !important; }
-body.home-active::before { content: none; }
-body.home-active .md-typeset h1 > .headerlink { display: none; }
+body[data-page-home="true"] .md-content__inner { padding-inline: 0; }
+body[data-page-home="true"] .md-content,
+body[data-page-home="true"] .md-content > .md-typeset { background-color: transparent !important; }
+body[data-page-home="true"]::before { content: none; }
+body[data-page-home="true"] .md-typeset h1 > .headerlink { display: none; }
 
 .home-section {
   margin-block: var(--home-section-margin-block);
