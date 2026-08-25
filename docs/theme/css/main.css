@@ -471,14 +471,20 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   padding-left: var(--base-size-16, 1rem);
 }
 
-/* 脚注内的嵌套列表不再继承正文列表的 2em 缩进，
-   否则会叠在脚注编号的缩进之后，看起来多出一层。 */
+/* 脚注内嵌套列表：保持正文列表的 2em 缩进，
+   并取消 Material 额外附加的 .625em 左偏移。 */
 .md-typeset .footnote ol > li > ul,
 .md-typeset .footnote ol > li > ol {
-  padding-left: 1.25em;
+  margin-left: 0;
 }
 
-/* ---- 行间距：统一块级元素 top/bottom 边距 ----
+/* ============================================================================
+   06. 行间距
+   ----------------------------------------------------------------------------
+   GitHub 式统一块级元素底边距（p/列表/表格/引用/pre/details）
+   ============================================================================ */
+
+/* 统一块级元素 top/bottom 边距。
    嵌套列表（ul ul 等） specificity 更高，保持 0 不受影响。
    tabbed-set/admonition 边距见 theme.css。 */
 .md-typeset p,
@@ -495,9 +501,14 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   letter-spacing: normal;
 }
 
-/* MathJax 独立公式：垂直间距交给外层 .arithmatex，
-   避免 MathJax 自带 margin 与段落 margin 叠加。 */
-.md-typeset div.arithmatex > mjx-container[display] {
-  margin-top: 0;
+/* MathJax 独立公式：取消外层容器底部边距，*/
+.md-typeset div.arithmatex {
   margin-bottom: 0;
+}
+
+/* 保留 MathJax 自身底部/顶部间距，避免横向滚动条贴住公式。*/
+.md-typeset div.arithmatex > mjx-container[display] {
+  margin-top: 2px;
+  margin-bottom: 18px;
+  margin-bottom: calc(var(--base-size-16, 1rem) + 2px);
 }

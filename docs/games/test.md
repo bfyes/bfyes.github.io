@@ -98,6 +98,10 @@
 
 ## 列表
 
+间距对照。
+
+间距对照。
+
 - 无序列表项目
 - 第二项包含一些较长文字，用来检查换行和列表缩进是否自然。
     - 嵌套项目
@@ -130,6 +134,22 @@ $$
 \frac{\partial f}{\partial x} = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}
 $$
 
+超长公式
+
+$$
+\begin{aligned}
+F(x)
+&= \sum_{n=1}^{N} \frac{(-1)^{n+1} x^{2n-1}}{(2n-1)!}
++ \sum_{n=0}^{N} \frac{x^n}{n!}
++ \int_0^x \frac{\sin t}{t}\,dt
++ \int_0^x \frac{1-\cos t}{t}\,dt
++ \prod_{n=1}^{N} \left(1+\frac{x^2}{n^2}\right)
++ \log\!\left(1+x+x^2+x^3+x^4+x^5+x^6+x^7+x^8+x^9+x^{10}\right)
+\end{aligned}
+$$
+
+用来测试滚动条位置。
+
 ## 表格
 
 | 名称 | 类型 | 状态 |
@@ -139,7 +159,9 @@ $$
 | x86 | 汇编 | ok |
 | RISC-V | 汇编 | ok |
 
-## 代码
+间距测试。
+
+## 代码&命令行
 
 行内代码 `#!python squares = [x ** 2 for x in data]`，`#!asm assume cs:code, ds:data`，`#!asm repne scasb`，`#!asm les di, dword ptr [bp+2]`，`#!bash cd ~/bfyes`，`#!makefile $(CC) $(CFLAGS) -o hello hello.c`，`#!c int main()`，`int main()`，以及代码块：
 
@@ -201,8 +223,6 @@ all: hello
 hello: hello.c
     $(CC) $(CFLAGS) -o hello hello.c
 ```
-
-## 命令行
 
 ```bash
 #!/usr/bin/env bash
