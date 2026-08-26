@@ -86,7 +86,6 @@
   --page-info-font-size: var(--font-meta);
   --page-info-line-height: 1.5;
   --page-info-margin-bottom: 1rem;
-  --page-info-height: calc(var(--page-info-font-size) * var(--page-info-line-height));
 
   /* === 网格背景 === */
   --grid-clear-half: 22rem;
@@ -128,9 +127,6 @@
   /* === 全局高亮色（链接、导航选中、headerlink 等） === */
   --md-accent-fg-color: #0969da;
 
-  /* === 导航选中态 === */
-  --active-nav-bg: #f2f2f2;
-
   /* === 滚动条 === */
   --scrollbar-thumb: rgba(107, 114, 128, 0.42);
   --scrollbar-thumb-hover: rgba(75, 85, 99, 0.58);
@@ -150,9 +146,6 @@
 
   /* === 全局高亮色（链接、导航选中、headerlink 等） === */
   --md-accent-fg-color: #4493f8;
-
-  /* === 导航选中态 === */
-  --active-nav-bg: #272b30;
 
   /* === 滚动条 === */
   --scrollbar-thumb: rgba(156, 163, 175, 0.38);
