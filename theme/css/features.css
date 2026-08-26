@@ -675,6 +675,13 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
   background-color: transparent !important;
 }
 
+/* 手机端右侧 TOC 是浮层面板；展开后不能透出彩虹背景。 */
+@media screen and (max-width: 59.984375em) {
+  body[data-page-rainbow="true"] .md-sidebar--secondary .md-sidebar__inner {
+    background-color: var(--md-default-bg-color) !important;
+  }
+}
+
 .rainbow-page::before,
 .rainbow-page::after,
 .rainbow-backdrop::before,
