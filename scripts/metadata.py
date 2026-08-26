@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Build-time page metadata patcher."""
+"""Inject page update date and word count into built HTML."""
 
 from __future__ import annotations
 
 import re
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
@@ -58,8 +59,32 @@ def source_path_for(html_path: Path) -> Path | None:
     return next((candidate for candidate in candidates if candidate.is_file()), None)
 
 
+def git_updated(source: Path) -> datetime:
+    """Return the source file's last Git commit date, falling back to mtime."""
+
+    result = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(ROOT),
+            "log",
+            "-1",
+            "--format=%cI",
+            "--",
+            source.resolve().relative_to(ROOT).as_posix(),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    try:
+        return datetime.fromisoformat(result.stdout.strip())
+    except ValueError:
+        return datetime.fromtimestamp(source.stat().st_mtime).astimezone()
+
+
 def page_info_html(source: Path, markdown: str) -> str:
-    updated = datetime.fromtimestamp(source.stat().st_mtime).astimezone()
+    updated = git_updated(source)
     words = count_words(markdown)
     return (
         '<div class="page-updated-top">'

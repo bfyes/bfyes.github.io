@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""patch_feature_blocks.py — 构建后把主页自定义语法替换为 HTML。
+"""Render custom homepage blocks into static HTML.
 
 支持块语法（::terminal:: / ::changelog:: / ::friends:: / ::activity::）：
 
@@ -19,7 +19,7 @@ dreamem0ra1n | dreamem0ra1n | https://dreamem0ra1n.github.io/ISYS/ | ISYS
 
 ::activity:: —— 块语法，参数为 GitHub 用户名（::activity::user::/activity::）。
 
-用法: uv run python scripts/patch_feature_blocks.py
+用法: uv run python scripts/blocks.py
 """
 from __future__ import annotations
 

@@ -42,7 +42,7 @@ zensical.toml      # 站点配置
 ## 构建链路
 
 ```text
-contributions → compress_pdfs → compress_images → zensical build → previews → patch_image_src → patch_page_info → push gh-pages
+contributions → pdfs → images(all) → zensical build → blocks → link_previews → metadata → push gh-pages
 ```
 
 ## 写作约定

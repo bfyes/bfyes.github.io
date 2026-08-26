@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""压缩 docs/ 中的 PDF，原地替换源文件。
+"""PDF optimization pipeline.
 
 zensical build 会把 docs/ 原样拷到 site/，所以压缩在 docs/ 里做即可：
 build 拷过去的就是压缩版，无需后处理 site/。

@@ -1156,6 +1156,10 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
 .md-sidebar--secondary [data-md-component="toc"] .md-nav__link {
   --toc-fade-duration: 0.8s;
   animation: toc-fade var(--toc-fade-duration) ease-out both;
+  animation-play-state: paused;
+}
+.md-sidebar--secondary [data-md-component="toc"] .md-nav__link.toc-fade-ready {
+  animation-play-state: running;
 }
 @media (prefers-reduced-motion: reduce) {
   .rainbow-page::before,
