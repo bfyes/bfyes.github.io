@@ -31,9 +31,9 @@ Fork 后需修改 `zensical.toml`（site_name/site_url/repo_url/nav）和 `docs/
 
 ```text
 docs/              # 站点内容
-  theme/css/       # variables → main → theme → home
-  theme/js/        # site(核心+主题) → mathjax → highlight → home → pdf-viewer
-  theme/data/      # 贡献图 JSON、页面 metadata
+  theme/css/       # variables → main → features → home
+  theme/js/        # core → mathjax → highlight → features
+  theme/data/      # 贡献图 JSON（构建期生成）
 overrides/         # main.html + partials（comments/page-info/logo）
 scripts/           # 构建期脚本（metadata/contributions/previews/compress/patch）
 zensical.toml      # 站点配置
@@ -42,7 +42,7 @@ zensical.toml      # 站点配置
 ## 构建链路
 
 ```text
-metadata → contributions → compress_pdfs → compress_images → zensical build → previews → patch_image_src → push gh-pages
+contributions → compress_pdfs → compress_images → zensical build → previews → patch_image_src → patch_page_info → push gh-pages
 ```
 
 ## 写作约定

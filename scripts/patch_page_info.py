@@ -58,8 +58,7 @@ def source_path_for(html_path: Path) -> Path | None:
     return next((candidate for candidate in candidates if candidate.is_file()), None)
 
 
-def page_info_html(source: Path) -> str:
-    markdown = source.read_text(encoding="utf-8")
+def page_info_html(source: Path, markdown: str) -> str:
     updated = datetime.fromtimestamp(source.stat().st_mtime).astimezone()
     words = count_words(markdown)
     return (
@@ -78,6 +77,9 @@ def patch_page(html_path: Path) -> bool:
         return False
 
     markdown = source.read_text(encoding="utf-8")
+    front_matter = FRONT_MATTER.match(markdown)
+    if front_matter and PAGE_METADATA_OFF.search(front_matter.group(0)):
+        return False
 
     html = html_path.read_text(encoding="utf-8")
     match = H1.search(html)
@@ -87,7 +89,7 @@ def patch_page(html_path: Path) -> bool:
     if "page-updated-top" in html:
         return False
 
-    info = page_info_html(source)
+    info = page_info_html(source, markdown)
     patched = html[: match.end()] + info + html[match.end() :]
     html_path.write_text(patched, encoding="utf-8")
     return True

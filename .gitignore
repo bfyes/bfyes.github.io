@@ -20,4 +20,5 @@ site/
 # 构建时生成的主题数据（保留本地，不提交）
 docs/theme/data/
 
-000asm.md
+# 本地私有资料，不进入 Git，也不参与 Zensical 构建
+private/

@@ -775,11 +775,6 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
   line-height: var(--page-info-line-height);
 }
 
-.page-updated-top[hidden],
-.page-info__item[hidden] {
-  display: none !important;
-}
-
 .page-updated-top__label {
   width: 6em;
   flex-shrink: 0;
