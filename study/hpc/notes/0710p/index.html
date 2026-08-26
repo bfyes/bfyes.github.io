@@ -3732,7 +3732,7 @@
 
 
 
-<h1 id="07-10-下午向量化并行计算基础">07-10 下午：向量化并行计算基础<a class="headerlink" href="#07-10-下午向量化并行计算基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:27:49.455976+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 8102 字</span></div>
+<h1 id="07-10-下午向量化并行计算基础">07-10 下午：向量化并行计算基础<a class="headerlink" href="#07-10-下午向量化并行计算基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:41:21+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 8102 字</span></div>
 <p>同一段数组计算可能停在 Python 解释器、标量指令<sup id="fnref:scalar"><a class="footnote-ref" href="#fn:scalar">1</a></sup>、cache miss，或不规则的数据依赖<sup id="fnref:dependency"><a class="footnote-ref" href="#fn:dependency">2</a></sup>上。SIMD<sup id="fnref:simd"><a class="footnote-ref" href="#fn:simd">3</a></sup> 只处理其中许多相同、独立元素操作的一段；进入 intrinsic<sup id="fnref:intrinsic"><a class="footnote-ref" href="#fn:intrinsic">4</a></sup> 之前，先让循环边界、别名关系和数据布局足够明确。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0710p/vector-simd.png"><img width="2000" height="1125" class="lqip" alt="一条 SIMD 指令在多个 lane 上完成相同运算" src="../assets/0710p/vector-simd.preview.jpg" data-fullsrc="../assets/0710p/vector-simd.png" /></a></p>
 <p><em>图：标量指令一次处理一个元素，SIMD 指令把同一种运算分发到多个 lane。lane 数由寄存器宽度和元素类型共同决定。</em></p>

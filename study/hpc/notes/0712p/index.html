@@ -3398,7 +3398,7 @@
 
 
 
-<h1 id="07-12-下午性能分析技术基础profiling">07-12 下午：性能分析技术基础（Profiling）<a class="headerlink" href="#07-12-下午性能分析技术基础profiling" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:27:49.456422+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 8216 字</span></div>
+<h1 id="07-12-下午性能分析技术基础profiling">07-12 下午：性能分析技术基础（Profiling）<a class="headerlink" href="#07-12-下午性能分析技术基础profiling" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:41:21+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 8216 字</span></div>
 <p>性能工具给出的是迹象，不是结论。一个热点<sup id="fnref:hotspot"><a class="footnote-ref" href="#fn:hotspot">1</a></sup>的高 cache miss、低 IPC<sup id="fnref:ipc"><a class="footnote-ref" href="#fn:ipc">2</a></sup> 或长时间等待，必须回到循环访问、线程分工和数据位置解释；优化后的同一组测量再决定假设是否成立。</p>
 <h2 id="性能测量">性能测量<a class="headerlink" href="#性能测量" title="Permanent link"></a></h2>
 <p>性能数据必须有问题定义。要比较两个版本，至少固定输入规模、数据类型、编译器和优化选项、线程数、CPU 绑核、NUMA 策略、是否包含初始化/I/O。首次运行可能受动态链接、页面分配、缓存预热影响，因此应多次测量，报告中位数/分布，而不是只挑一次最好结果。</p>

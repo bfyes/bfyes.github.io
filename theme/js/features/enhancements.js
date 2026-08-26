@@ -84,6 +84,8 @@
 
   // ---- 右侧 TOC：统一绝对时间轴的逐条淡入 ----
   // 折叠状态完全交给 CSS 处理；这里只负责按完整 TOC 顺序注入 animation-delay。
+  // 动画必须等 delay 写完后再加 .toc-fade-ready，否则刷新时 CSS 可能先以
+  // delay=0 开始播放，JS 随后修改 delay，形成时序竞争。
   function initToc() {
     var sidebar = document.querySelector(".md-sidebar--secondary");
     var toc = sidebar && sidebar.querySelector('[data-md-component="toc"]');
@@ -91,7 +93,11 @@
 
     var links = toc.querySelectorAll(".md-nav__link");
     for (var i = 0; i < links.length; i++) {
+      links[i].classList.remove("toc-fade-ready");
       links[i].style.animationDelay = (i * TOC_DELAY_STEP_MS) + "ms";
+    }
+    for (var i = 0; i < links.length; i++) {
+      links[i].classList.add("toc-fade-ready");
     }
   }
 

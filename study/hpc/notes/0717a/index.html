@@ -3408,7 +3408,7 @@
 
 
 
-<h1 id="07-17-上午算法系统协同设计">07-17 上午：算法—系统协同设计<a class="headerlink" href="#07-17-上午算法系统协同设计" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:27:49.457640+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 12812 字</span></div>
+<h1 id="07-17-上午算法系统协同设计">07-17 上午：算法—系统协同设计<a class="headerlink" href="#07-17-上午算法系统协同设计" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:41:21+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 12812 字</span></div>
 <p>课程题目是 <em>Algorithm-Infra Co-Design for AGI</em>。这里的 <code>infra</code><sup id="fnref:infra"><a class="footnote-ref" href="#fn:infra">1</a></sup> 包括训练集群、kernel<sup id="fnref:kernel"><a class="footnote-ref" href="#fn:kernel">2</a></sup>、并行策略、显存管理、编译器、推理引擎和服务调度。模型结构决定了通信量、KV cache<sup id="fnref:kv-cache"><a class="footnote-ref" href="#fn:kv-cache">3</a></sup> 和访存量，系统与硬件的限制反过来又约束注意率、MoE<sup id="fnref:moe"><a class="footnote-ref" href="#fn:moe">4</a></sup>、精度和上下文长度能怎么选。</p>
 <p>协同设计的基本对象可以用一条流水线串起来。文本先被切成 token，token 经过 embedding 变成向量，再经过多层 Transformer block；每层包含 attention<sup id="fnref:attention"><a class="footnote-ref" href="#fn:attention">5</a></sup> 和 FFN。训练时在这些计算之后计算 loss、反向传播并更新参数；推理时保存 KV cache、采样下一个 token，并把请求交给调度器。集群、显存和网络带宽分别影响这条流水线的不同位置。把术语放回这条流水线，后面各节的优化目标就不会散开。</p>
 <details class="question" open="open">

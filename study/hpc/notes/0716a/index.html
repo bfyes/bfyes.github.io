@@ -3510,7 +3510,7 @@
 
 
 
-<h1 id="07-16-上午机器学习基础">07-16 上午：机器学习基础<a class="headerlink" href="#07-16-上午机器学习基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:27:49.457088+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 13879 字</span></div>
+<h1 id="07-16-上午机器学习基础">07-16 上午：机器学习基础<a class="headerlink" href="#07-16-上午机器学习基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:41:21+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 13879 字</span></div>
 <p>给定一批带答案的历史数据，监督学习要构造一个能处理新输入的函数。房价、气温、购买意愿和图像类别的任务形式不同，数据、目标函数、训练和独立评估的边界却相同。这个边界决定后面交叉熵<sup id="fnref:cross-entropy"><a class="footnote-ref" href="#fn:cross-entropy">1</a></sup>、梯度、神经网络和语言模型的每个公式怎样解释。</p>
 <p>attention<sup id="fnref:attention"><a class="footnote-ref" href="#fn:attention">2</a></sup> 的直觉可以先记成一次加权取数。序列中每个位置都提出一个 query<sup id="fnref:qkv"><a class="footnote-ref" href="#fn:qkv">3</a></sup>，用来和其它位置的 key 比较；比较结果经 softmax<sup id="fnref:softmax"><a class="footnote-ref" href="#fn:softmax">4</a></sup> 变成权重，再对对应 value 加权求和。若把“猫追狗”里的“追”看作当前 token<sup id="fnref:token"><a class="footnote-ref" href="#fn:token">5</a></sup>，它可以选择多看“猫”、少看无关位置。后面 QKV 小节会把这句话完全翻译成矩阵乘法。</p>
 <details class="question" open="open">

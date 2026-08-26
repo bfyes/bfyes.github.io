@@ -3668,7 +3668,7 @@
 
 
 
-<h1 id="07-07-下午hpc-中的计算机系统-i">07-07 下午：HPC 中的计算机系统 I<a class="headerlink" href="#07-07-下午hpc-中的计算机系统-i" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:27:49.455506+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 11673 字</span></div>
+<h1 id="07-07-下午hpc-中的计算机系统-i">07-07 下午：HPC 中的计算机系统 I<a class="headerlink" href="#07-07-下午hpc-中的计算机系统-i" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:41:21+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 11673 字</span></div>
 <p>一条算术指令很少单独决定程序速度。数据抵达执行单元之前会经过 cache<sup id="fnref:cache"><a class="footnote-ref" href="#fn:cache">1</a></sup> 和地址翻译；多个线程<sup id="fnref:thread"><a class="footnote-ref" href="#fn:thread">2</a></sup>又会争用 cache、内存带宽和同步点。理解这些路径，才能解释同一份循环为何会随数据布局和线程数而变化。</p>
 <h2 id="cpu-执行与流水线">CPU 执行与流水线<a class="headerlink" href="#cpu-执行与流水线" title="Permanent link"></a></h2>
 <p>CPU 执行的是指令。编译器把 C/C++ 等源代码翻译成目标指令；程序计数器<sup id="fnref:pc"><a class="footnote-ref" href="#fn:pc">3</a></sup>（PC，在 x86 上常称 RIP）指向下一条指令；控制器取指、译码，把操作送到算术逻辑单元、浮点单元、访存单元等部件。</p>

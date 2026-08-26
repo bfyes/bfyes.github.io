@@ -11,14 +11,14 @@
          1.1 GitHub 贡献图：本地数据兜底 + 实时刷新 + tooltip
          1.2 终端：打字机、命令输入与快捷跳转
 
-     友链 DOM 由 patch_feature_blocks.py 构建；样式均由 features.css 负责。
+     友链 DOM 由 blocks.py 构建；样式均由 features.css 负责。
      ============================================================================ */
 
   window.site = window.site || {};
   var htmlEl = window.site.htmlEl;
 
   /* ---- 构建期友链内容 ------------------------------------------------------
-     头像、handle 和描述由 scripts/patch_feature_blocks.py 在构建期写入 HTML；
+     头像、handle 和描述由 scripts/blocks.py 在构建期写入 HTML；
      运行时不处理（头像 img 加载失败由 onerror="this.remove()" 内联处理，
      露出首字母占位 span）。 */
 
@@ -271,7 +271,7 @@
 
   // ---- 01.2 终端 ------------------------------------------------------
   // 终端窗口(.site-terminal)的逐字敲入动画 + 简易命令解析 + 隐藏输入。
-  // DOM 由 patch_feature_blocks.py render_terminal() 烘焙；此处只驱动文字。
+  // DOM 由 blocks.py render_terminal() 烘焙；此处只驱动文字。
   // 字号/高度/布局全在 features.css，JS 不修改任何尺寸。
   var typewriterTimers = [], typewriterRun = 0;
 

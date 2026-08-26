@@ -3486,7 +3486,7 @@
 
 
 
-<h1 id="07-13-下午cuda-编程基础">07-13 下午：CUDA 编程基础<a class="headerlink" href="#07-13-下午cuda-编程基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:27:49.456830+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 7739 字</span></div>
+<h1 id="07-13-下午cuda-编程基础">07-13 下午：CUDA 编程基础<a class="headerlink" href="#07-13-下午cuda-编程基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:41:21+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 7739 字</span></div>
 <p>CUDA<sup id="fnref:cuda"><a class="footnote-ref" href="#fn:cuda">1</a></sup> 把 CPU 称为 host<sup id="fnref:host"><a class="footnote-ref" href="#fn:host">2</a></sup>，把 NVIDIA GPU 称为 device<sup id="fnref:device"><a class="footnote-ref" href="#fn:device">3</a></sup>。host 负责组织数据和发射 kernel<sup id="fnref:kernel"><a class="footnote-ref" href="#fn:kernel">4</a></sup>；device 上有大量线程<sup id="fnref:thread"><a class="footnote-ref" href="#fn:thread">5</a></sup>执行同一段 kernel 代码。写 CUDA 的关键在于把问题拆成大量相似工作，让线程、数据和内存层级相匹配，而不是简单地把普通 C 循环搬到 GPU。</p>
 <h2 id="cuda-程序流程">CUDA 程序流程<a class="headerlink" href="#cuda-程序流程" title="Permanent link"></a></h2>
 <p>最小流程是：host 分配显存，把输入从主存复制到显存，发射 kernel，等待必要的同步，再把结果复制回主存并释放资源。</p>
