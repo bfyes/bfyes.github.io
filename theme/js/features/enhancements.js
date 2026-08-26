@@ -3,10 +3,18 @@
   /* ============================================================================
      features/enhancements.js —— 站点增强
      ----------------------------------------------------------------------------
-     LQIP、页面状态、TOC、Giscus、脚注修正，以及瞬时导航后的 tooltip 回收。
+     目录
+     01. 运行时常量
+     02. LQIP 图片渐进加载
+     03. 页面状态与 TOC
+     04. Giscus 评论区
+     05. 脚注回跳修正
+     06. 瞬时导航后的 tooltip 回收
      ============================================================================ */
   // ---- TOC：逐条淡入的时间间隔 ------------------------------------------
   var TOC_DELAY_STEP_MS = 100;
+  // TOC 跟随滚动时长；原生 smooth 滚动无法指定时长，统一在此调整。
+  var TOC_SCROLL_DURATION_MS = 520;
 
   // ---- LQIP：预览图 → 全分辨率 ------------------------------------------
   var LQIP_MAX_WAIT = 15000;
@@ -99,6 +107,81 @@
     for (var i = 0; i < links.length; i++) {
       links[i].classList.add("toc-fade-ready");
     }
+  }
+
+  // 将官方已标记的当前项以较慢的缓动定位到 TOC 中部。
+  var tocFollowObserver = null;
+  var tocFollowResizeObserver = null;
+  var tocFollowMedia = null;
+  var tocFollowAnimation = null;
+  function initTocFollow() {
+    if (tocFollowObserver) tocFollowObserver.disconnect();
+    if (tocFollowResizeObserver) tocFollowResizeObserver.disconnect();
+    var sidebar = document.querySelector(".md-sidebar--secondary");
+    var toc = sidebar && sidebar.querySelector('[data-md-component="toc"]');
+    if (!sidebar || !toc || !window.matchMedia) return;
+    var narrow = window.matchMedia("(max-width: 59.984375em)").matches;
+    var panel = sidebar.querySelector(narrow ? ".md-sidebar__inner" : ".md-sidebar__scrollwrap");
+    if (!panel) return;
+    function revealActive() {
+      var active = toc.querySelector(".md-nav__link--active");
+      if (!active) return;
+      // 用实际几何位置计算，兼容桌面侧栏与移动浮层不同的嵌套层级。
+      var activeRect = active.getBoundingClientRect();
+      var panelRect = panel.getBoundingClientRect();
+      var top = panel.scrollTop + activeRect.top - panelRect.top;
+      // 与桌面端原生 toc.follow 一致：当前项尽量位于浮层垂直中线。
+      var target = top + active.offsetHeight / 2 - panel.clientHeight / 2;
+      var max = Math.max(0, panel.scrollHeight - panel.clientHeight);
+      var nextTop = Math.max(0, Math.min(target, max));
+      if (tocFollowAnimation) cancelAnimationFrame(tocFollowAnimation);
+      if (!window.matchMedia || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        panel.scrollTop = nextTop;
+        return;
+      }
+      var startTop = panel.scrollTop;
+      var distance = nextTop - startTop;
+      if (Math.abs(distance) < 1) return;
+      var started = performance.now();
+      var duration = TOC_SCROLL_DURATION_MS;
+      var frame = function (now) {
+        var progress = Math.min(1, (now - started) / duration);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        panel.scrollTop = startTop + distance * eased;
+        if (progress < 1) tocFollowAnimation = requestAnimationFrame(frame);
+        else tocFollowAnimation = null;
+      };
+      tocFollowAnimation = requestAnimationFrame(frame);
+    }
+    function scheduleReveal() {
+      var frame = window.requestAnimationFrame || function (fn) { return setTimeout(fn, 16); };
+      frame(revealActive);
+    }
+    // 官方逻辑负责判定 active；这里只同步两种布局下的 TOC 滚动位置。
+    tocFollowObserver = new MutationObserver(function () {
+      scheduleReveal();
+    });
+    tocFollowObserver.observe(toc, { subtree: true, attributes: true, attributeFilter: ["class"] });
+    toc.addEventListener("transitionend", function (event) {
+      if (event.propertyName === "grid-template-rows" || event.propertyName === "opacity") revealActive();
+    });
+    if (window.ResizeObserver) {
+      tocFollowResizeObserver = new ResizeObserver(scheduleReveal);
+      tocFollowResizeObserver.observe(panel);
+    }
+    var toggle = narrow && sidebar.querySelector("#__toc");
+    if (toggle) toggle.addEventListener("change", function () {
+      scheduleReveal();
+    });
+    scheduleReveal();
+  }
+
+  // 跨越 60em（桌面/窄屏）或旋转屏幕后，重新绑定正确的 TOC 容器。
+  if (window.matchMedia) {
+    tocFollowMedia = window.matchMedia("(max-width: 59.984375em)");
+    var onTocFollowMediaChange = function () { initTocFollow(); };
+    if (tocFollowMedia.addEventListener) tocFollowMedia.addEventListener("change", onTocFollowMediaChange);
+    else if (tocFollowMedia.addListener) tocFollowMedia.addListener(onTocFollowMediaChange);
   }
 
   // ---- Giscus 评论区 ----
@@ -229,6 +312,7 @@
   window.site.onPageReady(initLqip);
   window.site.onPageReady(initLqipBlur);
   window.site.onPageReady(initToc);
+  window.site.onPageReady(initTocFollow);
   window.site.onPageReady(initGiscus);
   window.site.onPageReady(normalizeFootnoteBackrefs);
   window.site.onPageReady(purgeTooltips);
