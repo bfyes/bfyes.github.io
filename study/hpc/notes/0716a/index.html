@@ -3510,7 +3510,7 @@
 
 
 
-<h1 id="07-16-上午机器学习基础">07-16 上午：机器学习基础<a class="headerlink" href="#07-16-上午机器学习基础" title="Permanent link"></a></h1>
+<h1 id="07-16-上午机器学习基础">07-16 上午：机器学习基础<a class="headerlink" href="#07-16-上午机器学习基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:27:49.457088+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 13879 字</span></div>
 <p>给定一批带答案的历史数据，监督学习要构造一个能处理新输入的函数。房价、气温、购买意愿和图像类别的任务形式不同，数据、目标函数、训练和独立评估的边界却相同。这个边界决定后面交叉熵<sup id="fnref:cross-entropy"><a class="footnote-ref" href="#fn:cross-entropy">1</a></sup>、梯度、神经网络和语言模型的每个公式怎样解释。</p>
 <p>attention<sup id="fnref:attention"><a class="footnote-ref" href="#fn:attention">2</a></sup> 的直觉可以先记成一次加权取数。序列中每个位置都提出一个 query<sup id="fnref:qkv"><a class="footnote-ref" href="#fn:qkv">3</a></sup>，用来和其它位置的 key 比较；比较结果经 softmax<sup id="fnref:softmax"><a class="footnote-ref" href="#fn:softmax">4</a></sup> 变成权重，再对对应 value 加权求和。若把“猫追狗”里的“追”看作当前 token<sup id="fnref:token"><a class="footnote-ref" href="#fn:token">5</a></sup>，它可以选择多看“猫”、少看无关位置。后面 QKV 小节会把这句话完全翻译成矩阵乘法。</p>
 <details class="question" open="open">
@@ -4117,8 +4117,6 @@ Y = X' + \operatorname{FFN}(\operatorname{Norm}(X')).
 
                 
   
-<script src="../../../../theme/data/page-metadata.js"></script>
-
 <div class="page-info">
   <span class="page-info__item page-info__stars">
     <span class="page-info__label">
@@ -4130,7 +4128,7 @@ Y = X' + \operatorname{FFN}(\operatorname{Norm}(X')).
       <a href="https://github.com/bfyes/bfyes.github.io/stargazers" aria-label="GitHub Stars">
         <img
           alt="Stars"
-          src="https://img.shields.io/github/stars/bfyes/bfyes.github.io?label=Stars&style=flat"
+          src="https://img.shields.io/github/stars/bfyes/bfyes.github.io?label=Stars&amp;style=flat"
         >
       </a>
     </span>
@@ -4142,141 +4140,6 @@ Y = X' + \operatorname{FFN}(\operatorname{Norm}(X')).
 </div>
 
 <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-<script>
-  (function () {
-    function pageMetaCandidates() {
-      var path = window.location.pathname || "/";
-      var decoded = path;
-      try {
-        decoded = decodeURIComponent(path);
-      } catch (e) {}
-
-      return [
-        path,
-        decoded,
-        path.endsWith("/") ? path : path + "/",
-        decoded.endsWith("/") ? decoded : decoded + "/",
-      ];
-    }
-
-    function updatedText(value) {
-      var date = new Date(value);
-      return date.toLocaleDateString("zh-CN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-    }
-
-    function countWords() {
-      var inner = document.querySelector(".md-content__inner");
-      if (!inner) return 0;
-      var clone = inner.cloneNode(true);
-      // 移除非正文元素
-      clone.querySelectorAll('.page-updated-top, .page-info, .md-content__button, .giscus, script, style, .md-clipboard').forEach(function(el) { el.remove(); });
-      var text = clone.textContent || "";
-      // 中文字符按字计数
-      var cjk = (text.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length;
-      // 英文单词：只匹配 a-z A-Z 组成的词
-      var words = (text.match(/[a-zA-Z]+/g) || []).length;
-      return cjk + words;
-    }
-
-    function ensureTopUpdated() {
-      var inner = document.querySelector(".md-content__inner");
-      if (!inner) {
-        return null;
-      }
-
-      var top = inner.querySelector(".page-updated-top");
-      if (!top) {
-        top = document.createElement("div");
-        top.className = "page-updated-top";
-        top.hidden = true;
-        top.innerHTML =
-          '<span class="page-updated-top__label">最后更新于</span>' +
-          '<time class="page-updated-top__time" datetime=""></time>' +
-          '<span class="page-updated-top__sep">·</span>' +
-          '<span class="page-updated-top__words"></span>';
-
-        var title = inner.querySelector("h1");
-        if (title) {
-          title.insertAdjacentElement("afterend", top);
-        } else {
-          inner.insertBefore(top, inner.firstChild);
-        }
-      }
-
-      return top;
-    }
-
-    function renderTime(wrap, time, value, text) {
-      if (!wrap || !time) {
-        return;
-      }
-
-      time.dateTime = value;
-      time.textContent = text;
-      wrap.hidden = false;
-    }
-
-    function renderLastUpdated() {
-      var meta = window.__PAGE_META__ || {};
-      var candidates = pageMetaCandidates();
-      var data = null;
-
-      for (var i = 0; i < candidates.length; i++) {
-        if (meta[candidates[i]]) {
-          data = meta[candidates[i]];
-          break;
-        }
-      }
-
-      var top = ensureTopUpdated();
-
-      if (data && data.updated) {
-        var text = updatedText(data.updated);
-        renderTime(top, top ? top.querySelector(".page-updated-top__time") : null, data.updated, text);
-      }
-
-      // 字数统计
-      var words = countWords();
-      if (top && words > 0) {
-        var wordsEl = top.querySelector(".page-updated-top__words");
-        if (wordsEl) {
-          wordsEl.textContent = "约 " + words + " 字";
-          top.hidden = false;
-        }
-      }
-    }
-
-    function renderPageInfo() {
-      renderLastUpdated();
-    }
-
-    function scheduleRenderPageInfo() {
-      requestAnimationFrame(renderPageInfo);
-      setTimeout(renderPageInfo, 50);
-      setTimeout(renderPageInfo, 200);
-    }
-
-    if (!window.__pageInfoReady) {
-      window.__pageInfoReady = true;
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", scheduleRenderPageInfo);
-      } else {
-        scheduleRenderPageInfo();
-      }
-
-      if (window.document$) {
-        window.document$.subscribe(scheduleRenderPageInfo);
-      }
-    } else {
-      scheduleRenderPageInfo();
-    }
-  })();
-</script>
 
   <!-- Giscus 评论区（加载与主题同步逻辑见 features/enhancements.js 的 Giscus 模块）
      本文件只负责在需要评论的页面放置容器并声明 giscus 配置。 -->

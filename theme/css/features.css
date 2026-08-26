@@ -769,7 +769,7 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  margin: calc(-1 * var(--h1-reserved-gap)) 0 var(--page-info-margin-bottom);
+  margin: 0 0 var(--page-info-margin-bottom);
   color: var(--md-default-fg-color--light);
   font-size: var(--page-info-font-size);
   line-height: var(--page-info-line-height);

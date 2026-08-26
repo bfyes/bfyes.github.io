@@ -82,6 +82,23 @@
     }
   }
 
+
+  // 只要页面仍在最顶部，就不显示 header 的底边框；
+  // 一旦用户向下滚动，立即恢复正常 shadow。
+  function initHeaderTopState() {
+    function update() {
+      if (window.scrollY < 1) {
+        document.body.setAttribute("data-md-at-top", "true");
+      } else {
+        document.body.removeAttribute("data-md-at-top");
+      }
+    }
+
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update, { passive: true });
+    update();
+  }
+
   // 共享 DOM 工具：供 features/、highlight.js 等后续模块使用。
   function htmlEl(name, attrs, text) {
     var node = document.createElement(name);
@@ -180,4 +197,5 @@
 
   installHeaderlinkFocusFix();
   initPageLifecycle();
+  initHeaderTopState();
 })();

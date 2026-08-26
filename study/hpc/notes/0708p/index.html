@@ -3454,7 +3454,7 @@
 
 
 
-<h1 id="07-08-下午hpc-中的计算机系统-ii">07-08 下午：HPC 中的计算机系统 II<a class="headerlink" href="#07-08-下午hpc-中的计算机系统-ii" title="Permanent link"></a></h1>
+<h1 id="07-08-下午hpc-中的计算机系统-ii">07-08 下午：HPC 中的计算机系统 II<a class="headerlink" href="#07-08-下午hpc-中的计算机系统-ii" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:27:49.455719+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 9407 字</span></div>
 <p>计算节点、网络和存储共同构成一个程序的运行路径。峰值算力只描述其中一段；一次迭代可能停在 DRAM、网络启动、并行文件系统<sup id="fnref:pfs"><a class="footnote-ref" href="#fn:pfs">1</a></sup>元数据或全局同步上。性能数字离开问题规模和计时边界没有解释力。</p>
 <h2 id="hpc-系统与工作负载">HPC 系统与工作负载<a class="headerlink" href="#hpc-系统与工作负载" title="Permanent link"></a></h2>
 <p>高性能计算<sup id="fnref:hpc"><a class="footnote-ref" href="#fn:hpc">2</a></sup>的问题并不只是代码执行速度。典型任务同时有大规模计算、大规模数据和多节点协作：数值模拟需要反复更新网格；气候、材料、生物信息任务需要保存或读取海量数据；机器学习训练需要在大量 GPU 间交换梯度或激活。</p>
@@ -3818,8 +3818,6 @@ S(p)=\frac{1}{s+(1-s)/p}.
 
                 
   
-<script src="../../../../theme/data/page-metadata.js"></script>
-
 <div class="page-info">
   <span class="page-info__item page-info__stars">
     <span class="page-info__label">
@@ -3831,7 +3829,7 @@ S(p)=\frac{1}{s+(1-s)/p}.
       <a href="https://github.com/bfyes/bfyes.github.io/stargazers" aria-label="GitHub Stars">
         <img
           alt="Stars"
-          src="https://img.shields.io/github/stars/bfyes/bfyes.github.io?label=Stars&style=flat"
+          src="https://img.shields.io/github/stars/bfyes/bfyes.github.io?label=Stars&amp;style=flat"
         >
       </a>
     </span>
@@ -3843,141 +3841,6 @@ S(p)=\frac{1}{s+(1-s)/p}.
 </div>
 
 <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-<script>
-  (function () {
-    function pageMetaCandidates() {
-      var path = window.location.pathname || "/";
-      var decoded = path;
-      try {
-        decoded = decodeURIComponent(path);
-      } catch (e) {}
-
-      return [
-        path,
-        decoded,
-        path.endsWith("/") ? path : path + "/",
-        decoded.endsWith("/") ? decoded : decoded + "/",
-      ];
-    }
-
-    function updatedText(value) {
-      var date = new Date(value);
-      return date.toLocaleDateString("zh-CN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-    }
-
-    function countWords() {
-      var inner = document.querySelector(".md-content__inner");
-      if (!inner) return 0;
-      var clone = inner.cloneNode(true);
-      // 移除非正文元素
-      clone.querySelectorAll('.page-updated-top, .page-info, .md-content__button, .giscus, script, style, .md-clipboard').forEach(function(el) { el.remove(); });
-      var text = clone.textContent || "";
-      // 中文字符按字计数
-      var cjk = (text.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length;
-      // 英文单词：只匹配 a-z A-Z 组成的词
-      var words = (text.match(/[a-zA-Z]+/g) || []).length;
-      return cjk + words;
-    }
-
-    function ensureTopUpdated() {
-      var inner = document.querySelector(".md-content__inner");
-      if (!inner) {
-        return null;
-      }
-
-      var top = inner.querySelector(".page-updated-top");
-      if (!top) {
-        top = document.createElement("div");
-        top.className = "page-updated-top";
-        top.hidden = true;
-        top.innerHTML =
-          '<span class="page-updated-top__label">最后更新于</span>' +
-          '<time class="page-updated-top__time" datetime=""></time>' +
-          '<span class="page-updated-top__sep">·</span>' +
-          '<span class="page-updated-top__words"></span>';
-
-        var title = inner.querySelector("h1");
-        if (title) {
-          title.insertAdjacentElement("afterend", top);
-        } else {
-          inner.insertBefore(top, inner.firstChild);
-        }
-      }
-
-      return top;
-    }
-
-    function renderTime(wrap, time, value, text) {
-      if (!wrap || !time) {
-        return;
-      }
-
-      time.dateTime = value;
-      time.textContent = text;
-      wrap.hidden = false;
-    }
-
-    function renderLastUpdated() {
-      var meta = window.__PAGE_META__ || {};
-      var candidates = pageMetaCandidates();
-      var data = null;
-
-      for (var i = 0; i < candidates.length; i++) {
-        if (meta[candidates[i]]) {
-          data = meta[candidates[i]];
-          break;
-        }
-      }
-
-      var top = ensureTopUpdated();
-
-      if (data && data.updated) {
-        var text = updatedText(data.updated);
-        renderTime(top, top ? top.querySelector(".page-updated-top__time") : null, data.updated, text);
-      }
-
-      // 字数统计
-      var words = countWords();
-      if (top && words > 0) {
-        var wordsEl = top.querySelector(".page-updated-top__words");
-        if (wordsEl) {
-          wordsEl.textContent = "约 " + words + " 字";
-          top.hidden = false;
-        }
-      }
-    }
-
-    function renderPageInfo() {
-      renderLastUpdated();
-    }
-
-    function scheduleRenderPageInfo() {
-      requestAnimationFrame(renderPageInfo);
-      setTimeout(renderPageInfo, 50);
-      setTimeout(renderPageInfo, 200);
-    }
-
-    if (!window.__pageInfoReady) {
-      window.__pageInfoReady = true;
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", scheduleRenderPageInfo);
-      } else {
-        scheduleRenderPageInfo();
-      }
-
-      if (window.document$) {
-        window.document$.subscribe(scheduleRenderPageInfo);
-      }
-    } else {
-      scheduleRenderPageInfo();
-    }
-  })();
-</script>
 
   <!-- Giscus 评论区（加载与主题同步逻辑见 features/enhancements.js 的 Giscus 模块）
      本文件只负责在需要评论的页面放置容器并声明 giscus 配置。 -->

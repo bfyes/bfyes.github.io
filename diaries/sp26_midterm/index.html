@@ -3306,7 +3306,7 @@
 
 
 
-<h1 id="25-26春-半期总结">25-26春 半期总结<a class="headerlink" href="#25-26春-半期总结" title="Permanent link"></a></h1>
+<h1 id="25-26春-半期总结">25-26春 半期总结<a class="headerlink" href="#25-26春-半期总结" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-07-16T00:45:17+08:00">2026/07/16</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 1564 字</span></div>
 <p>大一下半学期的忙碌程度和预想的如出一辙，较多的课程把我压得喘不过气。和高中的同学聊了聊，认为是高中玩太嗨了导致一种“现在比高中更累”的感觉。真是矛盾啊：高中时的过程性考试几乎不影响最终结果，当时却次次极其在意；大学的过程性测试计入平时分，现在反而显得有些漠然不在乎了...</p>
 <p>大学不应该只有学习，但我还能做什么？0个社团和学生组织，屈指可数的活动，只剩有空时出去闲逛的“自娱自乐”，而这在后来看来大多是意义不大的（除非拍到满意的照片）。加上各科都一般般的期中成绩，有一种学习玩耍两头都抓不到的天昏地暗感。纵观舍友，有人积极参与到社团活动、生活丰富、且学业成绩很好；有人“放纵”玩王者，但学习时候极高效，纯纯理科天才。</p>
 <p>我需要反思自己的生活节奏和方式。</p>
@@ -3435,8 +3435,6 @@
 
                 
   
-<script src="../../theme/data/page-metadata.js"></script>
-
 <div class="page-info">
   <span class="page-info__item page-info__stars">
     <span class="page-info__label">
@@ -3448,7 +3446,7 @@
       <a href="https://github.com/bfyes/bfyes.github.io/stargazers" aria-label="GitHub Stars">
         <img
           alt="Stars"
-          src="https://img.shields.io/github/stars/bfyes/bfyes.github.io?label=Stars&style=flat"
+          src="https://img.shields.io/github/stars/bfyes/bfyes.github.io?label=Stars&amp;style=flat"
         >
       </a>
     </span>
@@ -3460,141 +3458,6 @@
 </div>
 
 <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-<script>
-  (function () {
-    function pageMetaCandidates() {
-      var path = window.location.pathname || "/";
-      var decoded = path;
-      try {
-        decoded = decodeURIComponent(path);
-      } catch (e) {}
-
-      return [
-        path,
-        decoded,
-        path.endsWith("/") ? path : path + "/",
-        decoded.endsWith("/") ? decoded : decoded + "/",
-      ];
-    }
-
-    function updatedText(value) {
-      var date = new Date(value);
-      return date.toLocaleDateString("zh-CN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-    }
-
-    function countWords() {
-      var inner = document.querySelector(".md-content__inner");
-      if (!inner) return 0;
-      var clone = inner.cloneNode(true);
-      // 移除非正文元素
-      clone.querySelectorAll('.page-updated-top, .page-info, .md-content__button, .giscus, script, style, .md-clipboard').forEach(function(el) { el.remove(); });
-      var text = clone.textContent || "";
-      // 中文字符按字计数
-      var cjk = (text.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g) || []).length;
-      // 英文单词：只匹配 a-z A-Z 组成的词
-      var words = (text.match(/[a-zA-Z]+/g) || []).length;
-      return cjk + words;
-    }
-
-    function ensureTopUpdated() {
-      var inner = document.querySelector(".md-content__inner");
-      if (!inner) {
-        return null;
-      }
-
-      var top = inner.querySelector(".page-updated-top");
-      if (!top) {
-        top = document.createElement("div");
-        top.className = "page-updated-top";
-        top.hidden = true;
-        top.innerHTML =
-          '<span class="page-updated-top__label">最后更新于</span>' +
-          '<time class="page-updated-top__time" datetime=""></time>' +
-          '<span class="page-updated-top__sep">·</span>' +
-          '<span class="page-updated-top__words"></span>';
-
-        var title = inner.querySelector("h1");
-        if (title) {
-          title.insertAdjacentElement("afterend", top);
-        } else {
-          inner.insertBefore(top, inner.firstChild);
-        }
-      }
-
-      return top;
-    }
-
-    function renderTime(wrap, time, value, text) {
-      if (!wrap || !time) {
-        return;
-      }
-
-      time.dateTime = value;
-      time.textContent = text;
-      wrap.hidden = false;
-    }
-
-    function renderLastUpdated() {
-      var meta = window.__PAGE_META__ || {};
-      var candidates = pageMetaCandidates();
-      var data = null;
-
-      for (var i = 0; i < candidates.length; i++) {
-        if (meta[candidates[i]]) {
-          data = meta[candidates[i]];
-          break;
-        }
-      }
-
-      var top = ensureTopUpdated();
-
-      if (data && data.updated) {
-        var text = updatedText(data.updated);
-        renderTime(top, top ? top.querySelector(".page-updated-top__time") : null, data.updated, text);
-      }
-
-      // 字数统计
-      var words = countWords();
-      if (top && words > 0) {
-        var wordsEl = top.querySelector(".page-updated-top__words");
-        if (wordsEl) {
-          wordsEl.textContent = "约 " + words + " 字";
-          top.hidden = false;
-        }
-      }
-    }
-
-    function renderPageInfo() {
-      renderLastUpdated();
-    }
-
-    function scheduleRenderPageInfo() {
-      requestAnimationFrame(renderPageInfo);
-      setTimeout(renderPageInfo, 50);
-      setTimeout(renderPageInfo, 200);
-    }
-
-    if (!window.__pageInfoReady) {
-      window.__pageInfoReady = true;
-      if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", scheduleRenderPageInfo);
-      } else {
-        scheduleRenderPageInfo();
-      }
-
-      if (window.document$) {
-        window.document$.subscribe(scheduleRenderPageInfo);
-      }
-    } else {
-      scheduleRenderPageInfo();
-    }
-  })();
-</script>
 
   <!-- Giscus 评论区（加载与主题同步逻辑见 features/enhancements.js 的 Giscus 模块）
      本文件只负责在需要评论的页面放置容器并声明 giscus 配置。 -->
