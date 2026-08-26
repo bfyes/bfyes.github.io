@@ -118,7 +118,7 @@ def section_shell(
     extra_class: str = "",
 ) -> str:
     """生成主页分区外壳；标题为空时不输出标题栏。"""
-    classes = "home-section" + (f" {extra_class}" if extra_class else "")
+    classes = "site-section" + (f" {extra_class}" if extra_class else "")
     aria = f' aria-labelledby="{html.escape(section_id)}"' if section_id else ""
     head = ""
     if title:
@@ -242,10 +242,7 @@ def replace_home_blocks(content: str, is_home_page: bool) -> str:
     content = re.sub(r"<p>::terminal::</p>", render_terminal(), content)
 
     def render_block(renderer, block: str, title: str | None = None, section_id: str | None = None) -> str:
-        rendered = renderer(block, title, section_id)
-        if not is_home_page:
-            rendered = rendered.replace('class="home-section', 'class="site-component', 1)
-        return rendered
+        return renderer(block, title, section_id)
 
     renderers = {
         "friends": render_friends,

@@ -16,7 +16,7 @@
    03. 页面信息（顶部更新时间、底部统计）
    04. PDF 阅读器
    05. 响应式适配
-       移动端友链/贡献图/日志、页面信息与文档阅读适配
+       窄屏友链/贡献图/日志、页面信息与文档阅读适配
    06. 动效与动态反馈
        彩虹背景与 TOC 的全局动效及减少动态效果
    07. 站点增强体验
@@ -507,12 +507,6 @@
   margin: 0;
 }
 
-/* 非首页的 ::friends:: / ::changelog:: / ::activity:: 等块由构建脚本包装为
-   .site-component；恢复与普通文档块一致的上下节奏。 */
-.md-typeset > .site-component {
-  margin-block: var(--base-size-16, 1rem);
-}
-
 /* ---- 1.4 终端 ---------------------------------------------------- */
 
 .site-terminal {
@@ -675,7 +669,7 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
   background-color: transparent !important;
 }
 
-/* 手机端右侧 TOC 是浮层面板；展开后不能透出彩虹背景。 */
+/* 窄屏（含平板）右侧 TOC 是浮层面板；展开后不能透出彩虹背景。 */
 @media screen and (max-width: 59.984375em) {
   body[data-page-rainbow="true"] .md-sidebar--secondary .md-sidebar__inner {
     background-color: var(--md-default-bg-color) !important;
@@ -1063,7 +1057,8 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
 /* ============================================================================
    05. 响应式适配
    ============================================================================
-   所有窄屏布局覆盖集中在这里；终端沿用桌面字号与 padding，无需另设移动变量。
+   所有窄屏布局覆盖集中在这里；44.984375em 以下为手机窄屏，终端沿用桌面字号与
+   padding，无需另设移动变量。
    ============================================================================ */
 @media screen and (max-width: 44.984375em) {
   .site-friend-list {
@@ -1111,25 +1106,42 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
    ============================================================================ */
 .md-nav--secondary [data-md-component="toc"] .md-nav__link { transition: color 0.15s ease, opacity 0.15s ease; }
 
+/* 移动端浮层内部跟随时平滑滚动；高度由内容和视口动态决定。 */
+@media screen and (max-width: 59.984375em) {
+  .md-sidebar--secondary .md-sidebar__inner {
+    scroll-behavior: smooth !important;
+    transition: transform .4s cubic-bezier(0, 1, .35, 1), opacity .25s,
+      max-height .25s ease !important;
+    will-change: transform, opacity, scroll-position;
+  }
+}
+
 /* fold_toc: true 时直接复用官方 .md-nav__link--active：
    active 项自身的子目录，以及包含 active 项的祖先目录展开。
    隐藏层不用 display:none，保证所有 TOC 项仍按统一绝对时间轴执行淡入动画。
    不支持 :has 的浏览器保持整棵 TOC 展开，作为降级方案。 */
 @supports selector(:has(*)) {
   body[data-page-fold-toc="true"] .md-sidebar--secondary .md-nav > .md-nav__list > .md-nav__item > .md-nav {
-    display: block;
-    height: 0;
-    overflow: hidden;
-    visibility: hidden;
+    display: grid;
+    grid-template-rows: minmax(.005rem, 0fr);
+    visibility: collapse;
+    opacity: 0;
     margin: 0;
+    transition: grid-template-rows .25s cubic-bezier(.86, 0, .07, 1), opacity .25s,
+      visibility 0s .25s;
+  }
+
+  body[data-page-fold-toc="true"] .md-sidebar--secondary .md-nav > .md-nav__list > .md-nav__item > .md-nav > .md-nav__list {
+    overflow: hidden;
   }
 
   body[data-page-fold-toc="true"] .md-sidebar--secondary .md-nav > .md-nav__list > .md-nav__item > .md-nav__link--active + .md-nav,
   body[data-page-fold-toc="true"] .md-sidebar--secondary .md-nav > .md-nav__list > .md-nav__item > .md-nav:has(.md-nav__link--active) {
-    height: auto;
-    overflow: visible;
+    grid-template-rows: minmax(.005rem, 1fr);
     visibility: visible;
+    opacity: 1;
     margin-top: 0.2rem;
+    transition: grid-template-rows .25s cubic-bezier(.86, 0, .07, 1), opacity .25s;
   }
 }
 

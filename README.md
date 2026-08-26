@@ -2,32 +2,41 @@
 
 bfyes 的个人文档站，使用 Zensical/MkDocs 构建，主题层基于 GitHub 风格深度定制。
 
-## 快速开始
+## 如需 Fork 请阅读
 
 ```bash
-git clone https://github.com/<你的用户名>/bfyes.github.io.git
-cd bfyes
+git clone https://github.com/bfyes/bfyes.github.io.git
+cd bfyes.github.io
 uv sync    # 安装依赖
 make       # 本地预览 http://127.0.0.1:8000
 make deploy # 构建并部署到 GitHub Pages
 ```
 
-Fork 后需修改 `zensical.toml`（site_name/site_url/repo_url/nav）和 `docs/index.md`（首页内容）。
+Fork 后按需修改 `zensical.toml` 和 `docs/index.md` 中的个人信息。
 
 > 部分功能依赖 macOS（`sips` 图片预览、`gs` PDF 压缩）。
 
-## 主要特性
+## 新特性
 
-- 明暗主题适配，Giscus 评论区主题同步
-- GitHub 风格正文排版（[github-markdown-css](https://github.com/sindresorhus/github-markdown-css)）
-- highlight.js 运行时代码高亮，明暗主题切换
-- GitHub 贡献图静态烘焙 + 前端渲染
-- PDF 内联阅读器（进度条 + iOS/iPadOS PDF.js 降级）
-- 图片低清预览渐进加载
-- 主页终端打字机动画 + 交互命令
-- 页面更新时间、浏览量、Stars 展示
+- 明暗主题适配，站点字体、颜色和 GitHub 风格正文排版
+- Giscus 评论区，并随站点主题自动切换
+- Instant navigation、页面滚动追踪、返回顶部和前后页导航
+- 搜索建议、关键词高亮与搜索结果分享
+- 右侧 TOC 自动跟随、当前项高亮，以及按页面开关的目录折叠
+- 桌面侧栏与移动端抽屉式导航，TOC 跟随和展开均带平滑动画
+- 标题自动编号、锚点图标、脚注回跳与链接定位
+- highlight.js 运行时代码高亮，支持复制、选择和代码注释
+- MathJax 公式、Tabbed、Details、Admonition 等内容组件
+- tooltip
+- PDF 内联阅读器
+- 图片低清预览（LQIP）& 渐进清晰加载
+- 彩虹背景、网格背景
+- 页面级开关
+- 主页终端，友情链接，GitHub 贡献图静态数据 + 前端渲染
+- 页面更新时间、字数、浏览量、Stars 与编辑/查看链接
+- 构建期图片压缩、PDF 处理、链接预览和页面元数据生成
 
-## 项目结构
+## 文件结构
 
 ```text
 docs/              # 站点内容
@@ -35,11 +44,11 @@ docs/              # 站点内容
   theme/js/        # core → mathjax → highlight → features
   theme/data/      # 贡献图 JSON（构建期生成）
 overrides/         # main.html + partials（comments/page-info/logo）
-scripts/           # 构建期脚本（metadata/contributions/previews/compress/patch）
+scripts/           # 构建期脚本
 zensical.toml      # 站点配置
 ```
 
-## 构建链路
+## 生成流程
 
 ```text
 contributions → pdfs → images(all) → zensical build → blocks → link_previews → metadata → push gh-pages
