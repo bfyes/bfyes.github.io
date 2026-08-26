@@ -1,5 +1,7 @@
 ---
 fold_toc: true
+page_metadata: false
+page_info: false
 ---
 
 <!--
@@ -24,12 +26,15 @@ fold_toc: false
 # Giscus 评论区。默认 true；写 false 才关闭。
 comments: true
 
-# 顶部更新时间/字数，以及页底 Star/浏览量信息。默认 true；写 false 才关闭。
+# 顶部更新时间/字数。默认 true；写 false 才关闭。
+page_metadata: true
+
+# 页底 Star/浏览量信息。默认 true；写 false 才关闭。
 page_info: true
 ---
 
 说明：
-- 这七项都是独立布尔开关；省略时采用上面写明的默认值。
+- 这八项都是独立布尔开关；省略时采用上面写明的默认值。
 - home-page、rainbow-page 是模板内部样式 class；运行时 body 会得到
   data-page-home / data-page-rainbow / data-page-grid / data-page-counter /
   data-page-fold-toc="true|false"，均不写进页面 front matter。

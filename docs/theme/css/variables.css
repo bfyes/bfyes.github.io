@@ -87,7 +87,6 @@
   --page-info-line-height: 1.5;
   --page-info-margin-bottom: 1rem;
   --page-info-height: calc(var(--page-info-font-size) * var(--page-info-line-height));
-  --h1-reserved-gap: calc(var(--page-info-height) + var(--page-info-margin-bottom));
 
   /* === 网格背景 === */
   --grid-clear-half: 22rem;

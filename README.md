@@ -51,4 +51,5 @@ metadata → contributions → compress_pdfs → compress_images → zensical bu
 - 图片放同名 `.assets/` 目录，运行 `make previews`
 - PDF 用 `<iframe src="xxx.pdf">` 嵌入，前端自动替换为阅读器
 - 关闭评论区：front matter 加 `comments: false`
+- 关闭顶部更新时间/字数：front matter 加 `page_metadata: false`
 - 关闭底部信息：front matter 加 `page_info: false`
