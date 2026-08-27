@@ -13,9 +13,6 @@
      ============================================================================ */
   // ---- TOC：逐条淡入的时间间隔 ------------------------------------------
   var TOC_DELAY_STEP_MS = 100;
-  // TOC 跟随滚动时长；原生 smooth 滚动无法指定时长，统一在此调整。
-  var TOC_SCROLL_DURATION_MS = 520;
-
   // ---- LQIP：预览图 → 全分辨率 ------------------------------------------
   var LQIP_MAX_WAIT = 15000;
 
@@ -109,79 +106,36 @@
     }
   }
 
-  // 将官方已标记的当前项以较慢的缓动定位到 TOC 中部。
-  var tocFollowObserver = null;
-  var tocFollowResizeObserver = null;
-  var tocFollowMedia = null;
-  var tocFollowAnimation = null;
-  function initTocFollow() {
-    if (tocFollowObserver) tocFollowObserver.disconnect();
-    if (tocFollowResizeObserver) tocFollowResizeObserver.disconnect();
-    var sidebar = document.querySelector(".md-sidebar--secondary");
-    var toc = sidebar && sidebar.querySelector('[data-md-component="toc"]');
-    if (!sidebar || !toc || !window.matchMedia) return;
-    var narrow = window.matchMedia("(max-width: 59.984375em)").matches;
-    var panel = sidebar.querySelector(narrow ? ".md-sidebar__inner" : ".md-sidebar__scrollwrap");
-    if (!panel) return;
-    function revealActive() {
-      var active = toc.querySelector(".md-nav__link--active");
-      if (!active) return;
-      // 用实际几何位置计算，兼容桌面侧栏与移动浮层不同的嵌套层级。
-      var activeRect = active.getBoundingClientRect();
-      var panelRect = panel.getBoundingClientRect();
-      var top = panel.scrollTop + activeRect.top - panelRect.top;
-      // 与桌面端原生 toc.follow 一致：当前项尽量位于浮层垂直中线。
-      var target = top + active.offsetHeight / 2 - panel.clientHeight / 2;
-      var max = Math.max(0, panel.scrollHeight - panel.clientHeight);
-      var nextTop = Math.max(0, Math.min(target, max));
-      if (tocFollowAnimation) cancelAnimationFrame(tocFollowAnimation);
-      if (!window.matchMedia || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        panel.scrollTop = nextTop;
-        return;
-      }
-      var startTop = panel.scrollTop;
-      var distance = nextTop - startTop;
-      if (Math.abs(distance) < 1) return;
-      var started = performance.now();
-      var duration = TOC_SCROLL_DURATION_MS;
-      var frame = function (now) {
-        var progress = Math.min(1, (now - started) / duration);
-        var eased = 1 - Math.pow(1 - progress, 3);
-        panel.scrollTop = startTop + distance * eased;
-        if (progress < 1) tocFollowAnimation = requestAnimationFrame(frame);
-        else tocFollowAnimation = null;
-      };
-      tocFollowAnimation = requestAnimationFrame(frame);
-    }
-    function scheduleReveal() {
-      var frame = window.requestAnimationFrame || function (fn) { return setTimeout(fn, 16); };
-      frame(revealActive);
-    }
-    // 官方逻辑负责判定 active；这里只同步两种布局下的 TOC 滚动位置。
-    tocFollowObserver = new MutationObserver(function () {
-      scheduleReveal();
-    });
-    tocFollowObserver.observe(toc, { subtree: true, attributes: true, attributeFilter: ["class"] });
-    toc.addEventListener("transitionend", function (event) {
-      if (event.propertyName === "grid-template-rows" || event.propertyName === "opacity") revealActive();
-    });
-    if (window.ResizeObserver) {
-      tocFollowResizeObserver = new ResizeObserver(scheduleReveal);
-      tocFollowResizeObserver.observe(panel);
-    }
-    var toggle = narrow && sidebar.querySelector("#__toc");
-    if (toggle) toggle.addEventListener("change", function () {
-      scheduleReveal();
-    });
-    scheduleReveal();
+  // ---- 窄屏 TOC：禁用官方跟随定位 ----
+  // Zensical 的 toc.follow 在移动抽屉中也会平滑滚动到 active 项；
+  // 这里只在 active 更新后把面板拉回顶部，不阻止用户手动滚动。
+  var mobileTocTopMedia = null;
+  function resetMobileTocTop() {
+    var panel = document.querySelector(".md-sidebar--secondary .md-sidebar__inner");
+    if (panel) panel.scrollTop = 0;
   }
 
-  // 跨越 60em（桌面/窄屏）或旋转屏幕后，重新绑定正确的 TOC 容器。
-  if (window.matchMedia) {
-    tocFollowMedia = window.matchMedia("(max-width: 59.984375em)");
-    var onTocFollowMediaChange = function () { initTocFollow(); };
-    if (tocFollowMedia.addEventListener) tocFollowMedia.addEventListener("change", onTocFollowMediaChange);
-    else if (tocFollowMedia.addListener) tocFollowMedia.addListener(onTocFollowMediaChange);
+  function initMobileTocTop() {
+    var panel = document.querySelector(".md-sidebar--secondary .md-sidebar__inner");
+    if (!panel || !window.matchMedia) return;
+
+    function syncScrollTo() {
+      var narrow = window.matchMedia("(max-width: 59.984375em)").matches;
+      if (narrow) {
+        // 拦截官方 toc.follow 的平滑定位调用；触摸滚动不经过这里。
+        panel.scrollTo = function () { panel.scrollTop = 0; };
+        panel.scrollTop = 0;
+      } else if (Object.prototype.hasOwnProperty.call(panel, "scrollTo")) {
+        delete panel.scrollTo;
+      }
+    }
+
+    if (!mobileTocTopMedia && window.matchMedia) {
+      mobileTocTopMedia = window.matchMedia("(max-width: 59.984375em)");
+      if (mobileTocTopMedia.addEventListener) mobileTocTopMedia.addEventListener("change", syncScrollTo);
+      else if (mobileTocTopMedia.addListener) mobileTocTopMedia.addListener(syncScrollTo);
+    }
+    syncScrollTo();
   }
 
   // ---- Giscus 评论区 ----
@@ -312,7 +266,7 @@
   window.site.onPageReady(initLqip);
   window.site.onPageReady(initLqipBlur);
   window.site.onPageReady(initToc);
-  window.site.onPageReady(initTocFollow);
+  window.site.onPageReady(initMobileTocTop);
   window.site.onPageReady(initGiscus);
   window.site.onPageReady(normalizeFootnoteBackrefs);
   window.site.onPageReady(purgeTooltips);
