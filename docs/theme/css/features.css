@@ -1106,16 +1106,6 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
    ============================================================================ */
 .md-nav--secondary [data-md-component="toc"] .md-nav__link { transition: color 0.15s ease, opacity 0.15s ease; }
 
-/* 移动端浮层内部跟随时平滑滚动；高度由内容和视口动态决定。 */
-@media screen and (max-width: 59.984375em) {
-  .md-sidebar--secondary .md-sidebar__inner {
-    scroll-behavior: smooth !important;
-    transition: transform .4s cubic-bezier(0, 1, .35, 1), opacity .25s,
-      max-height .25s ease !important;
-    will-change: transform, opacity, scroll-position;
-  }
-}
-
 /* fold_toc: true 时直接复用官方 .md-nav__link--active：
    active 项自身的子目录，以及包含 active 项的祖先目录展开。
    隐藏层不用 display:none，保证所有 TOC 项仍按统一绝对时间轴执行淡入动画。
