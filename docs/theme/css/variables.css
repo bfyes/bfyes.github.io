@@ -74,7 +74,7 @@
   --admonition-border-w: 0.075rem;     /* 提示块边框宽度 */
   --admonition-pad-inline: 0.8rem;     /* 左右内边距 */
   --admonition-title-margin: 0.4rem;   /* 标题 margin（顶/底） */
-  --admonition-title-lh: 1.8;          /* 标题行高（与 ::before 高度联动）*/
+  --admonition-title-lh: 1.8;          /* 标题行高（多行标题与首行渐变共用）*/
   --admonition-body-margin: 0.6rem;    /* 正文 margin（首元素 padding-top + 末元素 margin-bottom，上下统一值）*/
 
   /* === 圆角 === */
