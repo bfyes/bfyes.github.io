@@ -669,11 +669,11 @@ body[data-page-counter="true"] .md-content__inner h4::before {
    所有自定义（边框/背景/标题栏 padding 与渐变/图标箭头定位颜色）统一在下方 @supports 块内。 */
 
 /* 退化后的标题行高恢复：main.css 的 .md-typeset { line-height:1.5 } 会连带压低提示块标题，
-   使图标 top:.125em 相对标题行中心偏下。此处仅对标题行恢复官方 1.8，
+   使图标 top:.125em 相对标题行中心偏下。此处仅对标题行恢复官方行高，
    不影响提示块正文与其他正文的 GitHub 1.5 行高。 */
 .md-typeset .admonition > .admonition-title,
 .md-typeset details > summary {
-  line-height: 1.8;
+  line-height: var(--admonition-title-lh);
 }
 
 /* ---- Admonition 自定义（置于所有提示块定义下方）----
@@ -681,12 +681,14 @@ body[data-page-counter="true"] .md-content__inner h4::before {
 
 @supports (color: color-mix(in srgb, red 50%, blue)) {
   /* —— 容器：透明底 + 类型色描边 + 防溢出 ——
-     position:relative 作为下方 ::before 填充块的定位锚点；
-     overflow:hidden 配合圆角/填充块，裁切超长内容与渐变溢出；
-     字号统一用代码块字号（--font-code，标题与正文一致）。 */
+     CSS Grid 的首行同时容纳标题和下方 ::before：标题变成多行时，首行会
+     自动增高，渐变填充块随同拉伸，不再依赖单行高度 calc。 */
   .md-typeset .admonition,
   .md-typeset details {
     position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    isolation: isolate;
     background-color: transparent !important;
     border: var(--admonition-border-w) solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
     box-shadow: var(--shadow-sm);
@@ -696,20 +698,29 @@ body[data-page-counter="true"] .md-content__inner h4::before {
   }
   /* —— 标题 margin：容器 padding 上下为 0，由标题 margin-top/bottom 撑出
      标题与容器顶边、标题与正文之间的空隙（上下均取标题 margin）。
-     标题强制单行（nowrap），超长用省略号截断；折叠箭头为绝对定位，
-     需在右侧预留 padding 避免遮挡。 —— */
+     恢复官方多行换行；长的连续字符串也可在任意字符处换行。标题放在
+     Grid 首行并压在渐变上方，首行高度由实际内容决定。 —— */
   .md-typeset .admonition-title,
   .md-typeset summary {
+    grid-column: 1;
+    grid-row: 1;
+    z-index: 1;
     margin-top: var(--admonition-title-margin);
     margin-bottom: var(--admonition-title-margin);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
   }
-  /* —— 折叠箭头为绝对定位（right:.4rem, width:1rem），nowrap 下需在右侧
-     预留空间避免文字被箭头遮挡；非折叠的 .admonition-title 无箭头，不加。 —— */
+  /* —— 折叠箭头为绝对定位（right:.4rem, width:1rem），多行标题同样需在右侧
+     预留空间避免文字与箭头重叠；非折叠的 .admonition-title 无箭头，不加。 —— */
   .md-typeset summary {
     padding-right: 2rem;
+  }
+  /* Grid 中其余直接子元素顺序流入后续行，避免与标题/渐变共用首行。 */
+  .md-typeset .admonition > :not(.admonition-title),
+  .md-typeset details > :not(summary) {
+    grid-column: 1;
   }
   /* —— 正文首元素 padding-top：与标题底边留白（取正文 margin，与正文末元素底边对称）。 —— */
   .md-typeset .admonition-title + *,
@@ -732,16 +743,20 @@ body[data-page-counter="true"] .md-content__inner h4::before {
     margin-bottom: var(--admonition-body-margin);
   }
   /* —— 填充高亮块（::before）——
-     绝对定位贴在容器顶部，高度 = 标题 margin×2 + 标题行高，
-     与 <p class="admonition-title"> 标题行精确对齐。
+     与标题同处 Grid 首行并 stretch；无论标题是一行还是多行，背景高度都与
+     标题行（含上下 margin）同步。inline-size / margin-inline 让渐变仍铺满
+     容器的左右内边距区域。
      五段 105° 渐变取类型色 → 强调色 → 光谱色，逐段淡出；
      pointer-events:none 保证不拦截点击。 */
   .md-typeset .admonition::before,
   .md-typeset details::before {
     content: "";
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: calc(var(--admonition-title-margin) * 2 + var(--admonition-title-lh) * 1em);
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+    align-self: stretch;
+    inline-size: calc(100% + 2 * var(--admonition-pad-inline));
+    margin-inline: calc(-1 * var(--admonition-pad-inline));
     background:
       linear-gradient(
         105deg,
