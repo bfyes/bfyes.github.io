@@ -680,15 +680,10 @@ body[data-page-counter="true"] .md-content__inner h4::before {
    仅支持 color-mix 的现代浏览器通过；不支持者 @supports 不通过 → 提示块完全官方。 */
 
 @supports (color: color-mix(in srgb, red 50%, blue)) {
-  /* —— 容器：透明底 + 类型色描边 + 防溢出 ——
-     CSS Grid 的首行同时容纳标题和下方 ::before：标题变成多行时，首行会
-     自动增高，渐变填充块随同拉伸，不再依赖单行高度 calc。 */
+  /* 容器保持原生 flow-root 文档流；渐变直接画在标题本身，标题换行时背景自然同步。 */
   .md-typeset .admonition,
   .md-typeset details {
     position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    isolation: isolate;
     background-color: transparent !important;
     border: var(--admonition-border-w) solid color-mix(in srgb, var(--admonition-color) 36%, var(--borderColor-muted));
     box-shadow: var(--shadow-sm);
@@ -696,67 +691,17 @@ body[data-page-counter="true"] .md-content__inner h4::before {
     padding: 0 var(--admonition-pad-inline);
     font-size: var(--font-code);
   }
-  /* —— 标题 margin：容器 padding 上下为 0，由标题 margin-top/bottom 撑出
-     标题与容器顶边、标题与正文之间的空隙（上下均取标题 margin）。
-     恢复官方多行换行；长的连续字符串也可在任意字符处换行。标题放在
-     Grid 首行并压在渐变上方，首行高度由实际内容决定。 —— */
   .md-typeset .admonition-title,
   .md-typeset summary {
-    grid-column: 1;
-    grid-row: 1;
-    z-index: 1;
-    margin-top: var(--admonition-title-margin);
-    margin-bottom: var(--admonition-title-margin);
+    /* 覆盖主题 summary:last-child 的底边距；标题自身 padding 已提供留白。 */
+    margin: 0 calc(-1 * var(--admonition-pad-inline)) !important;
+    padding-block: var(--admonition-title-margin);
+    padding-inline-start: calc(1.6rem + var(--admonition-pad-inline)) !important;
+    padding-inline-end: calc(0.8rem + var(--admonition-pad-inline)) !important;
     white-space: normal;
     overflow: visible;
     overflow-wrap: anywhere;
     text-overflow: clip;
-  }
-  /* —— 折叠箭头为绝对定位（right:.4rem, width:1rem），多行标题同样需在右侧
-     预留空间避免文字与箭头重叠；非折叠的 .admonition-title 无箭头，不加。 —— */
-  .md-typeset summary {
-    padding-right: 2rem;
-  }
-  /* Grid 中其余直接子元素顺序流入后续行，避免与标题/渐变共用首行。 */
-  .md-typeset .admonition > :not(.admonition-title),
-  .md-typeset details > :not(summary) {
-    grid-column: 1;
-  }
-  /* —— 正文首元素 padding-top：与标题底边留白（取正文 margin，与正文末元素底边对称）。 —— */
-  .md-typeset .admonition-title + *,
-  .md-typeset summary + * {
-    padding-top: var(--admonition-body-margin);
-  }
-  /* —— 标题即末子时（折叠态 details:not([open])>summary，或只有标题无正文的
-     .admonition>.admonition-title），Material 的 :last-child{margin-bottom:.6rem}
-     把标题底边撑成 0.6，与顶边 0.4 不对称；此处统一压回标题 margin，保持上下对称。
-     有正文时标题非末子，不触发，正文末子见下方规则约束。 —— */
-  .md-typeset details:not([open]) > summary,
-  .md-typeset .admonition > .admonition-title:last-child,
-  .md-typeset details > summary:last-child {
-    margin-bottom: var(--admonition-title-margin);
-  }
-  /* —— 正文末元素底边距：Material 默认 .admonition>:last-child{margin-bottom:.6rem}，
-     此处显式约束到变量，与正文首元素 padding-top 联动（上下对称）。 —— */
-  .md-typeset .admonition > :last-child,
-  .md-typeset details > :last-child {
-    margin-bottom: var(--admonition-body-margin);
-  }
-  /* —— 填充高亮块（::before）——
-     与标题同处 Grid 首行并 stretch；无论标题是一行还是多行，背景高度都与
-     标题行（含上下 margin）同步。inline-size / margin-inline 让渐变仍铺满
-     容器的左右内边距区域。
-     五段 105° 渐变取类型色 → 强调色 → 光谱色，逐段淡出；
-     pointer-events:none 保证不拦截点击。 */
-  .md-typeset .admonition::before,
-  .md-typeset details::before {
-    content: "";
-    grid-column: 1;
-    grid-row: 1;
-    justify-self: start;
-    align-self: stretch;
-    inline-size: calc(100% + 2 * var(--admonition-pad-inline));
-    margin-inline: calc(-1 * var(--admonition-pad-inline));
     background:
       linear-gradient(
         105deg,
@@ -766,15 +711,27 @@ body[data-page-counter="true"] .md-content__inner h4::before {
         color-mix(in srgb, var(--admonition-spectrum) 8%, transparent) 86%,
         color-mix(in srgb, var(--admonition-spectrum) 7%, transparent)
       );
-    pointer-events: none;
   }
-  /* —— 图标与箭头着色：复用类型色，与边框/填充呼应 ——
-     ::before 是标题左侧图标底色，::after 是折叠箭头。 */
+  .md-typeset summary {
+    padding-inline-end: calc(2rem + var(--admonition-pad-inline)) !important;
+  }
+  .md-typeset .admonition-title + *,
+  .md-typeset summary + * {
+    padding-top: var(--admonition-body-margin);
+  }
+  .md-typeset .admonition > :last-child,
+  .md-typeset details > :last-child {
+    margin-bottom: var(--admonition-body-margin);
+  }
   .md-typeset .admonition-title::before,
   .md-typeset summary::before {
+    top: calc(var(--admonition-title-margin) + 0.125em) !important;
+    inset-inline-start: var(--admonition-pad-inline) !important;
     background-color: var(--admonition-color) !important;
   }
   .md-typeset summary::after {
+    top: calc(var(--admonition-title-margin) + 0.125em) !important;
+    inset-inline-end: var(--admonition-pad-inline) !important;
     color: var(--admonition-color) !important;
   }
 }
