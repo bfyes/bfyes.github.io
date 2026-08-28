@@ -715,9 +715,11 @@ body[data-page-counter="true"] .md-content__inner h4::before {
   .md-typeset summary {
     padding-inline-end: calc(2rem + var(--admonition-pad-inline)) !important;
   }
+  /* 标题与正文是同级流内元素，统一以 margin 表达两者之间的外部间距。 */
   .md-typeset .admonition-title + *,
   .md-typeset summary + * {
-    padding-top: var(--admonition-body-margin);
+    padding-top: 0;
+    margin-top: var(--admonition-body-margin);
   }
   .md-typeset .admonition > :last-child,
   .md-typeset details > :last-child {
