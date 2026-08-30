@@ -3398,7 +3398,7 @@
 
 
 
-<h1 id="07-12-下午性能分析技术基础profiling">07-12 下午：性能分析技术基础（Profiling）<a class="headerlink" href="#07-12-下午性能分析技术基础profiling" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:41:21+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 8216 字</span></div>
+<h1 id="07-12-下午性能分析技术基础profiling">07-12 下午：性能分析技术基础（Profiling）<a class="headerlink" href="#07-12-下午性能分析技术基础profiling" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-30T12:46:02+08:00">2026/08/30</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 8217 字</span></div>
 <p>性能工具给出的是迹象，不是结论。一个热点<sup id="fnref:hotspot"><a class="footnote-ref" href="#fn:hotspot">1</a></sup>的高 cache miss、低 IPC<sup id="fnref:ipc"><a class="footnote-ref" href="#fn:ipc">2</a></sup> 或长时间等待，必须回到循环访问、线程分工和数据位置解释；优化后的同一组测量再决定假设是否成立。</p>
 <h2 id="性能测量">性能测量<a class="headerlink" href="#性能测量" title="Permanent link"></a></h2>
 <p>性能数据必须有问题定义。要比较两个版本，至少固定输入规模、数据类型、编译器和优化选项、线程数、CPU 绑核、NUMA 策略、是否包含初始化/I/O。首次运行可能受动态链接、页面分配、缓存预热影响，因此应多次测量，报告中位数/分布，而不是只挑一次最好结果。</p>
@@ -3638,7 +3638,7 @@ perf report</code></pre>
 </table>
 <p><a class="glightbox" data-type="image" href="../assets/0712p/blocking-8n2-vs-l3.png"><img width="908" height="511" class="lqip" alt="课件用 8N² 与 45 MB L3 判定 blocking 何时有用：B 装得进 L3 时 ikj 与 blocked 差距不大，溢出后 ikj 陡降、blocked 维持。" src="../assets/0712p/blocking-8n2-vs-l3.preview.jpg" data-fullsrc="../assets/0712p/blocking-8n2-vs-l3.png" /></a></p>
 <p><em>图：一张表说明分块是否值得可由 <span class="arithmatex">\(8N^2\)</span> 与 L3 容量直接预判，不必等跑完再猜。</em></p>
-<p>B 未溢出 L3 时，<code>blocking</code> 反而略慢（2048 时为 3.71 对 3.98）；B 一超过 L3，<code>ikj</code> 因反复搬运 B 而降到 2.65、2.28，<code>blocked</code> 靠块内复用维持在 3.7 左右。分块是否值得取决于工作集能否放进对应层级，<code>$8N^2$</code> 这个数在运行前就能判断。</p>
+<p>B 未溢出 L3 时，<code>blocking</code> 反而略慢（2048 时为 3.71 对 3.98）；B 一超过 L3，<code>ikj</code> 因反复搬运 B 而降到 2.65、2.28，<code>blocked</code> 靠块内复用维持在 3.7 左右。分块是否值得取决于工作集能否放进对应层级，<span class="arithmatex">\(8N^2\)</span> 这个数在运行前就能判断。</p>
 <p>packing 是把原矩阵的一块复制到按微内核访问顺序连续的缓冲区。它增加了一次复制，却能让后续内层循环连续 load，避免跨大步长和复杂边界判断。矩阵足够大、同一 packed 块被反复使用时，复制成本会被摊薄；很小的矩阵或只用一次的块，则可能得不偿失。许多高性能库把这层细节藏起来，理解它能帮助阅读 profiler：看到额外的 copy 函数，不应立刻把它当作无用开销。</p>
 <p>一条完整的优化轨迹也能说明先后次序：仅仅改循环顺序已得到约 <code>7.6x</code>，cache blocking<sup id="fnref:cache-blocking"><a class="footnote-ref" href="#fn:cache-blocking">9</a></sup> 再得到约 <code>1.6x</code>；自动向量化<sup id="fnref:vectorization"><a class="footnote-ref" href="#fn:vectorization">10</a></sup>、手写微内核和多核并行是在此基础上继续提高。访问布局要先于指令级微调，因为布局决定数据是否能被 cache 和带宽系统有效供给。</p>
 <details class="note" open="open">

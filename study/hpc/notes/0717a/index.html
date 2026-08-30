@@ -3408,7 +3408,7 @@
 
 
 
-<h1 id="07-17-上午算法系统协同设计">07-17 上午：算法—系统协同设计<a class="headerlink" href="#07-17-上午算法系统协同设计" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:41:21+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 12812 字</span></div>
+<h1 id="07-17-上午算法系统协同设计">07-17 上午：算法—系统协同设计<a class="headerlink" href="#07-17-上午算法系统协同设计" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-30T12:46:02+08:00">2026/08/30</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 12821 字</span></div>
 <p>课程题目是 <em>Algorithm-Infra Co-Design for AGI</em>。这里的 <code>infra</code><sup id="fnref:infra"><a class="footnote-ref" href="#fn:infra">1</a></sup> 包括训练集群、kernel<sup id="fnref:kernel"><a class="footnote-ref" href="#fn:kernel">2</a></sup>、并行策略、显存管理、编译器、推理引擎和服务调度。模型结构决定了通信量、KV cache<sup id="fnref:kv-cache"><a class="footnote-ref" href="#fn:kv-cache">3</a></sup> 和访存量，系统与硬件的限制反过来又约束注意率、MoE<sup id="fnref:moe"><a class="footnote-ref" href="#fn:moe">4</a></sup>、精度和上下文长度能怎么选。</p>
 <p>协同设计的基本对象可以用一条流水线串起来。文本先被切成 token，token 经过 embedding 变成向量，再经过多层 Transformer block；每层包含 attention<sup id="fnref:attention"><a class="footnote-ref" href="#fn:attention">5</a></sup> 和 FFN。训练时在这些计算之后计算 loss、反向传播并更新参数；推理时保存 KV cache、采样下一个 token，并把请求交给调度器。集群、显存和网络带宽分别影响这条流水线的不同位置。把术语放回这条流水线，后面各节的优化目标就不会散开。</p>
 <details class="question" open="open">
@@ -3721,7 +3721,7 @@ W=W_0+\Delta W,\qquad \Delta W=BA,
 <p><a class="glightbox" data-type="image" href="../assets/0717a/quantization-mapping.jpg"><img width="1280" height="720" class="lqip" alt="课件说明神经网络量化的本质：把高精度权重与激活映射到更少的离散取值，用 scale 等参数近似还原。" src="../assets/0717a/quantization-mapping.preview.jpg" data-fullsrc="../assets/0717a/quantization-mapping.jpg" /></a></p>
 <p><em>图：量化的核心是把连续范围映射到有限格点；格点越粗，存储越省，误差越大。</em></p>
 <h3 id="量化误差与-gptq">量化误差与 GPTQ<a class="headerlink" href="#量化误差与-gptq" title="Permanent link"></a></h3>
-<p>权重量化并非只最小化 <code>\|W-\hat W\|</code>。线性层真正关心输出扰动 <code>X(W-\hat W)</code>；输入激活在某些方向幅度很大时，即使权重逐元素误差很小，输出也可能明显偏移。GPTQ 用校准样本的激活二阶信息近似这种敏感度，按列/组逐步量化并补偿尚未量化的权重误差。校准集不需要标签，却应覆盖实际 prompt 的激活分布；用完全无关的短文本校准，量化后的困惑度可能恶化。</p>
+<p>权重量化并非只最小化 <span class="arithmatex">\(\lVert W-\hat{W}\rVert\)</span>。线性层真正关心输出扰动 <span class="arithmatex">\(X(W-\hat{W})\)</span>；输入激活在某些方向幅度很大时，即使权重逐元素误差很小，输出也可能明显偏移。GPTQ 用校准样本的激活二阶信息近似这种敏感度，按列/组逐步量化并补偿尚未量化的权重误差。校准集不需要标签，却应覆盖实际 prompt 的激活分布；用完全无关的短文本校准，量化后的困惑度可能恶化。</p>
 <p>量化还有一个简单的基线：<strong>RTN（round-to-nearest）</strong>，把每个浮点权重直接四舍五入到最近的格点，不做校准、也不补偿误差。它快、可复现，常作为对比 GPTQ 的什么都没有做起点。对大的 4-bit 权重，RTN 通常会让 NLL<sup id="fnref:nll"><a class="footnote-ref" href="#fn:nll">12</a></sup> 明显变差，因为单个权重误差受激活方向放大；GPTQ 的价值恰恰在于把这份误差按真实输入分布补偿掉。读 <code>quantize.py</code> 时先看它走的是 RTN 还是带校准的 GPTQ——两者的输出质量不可直接比较，速度也不一样。</p>
 <p>group-wise scale 是质量、元数据和 kernel 复杂度的折中。组越小，scale 更能贴合权重分布，但每组都要读取 scale/zero-point，量化元数据比例升高，fused kernel 的访存也更碎。对称 INT4 通常把 4-bit 值解释为有符号范围并使用一个 scale；非对称方案额外使用 zero-point。无论编码方式如何，反量化的语义都应写清：<code>w ≈ scale * (q - zero)</code>，以及 scale 按输出通道、输入组还是张量共享。</p>
 <p>NLL 用于检验推理是否仍是同一概率模型。对 token 序列 <span class="arithmatex">\(x_1,\ldots,x_T\)</span>，忽略不计分的前缀后，</p>
