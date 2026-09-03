@@ -2,18 +2,18 @@
 
 大语言模型的一次回答可以拆成一串连续的计算。文字先变成 token 编号，编号再变成向量。模型层不断更新这些向量，最后给词表中的候选 token 打分。选出的新 token 会加入已有文本，下一步从这里继续。
 
-这一页主要讨论 **decoder-only 自回归模型**。聊天模型和代码模型常采用这种结构。它在已有 token 的基础上预测下一个 token，再把结果加入上下文。后面的机器学习四节、Lab 2、Lab 3、Lab 5 会分别展开这条链中的一段。[^hf-llm][^tf-transformer]
+这一页讨论 **decoder-only 自回归模型**。聊天模型和代码模型常采用这种结构。它依据已有 token 预测下一个 token，再把结果加入上下文。后面的机器学习四节、Lab 2、Lab 3、Lab 5 会分别展开这条链中的一段。
 
 !!! tip "注意以下两条线"
 
     - **数据线**。文本 → token ID → 向量 → hidden state → logits → 新 token → 文本。
     - **时间线**。训练时整段序列可以同时计算。推理时每生成一个 token，就把它追加到上下文，再进行下一步。
 
-    后面出现的 attention、MoE、KV cache、量化和并行，都是在这两条线上改变计算、存储或数据移动的方式。
+    后面出现的注意力机制、混合专家层、键值缓存、量化和并行，都是在这两条线上改变计算、存储或数据移动的方式。
 
 !!! note "不需要先记住全部缩写"
 
-    首次阅读时，先理解 `input_ids [B,S]`、`hidden states [B,S,H]`、`logits [B,S,V]` 三种张量即可。Q/K/V、MHA、GQA、MLA、FFN、MoE、Gated DeltaNet 会在相应小节首次出现时解释；忘记缩写时可以回到本页的表格和层级图。
+    首次阅读时，先理解 `input_ids [B,S]`、`hidden states [B,S,H]`、`logits [B,S,V]` 三种张量。后面的小节会在需要时解释注意力投影、多头共享、前馈网络、混合专家层和状态式模块；术语表和层级图可用于回看它们的关系。
 
 
 ## 一次回答的过程
@@ -42,7 +42,7 @@
     模型不能直接读取字符串。tokenizer 先把模板文本切成 token，再查词表得到整数编号。token 可以是词片、汉字、标点或字节片段，因此一个自然语言词不一定只占一个 token。[^hf-tokenizer]
 
     ```text
-    文本：      HPC makes programs faster
+    文本：      High-performance computing makes programs faster
     token：    ["H", "PC", " makes", " programs", " faster"]
     input_ids：[id_0, id_1, id_2, id_3, id_4]
     ```
@@ -59,11 +59,11 @@
 
     接下来，这张 `[B,S,H]` 的表会经过 $L$ 个模型层。每层看起来都在处理同一批 token，实际更新了每一行向量所携带的信息。
 
-    一层里常有两件事。第一件是让当前位置读取上下文，例如 attention 或 Gated DeltaNet。第二件是改写当前位置自己的通道向量，例如 FFN 或 MoE。后面的小节会分别说明这两件事。
+    一层里常有两件事。第一件是让当前位置读取上下文，例如 attention 或递推状态模块。第二件是改写当前位置自己的通道向量，例如 FFN 或 MoE。后面的小节会分别说明这两件事。
 
 === "4. 得到下一个 token"
 
-    最后一层的 hidden state 还不是文字。语言模型头把它投影到词表大小，得到 `logits [B,S,V]`。其中 `V` 是词表大小。最后一个位置的一整行 logits 就是模型对所有候选 token 给出的未归一化分数。
+    最后一层的 hidden state 经过语言模型头投影到词表大小，得到 `logits [B,S,V]`。其中 `V` 是词表大小。最后一个位置的一整行 logits 是模型对所有候选 token 给出的未归一化分数。
 
     程序随后按采样规则选出一个 ID。可以总是选最高分，也可以保留多个候选后按概率抽样。这个 ID 经 tokenizer decode 后才变成可见文本。[^tf-text-generation]
 
@@ -92,6 +92,8 @@ Transformer 常见的外层结构有三种。它们解决的问题不同，也�
 | Encoder-decoder | 源序列 → 目标序列 | decoder 读取已生成 token，也读取 encoder 输出 | 翻译、摘要、语音到文本 |
 | Decoder-only | 已有 token → 下一个 token | 每个位置只读取自身和历史 token | 对话、续写、代码生成 |
 
+先用一张 encoder-decoder 图辨认三种外层结构的差别。图的重点是上方 encoder 输出会供下方 decoder 读取；后文的 decoder-only 模型省去这一条 encoder 路径。
+
 ![TensorFlow Transformer 教程的单层词级示意图。上方的法语序列经过 encoder，下方的英语序列经过 decoder，右侧是每个位置应预测出的下一个词。](assets/llm/tensorflow-transformer-1layer-words.png)
 
 *这是一张 **翻译模型的训练图**，用法语 `je suis etudiant` 生成英语 `I am a student`。它用于区分 encoder-decoder 和本文后面重点讨论的 decoder-only，不应用来记忆每个方块的颜色或线条数量。[^tf-transformer]*
@@ -115,7 +117,7 @@ Transformer 常见的外层结构有三种。它们解决的问题不同，也�
 
 ### 聊天消息先按模板组织
 
-聊天模型通常接收多轮消息，而不是单一字符串。运行时会把 system、user、assistant、工具返回等内容按照该模型的模板拼成 token 序列。模板往往会插入角色标记、轮次分隔符、生成起始标记或结束标记。
+聊天模型通常接收多轮消息。运行时会把 system、user、assistant、工具返回等内容按照该模型的模板拼成 token 序列，并插入角色标记、轮次分隔符、生成起始标记或结束标记。
 
 ```text
 结构化消息
@@ -126,11 +128,11 @@ user: 解释 KV cache
 <system>你是一个助手</system><user>解释 KV cache</user><assistant>
 ```
 
-模型最终看到的是第二行经过 tokenizer 后的 ID 序列。不同模型的模板不同。直接把对话文字拼接成普通字符串时，可能缺少角色标记或结束标记，输出格式也会变化。Hugging Face 的 LLM 教程将 chat template 视为调用聊天模型时的重要输入准备步骤。[^hf-llm]
+模型最终看到的是第二行经过 tokenizer 后的 ID 序列。不同模型的模板不同。直接把对话文字拼接成普通字符串时，可能缺少角色标记或结束标记，输出格式也会变化。Hugging Face 的 LLM 教程将 chat template 视为调用聊天模型时的重要输入准备步骤。
 
 ### tokenizer 将文本切成编号
 
-tokenizer 由词表和切分规则组成。它把文本分成 token，再把每个 token 查成词表中的整数编号。token 可以是词片、汉字、标点或字节片段。[^hf-tokenizer]
+tokenizer 由词表和切分规则组成。它把文本分成 token，再把每个 token 查成词表中的整数编号。token 可以是词片、汉字、标点或字节片段。
 
 ```text
 文本：      HPC makes programs faster
@@ -176,7 +178,7 @@ input_ids       [B,S]       整数
 embedding       [B,S,H]     浮点
 ```
 
-位置也必须进入模型。只知道 token ID 时，“猫追狗”和“狗追猫”拥有相同 token 集合，模型无法区分顺序。位置嵌入、正弦位置编码、旋转位置编码等方法都在为 token 表示加入位置差异。[^transformer][^tf-transformer]
+位置也必须进入模型。只知道 token ID 时，“猫追狗”和“狗追猫”拥有相同 token 集合，模型无法区分顺序。位置嵌入、正弦位置编码、旋转位置编码等方法都在为 token 表示加入位置差异。[^transformer]
 
 这个阶段为后续层提供可学习的数值表示。经过许多层更新后，向量会同时携带 token 本身、所在位置和已读取上下文的信息。
 
@@ -224,7 +226,7 @@ $$
 
 | 部件 | 做什么 | 是否与其他部件同层共存 |
 | --- | --- | --- |
-| Norm | 调整每个 token 向量的数值尺度，例如 LayerNorm、RMSNorm | 是 |
+| Norm | 调整数值尺度，例如 LayerNorm（层归一化）、RMSNorm（均方根归一化） | 是 |
 | residual | 将子层输出加回输入 | 是 |
 | TokenMixer | 让 token 读取序列信息 | 每层选择一种主要形式 |
 | ChannelMixer | 改写单个 token 的通道维度 | 每层选择 dense FFN 或 MoE |
@@ -233,7 +235,7 @@ Norm、residual、TokenMixer、ChannelMixer 位于层的不同位置。TokenMixe
 
 !!! note "同一层中哪些部件共存"
 
-    Norm 和 residual 是层的通用结构，通常与其他部件一起出现。TokenMixer 是上下文读取的位置，一层会选用 attention、状态式模块等一种主要实现。ChannelMixer 是通道变换的位置，一层会选用 dense FFN 或 MoE。两类 mixer 位于同一层的不同槽位。MoE 不替代 attention，Gated DeltaNet 也不替代 FFN。
+    Norm 和 residual 是层的通用结构，通常与其他部件一起出现。TokenMixer 是上下文读取的位置，一层会选用 attention、状态式模块等一种主要实现。ChannelMixer 是通道变换的位置，一层会选用 dense FFN 或 MoE。两类 mixer 位于同一层的不同槽位。MoE 替换的是 FFN 所在的通道变换路径，状态式模块替换的是 attention 所在的上下文读取路径。
 
 下面用一条更直接的层间数据流代替多层结构图。图中每一层的内部细节已经由上面的公式、后面的注意力图和 FFN/MoE 小节分别展开。
 
@@ -311,6 +313,8 @@ $$
 O=\operatorname{softmax}(A)V
 $$
 
+下图把这条限制画成连接关系。观察每个位置向左保留的连线，再对照上面的下三角可见区域，就能将图形和 mask 矩阵对应起来。
+
 ![TensorFlow Transformer 教程中的 causal self-attention。下方位置只能连接到当前位置及其左侧位置，不能读取右侧未来 token。](assets/llm/tensorflow-causal-self-attention.png)
 
 *图：TensorFlow Text Tutorial。因果 mask 决定信息可见范围。训练时它让序列中所有位置可以同时计算预测；生成时它保证新 token 只依赖已知历史。[^tf-transformer]*
@@ -344,7 +348,7 @@ $$
     = [0.845, 0.580]
     ```
 
-    这个例子只展示最后一步。实际模型先用 $W_Q,W_K,W_V$ 从隐藏状态算出 Q、K、V，分数也由训练得到的投影决定。softmax 权重不是人为写出的语法规则，而是当前输入和模型参数共同算出的结果。
+    这个例子只展示最后一步。实际模型先用 $W_Q,W_K,W_V$ 从隐藏状态算出 Q、K、V，分数也由训练得到的投影决定。softmax 权重由当前输入和模型参数共同计算。
 
 对于单个 head，$QK^T$ 的形状是 `[S,S]`。序列长度翻倍后，分数矩阵元素数量约变为四倍；标准 attention 的计算和中间访问都会随 $S^2$ 增长。这是长上下文模型需要关注 attention 算法和显存访问的原因。
 
@@ -378,6 +382,8 @@ MHA 是 Multi-Head Attention（多头注意力），MQA 是 Multi-Query Attentio
 | GQA | 多个 query head 共用一组 K/V | 在 MHA 与 MQA 之间折中 |
 | MLA | 将 K/V 压缩为 latent 表示 | 通过改变缓存表示压缩 KV cache |
 
+接下来的两张图分别强调 head 共享和缓存表示。第一张只比较 MHA、GQA、MQA；第二张再加入 MLA，因此阅读时不要把两张图中的视觉元素逐一对应。
+
 ![GQA 论文将 MHA、GQA、MQA 并列。query head 数相同，区别在于 key/value head 被多少 query head 共享。](assets/llm/gqa-paper-architecture.png)
 
 *图：GQA 论文。图中的连线表示 query head 与 K/V head 的共享关系；共享越多，推理时需要保存和读取的 K/V 越少。[^gqa]*
@@ -386,7 +392,7 @@ MHA 是 Multi-Head Attention（多头注意力），MQA 是 Multi-Query Attentio
 
 *图：DeepSeek-V2 论文。MLA 与 MHA/GQA/MQA 的区别在于缓存表示本身；它不只是减少 K/V head 数。[^deepseek-v2]*
 
-一个注意力层采用其中一种主要 K/V 组织方式。GQA 在 MHA 的质量和 MQA 的推理速度之间折中；MLA 使用另一条路径压缩缓存。[^gqa][^deepseek-v2]
+一个注意力层采用其中一种主要 K/V 组织方式。GQA 在 MHA 的质量和 MQA 的推理速度之间折中；MLA 使用另一条路径压缩缓存。
 
 ??? note "展开：head 共享为什么会影响 KV cache"
 
@@ -410,9 +416,9 @@ $$
 
 $g_t$ 控制已有状态保留或遗忘的程度，$k_t$、$v_t$ 参与写入，$\beta_t$ 控制更新。这个式子用于说明依赖方向。$S_t$ 依赖 $S_{t-1}$，因此朴素实现按 token 顺序递推。[^gated-deltanet]
 
-Gated DeltaNet 与标准 attention 位于同一个 TokenMixer 槽位。模型可以采用纯 Gated DeltaNet，也可以在不同层混合 Gated DeltaNet、滑动窗口 attention 或其他 TokenMixer；具体组合由模型架构决定。MoE 位于 ChannelMixer 槽位，因而可以和 Gated DeltaNet 同时出现在一个模型层中。[^gated-deltanet]
+Gated DeltaNet 与标准 attention 位于同一个 TokenMixer 槽位。模型可以采用纯 Gated DeltaNet，也可以在不同层混合 Gated DeltaNet、滑动窗口 attention 或其他 TokenMixer；具体组合由模型架构决定。MoE 位于 ChannelMixer 槽位，因而可以和 Gated DeltaNet 同时出现在一个模型层中。
 
-Lab 3 处理的是 Gated DeltaNet 的 prefill。序列可以切成固定长度的 chunk。chunk 边界仍传递状态，chunk 内的门控前缀、三角结构和矩阵乘可以组织为块计算。GPU 优化的对象由此变成 chunk 内的 GEMM、状态 tile、数据搬运和 warp 协作。
+Lab 3 处理的是 Gated DeltaNet 的 prefill。序列可以切成固定长度的 chunk。chunk 边界仍传递状态，chunk 内的门控前缀、三角结构和矩阵乘可以组织为块计算。GPU 优化的对象由此变成 chunk 内的 GEMM（general matrix multiplication，通用矩阵乘法）、状态 tile、数据搬运和 warp（GPU 通常以 32 个线程为一组调度的执行组）协作。
 
 ```text
 输入 Q / K / V / gate / beta
@@ -436,7 +442,7 @@ $W_1$ 通常将隐藏维度从 $H$ 扩展到更宽的中间维度，激活函数
 
     Transformer 的前馈网络由两层线性层和中间激活函数组成。它在 encoder 和 decoder 中都以逐位置方式运行；attention 负责位置之间的信息交换，前馈网络负责把每个位置的向量进一步变换。[^tf-transformer]
 
-SwiGLU（Swish Gated Linear Unit）和 GEGLU（GELU Gated Linear Unit）等门控 FFN 会从同一个输入生成两路中间表示，其中一路经过激活函数后作为门，逐元素调制另一路。可概括为
+SwiGLU（Swish Gated Linear Unit，使用 Swish/SiLU 激活的门控线性单元）和 GEGLU（GELU Gated Linear Unit，使用 GELU 激活的门控线性单元）等门控 FFN 会从同一个输入生成两路中间表示，其中一路经过激活函数后作为门，逐元素调制另一路。可概括为
 
 $$
 \operatorname{SwiGLU}(x)=W_{\mathrm{down}}\bigl(\operatorname{SiLU}(xW_{\mathrm{gate}})\odot(xW_{\mathrm{up}})\bigr)
@@ -444,7 +450,7 @@ $$
 
 这里的 $\odot$ 是逐元素乘法。它仍然逐 token 计算，不负责不同 token 的信息交换。
 
-MoE 将一个 dense FFN 换成多个 expert FFN。设有 $E$ 个 expert，router 对每个 token 输出 `[E]` 个分数。top-k 选择少数 expert 和相应权重。随后系统按 expert 重排 token，将同一 expert 的 token 组织成矩阵，再执行各 expert 的 FFN。
+MoE 将一个 dense FFN 换成多个 expert FFN。设有 $E$ 个 expert，router 对每个 token 输出 `[E]` 个分数。top-k 表示保留分数最高的 $k$ 个 expert 及其权重。随后系统按 expert 重排 token，将同一 expert 的 token 组织成矩阵，再执行各 expert 的 FFN。
 
 ```text
 hidden states [B,S,H]
@@ -462,13 +468,13 @@ $$
 y_t=g_{t,e_1}\,\operatorname{FFN}_{e_1}(x_t)+g_{t,e_2}\,\operatorname{FFN}_{e_2}(x_t)
 $$
 
-MoE 与 dense FFN 是同一槽位的替代关系；一个 expert 内部仍可以使用普通 FFN 或 SwiGLU。MoE 的额外代价来自 router、token dispatch、combine、expert 负载不均和可能的 All-to-All 通信。[^gshard]
+MoE 与 dense FFN 是同一槽位的替代关系；一个 expert 内部仍可以使用普通 FFN 或 SwiGLU。MoE 的额外代价来自 router、token dispatch、combine、expert 负载不均和可能的 All-to-All（全互换）通信。
 
 ![GShard 论文将普通 Transformer 中间的一个 FFN 层替换为 MoE 层。左侧是普通层，中间是插入 MoE 的层，右侧展示多个设备上按 expert 分片并通过 All-to-All dispatch 与 combine 交换 token。](assets/llm/gshard-moe-extension.png)
 
 *读这张图时先只看红色框。红框上方和下方的 attention、Add & Norm 结构保持不变，变化发生在原 FFN 所在的位置。中间栏的 gating 为 token 选择 expert。右侧将 expert 分到不同设备，token 先按目标 expert 分发，expert FFN 完成计算后再把结果按原 token 位置合并。论文画的是 encoder 示例，decoder-only 模型中的 MoE 也遵循同样的 FFN 替换与路由过程。[^gshard]*
 
-这正是 Lab 2 优化的局部路径。CPU 向量化、低精度矩阵乘法和缓存分块集中在 expert FFN 的 GEMM；router、token dispatch 和 combine 决定专家矩阵的实际 shape，也会影响负载均衡和端到端时间。
+Lab 2 优化的重点位于这条局部路径。CPU 向量化、低精度矩阵乘法和缓存分块集中在 expert FFN 的 GEMM；router、token dispatch 和 combine 决定专家矩阵的实际 shape，也会影响负载均衡和端到端时间。
 
 ??? tip "展开：一个 token 怎样经过 top-2 MoE"
 
@@ -518,7 +524,7 @@ logits 是未归一化分数。对最后一个位置的长度为 $V$ 的 logits 
 | Top-k | 仅保留概率最高的 $k$ 个候选 | 去掉低概率尾部 |
 | Top-p | 保留累计概率达到 $p$ 的最小候选集 | 随分布形状调整候选数 |
 
-Temperature、top-k、top-p 是输出采样策略，不是 Transformer 层。它们可以组合使用，例如先做 temperature 缩放，再在 top-p 候选中采样。不同设置会改变输出多样性、可复现性和评测结果。[^tf-text-generation]
+Temperature、top-k、top-p 是输出采样策略，不属于 Transformer 层。它们可以组合使用，例如先做 temperature 缩放，再在 top-p 候选中采样。不同设置会改变输出多样性、可复现性和评测结果。
 
 ![TensorFlow Text Generation 教程展示自回归采样循环。模型根据当前序列产生分布，采样出一个 token，将它追加到输入，再进入下一步。](assets/llm/tensorflow-text-generation-sampling.png)
 
@@ -538,7 +544,7 @@ Temperature、top-k、top-p 是输出采样策略，不是 Transformer 层。它
     [2.0, 1.0, 0.0, -1.0]
     ```
 
-    它们还不是概率。softmax 后约为 `[0.644, 0.237, 0.087, 0.032]`。greedy 直接选择第一个 token。
+    这些数仍是 logits。softmax 后约为 `[0.644, 0.237, 0.087, 0.032]`，greedy 会选择第一个 token。
 
     temperature 会先把 logits 除以温度 $T$。$T<1$ 时分布更尖锐，更偏向最高分 token。$T>1$ 时分布更平，更容易抽到次高分 token。top-k 例如 $k=2$ 时，会先丢弃后两个候选，再在前两个候选之间重新归一化并采样。top-p 则按从高到低累加概率，保留累计概率刚达到阈值的候选集。
 
@@ -595,7 +601,7 @@ input_ids [B,S]
 1. **Prefill** 一次处理 prompt 中已有的 $S$ 个 token，计算各层 K/V 并写入 KV cache。矩阵乘法较大，GPU 容易获得较高并行度。
 2. **Decode** 每次只加入一个新 token，读取历史 KV、计算新 token 的 K/V 和输出概率，再把新 K/V 追加到缓存。单步工作较小，cache 读取和请求调度常更显著。
 
-KV cache 是推理运行时状态。它保存各层历史 token 的 K/V。MHA、MQA、GQA、MLA 会改变缓存的表示和大小，量化或分页会改变它的存储与管理方式。Prefill 与 decode 是同一模型在不同序列阶段的执行模式。[^hf-cache]
+KV cache 是推理运行时状态。它保存各层历史 token 的 K/V。MHA、MQA、GQA、MLA 会改变缓存的表示和大小，量化或分页会改变它的存储与管理方式。Prefill 与 decode 是同一模型在不同序列阶段的执行模式。
 
 !!! quote "Hugging Face 文档关于 KV cache 的说明（译）"
 
@@ -624,7 +630,7 @@ $$
 
 ??? tip "展开：用一个小数字估算 KV cache"
 
-    假设有 2 层、每层 2 个 KV head、每个 head 维度为 4、上下文长 3，元素使用 BF16 的 2 字节。单个请求缓存约为
+    假设有 2 层、每层 2 个 KV head、每个 head 维度为 4、上下文长 3，元素使用 BF16（bfloat16，一种 16 位浮点格式）的 2 字节。单个请求缓存约为
 
     $$
     2\;\text{(K/V)}\times2\;\text{(layers)}\times3\;\text{(tokens)}\times2\;\text{(KV heads)}\times4\;\text{(head dim)}\times2\;\text{(bytes)}=192\;\text{bytes}
@@ -656,7 +662,7 @@ Prefill 与 decode 使用同一层权重，但张量形状不同。设 prompt �
 
 在 decode 的第 $t$ 步，每层只需要为新 token 计算一行 $q_t,k_t,v_t$。$q_t$ 与缓存的 $K_{\leq t}$ 相乘得到长度为 $t$ 的分数，随后与缓存的 $V_{\leq t}$ 加权求和。新 $k_t,v_t$ 会追加到该层 cache。历史 token 的 K/V 可以直接复用。Q 没有被长期缓存，因为下一步生成时需要的是新 token 的 query。
 
-Lab 5 覆盖这条完整路径中的多个位置。GPTQ（Generative Pre-trained Transformer Quantization，一种训练后量化方法）改变线性层权重的表示与反量化。KV cache 管理影响长上下文容量。算子融合影响每层读取和写回。continuous batching、paged cache 与请求调度决定多个请求怎样共享 GPU 时间。
+Lab 5 覆盖这条完整路径中的多个位置。GPTQ（Generative Pre-trained Transformer Quantization，一种训练后量化方法）改变线性层权重的表示与反量化。KV cache 管理影响长上下文容量。算子融合影响每层读取和写回。continuous batching（连续批处理）会在请求到达和完成时动态组织 batch；paged cache（分页缓存）把 KV cache 分成固定块管理。二者与请求调度共同决定多个请求怎样共享 GPU 时间。
 
 ## 训练和推理分别保存什么
 
@@ -669,15 +675,15 @@ Lab 5 覆盖这条完整路径中的多个位置。GPTQ（Generative Pre-trained
 | 推理 prefill | 全 prompt 的 K/V | KV cache |
 | 推理 decode | 新 token 的输出 | 扩展后的 KV cache |
 
-分布式训练中的 DP、FSDP、TP、PP 等策略处理训练状态和计算如何分布到多卡。它们改变参数、activation、梯度和通信发生的位置。
+分布式训练中的数据并行、完全分片数据并行、张量并行和流水线并行，处理训练状态和计算如何分布到多张卡。它们改变参数、activation、梯度和通信发生的位置。
 
 ## 与后续内容的联系
 
 | 页面或实验 | 位于这条路径中的位置 | 主要问题 |
 | --- | --- | --- |
 | [0716a：机器学习基础](0716a.md) | loss、梯度、Transformer 基础 | 监督学习、交叉熵、反向传播、Q/K/V |
-| [0716p：分布式训练与推理](0716p.md) | 训练状态和多卡执行 | DP、FSDP、TP、PP、通信 |
-| [0717a：算法—系统协同](0717a.md) | attention、MoE、量化、服务 | FlashAttention、KV cache、GPTQ、调度 |
+| [0716p：分布式训练与推理](0716p.md) | 训练状态和多卡执行 | 数据并行、参数分片、层内切分、流水线和通信 |
+| [0717a：算法—系统协同](0717a.md) | attention、MoE、量化、服务 | 高效注意力、键值缓存、GPTQ、调度 |
 | [Lab 2：MoE 向量化](../lab2/index.md) | FFN / MoE expert 路径 | router、token 重排、expert GEMM、量化和 CPU 向量化 |
 | [Lab 3：GDN Prefill](../lab3/index.md) | TokenMixer 的 prefill | Gated DeltaNet 状态更新、chunk、GPU kernel |
 | [Lab 5：Gemma4 推理](../lab5/index.md) | tokenizer 到 decode 的端到端路径 | GPTQ、KV cache、算子、批处理和服务调度 |
