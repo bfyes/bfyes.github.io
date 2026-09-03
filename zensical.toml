@@ -64,6 +64,7 @@ nav = [
                 { "性能分析基础 Profiling" = "study/hpc/notes/0712p.md" },
                 { "高性能计算高级话题" = "study/hpc/notes/0713a.md" },
                 { "CUDA 编程基础" = "study/hpc/notes/0713p.md" },
+                { "从文本到下一个 token" = "study/hpc/notes/llm.md" },
                 { "机器学习基础（上）" = "study/hpc/notes/0716a.md" },
                 { "机器学习基础（下）" = "study/hpc/notes/0716p.md" },
                 { "机器学习高级话题（上）" = "study/hpc/notes/0717a.md" },
