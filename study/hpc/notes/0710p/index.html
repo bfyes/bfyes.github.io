@@ -3817,7 +3817,7 @@
 
 
 
-<h1 id="07-10-下午向量化并行计算基础">07-10 下午：向量化并行计算基础<a class="headerlink" href="#07-10-下午向量化并行计算基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T09:41:46+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 6026 字</span></div>
+<h1 id="07-10-下午向量化并行计算基础">07-10 下午：向量化并行计算基础<a class="headerlink" href="#07-10-下午向量化并行计算基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T17:16:17+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 6026 字</span></div>
 <p>这一节讨论一段连续数组上的循环。它很小，却经常位于大程序最里面。Lab 2 中的路由、缩放和矩阵乘法，最终都会把一批数读入寄存器，完成运算，再写回数组。</p>
 <p>SIMD（single instruction, multiple data，单指令多数据）让一条机器指令同时处理一小组同类型元素。向量寄存器里的每个位置称为 lane。归约则把多份局部结果合并为一个数，例如求和或取最大值。SIMD 适合批量执行同一种操作，归约适合将多份局部结果合成一个结果。<sup id="fnref:numpy"><a class="footnote-ref" href="#fn:numpy">1</a></sup><sup id="fnref:intel-vector"><a class="footnote-ref" href="#fn:intel-vector">2</a></sup></p>
 <div class="admonition quote">

@@ -3741,7 +3741,7 @@
 
 
 
-<h1 id="07-13-下午cuda-编程基础">07-13 下午：CUDA 编程基础<a class="headerlink" href="#07-13-下午cuda-编程基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T09:41:46+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 4841 字</span></div>
+<h1 id="07-13-下午cuda-编程基础">07-13 下午：CUDA 编程基础<a class="headerlink" href="#07-13-下午cuda-编程基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T17:16:17+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 4841 字</span></div>
 <p>CUDA（Compute Unified Device Architecture，统一计算设备架构）程序同时有 host（主机，通常是 CPU）和 device（设备，通常是 GPU）两部分。host 负责准备数据、安排依赖并发射 kernel；device 用大量线程完成适合并行的数据处理。</p>
 <p>写 kernel 时，先把一个线程负责哪个输出位置说清楚。接着才讨论输入怎样进入 GPU、哪些数据可放进寄存器或 shared memory（共享内存）复用，以及哪些地方需要同步。<sup id="fnref:cuda-guide"><a class="footnote-ref" href="#fn:cuda-guide">1</a></sup></p>
 <div class="admonition quote">

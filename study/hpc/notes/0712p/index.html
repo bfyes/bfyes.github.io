@@ -3585,7 +3585,7 @@
 
 
 
-<h1 id="07-12-下午性能分析技术基础profiling">07-12 下午：性能分析技术基础（Profiling）<a class="headerlink" href="#07-12-下午性能分析技术基础profiling" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T09:41:46+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 5073 字</span></div>
+<h1 id="07-12-下午性能分析技术基础profiling">07-12 下午：性能分析技术基础（Profiling）<a class="headerlink" href="#07-12-下午性能分析技术基础profiling" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T17:16:17+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 5073 字</span></div>
 <p>性能分析从一份能稳定复现的运行开始。以 CPU 矩阵乘法为例，先决定计时从哪里开始、到哪里结束，再找出主要耗时的函数或循环，随后才检查计算、内存、线程和 NUMA（non-uniform memory access，非统一内存访问）带来的限制。</p>
 <p>热点是占用了较多时间、CPU 周期或其他资源的函数、循环或调用路径。IPC（instructions per cycle，每周期指令数）表示处理器平均每个周期完成多少条指令。FLOP（floating-point operation，浮点运算）表示一次浮点操作；矩阵乘法中的一次乘加通常按两次 FLOP 计。Lab 2 和 Lab 4 的性能报告可以沿用这条从现象到证据的过程。<sup id="fnref:nersc-perf"><a class="footnote-ref" href="#fn:nersc-perf">2</a></sup></p>
 <div class="admonition quote">

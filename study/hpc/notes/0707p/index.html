@@ -3741,7 +3741,7 @@
 
 
 
-<h1 id="07-07-下午hpc-中的计算机系统-i">07-07 下午：HPC 中的计算机系统 I<a class="headerlink" href="#07-07-下午hpc-中的计算机系统-i" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T09:41:46+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 5331 字</span></div>
+<h1 id="07-07-下午hpc-中的计算机系统-i">07-07 下午：HPC 中的计算机系统 I<a class="headerlink" href="#07-07-下午hpc-中的计算机系统-i" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T17:16:17+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 5331 字</span></div>
 <p>程序在计算节点上运行时，CPU、缓存、内存、线程和操作系统同时参与执行。数据送达核心的速度，以及多个执行流之间的等待，都会进入最终运行时间。</p>
 <p>缓存保存最近或相邻使用的数据，用来减少较慢内存访问。OpenMP（Open Multi-Processing，共享内存线程并行接口）、MPI（Message Passing Interface，消息传递接口）、向量化和 profiler 都建立在这些机制上。后面会依次看指令依赖、缓存命中、共享写入、NUMA（Non-Uniform Memory Access，非一致内存访问）数据位置和进程等待。<sup id="fnref:intel-opt"><a class="footnote-ref" href="#fn:intel-opt">1</a></sup></p>
 <div class="admonition tip">

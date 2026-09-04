@@ -3593,7 +3593,7 @@
 
 
 
-<h1 id="大语言模型导读一轮回答怎样生成">大语言模型导读：一轮回答怎样生成<a class="headerlink" href="#大语言模型导读一轮回答怎样生成" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T09:41:46+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 9673 字</span></div>
+<h1 id="大语言模型导读一轮回答怎样生成">大语言模型导读：一轮回答怎样生成<a class="headerlink" href="#大语言模型导读一轮回答怎样生成" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T17:16:17+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 9673 字</span></div>
 <p>大语言模型的一次回答可以拆成一串连续的计算。文字先变成 token 编号，编号再变成向量。模型层不断更新这些向量，最后给词表中的候选 token 打分。选出的新 token 会加入已有文本，下一步从这里继续。</p>
 <p>这一页讨论 <strong>decoder-only 自回归模型</strong>。聊天模型和代码模型常采用这种结构。它依据已有 token 预测下一个 token，再把结果加入上下文。后面的机器学习四节、Lab 2、Lab 3、Lab 5 会分别展开这条链中的一段。</p>
 <div class="admonition tip">

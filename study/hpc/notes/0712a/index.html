@@ -3583,7 +3583,7 @@
 
 
 
-<h1 id="07-12-上午openmpc-线程与-mpi-并行计算基础">07-12 上午：OpenMP、C++ 线程与 MPI 并行计算基础<a class="headerlink" href="#07-12-上午openmpc-线程与-mpi-并行计算基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T09:41:46+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 4713 字</span></div>
+<h1 id="07-12-上午openmpc-线程与-mpi-并行计算基础">07-12 上午：OpenMP、C++ 线程与 MPI 并行计算基础<a class="headerlink" href="#07-12-上午openmpc-线程与-mpi-并行计算基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T17:16:17+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 4713 字</span></div>
 <p>并行程序先要确定数据由谁读、由谁写，以及什么时候可以交给下一份工作。数据边界不同，程序会采用 OpenMP、C++ 线程或 MPI 等不同结构。</p>
 <p>OpenMP（Open Multi-Processing，开放式多处理）让同一进程里的线程共同处理数组。MPI（Message Passing Interface，消息传递接口）让独立进程通过消息交换数据。C++ 标准库提供更底层的线程和同步工具。Lab 1 的 HPL（High Performance Linpack，高性能 Linpack 基准）使用 MPI；Lab 2 的 CPU kernel 会遇到线程与 SIMD；后续工作可将 MPI、OpenMP 和 GPU 组合起来。<sup id="fnref:openmp-spec"><a class="footnote-ref" href="#fn:openmp-spec">3</a></sup><sup id="fnref:mpi-standard"><a class="footnote-ref" href="#fn:mpi-standard">8</a></sup></p>
 <div class="admonition quote">
