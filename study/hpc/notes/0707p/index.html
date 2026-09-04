@@ -1277,6 +1277,8 @@
       
         
       
+        
+      
     
     
     
@@ -1411,6 +1413,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#一个数组在节点内经历什么" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        一个数组在节点内经历什么
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cpu-执行与流水线" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -1473,10 +1486,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#缓存一致性与-false-sharing" class="md-nav__link">
+  <a href="#时间局部性空间局部性与工作集" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        缓存一致性与 false sharing
+        时间局部性、空间局部性与工作集
       </span>
     </span>
   </a>
@@ -1488,6 +1501,17 @@
     <span class="md-ellipsis">
       <span class="md-typeset">
         缓存行、关联度与预取
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#缓存一致性与-false-sharing" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        缓存一致性与 false sharing
       </span>
     </span>
   </a>
@@ -1674,10 +1698,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#阿姆达尔amdahl定律" class="md-nav__link">
+  <a href="#阿姆达尔定律" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        阿姆达尔（Amdahl）定律
+        阿姆达尔定律
       </span>
     </span>
   </a>
@@ -1848,6 +1872,33 @@
     
   
   CUDA 编程基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  从文本到下一个 token
 
     
   </span>
@@ -3351,6 +3402,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#一个数组在节点内经历什么" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        一个数组在节点内经历什么
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cpu-执行与流水线" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -3413,10 +3475,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#缓存一致性与-false-sharing" class="md-nav__link">
+  <a href="#时间局部性空间局部性与工作集" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        缓存一致性与 false sharing
+        时间局部性、空间局部性与工作集
       </span>
     </span>
   </a>
@@ -3428,6 +3490,17 @@
     <span class="md-ellipsis">
       <span class="md-typeset">
         缓存行、关联度与预取
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#缓存一致性与-false-sharing" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        缓存一致性与 false sharing
       </span>
     </span>
   </a>
@@ -3614,10 +3687,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#阿姆达尔amdahl定律" class="md-nav__link">
+  <a href="#阿姆达尔定律" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        阿姆达尔（Amdahl）定律
+        阿姆达尔定律
       </span>
     </span>
   </a>
@@ -3668,411 +3741,269 @@
 
 
 
-<h1 id="07-07-下午hpc-中的计算机系统-i">07-07 下午：HPC 中的计算机系统 I<a class="headerlink" href="#07-07-下午hpc-中的计算机系统-i" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-25T14:41:21+08:00">2026/08/25</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 11673 字</span></div>
-<p>一条算术指令很少单独决定程序速度。数据抵达执行单元之前会经过 cache<sup id="fnref:cache"><a class="footnote-ref" href="#fn:cache">1</a></sup> 和地址翻译；多个线程<sup id="fnref:thread"><a class="footnote-ref" href="#fn:thread">2</a></sup>又会争用 cache、内存带宽和同步点。理解这些路径，才能解释同一份循环为何会随数据布局和线程数而变化。</p>
-<h2 id="cpu-执行与流水线">CPU 执行与流水线<a class="headerlink" href="#cpu-执行与流水线" title="Permanent link"></a></h2>
-<p>CPU 执行的是指令。编译器把 C/C++ 等源代码翻译成目标指令；程序计数器<sup id="fnref:pc"><a class="footnote-ref" href="#fn:pc">3</a></sup>（PC，在 x86 上常称 RIP）指向下一条指令；控制器取指、译码，把操作送到算术逻辑单元、浮点单元、访存单元等部件。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/cpu-die-abstraction.jpg"><img width="1280" height="720" class="lqip" alt="课件用 CPU die 的抽象说明 CPU 抽象：真正重要的是程序计数器、寄存器文件与算术/访存单元这些可见状态。" src="../assets/0707p/cpu-die-abstraction.preview.jpg" data-fullsrc="../assets/0707p/cpu-die-abstraction.jpg" /></a></p>
-<p><em>图：CPU 的抽象视图——PC 指向下一条指令，寄存器保存中间状态；流水线与 cache 都是在这之上为提吞吐添加的内部结构。</em></p>
-<details class="note" open="open">
-<summary>从单周期 CPU 到流水线</summary>
-<p>单周期 CPU 在一个时钟周期里取指、译码、执行、访存、写回一口气全部做完，下个周期再做下一条。这种设计直观但有问题。</p>
-<ul>
-<li>时钟周期必须按<strong>最慢的那条指令</strong>（常常是访存或乘法）来定长，快指令也被拖到这同一个周期</li>
-<li>每个时刻只有一个部件在干活，其余都在等。</li>
-</ul>
-<p>流水线的思路<sup id="fnref:pipeline"><a class="footnote-ref" href="#fn:pipeline">4</a></sup>是把取指、译码、执行、访存、写回拆成<strong>独立阶段</strong>，让不同指令同时处在不同阶段——第 1 条做写回的同时，第 2 条在访存、第 3 条在执行、第 4 条在译码、第 5 条在取指。单条指令的延迟并没有变短，但<strong>每周期能完成一条指令</strong>，吞吐大幅提升。代价是引入了依赖：第 2 条若要第 1 条的结果，就得等；跳转指令还会让已经取进来的后续指令可能作废。</p>
-<p>理解 HPC 时，流水线告诉你一个基本事实，<strong>处理器在意的是吞吐（每周期完成几条），而不只是单条指令有多快</strong>。写高性能代码时，尽量多提供彼此独立的指令，让流水线一直被有用工作填满。</p>
-</details>
-<p>顺序地看，一条指令经历取指、译码、执行、访存、写回。现代处理器把这些阶段重叠成流水线，也会在不改变可见结果的前提下乱序执行彼此独立的指令。比如一条内存读取还没回来，后面与它无关的算术指令可以先做。</p>
-<p>but，乱序不是任意改顺序，如下面的第二行依赖第一行的结果，不能提前。</p>
-<pre class="highlight"><code class="language-cpp">int x = a + b;
-int y = x * c;</code></pre>
-<p>相反，若 <code>u = d + e</code> 与 <code>x = a + b</code> 无关，硬件或编译器可能同时安排它们。高性能程序常试图提供更多独立工作，以隐藏一次运算或访存的延迟。</p>
-<h3 id="分支预测">分支预测<a class="headerlink" href="#分支预测" title="Permanent link"></a></h3>
-<p>遇到 <code>if</code>、循环跳转时，处理器需要猜下一条指令在哪里。猜对时流水线继续流动；猜错时已经取入/执行的一部分工作要丢弃，重新从正确路径开始。数据随机、条件难预测的分支常比直觉上慢得多。把大量小分支改写成规则数组操作，有时既利于分支预测，也利于向量化，但必须先验证语义没有变化。</p>
-<h3 id="流水线停顿与依赖">流水线停顿与依赖<a class="headerlink" href="#流水线停顿与依赖" title="Permanent link"></a></h3>
-<p>从顺序模型看，CPU 每个周期执行一条指令；现实中一条指令分成取指、译码、分派、执行、访存、提交等阶段。流水线让不同指令同时占据不同阶段。理想情况下，每周期都有新指令完成，吞吐很高；一条指令的总延迟却没有因此消失。</p>
-<p>流水线被打断的原因常被归为三类。数据相关最直观：后一条要使用前一条尚未产生的结果。结构冲突指多个操作争同一个执行单元或访存端口。控制相关来自分支，处理器不知道接下来该取哪条指令。现代 CPU 用 forwarding、更多执行单元、分支预测和推测执行缓解这些问题，但真实依赖和错误分支仍然会留下空泡。</p>
-<p>例如下面的累加有一条很长的依赖链：</p>
-<pre class="highlight"><code class="language-cpp">for (int i = 0; i &lt; n; ++i)
-    sum += x[i];</code></pre>
-<p>每次 <code>sum</code> 都依赖上一次的结果。编译器或手写代码可以使用多个局部累加器，把一条链拆为几条独立链，最后再合并；向量化归约也采用相近想法。效果取决于处理器能否借此发现原先不存在的独立工作，循环展开本身不保证更快。</p>
-<h3 id="乱序推测与提交">乱序、推测与提交<a class="headerlink" href="#乱序推测与提交" title="Permanent link"></a></h3>
-<p>乱序执行让处理器在等待某条慢指令时，先发射已经具备输入的其他指令。为了让程序对外仍像按顺序运行，现代 CPU 会给寄存器重命名，记录指令真正依赖的是哪一个临时物理寄存器；计算结果可以先完成，但通常按程序顺序提交到架构可见状态。</p>
-<p>分支预测则先猜条件结果，并沿猜测路径取指、执行。预测正确时，延迟被隐藏；预测错时，需要撤销错误路径上的推测工作，流水线重新从正确地址开始。随机数据上的阈值判断、间接跳转和难预测的状态机都可能因此变慢。优化前应先测量：有时改数据表示、消除分支或让条件按块集中，比微调某条算术指令更有效。</p>
-<div class="admonition question">
-<p class="admonition-title">思考题</p>
-<p>为什么一条指令的执行可以被拆成取指、译码、执行、访存、写回？流水线提高吞吐的前提是什么？</p>
-<details class="tip">
-<summary>答案</summary>
-<p>一条指令完成的是一串不同阶段的工作，硬件可以把这些阶段做成流水段，让各段同时处理不同指令。这样单条指令的完成时间不一定缩短，但稳态下可以在每个周期推出一条结果。前提是指令流能连续供给，阶段之间不会长期互相等待；一旦出现数据依赖、分支方向不明或 cache miss，流水线就要停顿、冲刷或等待。</p>
-</details>
-</div>
-<h2 id="存储层级与访存代价">存储层级与访存代价<a class="headerlink" href="#存储层级与访存代价" title="Permanent link"></a></h2>
-<p>寄存器最接近执行单元、容量最小；其次是 L1、L2、L3 cache；再往外是 DRAM<sup id="fnref:dram"><a class="footnote-ref" href="#fn:dram">5</a></sup>。越往外容量越大、单位容量越便宜，但访问延迟和带宽代价也越高。CPU 通常以 <strong>cache line</strong> 为单位搬运一段连续字节，很少单独取一个 <code>double</code>。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-hierarchy-registers.jpg"><img width="1280" height="720" class="lqip" alt="课件的 Memory Hierarchy：从寄存器、cache、主存到外存，越往里越快越小，越往外越大越慢。" src="../assets/0707p/memory-hierarchy-registers.preview.jpg" data-fullsrc="../assets/0707p/memory-hierarchy-registers.jpg" /></a></p>
-<p><em>图：存储层级是快、小、贵与大、慢、便宜的连续权衡。访存位置决定性能。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-cost.jpg"><img width="1280" height="720" class="lqip" alt="课件用一条对数轴展示各操作的成本（CPU cycles）：寄存器/L1 极快，DRAM 在百周期量级，磁盘更慢好几个数量级。" src="../assets/0707p/memory-cost.preview.jpg" data-fullsrc="../assets/0707p/memory-cost.jpg" /></a></p>
-<p><em>图：不同层级访存代价相差甚远。</em></p>
-<details class="note" open="open">
-<summary>为什么现代 CPU 需要 cache</summary>
-<p>现代真实系统里，主存 DRAM 的访问延迟大约是 CPU 寄存器/执行单元的几十到几百倍。如果每条指令要访存的都直接去 DRAM，处理器大部分时间会干等着数电压的流动，算力白搭。</p>
-<p>cache 就是为了弥合这个速度差：在 CPU 和主存之间放几层又快又小的存储，把最近用过的数据（及其附近的数据）暂时放在离 CPU 更近的地方。核心思想是两条经验——<strong>时间局部性</strong>（刚用过的数据很可能马上再用）和<strong>空间局部性</strong>（刚用过的地址附近的数据很可能马上也会用）。连续遍历数组所以快，正因为下一批元素大概率已在 cache 里。</p>
-<p>程序性能往往取决于数据所处的层级和是否停在足够近的 cache，指令条数是次要因素。后面几乎所有优化——改循环顺序、分块、SoA 布局——都是为了把数据更多地留在较近的层级、减少从 DRAM 反复搬上来的次数。</p>
-</details>
-<pre class="highlight"><code class="language-text">寄存器
-  L1 cache（每核，最快的小缓存）
-  L2 cache（每核或小范围共享）
-  L3 cache（多个核心共享）
-主内存 DRAM</code></pre>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-latency-x200.jpg"><img width="1280" height="720" class="lqip" alt="课件给出 cache 与内存延迟的相对倍数（这里 ×200 量级）：64KB 以内约一条时间线、4MB 以内约另一条时间线、更大的数据落回更慢的外部内存；工作集越大越容易超出 cache 容量。" src="../assets/0707p/memory-latency-x200.preview.jpg" data-fullsrc="../assets/0707p/memory-latency-x200.jpg" /></a></p>
-<p><em>图：工作集可以按三层看——64KB 以内由 L1 cache 承接，4MB 以内由 L2 cache 承接，更大则落到外部内存（DRAM）；每往一层，延迟都会跳高一大截，这正是 cache 命中和 miss 性能相差悬殊的原因。</em></p>
-<p>缓存设计利用两种经验：最近用过的数据可能再用（时间局部性），某个地址附近的数据可能很快也会用（空间局部性）。因此，连续遍历数组往往比随机跳转访问更快；矩阵乘法用小块计算，是为了让一块 A/B/C 数据留在 cache 里被重复使用。</p>
-<pre class="highlight"><code class="language-cpp">// C/C++ 多维数组按行存放；j 在内层时通常是连续访问。
-for (int i = 0; i &lt; rows; ++i)
-    for (int j = 0; j &lt; cols; ++j)
-        sum += a[i][j];</code></pre>
-<p>缓存命中不等于一定快，未命中也不必然是 bug。要看访问模式、工作集大小和总时间。性能分析课中的 cache-miss 指标正是用来验证这些判断。</p>
-<h3 id="缓存一致性与-false-sharing">缓存一致性与 false sharing<a class="headerlink" href="#缓存一致性与-false-sharing" title="Permanent link"></a></h3>
-<p>多核机器中，同一内存位置可能被多个核心缓存。硬件通过一致性协议保证一个核心写入后，其他核心最终不会长期读到旧值。代价是写入会让其他缓存中的相关 cache line 失效。</p>
-<p>即使两个线程写的是不同变量，只要变量落在同一 cache line，也会互相使对方的缓存失效。这称为 false sharing。典型例子是多个线程把局部统计量紧挨着放在数组里。常见处理办法是每线程保存私有结果、最后归约，或在确认是热点后做适当填充；不要一开始就到处加 padding。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/cache-line-false-sharing.jpg"><img width="1280" height="720" class="lqip" alt="课件用 cache line 与系统查询命令说明：相邻变量可被装入同一条 line，从而造成 false sharing。" src="../assets/0707p/cache-line-false-sharing.preview.jpg" data-fullsrc="../assets/0707p/cache-line-false-sharing.jpg" /></a></p>
-<p><em>图：line 大小应在目标机器上查询。课件示例为 64 B；不能把这个数当成所有 CPU 的固定常量。</em></p>
-<div class="admonition warning">
-<p class="admonition-title">把 false sharing 与数据竞争分开</p>
-<p>两个线程写同一个 <code>sum</code> 是正确性错误；两个线程写同一 cache line 中不同的私有槽位，结果可以正确却很慢。前者需要重新定义所有权或同步，后者才考虑 padding、分块或改变归约布局。</p>
-</div>
-<h3 id="缓存行关联度与预取">缓存行、关联度与预取<a class="headerlink" href="#缓存行关联度与预取" title="Permanent link"></a></h3>
-<p>cache 以缓存行（line）为单位填充，x86 常见一行 64 字节。读一个 <code>float x[i]</code> 可能把相邻 15 个 float 一并带入 L1；这正是连续访问容易快的物理原因，也是伪共享（false sharing）会发生在不同变量上的原因。若每次跨很大的固定步长访问，只用到每行的一个元素，内存带宽会被无效字节消耗。结构体里只使用少数热点字段时，改用结构体数组（SoA）有时能避免把无关字段也带进缓存行（上一节那张图已画出缓存行的这一行为，并用查询命令给出当前机器的行大小）。</p>
-<p>cache 是有限且按组组织的。地址中的一部分位选择缓存组（cache set），同一组能同时容纳的行数由相联度（associativity）决定。多个频繁访问的地址若恰好映射到同一组，会相互驱逐，即使总工作集小于 cache 容量也会发生冲突未命中（conflict miss）。大多数程序无需手工计算组，但矩阵行列访问、固定步长数组和多数组同步遍历出现反常性能时，填充（padding）或改变分块（tile）尺寸可能消除冲突；它应由硬件计数器和尺寸扫描验证。</p>
-<p>硬件预取器（prefetcher）会尝试预测线性或规则步长流，在真正读入（load）前把后续缓存行拉近。它对顺序数组极有效，对随机指针链、哈希表或数据相关间接索引帮助很小。软件预取（prefetch）也不是通用加速器：预取得太早会被挤出，太晚来不及，错误预取还会占用带宽。先让布局和循环顺序规律，通常比插入预取指令更可靠。</p>
-<div class="admonition question">
-<p class="admonition-title">思考题</p>
-<p>两个线程分别频繁写同一个 cache line 里的不同变量，为什么程序会变慢？这叫什么问题？</p>
-<details class="tip">
-<summary>答案</summary>
-<p>这叫 false sharing。变量虽然逻辑上不相干，但落在同一个 cache line，硬件维护一致性时会让两边的 cache line 反复失效。一个线程写完，另一个线程再写，通信量被放大，性能下降。把两个变量按 cache line 对齐分开，或让每个线程写自己连续的区域，可以缓解。</p>
-</details>
-</div>
-<h2 id="进程与地址空间">进程与地址空间<a class="headerlink" href="#进程与地址空间" title="Permanent link"></a></h2>
-<p>进程是操作系统分配<sup id="fnref:process"><a class="footnote-ref" href="#fn:process">6</a></sup>和保护资源的基本单位。一个进程拥有自己的虚拟地址空间<sup id="fnref:vas"><a class="footnote-ref" href="#fn:vas">7</a></sup>、打开的文件、权限和运行状态。它看见的地址是虚拟地址，不等于物理内存条上的地址；这使两个进程都可以使用看似相同的地址而互不干扰。</p>
-<details class="note" open="open">
-<summary>进程 &amp; 线程</summary>
-<p>进程是资源隔离的单位、线程是共享内存并行执行的最小单位。</p>
-<p><strong>进程</strong>是一个程序运行时的完整实例。它有自己独立的虚拟地址空间、自己的寄存器状态、自己的文件描述符和权限。两个进程不能互相直接读对方内存，这是一层隔离，也是安全的基础。</p>
-<p><strong>线程</strong>是进程内部更小的执行单元。同一进程的多个线程<strong>共享</strong>地址空间（所以能直接读写同一变量、同一块动态内存）和大部分资源，只是各自有独立的栈和寄存器上下文。创建线程比创建进程更轻，但共享内存也意味着它们需要自己处理谁先写、谁后读的同步。</p>
-<p>现代 CPU 多核并行，通常就是在一个进程里开多个线程、或开多个进程各自跑一块，再靠通信把结果合起来。OpenMP 在进程内开线程、MPI 跨进程通信，底子都是这里讲的进程/线程区别。</p>
-</details>
-<p>磁盘上的可执行文件采用 ELF（Executable and Linkable Format）时，文件里既有待加载的代码和数据，也可能有符号表、调试信息等运行时不必装入内存的内容。加载器读取 program header，把若干 section 组合成具有读、写、执行权限的内存 segment。于是文件里有什么和进程地址空间里映射了什么并非一一对应。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/elf-sections.jpg"><img width="1280" height="720" class="lqip" alt="ELF 文件中的 section 会按运行权限组合成代码段和可写数据段，符号及调试信息通常不映射进进程。" src="../assets/0707p/elf-sections.preview.jpg" data-fullsrc="../assets/0707p/elf-sections.jpg" /></a></p>
-<p><em>图：<code>.text</code>、<code>.rodata</code> 常进入只读/可执行映射，<code>.data</code>、<code>.bss</code> 进入可写映射；section header 主要描述链接视角，program header 服务于加载。</em></p>
-<details class="info">
-<summary>ELF 为什么值得认识</summary>
-<p>编译报错、链接报错和程序启动失败落在不同边界。<code>readelf -h/-S/-l</code> 可分别查看 ELF 头、section 和 segment；<code>nm</code> 看符号；<code>ldd</code> 看动态依赖。源码里有函数却出现 <code>undefined reference</code>，多半是链接器没找到定义；文件已经生成却提示缺少 <code>.so</code>，则是动态加载阶段的问题。</p>
-</details>
-<p>进程运行时至少可粗略分为代码区、全局/静态数据、堆和栈。代码区放机器指令；堆用于动态分配；每个线程有自己的栈。<code>fork</code> 在 Unix 中可创建子进程，常配合 copy-on-write：创建时不急着复制所有内存页，只有某一方修改时才真正复制，以降低启动开销。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/process-address-space.jpg"><img width="1280" height="720" class="lqip" alt="一个常见的进程虚拟地址空间：text、data、heap 向上增长，stack 向下增长。" src="../assets/0707p/process-address-space.preview.jpg" data-fullsrc="../assets/0707p/process-address-space.jpg" /></a></p>
-<p><em>图：这些区域属于进程的虚拟地址视图；实际物理页由页表映射，图中的增长方向也是典型布局而非语言保证。</em>
-进程间默认不能直接读写彼此内存。要交换数据，使用文件、管道、socket、共享内存或 MPI 等明确机制。隔离提高安全性，但也让跨进程通信比同进程访问变量更贵。</p>
-<details class="info" open="open">
-<summary>虚拟地址为什么有用</summary>
-<p>虚拟地址是进程使用的地址编号，不是内存条上的坐标。它让每个进程拥有独立、连续的地址视图，并让内核能在页表<sup id="fnref:page-table"><a class="footnote-ref" href="#fn:page-table">8</a></sup>中标记可读、可写、可执行等权限。同一个数值地址在两个进程中可以映射到不同物理页；一个进程越界访问时，硬件和内核可据此阻止它伤害另一个进程。</p>
-</details>
-<h3 id="进程状态与抢占">进程状态与抢占<a class="headerlink" href="#进程状态与抢占" title="Permanent link"></a></h3>
-<p>进程并非从启动到退出一直占着 CPU。它至少会在运行（running）、就绪（runnable/ready）和等待（sleeping/blocked）之间变化。就绪表示它有事可做、但尚未得到核心；等待表示它在等磁盘、网络、锁、子进程或定时器，暂时不能继续执行。结束后内核还会短暂保留退出状态，直到父进程读取退出码。</p>
-<pre class="highlight"><code class="language-text">创建 -&gt; 就绪 --被调度--&gt; 运行 --时间片到/被抢占--&gt; 就绪
-                         |  
-                         +--等待 I/O 或锁--&gt; 等待 --事件到达--&gt; 就绪
-                         |
-                         +--exit--&gt; 退出</code></pre>
-<p>从就绪到运行，由操作系统按某种策略挑选下一个进程，进程自己并不抢占 CPU。课件以 Round Robin（时间片轮转）为例：给每个进程一小段固定时间片，到点后无论是否跑完都被换下，轮给下一个进程。下面图里 P1、P2、P3 在一条时间轴上轮流占 CPU。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/process-schedule-round-robin.png"><img width="1280" height="720" class="lqip" alt="课件以 Round Robin 时间片轮转调度为例：P1、P2、P3 在时间轴上轮流占用 CPU，每个进程的时间片到点就被换下，交给下一个。" src="../assets/0707p/process-schedule-round-robin.preview.jpg" data-fullsrc="../assets/0707p/process-schedule-round-robin.png" /></a></p>
-<p><em>图：进程调度有 Non-preemptive（非抢占，跑完才换）与 Preemptive（抢占，可被中断换下）之分；Round Robin 属于后者，靠固定时间片轮流。</em></p>
-<p>I/O 完成、网卡收到包、定时器到期等硬件事件会通过中断通知内核；内核再唤醒相应任务，必要时安排调度。中断处理本身要尽量短，较重的工作会延后处理，否则一个设备事件也可能拖慢整台机器。程序看起来没在使用 CPU，往往是在等待另一项资源，或已经被阻塞在同步点。</p>
-<details class="info" open="open">
-<summary>抢占（preemption）</summary>
-<p>抢占是内核暂时停止一个仍可运行的任务，把 CPU 让给另一个任务的机制。交互系统靠它避免一个程序独占机器；共享集群也靠它维护调度策略。计算作业不应假设某个线程从开始到结束都不被打断，因此计时要重复多次，并避免把一次偶然的系统干扰当成优化结论。</p>
-</details>
-<p><code>ps -o pid,ppid,stat,psr,comm -p &lt;pid&gt;</code> 可查看一个进程的状态、父进程和最近运行的 CPU；<code>top -H -p &lt;pid&gt;</code> 可在系统支持时查看进程中的线程。它们是瞬时观察，不是完整的性能证据：某线程显示为 sleeping，只说明采样时刻它没有运行，仍需结合程序的 I/O、锁和 profiler 事件判断等待原因。</p>
-<h3 id="系统调用页与缺页">系统调用、页与缺页<a class="headerlink" href="#系统调用页与缺页" title="Permanent link"></a></h3>
-<p>用户态代码执行 <code>read</code>、<code>write</code>、<code>mmap</code> 或创建线程时，会经由系统调用陷入内核。这里的陷入，指 CPU 切换到受保护的执行权限，让内核检查参数和权限，再操作文件系统、页表或调度器。系统调用边界有固定成本，因此逐字节调用 <code>read</code>、每次循环都打开文件，常会比按块缓冲处理慢得多；这也是并行文件系统偏好大块、顺序 I/O 的一个微观原因。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/trap-control-flow.jpg"><img width="1280" height="720" class="lqip" alt="异常或系统调用发生后，处理器保存返回位置并转入内核处理函数，处理结束后再恢复用户程序。" src="../assets/0707p/trap-control-flow.preview.jpg" data-fullsrc="../assets/0707p/trap-control-flow.jpg" /></a></p>
-<p><em>图：控制流跨过用户态—内核态边界时，程序计数器和寄存器状态必须可恢复；进程没有跳过原程序，只是暂时执行受保护的处理路径。RISC-V 统称这类事件为 trap，涵盖异常与中断；处理器保存现场、执行处理、再恢复原程序，是系统调用与缺页的共同基础。</em></p>
-<p>陷入内核的原因可以分开看。用户态程序想做特权操作（读写文件、分配内存、网络）时，就要通过系统调用请求内核代劳。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/system-call-privileged.jpg"><img width="1280" height="720" class="lqip" alt="课件说明什么时候需要系统调用：用户程序要做特权操作时陷入内核；系统调用是受保护的请求，不是程序本身出错。" src="../assets/0707p/system-call-privileged.preview.jpg" data-fullsrc="../assets/0707p/system-call-privileged.jpg" /></a></p>
-<p><em>图：系统调用把特权操作交给内核执行；CPU 切换权限并检查参数是它的固定开销来源。</em></p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/system-call-handler.jpg"><img width="1280" height="720" class="lqip" alt="课件画出系统调用处理的路径：用户进程发起调用，CPU 陷入内核，系统调用处理函数执行后返回用户态。" src="../assets/0707p/system-call-handler.preview.jpg" data-fullsrc="../assets/0707p/system-call-handler.jpg" /></a></p>
-<p><em>图：从用户态进入、内核处理、返回用户态，这套路径的固定成本，让每次调用尽量多干点活变得重要。</em></p>
-<table>
-<thead>
-<tr>
-<th>来源</th>
-<th>是否由当前指令主动触发</th>
-<th>例子</th>
-<th>处理后能否继续</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>系统调用</td>
-<td>是</td>
-<td><code>read</code>、<code>mmap</code>、<code>futex</code></td>
-<td>通常返回下一条用户指令</td>
-</tr>
-<tr>
-<td>异常</td>
-<td>由当前指令产生</td>
-<td>page fault、除零、非法指令</td>
-<td>取决于异常能否修复</td>
-</tr>
-<tr>
-<td>中断</td>
-<td>否，来自外部设备或时钟</td>
-<td>网卡收包、定时器</td>
-<td>内核处理后恢复被打断任务</td>
-</tr>
-</tbody>
-</table>
-<p>一次 minor page fault 可以由内核补上页表映射后重试原指令；越界访问若没有合法映射，内核会给进程发送 <code>SIGSEGV</code>。两者在硬件入口上都涉及异常，但软件语义和代价完全不同。（页和缺页的基本含义，后文虚拟内存与页表一节会系统讲解；这里先用得上的两点：页是内存按固定大小切出的块，缺页是访问时该块尚未有物理映射、由内核补上或判定非法。）</p>
-<p>虚拟内存以页为单位管理，常见页大小是 4 KiB（系统也可能使用 huge page）。<code>malloc</code> 成功通常只取得一段虚拟地址，不代表相同数量的 DRAM 已经立即占用。第一次写入某页时，处理器发现页表尚无有效物理映射，内核分配页面并更新页表，这就是按需分配造成的 minor page fault；若数据必须从磁盘换回，才是代价高得多的 major page fault。初始化一个数十 GB 数组也因此是实际工作，不能偷偷排除在端到端计时之外。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/huge-pages-tlb.jpg"><img width="1280" height="720" class="lqip" alt="4 KiB、2 MiB 与 1 GiB 页对 TLB 覆盖范围的影响；大页以更粗粒度减少地址翻译条目压力。" src="../assets/0707p/huge-pages-tlb.preview.jpg" data-fullsrc="../assets/0707p/huge-pages-tlb.jpg" /></a>
-<em>图：课件列出常见页大小及其覆盖范围。是否使用 huge page 取决于工作集、分配策略和系统配额，并非默认优化。</em></p>
-<p>地址翻译本身有缓存：TLB<sup id="fnref:tlb"><a class="footnote-ref" href="#fn:tlb">9</a></sup> 保存最近的虚拟页到物理页映射。连续扫描数组时，一条 TLB 项能覆盖其后一段地址；指针追逐或巨大的随机工作集会更频繁地耗尽 TLB。cache blocking 改善数据复用时，往往也同时改善 TLB 行为，不过页大小、对齐和访问顺序仍需要用测量确认。</p>
-<h3 id="forkexec-与文件描述符"><code>fork</code>、<code>exec</code> 与文件描述符<a class="headerlink" href="#forkexec-与文件描述符" title="Permanent link"></a></h3>
-<p>Unix 进程创建常见于 <code>fork()</code>。子进程最初得到父进程地址空间和文件描述符表的逻辑副本，但内核不会立刻复制全部物理页，先把双方页面标为 <strong>copy-on-write</strong>。只有父或子尝试写某页时，内核才复制该页。这让创建后立刻 <code>exec</code> 新程序的模式不必浪费复制整段内存的时间。</p>
-<p><code>execve()</code> 不创建新进程，它把当前进程的地址空间替换为目标可执行文件及其依赖库；PID 通常不变。shell 执行外部命令的基本过程便是 fork 一个子进程、在子进程中 exec、父进程按需要等待。作业系统启动 MPI rank、Python 的多进程库和管道也会建立在相似的进程机制上。</p>
-<p>文件描述符是进程内的小整数，指向内核维护的打开文件、管道、socket 或设备对象。标准输入/输出/错误一般是 0、1、2。fork 后父子会继承描述符，因此重定向、管道和日志输出需要特别注意谁还持有写端：管道读端只有在所有写端关闭后才会读到 EOF。这里的资源所有权，与多线程中谁可以写共享变量，是同一类工程问题。</p>
-<div class="admonition question">
-<p class="admonition-title">思考题</p>
-<p>为什么两个进程可以都使用地址 <code>0x400000</code>，而它们实际访问的数据不同？</p>
-<details class="tip">
-<summary>答案</summary>
-<p>进程看到的是虚拟地址。CPU 通过页表把虚拟地址翻译成物理地址，每个进程有独立的地址空间和页表，因此同一个虚拟地址可以映射到不同物理页。这也让地址空间隔离、按需分配和权限控制成为可能。</p>
-</details>
-</div>
-<h2 id="线程与共享内存">线程与共享内存<a class="headerlink" href="#线程与共享内存" title="Permanent link"></a></h2>
-<p>线程是 CPU 调度和执行的基本单位。一个进程可包含多个线程：它们共享代码、堆、全局变量和打开文件，但各自拥有寄存器状态、程序计数器和栈。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/thread-lightweight-process.jpg"><img width="1280" height="720" class="lqip" alt="课件把线程称作轻量级进程：每个线程有自己的线程 ID、程序计数器、寄存器组和栈，并与同一进程的其它线程共享代码段、数据段、堆和打开的文件。" src="../assets/0707p/thread-lightweight-process.preview.jpg" data-fullsrc="../assets/0707p/thread-lightweight-process.jpg" /></a></p>
-<p><em>图：线程作为轻量级进程，私有状态只有执行上下文（PC、寄存器、栈），其余全部共享；共享让线程间通信便宜，也让悬空指针、数据竞争和错误关闭文件影响整个进程。</em></p>
-<table>
-<thead>
-<tr>
-<th>对象</th>
-<th>同一进程的线程</th>
-<th>不同进程</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>虚拟地址空间</td>
-<td>共享</td>
-<td>默认隔离</td>
-</tr>
-<tr>
-<td>栈与寄存器</td>
-<td>每线程独立</td>
-<td>每进程中的线程各自独立</td>
-</tr>
-<tr>
-<td>打开的文件</td>
-<td>共享文件描述符表</td>
-<td>需继承或显式传递</td>
-</tr>
-<tr>
-<td>普通变量通信</td>
-<td>可直接共享，但要同步</td>
-<td>需要 IPC 或共享映射</td>
-</tr>
-<tr>
-<td>故障边界</td>
-<td>一个线程越界可能终止整个进程</td>
-<td>通常限制在出错进程内</td>
-</tr>
-</tbody>
-</table>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/create-threads-openmp.png"><img width="1280" height="720" class="lqip" alt="课件对比两种创建线程的方式：POSIX 线程（pthread）低层显式、需要手工同步，OpenMP 基于编译指令、是 HPC 的事实标准。" src="../assets/0707p/create-threads-openmp.preview.jpg" data-fullsrc="../assets/0707p/create-threads-openmp.png" /></a></p>
-<p><em>图：pthread_create 是底层建线程接口，啰嗦易错；OpenMP 用 <code>#pragma omp</code> 指令让编译器代劳建线程和同步，代码更接近串行。</em></p>
-<p>共享内存使线程通信方便，也带来数据竞争。<code>count++</code> 并不是一个不可分割的动作，它包含读、加、写。两个线程交错执行，结果可能少加一次：</p>
-<pre class="highlight"><code class="language-cpp">// 错误示例：多个线程同时执行会发生数据竞争。
-count++;</code></pre>
-<p>解决方式有三类：</p>
-<ol>
-<li>用互斥锁让同一时刻只有一个线程修改共享状态；</li>
-<li>对简单读改写使用原子操作；</li>
-<li>更常见也更高效的是避免共享写：各线程算自己的局部部分，最后归约。</li>
-</ol>
-<p>锁保证正确性，不保证性能。临界区过大，所有线程会排队；同步次数过多，程序即使有很多核心也会接近串行。写并行程序时先说明谁拥有数据、谁能写、何时合并，比先挑 OpenMP 语法更重要。</p>
-<h3 id="原子性可见性与等待">原子性、可见性与等待<a class="headerlink" href="#原子性可见性与等待" title="Permanent link"></a></h3>
-<details class="note" open="open">
-<summary>原子性（atomicity）是什么</summary>
-<p>原子（atomic）就是<strong>不可分割</strong>。一个原子操作要么完整做完、要么完全没做，不会被其他线程看到中间状态。反例是前面的 <code>count++</code>：它编译后其实是读 → 加 → 写三步，不是原子操作。两个线程交错时可能同时读到旧值，各自加一、再各写回，导致本应加两次却只加了一次。互斥锁、原子类型（<code>std::atomic</code>）、<code>omp atomic</code> 的作用，就是把这类读改写合成不可分割的一步，或保证同一时刻只有一个线程在做。要注意：原子只保证正确性，不保证快——多个线程抢同一个原子变量仍会排队、争同一条 cache line。</p>
-</details>
-<p>互斥锁让线程排队，还要保证先后读写的顺序跨线程可见。即便两个线程没有真正同时写，也要让先写后读的顺序对消费者成立：线程 A 解锁前的写入，必须对随后成功加锁的线程 B 可见，否则即使锁挡住了同时的修改，消费者仍可能读到旧值。<code>std::mutex</code>、OpenMP 的同步构造和语言原子类型会建立这一层顺序关系。反过来，多个线程无任何同步地读写同一个普通变量属于<strong>数据竞争</strong>（data race），在 C/C++ 里是未定义行为，不能靠我的电脑多跑几次都对就证明安全。</p>
-<pre class="highlight"><code class="language-cpp">std::mutex m;
-std::condition_variable cv;
-bool ready = false;
-
-// 生产者：写入数据后再公布 ready，并唤醒等待者。
-{
-    std::lock_guard&lt;std::mutex&gt; lock(m);
-    ready = true;
-}
-cv.notify_one();
-
-// 消费者：等待条件成立，不能只凭一次唤醒就继续。
-std::unique_lock&lt;std::mutex&gt; lock(m);
-cv.wait(lock, [] { return ready; });</code></pre>
-<p>锁解决同时访问，条件变量解决无事可做时如何等待。等待端若只是 <code>while (!ready) {}</code> 轮询，会一直占满一个核心、制造 cache 一致性流量；条件变量让它在条件不成立时睡眠，等 <code>notify</code> 才唤醒。等待必须写成谓词并在锁保护下检查，因为唤醒可能是虚假的，或数据已被其他线程先取走。只有极短、经过测量的等待才适合用自旋。</p>
+<h1 id="07-07-下午hpc-中的计算机系统-i">07-07 下午：HPC 中的计算机系统 I<a class="headerlink" href="#07-07-下午hpc-中的计算机系统-i" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T09:41:46+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 5331 字</span></div>
+<p>程序在计算节点上运行时，CPU、缓存、内存、线程和操作系统同时参与执行。数据送达核心的速度，以及多个执行流之间的等待，都会进入最终运行时间。</p>
+<p>缓存保存最近或相邻使用的数据，用来减少较慢内存访问。OpenMP（Open Multi-Processing，共享内存线程并行接口）、MPI（Message Passing Interface，消息传递接口）、向量化和 profiler 都建立在这些机制上。后面会依次看指令依赖、缓存命中、共享写入、NUMA（Non-Uniform Memory Access，非一致内存访问）数据位置和进程等待。<sup id="fnref:intel-opt"><a class="footnote-ref" href="#fn:intel-opt">1</a></sup></p>
 <div class="admonition tip">
-<p class="admonition-title">把共享对象的所有权写下来</p>
-<p>对每个数组或队列标明：哪个线程/进程创建它，哪些执行单元可以读，谁可以写，写完后如何通知读者。这个约定同时指导正确性和性能：独占写入避免锁，分块所有权减少 false sharing，明确的合并点也让计时边界更清楚。</p>
+<p class="admonition-title">测量时记录的项目</p>
+<p>一次测量至少保存以下内容。</p>
+<ul>
+<li>输入规模、编译选项和线程数；</li>
+<li>CPU 绑定与 NUMA 内存位置；</li>
+<li>端到端时间、热点函数和正确性结果。</li>
+</ul>
+<p>随后再检查热点循环的依赖、访问方向、共享写入和页面放置。这样得到的结论可以由 profiler 和对照实验复查。</p>
 </div>
-<div class="admonition question">
-<p class="admonition-title">思考题</p>
-<p>线程共享地址空间带来了便利，也带来了什么新问题？原子性、可见性和互斥分别对应哪类困难？</p>
-<details class="tip">
-<summary>答案</summary>
-<p>共享让数据传递很容易，也让多个线程可能同时修改同一块内存。原子性关心一个操作是否会被中间状态打断，例如读改写 <code>sum += x</code>；可见性关心一个线程的写入何时能被另一个线程看到；互斥则保证关键区同一时间只有一个线程进入。锁、原子操作、内存屏障和条件变量就是围绕这些问题设计的。</p>
-</details>
+<h2 id="一个数组在节点内经历什么">一个数组在节点内经历什么<a class="headerlink" href="#一个数组在节点内经历什么" title="Permanent link"></a></h2>
+<p>先跟着一个数组元素走一遍。它先由某个核心执行的指令读取，再经过缓存和主内存，最后还可能受到其他线程和 NUMA 数据位置影响。</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">1. 指令执行</label><label for="__tabbed_1_2">2. 数据进入核心</label><label for="__tabbed_1_3">3. 多线程同时写入</label><label for="__tabbed_1_4">4. 数据位于哪个 NUMA 节点</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>编译器把循环转换为加载、算术、分支和存储指令。处理器会尽量让彼此独立的指令重叠执行。真实数据依赖出现时，后一条指令必须等待前一条结果。这里可用的机器指令由 ISA（Instruction Set Architecture，指令集架构）规定。</p>
 </div>
+<div class="tabbed-block">
+<p>CPU 先从寄存器和缓存寻找数据，未命中后才访问 DRAM（dynamic random-access memory，动态随机存取内存，即通常所说的主内存）。连续访问和重复使用的数据更容易留在缓存中。随机访问或工作集过大时，核心更容易等待内存。</p>
+</div>
+<div class="tabbed-block">
+<p>同一进程内的线程共享数组。输出按块划分时，各线程通常写不同区域。多个线程频繁写同一缓存行时，即使写的是不同变量，也会产生一致性流量和 false sharing（伪共享，即逻辑上独立的数据落在同一缓存行）。</p>
+</div>
+<div class="tabbed-block">
+<p>多插槽机器的页面可能位于不同内存节点。线程首次写入页面的位置、CPU 绑定和后续访问模式共同决定本地或远端内存访问。</p>
+</div>
+</div>
+</div>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>常见原因</th>
+<th>第一项检查</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IPC（每周期完成的指令数）很低</td>
+<td>长依赖、缓存未命中、分支失预测</td>
+<td><code>perf stat</code> 与热点循环</td>
+</tr>
+<tr>
+<td>多线程加速停滞</td>
+<td>DRAM 带宽饱和、锁或 false sharing（不同线程写同一缓存行）</td>
+<td>线程数扫描、绑定和共享写入</td>
+</tr>
+<tr>
+<td>双插槽结果波动</td>
+<td>远端 NUMA 访问、线程迁移</td>
+<td><code>numactl --hardware</code> 与 first-touch（首次写页影响页的物理位置）</td>
+</tr>
+<tr>
+<td>时间偶发变长</td>
+<td>I/O、调度、频率或其他作业</td>
+<td>原始样本、系统日志和资源分配</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cpu-执行与流水线">CPU 执行与流水线<a class="headerlink" href="#cpu-执行与流水线" title="Permanent link"></a></h2>
+<div class="admonition quote">
+<p class="admonition-title">Intel 优化手册关于处理器性能的说明（译）</p>
+<p>程序性能取决于指令、数据和处理器资源之间的配合。处理器可以重叠执行独立工作，但数据依赖、分支和内存访问会限制可达到的吞吐。<sup id="fnref6:intel-opt"><a class="footnote-ref" href="#fn:intel-opt">1</a></sup></p>
+</div>
+<p>现代 CPU 会把取指、译码、执行、访存和提交等阶段重叠起来。源代码仍按程序顺序定义结果，硬件只会在不改变可见语义的前提下提前执行已经准备好的独立指令。</p>
+<p>因此，一条源语句没有固定的周期数。循环的吞吐取决于依赖链、执行端口、缓存命中、分支和指令类型。<sup id="fnref2:intel-opt"><a class="footnote-ref" href="#fn:intel-opt">1</a></sup></p>
+<p>先比较两种都在计算点积的写法。第一段只有一个累加器。第 <code>i+1</code> 次加法要等第 <code>i</code> 次更新 <code>sum</code> 后才能继续，因此形成一条很长的读后写依赖链。</p>
+<pre class="highlight"><code class="language-c">double sum = 0.0;
+for (int i = 0; i &lt; n; ++i)
+  sum += a[i] * b[i];</code></pre>
+<p>第二段把工作拆到两个独立累加器。处理器在等待 <code>s0</code> 的乘加结果时，可以推进 <code>s1</code> 的乘加；循环末尾再把两个部分和合并。</p>
+<pre class="highlight"><code class="language-c">double s0 = 0.0, s1 = 0.0;
+int i = 0;
+for (; i + 1 &lt; n; i += 2) {
+  s0 += a[i]     * b[i];
+  s1 += a[i + 1] * b[i + 1];
+}
+for (; i &lt; n; ++i) s0 += a[i] * b[i];  // 处理奇数长度的尾部
+sum = s0 + s1;</code></pre>
+<p>这不是凭空增加算力，而是把原来串成一条的依赖拆成两条可交错推进的链。若循环主要受内存带宽限制，算术独立性带来的收益会较小，因为数据到达速度没有变化。汇编、向量化报告和 profiler 可以帮助判断依赖链是否占据热点。</p>
+<h3 id="分支预测">分支预测<a class="headerlink" href="#分支预测" title="Permanent link"></a></h3>
+<p>条件跳转决定下一条取指地址。CPU 根据历史和上下文预测分支方向；预测成功时流水线继续推进，预测错误时需要丢弃错误路径上的推测工作并从正确位置恢复。数据随机、分支频繁的热循环可能花很多周期在恢复而非计算。<sup id="fnref3:intel-opt"><a class="footnote-ref" href="#fn:intel-opt">1</a></sup></p>
+<pre class="highlight"><code class="language-c">if (x[i] &gt; threshold)
+  sum += x[i];</code></pre>
+<p>当 <code>x[i] &gt; threshold</code> 的取值缺少规律时，CPU 的预测器和向量化路径都可能损失吞吐。此时可以考虑按类别分桶，或把罕见路径移出热点循环。</p>
+<p>掩码计算和查表也是可能的选择。它们会分别增加算术或随机访存，因此需要在代表性输入上比较。</p>
+<h3 id="流水线停顿与依赖">流水线停顿与依赖<a class="headerlink" href="#流水线停顿与依赖" title="Permanent link"></a></h3>
+<p>读后写依赖表示后一条指令必须等待前一条结果。除法、cache miss、函数调用、地址依赖加载和长链归约都会拉长等待。编译器和乱序硬件能重排独立指令，却无法消除真实数据依赖。循环展开、多个累加器、软件流水和分块的作用之一就是暴露更多独立工作。</p>
+<h3 id="乱序推测与提交">乱序、推测与提交<a class="headerlink" href="#乱序推测与提交" title="Permanent link"></a></h3>
+<p>乱序执行保持语言和 ISA 要求的可见结果。处理器可暂存推测结果，待分支与异常确定后再按程序顺序提交。多线程共享状态应使用语言规定的原子操作、锁和同步原语；依赖某台机器偶然出现的执行顺序会引入数据竞争和不可重复结果。<sup id="fnref:cpp-memory"><a class="footnote-ref" href="#fn:cpp-memory">2</a></sup></p>
+<h2 id="存储层级与访存代价">存储层级与访存代价<a class="headerlink" href="#存储层级与访存代价" title="Permanent link"></a></h2>
+<p>一个元素被 CPU 使用前，可能来自寄存器、缓存或 DRAM。程序通常不能指定每次读取来自哪一级，但访问顺序和工作集大小会改变数据留下的位置。</p>
+<p>寄存器、L1/L2/末级缓存、DRAM、存储和网络的容量、延迟和带宽各不相同。缓存按缓存行搬运数据，而不是按单个变量搬运。连续数组访问可以使用同一缓存行中的多个元素；随机指针追逐则常让核心等待更远的数据。<sup id="fnref4:intel-opt"><a class="footnote-ref" href="#fn:intel-opt">1</a></sup></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/memory-hierarchy-registers.jpg"><img width="1280" height="720" class="lqip" alt="图中将寄存器、缓存、主存、闪存和磁盘按访问速度与容量排成层次。图中的周期数是量级说明，实际延迟随 CPU、内存和访问模式变化。" src="../assets/0707p/memory-hierarchy-registers.preview.jpg" data-fullsrc="../assets/0707p/memory-hierarchy-registers.jpg" /></a></p>
+<p><em>图中较近的存储层容量通常较小、访问较快。数据复用和连续访问提高了命中较近层级的机会。</em></p>
+<h3 id="时间局部性空间局部性与工作集">时间局部性、空间局部性与工作集<a class="headerlink" href="#时间局部性空间局部性与工作集" title="Permanent link"></a></h3>
+<p>时间局部性指刚访问的数据很快再次使用。空间局部性指相邻地址很可能接着被访问。矩阵分块让一个 A/B tile 被多次使用，利用的是时间局部性；按连续维度遍历数组，利用的是空间局部性。</p>
+<p>工作集是某一时间窗口中频繁访问的数据集合。它大于对应缓存层的容量时，数据可能在下次复用前就被逐出缓存。</p>
+<pre class="highlight"><code class="language-c">/* C 行主序，j 连续。 */
+for (int i = 0; i &lt; m; ++i)
+  for (int j = 0; j &lt; n; ++j)
+    sum += a[i*n + j];</code></pre>
+<p>单独将一个循环改成连续访问后，多个数组访问、线程共享末级缓存、关联度冲突和预取器行为仍会改变实际结果。因此局部性原则需要与硬件计数器和时间一起检查。</p>
+<h3 id="缓存行关联度与预取">缓存行、关联度与预取<a class="headerlink" href="#缓存行关联度与预取" title="Permanent link"></a></h3>
+<p>缓存以固定大小的行装入；行大小常为几十字节，具体数值由平台决定。关联度限制同一集合中可同时保存的候选行数，某些规则步长会反复映射到少量集合并产生冲突。硬件预取器擅长顺序和简单固定步长访问；链表、哈希表和数据相关地址提供的规律较少。<sup id="fnref5:intel-opt"><a class="footnote-ref" href="#fn:intel-opt">1</a></sup></p>
+<p>优化通常从连续布局、适当分块和减少无用数据触碰开始。只有当 profile 显示硬件预取覆盖不足、且计算能与数据到达重叠时，才值得评估手动预取；过多预取会增加带宽压力并挤占缓存。</p>
+<h3 id="缓存一致性与-false-sharing">缓存一致性与 false sharing<a class="headerlink" href="#缓存一致性与-false-sharing" title="Permanent link"></a></h3>
+<p>多核处理器需要让对同一内存位置的写入对其他核心可见。硬件通常按缓存行为粒度维护这种一致性。一个核心要写某行时，其他核心中该行的可写副本会失效。</p>
+<p>这会带来一个容易忽略的情况。不同线程即使写的是不同数组元素，只要这些元素落在同一缓存行，缓存行仍会在核心之间来回转移。这就是 false sharing。<sup id="fnref:openmp-examples"><a class="footnote-ref" href="#fn:openmp-examples">3</a></sup></p>
+<pre class="highlight"><code class="language-c">/* partial[0]、partial[1] 可能位于同一缓存行。 */
+#pragma omp parallel
+{
+  int tid = omp_get_thread_num();
+  partial[tid] += local_work();
+}</code></pre>
+<p>这段代码的数学结果可以正确，但每个线程都会反复写自己的 <code>partial[tid]</code>。若相邻槽位恰好位于同一缓存行，两个核心会为同一行反复取得写权限，循环时间会花在一致性流量上。</p>
+<p>求和这类场景先使用 OpenMP 的 <code>reduction</code>。运行时会为每个线程建立私有部分和，循环结束后再合并，因此热循环里没有共享的 <code>sum</code> 写入。</p>
+<pre class="highlight"><code class="language-c">double sum = 0.0;
+#pragma omp parallel for reduction(+:sum)
+for (long i = 0; i &lt; n; ++i)
+  sum += x[i];</code></pre>
+<p>若算法确实需要保留每个线程的长期状态，可把槽位按一个缓存行的量级隔开。下面的 64 字节只是一种常见 CPU 的诊断性设置；实际平台的缓存行大小和是否发生伪共享仍要用测量确认。</p>
+<pre class="highlight"><code class="language-c">/* C11：让每个槽位从独立的 64 B 对齐位置开始。 */
+typedef struct {
+  _Alignas(64) double value;
+} PaddedDouble;
+
+PaddedDouble partial[MAX_THREADS];
+#pragma omp parallel
+{
+  int tid = omp_get_thread_num();
+  partial[tid].value += local_work();
+}</code></pre>
+<p>padding 会增加内存占用，适合 profile 已确认的高频写入位置。线程私有累加、连续分块和合适绑定仍是更早应检查的方案。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/cache-line-false-sharing.jpg"><img width="1280" height="720" class="lqip" alt="图中不同线程写同一缓存行内的不同字段时，缓存一致性协议仍需在核心间转移该行；这就是 false sharing 的典型来源。" src="../assets/0707p/cache-line-false-sharing.preview.jpg" data-fullsrc="../assets/0707p/cache-line-false-sharing.jpg" /></a></p>
+<p><em>图中缓存行是共享粒度。两个线程更新不同变量时，仍可能产生共享开销。<sup id="fnref2:openmp-examples"><a class="footnote-ref" href="#fn:openmp-examples">3</a></sup></em></p>
+<h2 id="进程与地址空间">进程与地址空间<a class="headerlink" href="#进程与地址空间" title="Permanent link"></a></h2>
+<p>进程是操作系统分配资源和隔离虚拟地址空间的执行单位。它拥有自己的地址空间、文件描述符、环境变量、信号处理状态和权限。</p>
+<p>两个进程可以使用相同数值的虚拟地址，却访问不同物理页。只有显式共享内存、文件映射或内核对象才会让它们访问同一实际数据。MPI 正是建立在这种隔离模型上：每个 rank 有独立变量，数据交换必须显式通信。<sup id="fnref:linux-mm"><a class="footnote-ref" href="#fn:linux-mm">4</a></sup></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/process-address-space.jpg"><img width="1280" height="720" class="lqip" alt="图中进程地址空间包含代码、数据、堆、映射区和栈等区域。具体地址布局受 ASLR、动态加载器、系统与运行时影响。" src="../assets/0707p/process-address-space.preview.jpg" data-fullsrc="../assets/0707p/process-address-space.jpg" /></a></p>
+<p><em>图中地址空间用于理解不同存储对象的生命周期和保护方式。程序不应依赖图中的固定地址。<sup id="fnref2:linux-mm"><a class="footnote-ref" href="#fn:linux-mm">4</a></sup></em></p>
+<h3 id="进程状态与抢占">进程状态与抢占<a class="headerlink" href="#进程状态与抢占" title="Permanent link"></a></h3>
+<p>调度器在可运行任务间分配 CPU 时间。进程可能正在运行，也可能等待 I/O、等待锁，或已经退出但尚未被父进程回收。</p>
+<p>频繁上下文切换不仅要保存寄存器，还会扰动缓存、TLB 和分支预测状态。线程数超过分配的核心数时，多个执行流会争用同一核心，性能常明显下降。</p>
+<pre class="highlight"><code class="language-bash">ps -o pid,ppid,stat,psr,etime,cmd -p "$PID"
+top -H -p "$PID"               # 若系统提供，查看线程</code></pre>
+<p>看到低 CPU 使用率时，要进一步区分是在等待 I/O、锁、MPI、调度资源，还是程序确实没有工作可做。单个百分比不能说明原因。</p>
+<h3 id="系统调用页与缺页">系统调用、页与缺页<a class="headerlink" href="#系统调用页与缺页" title="Permanent link"></a></h3>
+<p>用户代码通过系统调用请求内核完成文件、网络、进程和内存管理。<code>read</code>、<code>write</code>、<code>mmap</code>、<code>fork</code> 等调用会切换到内核执行相应服务。虚拟内存按页映射；首次写入新分配大数组常触发正常的按需分配缺页，计时实验应说明初始化是否包含在测量区间。<sup id="fnref3:linux-mm"><a class="footnote-ref" href="#fn:linux-mm">4</a></sup></p>
+<pre class="highlight"><code class="language-bash">/usr/bin/time -v ./solver input.dat
+# 关注 Maximum resident set size、major/minor page faults 等字段</code></pre>
+<p>major fault 可能需要从持久存储读取页面，代价很高；minor fault 常只涉及已在内存中的页表/页面准备，仍可能在大规模首次初始化时占用时间。访问无权限地址则是错误，不应和正常按需分配混为一谈。</p>
+<h3 id="forkexec-与文件描述符"><code>fork</code>、<code>exec</code> 与文件描述符<a class="headerlink" href="#forkexec-与文件描述符" title="Permanent link"></a></h3>
+<p><code>fork()</code> 创建子进程，现代系统常用写时复制推迟实际页面复制；<code>execve()</code> 用新程序映像替换当前进程。Shell 启动命令时会组合进程创建、文件描述符重定向和环境继承。打开的文件描述符可能随 <code>fork</code> 继承，管道两端若没有及时关闭，读端也可能一直等不到 EOF。<sup id="fnref:fork-exec"><a class="footnote-ref" href="#fn:fork-exec">5</a></sup></p>
+<pre class="highlight"><code class="language-text">shell
+  ├─ fork ──&gt; child: 调整 stdin/stdout/stderr
+  │             └─ execve("./solver", ...)
+  └─ waitpid: 收集子进程状态</code></pre>
+<p>这套机制解释了脚本中的 <code>&gt; log 2&gt;&amp;1</code>、管道以及作业系统启动任务时的环境继承。性能程序中不应在热路径频繁 <code>fork/exec</code>；将许多短任务改为批处理或线程池通常更稳定。</p>
+<h2 id="线程与共享内存">线程与共享内存<a class="headerlink" href="#线程与共享内存" title="Permanent link"></a></h2>
+<p>线程是进程内可独立调度的执行流。同一进程的线程共享地址空间、文件描述符和大部分资源，各自拥有寄存器、栈和调度状态。</p>
+<p>共享数组让节点内传递数据很方便，也让越界写、生命周期错误与数据竞争更难定位。先确定谁写哪一段数据，再讨论锁和原子操作的粒度。</p>
+<h3 id="原子性可见性与等待">原子性、可见性与等待<a class="headerlink" href="#原子性可见性与等待" title="Permanent link"></a></h3>
+<p>原子操作使某些读改写不可分割。锁保护一个更大的临界区。条件变量或屏障表达等待关系。它们解决的问题不同。</p>
+<p>一个原子递增不能自动保护“读、判断、写”的整套逻辑。一个 barrier 只保证参与者到达同一点，也不能代替正确的数据划分。<sup id="fnref2:cpp-memory"><a class="footnote-ref" href="#fn:cpp-memory">2</a></sup></p>
+<pre class="highlight"><code class="language-c">#pragma omp parallel for reduction(+:sum)
+for (long i = 0; i &lt; n; ++i)
+  sum += x[i];</code></pre>
+<p>归约让每个线程持有私有部分和，最后按规定合并，通常比每轮对共享 <code>sum</code> 执行 atomic 更合适。浮点合并顺序会改变最后几位，应按误差容限比较。</p>
 <h2 id="上下文切换与调度">上下文切换与调度<a class="headerlink" href="#上下文切换与调度" title="Permanent link"></a></h2>
-<p>一颗核心在任一时刻只能执行一个硬件线程。操作系统的调度器在许多可运行线程间切换<sup id="fnref:context-switch"><a class="footnote-ref" href="#fn:context-switch">10</a></sup>：保存当前线程的寄存器、程序计数器等上下文，恢复下一个线程，再继续执行。切换本身有成本；更大的损失往往是新线程迁移到另一核心后，原来热的 L1/L2 cache 失效了。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/process-switch.jpg"><img width="1280" height="720" class="lqip" alt="进程切换时，内核把当前寄存器状态保存到 PCB，再恢复另一个进程的状态。" src="../assets/0707p/process-switch.preview.jpg" data-fullsrc="../assets/0707p/process-switch.jpg" /></a></p>
-<p><em>图：图中的两条竖线表示两个进程交替运行；保存和恢复期间由操作系统执行，用户进程本身没有推进。</em></p>
-<p>调度器需要同时照顾吞吐、公平、响应时间和优先级。这些目标不能全部最大化。长时间片减少切换开销，却让交互任务等得更久；短时间片响应快，却增加保存状态和 cache 冷启动。HPC 批作业通常依靠作业系统先划定 CPU 集合，再由节点内调度器处理该集合中的线程。程序绑核只能限制允许往哪些核心去，不能让超过配额的线程凭空获得更多执行资源。</p>
-<p>这解释了几个实践现象：</p>
-<ul>
-<li>不要为极小任务反复创建/销毁线程；线程池和较粗的任务块更合适。</li>
-<li>线程数开得远多于核心数，不一定更快；它可能只增加调度、同步和缓存干扰。</li>
-<li>把一个工作线程随意迁移到不同核心，会丢失 cache 亲和性。</li>
-</ul>
-<p>调度器仍需要公平和响应性，所以把所有线程都绑死也不是默认答案。只有当测量表明迁移/NUMA<sup id="fnref:numa"><a class="footnote-ref" href="#fn:numa">11</a></sup> 是瓶颈时，再使用 <code>taskset</code>、<code>numactl</code>、OpenMP 的 affinity 选项或作业系统的绑核设置。</p>
-<p>线程数应区分三个数量：程序创建的 software threads、操作系统可调度的任务数、以及作业实际被允许运行的 logical CPUs。容器或作业系统可能只授予 8 个 CPU，即使宿主机有 128 个逻辑核；盲目让 OpenMP 创建 128 个线程会产生超额订阅。可用 <code>nproc</code>、调度器环境变量或 <code>sched_getaffinity</code> 的结果确认可用集合，再设置 <code>OMP_NUM_THREADS</code>。SMT<sup id="fnref:smt"><a class="footnote-ref" href="#fn:smt">12</a></sup> 的两个逻辑核也不等于两份完整执行资源：访存停顿较多的循环可能受益，已饱和 FMA 或内存带宽的循环则可能变慢。</p>
+<p>上下文切换要保存当前执行流的寄存器和调度状态，再恢复另一个执行流。切换之后，原来热的缓存和 TLB 也可能失去作用。</p>
+<p>短任务、细粒度锁、线程过多和多层运行时嵌套都会放大这一成本。节点内并行程序一般应建立与分配核心数相称的固定线程团队，避免每个小任务创建一个新线程。</p>
 <h3 id="核硬件线程与调度任务">核、硬件线程与调度任务<a class="headerlink" href="#核硬件线程与调度任务" title="Permanent link"></a></h3>
-<p>物理核心有独立的执行资源和较近的 L1 cache。SMT/Hyper-Threading 在同一物理核心上提供多个硬件线程上下文；当一个线程因 cache miss 暂时没有可执行指令时，另一个线程可能使用闲下来的发射槽。它提高的是资源利用机会，不会把一个核心变成两颗完整核心。两个硬件线程仍共享部分执行单元、cache 和带宽，计算密集型程序甚至可能互相干扰。</p>
-<p>Linux 从内核实现上将可调度实体统一看作 task，进程和线程在调度层面有很多共同点。调度器根据优先级、运行时间、CPU 亲和性等选择下一个 task；切换时保存寄存器、栈指针、程序计数器和地址空间相关状态。不同进程切换还可能影响 TLB 和页表上下文，通常比同一进程线程间切换更重。</p>
-<p>对于吞吐型 HPC 作业，理想情形是每个 worker 长时间占用一个明确的 CPU，处理足够大的数据块。若工作队列过细、线程频繁休眠唤醒、任务不断跨核迁移，调度和 cache 冷启动会吞掉并行收益。反过来，服务型程序为响应交互请求而让出 CPU 是合理的；优化前先分清工作负载，不要把所有 Linux 程序都按同一准则绑核。</p>
+<p>物理核心拥有执行资源。SMT（simultaneous multithreading，同时多线程）让一个核心维护多个硬件线程。其中一个线程因依赖或 cache miss 暂时不能发射时，核心可以转去运行另一个。</p>
+<p>SMT 增加的是覆盖等待的机会，不等价于增加同样数量的独立核心。性能实验应分别记录物理核数、SMT 状态、OpenMP 线程数和绑定策略。<sup id="fnref:openmp-affinity"><a class="footnote-ref" href="#fn:openmp-affinity">6</a></sup></p>
+<pre class="highlight"><code class="language-bash">lscpu
+OMP_DISPLAY_ENV=VERBOSE \
+OMP_PLACES=cores OMP_PROC_BIND=close \
+./solver</code></pre>
 <h2 id="numa-架构">NUMA 架构<a class="headerlink" href="#numa-架构" title="Permanent link"></a></h2>
-<details class="note" open="open">
-<summary>NUMA（Non-Uniform Memory Access）</summary>
-<p>大多数程序以为内存就是内存，从哪访问都一样。单路小机上确实接近这样：所有 CPU 核访问同一块内存，代价相近，这叫 UMA（一致内存访问）。但多路服务器不是这样：每颗 CPU（socket）旁边各挂一组本地内存，访问很快；跨 socket 去取另一颗 CPU 的内存，要穿过两颗 CPU 之间的高速互连，更慢、带宽也更低。这种不同位置内存访问代价不同的架构就叫 <strong>NUMA</strong>（非一致内存访问）；一个 socket 加它身边的内存合称一个 <strong>NUMA 节点</strong>（node）。</p>
-</details>
-<pre class="highlight"><code class="language-text">CPU socket 0 -- 本地内存 0
-       |\
-       | \  跨 socket 互连
-       |  \
-CPU socket 1 -- 本地内存 1</code></pre>
-<p>Linux 常按 first touch 分配物理页：哪个线程第一次写某块新内存，页面往往就分配到该线程所在 NUMA 节点。若主线程在 socket 0 一次性初始化全部大数组，之后 socket 1 的工作线程处理其中一半数据，就会发生大量远端访问。</p>
-<p>更合理的方式是让各线程初始化并处理自己的数据块；MPI/线程划分也与数据分块保持一致。可用 <code>numactl --hardware</code> 查看节点和距离，用 <code>numastat</code> 观察进程页分布。是否需要强制绑定，要以实际机器和测量为准。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/numa-latency.jpg"><img width="1280" height="720" class="lqip" alt="课件中的延迟矩阵显示：同一 socket 内访问较低，跨 socket 的格子明显更高。" src="../assets/0707p/numa-latency.preview.jpg" data-fullsrc="../assets/0707p/numa-latency.jpg" /></a></p>
-<p><em>图：线程与页面位于同一 NUMA node 时延迟较低；跨 socket 访问要经过处理器互连。</em></p>
+<p>单插槽程序中，CPU 核与内存的距离常被忽略。多插槽服务器中，内存被分到不同节点，数据放在哪里会直接影响后续线程读取的路径。</p>
+<p>核心访问本地节点内存时路径较短。访问远端节点时需要经过插槽间互连，延迟和可用带宽都会变化。NUMA（non-uniform memory access）描述的正是这种不均匀性。数据初始化和线程布局需要把它考虑进去。<sup id="fnref:linux-numa"><a class="footnote-ref" href="#fn:linux-numa">7</a></sup></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/numa-latency.jpg"><img width="1280" height="720" class="lqip" alt="图中延迟矩阵的对角区域对应本地 CPU/内存组合，跨节点区域通常显示更高的访问代价。具体颜色和数值属于测量机器。" src="../assets/0707p/numa-latency.preview.jpg" data-fullsrc="../assets/0707p/numa-latency.jpg" /></a></p>
+<p><em>NUMA 图应结合 <code>numactl --hardware</code>、CPU 绑定和应用数据位置阅读。不同服务器的节点数与距离不同。<sup id="fnref2:linux-numa"><a class="footnote-ref" href="#fn:linux-numa">7</a></sup></em></p>
 <h3 id="numa-分配与并行划分">NUMA 分配与并行划分<a class="headerlink" href="#numa-分配与并行划分" title="Permanent link"></a></h3>
-<p>first touch 的含义常被说得过于简单。它只说明页面在第一次实际触碰时倾向分配到执行该操作的 NUMA node；究竟由哪个线程触碰，取决于初始化代码、线程绑定、内核策略和内存压力。只在主线程中 <code>memset</code> 全部数组，再让多个 socket 并行处理，是分布式内存布局和计算布局相反的典型情况。</p>
-<p>更可靠的写法是让未来负责某块数据的线程先初始化这块数据。例如并行初始化数组，再用相同分块进入计算循环。对于 MPI，每个 rank 通常只申请并初始化自己的局部数组；对于共享内存程序，则需要把 OpenMP 的初始化、计算调度和 CPU affinity 放在一起考虑。</p>
-<p><code>numactl --hardware</code> 可查看节点、CPU 与距离矩阵；<code>numastat -p &lt;pid&gt;</code> 可粗略观察一个进程页面分布；<code>taskset -cp &lt;pid&gt;</code> 可查看或设置 CPU 亲和性。这些工具回答的是数据和线程实际上在哪里，不能替代对算法的数据划分判断。发现远端访问高以后，还要确认它是否恰好是程序需要共享的数据，别机械地把所有内存绑到一个节点。</p>
-<div class="admonition question">
-<p class="admonition-title">思考题</p>
-<p>为什么“第一次触碰数据”会影响 NUMA 系统上后续访存性能？</p>
-<details class="tip">
-<summary>答案</summary>
-<p>许多系统默认把页面分配在首次触碰它的线程所在 NUMA 节点上。若数据先由单线程初始化，之后再由另一个节点上的线程访问，数据可能长期放在远端内存，访问延迟和带宽都会变差。先按并行访问模式初始化，或显式绑定线程和内存，可以把数据放在使用它的节点附近。</p>
-</details>
-</div>
+<p>Linux 常采用 first-touch 放置。页面第一次被写入时，内核倾向于从执行该线程所在节点分配物理页。</p>
+<p>若主线程串行初始化整个大数组，页面可能集中在一个节点。随后其他插槽的线程访问这些页面时，会产生远端流量。更好的起点是让每个线程初始化自己后续负责的数据块。</p>
+<pre class="highlight"><code class="language-c">#pragma omp parallel for schedule(static)
+for (long i = 0; i &lt; n; ++i)
+  a[i] = 0.0;          // first-touch 与后续划分一致
+
+#pragma omp parallel for schedule(static)
+for (long i = 0; i &lt; n; ++i)
+  a[i] = f(a[i]);</code></pre>
+<pre class="highlight"><code class="language-bash">numactl --hardware
+numactl --cpunodebind=0 --membind=0 ./solver</code></pre>
+<p>绑核和绑内存可用于诊断和稳定实验，但不能替代正确分解。把所有线程和内存强行放到一个节点，可能因容量、带宽或线程数不足而更慢。</p>
 <h2 id="虚拟内存与页表">虚拟内存与页表<a class="headerlink" href="#虚拟内存与页表" title="Permanent link"></a></h2>
-<details class="note" open="open">
-<summary>页表（page table）是什么</summary>
-<p>程序里的指针是虚拟地址，要想真的去内存取数据，得先把虚拟地址翻译成物理地址。谁来查这个对应关系？就是页表（page table）——一张把虚拟页号 → 物理页框号对应起来的表，进程每访问一个虚拟页，内核/MMU 就查这张表找到它实际落在哪块物理内存。表的每一行叫一个页表项（PTE），除了记录映射到哪个物理页框，还附带这一页的权限位：可读、可写、可执行。每个进程都有自己的一份页表，所以两个进程能各自用看似相同的地址而互不冲突；页表里没有对应条目时，这次访问就会触发缺页（page fault）。</p>
-</details>
-<p>程序里的指针是虚拟地址。CPU 真正发起 DRAM 访问前，需要由 MMU（memory management unit）根据页表把它翻译成物理地址。操作系统按页管理内存；常见页大小是 4 KiB，但系统也可以使用更大的 huge page。页表记录虚拟页号到物理页框的映射，以及该页是否可读、可写、可执行。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/why-virtual-memory.jpg"><img width="1280" height="720" class="lqip" alt="课件说明为什么需要虚拟内存：隔离各进程的地址空间、统一编程模型，并允许按需分页，让可用地址不必受物理磁盘大小限制。" src="../assets/0707p/why-virtual-memory.preview.jpg" data-fullsrc="../assets/0707p/why-virtual-memory.jpg" /></a></p>
-<p><em>图：虚拟内存把逻辑地址与物理内存解耦，带来隔离与灵活，也带来地址翻译这一层需要缓存的额外成本。</em></p>
-<p>如果每次读写都要先走内存里的多级页表，地址翻译本身会很慢，因此 CPU 有 TLB（translation lookaside buffer）缓存最近的页表项。一次普通访问大致经历这样的判断：</p>
-<pre class="highlight"><code class="language-text">虚拟地址
-  -&gt; TLB 命中：得到物理页号，继续查 L1/L2/L3/DRAM
-  -&gt; TLB 未命中：页表遍历，填入 TLB，再继续访问
-  -&gt; 页表项不存在：触发 page fault，交给操作系统处理</code></pre>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/paging-page-frame.jpg"><img width="1280" height="720" class="lqip" alt="课件画出分页的基本思想：物理内存被切成页框，虚拟地址空间按页映射到这些页框，未映射或缺页时借助磁盘。" src="../assets/0707p/paging-page-frame.preview.jpg" data-fullsrc="../assets/0707p/paging-page-frame.jpg" /></a></p>
-<p><em>图：页与页框的映射是虚拟内存的核心；缺页、swap、共享与保护都建立在这张映射之上。</em></p>
-<p>这里的 <code>page fault</code> 并不自动等于程序出错。进程第一次触碰一块按需分配的匿名内存时，内核可能分配物理页并建立映射，这也是一种正常缺页。访问无权限地址、访问已经释放的映射，或系统不得不从磁盘换回被置换的页，才会分别成为异常或非常昂贵的缺页。</p>
-<p>大数组的访问模式会同时影响 cache 与 TLB。若每隔很远访问一个元素，带入的 cache line 很少被用到，TLB 里的页表项也可能频繁被替换。按块连续处理数据能让同一页、同一 cache line 上的内容被多次利用。该原则与后面矩阵分块、向量化课程里的数据布局是连着的。</p>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/tlb-translation-cache.jpg"><img width="1280" height="720" class="lqip" alt="课件说明 TLB 是地址翻译的缓存：每个内存访问都要翻译虚拟地址，TLB 保存最近的映射以加速这一过程。" src="../assets/0707p/tlb-translation-cache.preview.jpg" data-fullsrc="../assets/0707p/tlb-translation-cache.jpg" /></a></p>
-<p><em>图：TLB 缓存虚拟页到物理页的翻译；随机大工作集更容易耗尽 TLB，与 cache miss 是两类不同但相关的开销。</em></p>
+<p>虚拟地址通过页表映射到物理页。TLB（Translation Lookaside Buffer，地址转换后备缓冲）缓存最近使用的地址翻译，避免每次内存访问都遍历多级页表。大工作集、随机跨页访问和小页的大量映射都会增加 TLB 压力；这与缓存 miss 相关但不是同一个问题。<sup id="fnref4:linux-mm"><a class="footnote-ref" href="#fn:linux-mm">4</a></sup></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/paging-page-frame.jpg"><img width="1280" height="720" class="lqip" alt="图中定义分页的两个单位。物理内存划为固定大小的 frame，虚拟地址空间划为同样大小的 page；页表随后负责把 page 映射到 frame。" src="../assets/0707p/paging-page-frame.preview.jpg" data-fullsrc="../assets/0707p/paging-page-frame.jpg" /></a></p>
+<p><em>图中说明页与页框的划分。映射、权限和缺页处理建立在这一划分之上。page fault 的具体含义取决于原因。<sup id="fnref5:linux-mm"><a class="footnote-ref" href="#fn:linux-mm">4</a></sup></em></p>
 <h3 id="地址空间布局">地址空间布局<a class="headerlink" href="#地址空间布局" title="Permanent link"></a></h3>
-<p>进程地址空间图里常见的 <code>text</code>、<code>data</code>、heap、stack 并非只是教材标记，它们对应不同的分配与保护方式。</p>
-<ul>
-<li><code>text</code> 段存放机器指令，通常可读可执行、不可写；</li>
-<li>已初始化的全局和静态变量在 data 段，未初始化变量常以 BSS 形式记录；</li>
-<li>heap 由 <code>malloc</code>、<code>new</code> 等动态分配接口使用，分配器再向内核申请或归还页面；</li>
-<li>stack 保存函数调用帧、局部变量和返回地址，每个线程各有一份；</li>
-<li>共享库、文件映射和匿名映射通常落在专门的 mmap 区域。</li>
-</ul>
-<p>局部大数组放在栈上很容易触发 stack overflow；把大量互不相关的小对象逐个堆分配，也可能让分配器开销和访问碎片变大。HPC 程序常一次分配连续的大块数组，并明确数据布局，原因既包括易于并行，也包括对页面和 cache 更友好。</p>
-<div class="admonition question">
-<p class="admonition-title">思考题</p>
-<p>两个进程都使用虚拟地址 <code>0x400000</code>，它们一定访问同一个物理字节吗？</p>
-<details class="tip">
-<summary>答案</summary>
-<p>不一定。每个进程有自己的页表，同一个虚拟地址可以映射到不同物理页。只有显式建立的共享映射才可能落到同一物理页。虚拟地址是进程内的编号，物理地址才是内存中的实际位置。</p>
-</details>
-</div>
+<p>代码段通常存放指令。全局和静态数据有不同的初始化方式。堆由分配器管理，每个线程有自己的栈。共享库、文件和匿名内存常通过映射区出现。</p>
+<p>过大的局部数组容易耗尽栈。大量零散小分配会增加分配器开销、碎片和随机访问。HPC 程序常把大数组作为连续堆对象或专门分配器对象管理，以便控制页面、布局和并行初始化。</p>
 <h2 id="性能优化基础">性能优化基础<a class="headerlink" href="#性能优化基础" title="Permanent link"></a></h2>
-<p>向量化试图让单核在 cache 命中时吞吐更多数据；OpenMP 处理同一节点的线程和同步；MPI 在进程和节点间通信；性能分析工具帮助判断到底在等 DRAM、等锁、等远端 NUMA 内存，还是计算单元本身已满。</p>
-<p>判断一个程序慢时，先确认循环有没有规则访问，数据是否能留在 cache，线程是否争同一份可写数据，任务和内存是否在同一个 NUMA 节点。每一步都能通过实验验证。</p>
-<h3 id="阿姆达尔amdahl定律">阿姆达尔（Amdahl）定律<a class="headerlink" href="#阿姆达尔amdahl定律" title="Permanent link"></a></h3>
-<p><a class="glightbox" data-type="image" href="../assets/0707p/amdahl-law.jpg"><img width="1280" height="720" class="lqip" alt="课件用 Amdahl 定律说明并行加速受串行部分限制：线程级并行（TLP）能并行运行时越多，加速越好，但总有串行段成为上界。" src="../assets/0707p/amdahl-law.preview.jpg" data-fullsrc="../assets/0707p/amdahl-law.jpg" /></a></p>
-<p><em>图：Amdahl 定律表明，即使并行部分无限加速，串行占比仍决定加速上限；这也是为什么先减少必须串行的部分。</em></p>
-<p>它用一句话概括并行能带来多少收益：<strong>可并行部分可以无限加核提速，不可并行部分却始终占着一段时间</strong>。设一次运行不可并行的时间占比为 <span class="arithmatex">\(s\)</span>（例如 0.05），其余部分在 <span class="arithmatex">\(p\)</span> 个处理器上理想并行，则总加速比为</p>
+<p>向量化提高单核对连续数据的吞吐，OpenMP 分配节点内线程，MPI 分配进程和节点。性能工具把时间和资源事件关联到热点。</p>
+<p>一个可复查的优化步骤应写清输入和正确性判据，给出热点证据，提出关于计算、访存、同步或 NUMA 的假设，再只做一个受控改动。最后用同一口径重新测量。<sup id="fnref:nersc-roofline"><a class="footnote-ref" href="#fn:nersc-roofline">8</a></sup></p>
+<h3 id="阿姆达尔定律">阿姆达尔定律<a class="headerlink" href="#阿姆达尔定律" title="Permanent link"></a></h3>
+<p>若程序中比例 <span class="arithmatex">\(p\)</span> 的部分能加速 <span class="arithmatex">\(s\)</span> 倍，总加速比为</p>
 <div class="arithmatex">\[
-S=\frac{1}{s+(1-s)/p}.
+S=\frac{1}{(1-p)+p/s}
 \]</div>
-<p>当处理器数趋于无穷，<span class="arithmatex">\((1-s)/p\)</span> 趋于 0，加速上限就收敛到 <span class="arithmatex">\(1/s\)</span>。所以 5% 的串行时间，无论加多少核，加速都不会超过 20 倍。加核是否划算，取决于并行部分是否真占大头、能否被有效切分。反过来，若读文件、初始化、汇总输出这些串行步骤很重，先压缩它们，往往比继续加核更见效。</p>
+<p>若将可并行部分在 <span class="arithmatex">\(N\)</span> 个处理器上理想加速，可取 <span class="arithmatex">\(s=N\)</span>。即使 <span class="arithmatex">\(N\)</span> 很大，串行初始化、通信、锁、I/O 和最终汇总仍保留在分母中。该公式说明为何应先优化占时大的部分，也提醒报告同时包含并行 kernel 时间与端到端时间。<sup id="fnref:amdahl"><a class="footnote-ref" href="#fn:amdahl">9</a></sup></p>
+<p><a class="glightbox" data-type="image" href="../assets/0707p/amdahl-law.jpg"><img width="1280" height="720" class="lqip" alt="图中给出 Amdahl 定律的公式。并行比例与处理器数共同决定理想加速比，串行比例留在分母中。" src="../assets/0707p/amdahl-law.preview.jpg" data-fullsrc="../assets/0707p/amdahl-law.jpg" /></a></p>
+<p><em>图中 Amdahl 定律给出固定问题规模下的上界模型。实际加速还会受通信、内存带宽、负载不均和调度开销限制。<sup id="fnref2:amdahl"><a class="footnote-ref" href="#fn:amdahl">9</a></sup></em></p>
 <div class="admonition question">
-<p class="admonition-title">思考题</p>
-<p>把程序的某一部分加速 10 倍，整个程序一定加速 10 倍吗？</p>
+<p class="admonition-title">节点内并行自测</p>
+<p>一个双插槽节点上，主线程先串行初始化 64 GiB 数组，之后 64 个线程跨两个插槽计算。性能明显低于预期时，应先检查什么？</p>
 <details class="tip">
-<summary>答案</summary>
-<p>不一定。整体收益受该部分原来的时间占比限制。若它占 90%，理论上限约是 6.9 倍；若只占 10%，即便这部分几乎消失，整体也最多约 1.11 倍。这就是 Amdahl 定律的日常含义。</p>
+<summary>详细答案</summary>
+<p>先检查 NUMA 页放置与线程绑定。主线程串行初始化时，页面可能集中到一个 NUMA 节点；另一插槽上的线程随后访问这些页面，会产生远端内存流量。</p>
+<p>可以按以下顺序验证。</p>
+<ol>
+<li>运行 <code>numactl --hardware</code> 查看节点数和距离。</li>
+<li>记录线程数、<code>OMP_PLACES</code>、<code>OMP_PROC_BIND</code> 与实际 CPU 绑定。</li>
+<li>让各线程按后续工作块并行初始化数组，再运行相同计算。</li>
+<li>在相同输入下比较带宽、端到端时间和重复测量的波动。</li>
+</ol>
+<p>若并行初始化后带宽和时间改善，数据位置是重要因素。若变化不大，再检查算法算术强度、同步和访存模式。</p>
 </details>
 </div>
 <div class="footnote">
 <hr />
 <ol>
-<li id="fn:cache">
-<p>缓存。保存最近使用数据的快速存储层，利用局部性减少访问慢速内存。&#160;<a class="footnote-backref" href="#fnref:cache" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<li id="fn:intel-opt">
+<p>Intel, <em>Intel® 64 and IA-32 Architectures Optimization Reference Manual</em>, <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html</a>.&#160;<a class="footnote-backref" href="#fnref:intel-opt" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:intel-opt" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:intel-opt" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:intel-opt" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:intel-opt" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:intel-opt" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
-<li id="fn:thread">
-<p>线程。进程内可独立调度的执行流，同进程线程可共享地址空间。&#160;<a class="footnote-backref" href="#fnref:thread" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<li id="fn:cpp-memory">
+<p>ISO C++ Foundation, <em>C++ reference: Multi-threaded executions and data races</em>, <a href="https://en.cppreference.com/w/cpp/language/multithread">https://en.cppreference.com/w/cpp/language/multithread</a>.&#160;<a class="footnote-backref" href="#fnref:cpp-memory" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:cpp-memory" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
-<li id="fn:pc">
-<p>program counter，程序计数器，记录当前指令地址；x86 上常称 RIP。&#160;<a class="footnote-backref" href="#fnref:pc" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<li id="fn:openmp-examples">
+<p>OpenMP Architecture Review Board, <em>OpenMP Examples</em>, <a href="https://www.openmp.org/resources/openmp-examples/">https://www.openmp.org/resources/openmp-examples/</a>.&#160;<a class="footnote-backref" href="#fnref:openmp-examples" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:openmp-examples" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
-<li id="fn:pipeline">
-<p>流水线。把取指、译码、执行、访存、写回等阶段重叠执行，提高指令吞吐。&#160;<a class="footnote-backref" href="#fnref:pipeline" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<li id="fn:linux-mm">
+<p>Linux Kernel Documentation, <em>Memory Management</em>, <a href="https://docs.kernel.org/mm/index.html">https://docs.kernel.org/mm/index.html</a>.&#160;<a class="footnote-backref" href="#fnref:linux-mm" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:linux-mm" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:linux-mm" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:linux-mm" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:linux-mm" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
-<li id="fn:dram">
-<p>dynamic random access memory，主内存常用的动态随机存储器。&#160;<a class="footnote-backref" href="#fnref:dram" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<li id="fn:fork-exec">
+<p>Linux man-pages, <em>fork(2)</em> and <em>execve(2)</em>, <a href="https://man7.org/linux/man-pages/man2/fork.2.html">https://man7.org/linux/man-pages/man2/fork.2.html</a>.&#160;<a class="footnote-backref" href="#fnref:fork-exec" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
-<li id="fn:process">
-<p>进程。操作系统分配资源和隔离地址空间的执行单位。&#160;<a class="footnote-backref" href="#fnref:process" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+<li id="fn:openmp-affinity">
+<p>OpenMP Architecture Review Board, <em>OpenMP 5.2, §18.3 Affinity</em>, <a href="https://www.openmp.org/spec-html/5.2/openmpse103.html">https://www.openmp.org/spec-html/5.2/openmpse103.html</a>.&#160;<a class="footnote-backref" href="#fnref:openmp-affinity" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
-<li id="fn:vas">
-<p>virtual address space，虚拟地址空间。进程看到的连续地址，由页表映射到物理内存。&#160;<a class="footnote-backref" href="#fnref:vas" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+<li id="fn:linux-numa">
+<p>Linux Kernel Documentation, <em>NUMA Memory Policy</em>, <a href="https://docs.kernel.org/admin-guide/mm/numa_memory_policy.html">https://docs.kernel.org/admin-guide/mm/numa_memory_policy.html</a>.&#160;<a class="footnote-backref" href="#fnref:linux-numa" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:linux-numa" title="Jump back to footnote 7 in the text">&#8617;</a></p>
 </li>
-<li id="fn:page-table">
-<p>页表。虚拟页到物理页的映射表。&#160;<a class="footnote-backref" href="#fnref:page-table" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+<li id="fn:nersc-roofline">
+<p>NERSC, <em>Roofline Performance Model</em>, <a href="https://docs.nersc.gov/tools/performance/roofline/">https://docs.nersc.gov/tools/performance/roofline/</a>.&#160;<a class="footnote-backref" href="#fnref:nersc-roofline" title="Jump back to footnote 8 in the text">&#8617;</a></p>
 </li>
-<li id="fn:tlb">
-<p>translation lookaside buffer，地址翻译缓存，保存最近使用的页表项。&#160;<a class="footnote-backref" href="#fnref:tlb" title="Jump back to footnote 9 in the text">&#8617;</a></p>
-</li>
-<li id="fn:context-switch">
-<p>上下文切换。保存一个执行流的寄存器和状态，恢复另一个执行流。&#160;<a class="footnote-backref" href="#fnref:context-switch" title="Jump back to footnote 10 in the text">&#8617;</a></p>
-</li>
-<li id="fn:numa">
-<p>non-uniform memory access，非一致内存访问。不同处理器访问不同内存节点的延迟不同。&#160;<a class="footnote-backref" href="#fnref:numa" title="Jump back to footnote 11 in the text">&#8617;</a></p>
-</li>
-<li id="fn:smt">
-<p>simultaneous multithreading，同时多线程。一个物理核让多个硬件线程交错使用空闲执行部件。&#160;<a class="footnote-backref" href="#fnref:smt" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+<li id="fn:amdahl">
+<p>G. M. Amdahl, <em>Validity of the Single Processor Approach to Achieving Large Scale Computing Capabilities</em>, 1967, <a href="https://ieeexplore.ieee.org/document/4785615">https://ieeexplore.ieee.org/document/4785615</a>.&#160;<a class="footnote-backref" href="#fnref:amdahl" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:amdahl" title="Jump back to footnote 9 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
