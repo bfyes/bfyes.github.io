@@ -18,7 +18,6 @@ kill: ## 停止 make zensical / make serve 的 8000 端口监听服务
 	fi
 
 zensical: previews kill ## 实时预览文档站点（端口 8000）
-	uv run python scripts/metadata.py
 	uv run zensical serve -o &
 	@sleep 1.5 && uv run python scripts/blocks.py && uv run python scripts/link_previews.py && uv run python scripts/metadata.py
 	@wait

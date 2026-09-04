@@ -222,6 +222,8 @@ Z^{(\ell)}=\operatorname{Norm}(Y^{(\ell)}),\qquad
 X^{(\ell+1)}=Y^{(\ell)}+\operatorname{ChannelMixer}(Z^{(\ell)})
 $$
 
+上标 $\ell$ 表示第 $\ell$ 个模型层。$X^{(\ell)}$ 是该层输入，$U^{(\ell)}$、$Z^{(\ell)}$ 是两次归一化后的中间表示，$Y^{(\ell)}$ 是 TokenMixer 残差相加后的结果，$X^{(\ell+1)}$ 是经过 ChannelMixer 后送往下一层的输出。
+
 这里的部件如下。
 
 | 部件 | 做什么 | 是否与其他部件同层共存 |
@@ -515,6 +517,8 @@ $$
 \in\mathbb{R}^{B\times S\times V}
 $$
 
+$W_{\mathrm{vocab}}$ 是从 hidden size 投影到词表大小 $V$ 的输出权重，$b_{\mathrm{vocab}}$ 是对应偏置。
+
 logits 是未归一化分数。对最后一个位置的长度为 $V$ 的 logits 做 softmax，可得到词表中每个 token 的概率。采样器从这组概率中选择下一个 token。
 
 | 选择方式 | 规则 | 常见作用 |
@@ -566,6 +570,8 @@ Temperature、top-k、top-p 是输出采样策略，不属于 Transformer 层。
 $$
 \mathcal{L}=-\frac{1}{N}\sum_{t\in\mathcal{M}}\log p_t
 $$
+
+$\mathcal{M}$ 是需要计分的位置集合，$N=|\mathcal{M}|$ 是其中的位置数，$p_t$ 是第 $t$ 个位置分给真实下一个 token 的概率。
 
 集合 $\mathcal{M}$ 只包含需要计分的位置；padding、提示词中的某些部分或已被 mask 的位置可以从损失中排除。前向传播得到 logits 和 loss，反向传播计算参数梯度，优化器更新 embedding、投影矩阵、Norm 参数和其他可训练权重。训练时需要保存 activation 供反向使用，因此显存账本与推理不同。[^transformer]
 

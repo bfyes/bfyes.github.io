@@ -676,6 +676,15 @@ body[data-page-counter="true"] .md-content__inner h4::before {
   line-height: var(--admonition-title-lh);
 }
 
+/* 标题中的行内 MathJax 不参与正文公式的块级外边距计算。 */
+.md-typeset .admonition-title mjx-container,
+.md-typeset details > summary mjx-container {
+  display: inline-block !important;
+  margin: 0 !important;
+  line-height: 1;
+  vertical-align: -0.08em;
+}
+
 /* ---- Admonition 自定义（置于所有提示块定义下方）----
    仅支持 color-mix 的现代浏览器通过；不支持者 @supports 不通过 → 提示块完全官方。 */
 
