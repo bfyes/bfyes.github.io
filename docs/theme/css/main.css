@@ -460,9 +460,9 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 
 /* 保留 MathJax 自身底部/顶部间距，避免横向滚动条贴住公式。*/
 .md-typeset div.arithmatex > mjx-container[display] {
-  margin-top: 2px;
+  margin-top: 6px;
   margin-bottom: 18px;
-  margin-bottom: calc(var(--base-size-16, 1rem) + 2px);
+  margin-bottom: calc(var(--base-size-16, 1rem) + 6px);
 }
 
 

@@ -32,6 +32,8 @@ HPC101 课程文档：<https://hpc101.zjusct.io>
 - 【【官方双语】直观解释注意力机制，Transformer的核心 | 【深度学习第6章】】 <https://www.bilibili.com/video/BV1TZ421j7Ke>
 - 【【官方双语】直观解释大语言模型如何储存事实 | 【深度学习第7章】】 <https://www.bilibili.com/video/BV1aTxMehEjK>
 
+可视化网站：<https://bbycroft.net/llm>
+
 以下笔记目前主要由 gpt-5.6 生成，由人工核查。参考课程语音转写稿、PPT OCR 结果、权威论文等写成。
 
 ☝🏼🤓点击进入体验 AI 风味。读 AI 的产物真的好心累💩。
