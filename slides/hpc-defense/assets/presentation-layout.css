@@ -1,0 +1,83 @@
+/*
+ * Deck-specific structural layer.
+ * `custom.css` is an unmodified copy of team-s2/ctf_summer_courses.
+ * Keep all layout adjustments here so the upstream theme stays intact.
+ */
+:root {
+  --deck-page-margin: 55px;
+}
+
+/* A single, visible safe area on every slide. Padding remains inside Reveal's
+ * fixed 1000 × 700 slide box, so it does not affect Reveal's transforms. */
+.reveal .slides > section:not(.stack),
+.reveal .slides > section.stack > section {
+  box-sizing: border-box;
+  padding: var(--deck-page-margin) !important;
+}
+
+/*
+ * team-s2's `.middle` assumes its own `20px 0` slide padding and therefore
+ * uses a 660px fixed height. Vertical Reveal children size themselves from
+ * content, so `height: 100%` would resolve against that content-sized box.
+ * Give divider content the actual padded slide height instead: 700 - 2 × 55.
+ * Flex then centers the heading on both axes.
+ */
+.reveal .slides > section:not(.stack) > .middle,
+.reveal .slides > section.stack > section > .middle {
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(700px - 2 * var(--deck-page-margin));
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+/* The Markdown cover used ordinary flow, so Reveal shrank that section to its
+ * contents. Give the cover one padded slide-height and center its content as a
+ * single unit, without changing any other slide's established layout. */
+.reveal .slides > section:first-child:not(.stack) > .cover-content {
+  min-height: calc(700px - 2 * var(--deck-page-margin));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.reveal .cover-title {
+  margin: 0 0 44px;
+  padding: 0;
+  font-size: 55px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.reveal .cover-team {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 38px;
+}
+
+.reveal .cover-track,
+.reveal .cover-date {
+  font-size: 26px;
+  line-height: 1.28;
+}
+
+.reveal .cover-members {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 70px;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.reveal .cover-members img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
