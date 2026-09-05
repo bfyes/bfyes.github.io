@@ -1,6 +1,13 @@
-/* @import url(https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&family=Source+Code+Pro&family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400;1,700); */
+/*
+ * Reveal-md 演示共用的自定义样式入口。
+ * 顺序：课程基础样式 → 本答辩版式 → 深色覆盖 → 全局字体。
+ */
+@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css');
 @import url(https://cdn.tonycrane.cc/lxgw/lxgwscreen.css);
 @import url(https://cdn.tonycrane.cc/jbmono/jetbrainsmono.css);
+
+/* ===== 基础样式 ===== */
+/* @import url(https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&family=Source+Code+Pro&family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400;1,700); */
 /* @import url(https://gcore.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.1.0/style.css); */
 
 :root {
@@ -260,3 +267,121 @@ html.print-pdf .reveal pre code {
   left: unset !important;
   transform: none !important;
 }
+
+/* ===== 通用版式 ===== */
+/*
+ * Deck-specific structural layer.
+ * 版式规则与基础样式统一保留在本文件，避免多个 CSS 互相覆盖。
+ */
+:root {
+  --deck-page-margin: 55px;
+}
+
+/* A single, visible safe area on every slide. Padding remains inside Reveal's
+ * fixed 1000 × 700 slide box, so it does not affect Reveal's transforms. */
+.reveal .slides > section:not(.stack),
+.reveal .slides > section.stack > section {
+  box-sizing: border-box;
+  padding: var(--deck-page-margin) !important;
+}
+
+/*
+ * team-s2's `.middle` assumes its own `20px 0` slide padding and therefore
+ * uses a 660px fixed height. Vertical Reveal children size themselves from
+ * content, so `height: 100%` would resolve against that content-sized box.
+ * Give divider content the actual padded slide height instead: 700 - 2 × 55.
+ * Flex then centers the heading on both axes.
+ */
+.reveal .slides > section:not(.stack) > .middle,
+.reveal .slides > section.stack > section > .middle {
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(700px - 2 * var(--deck-page-margin));
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+/* The Markdown cover used ordinary flow, so Reveal shrank that section to its
+ * contents. Give the cover one padded slide-height and center its content as a
+ * single unit, without changing any other slide's established layout. */
+.reveal .slides > section:first-child:not(.stack) > .cover-content {
+  min-height: calc(700px - 2 * var(--deck-page-margin));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.reveal .cover-title {
+  margin: 0 0 44px;
+  padding: 0;
+  font-size: 55px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.reveal .cover-team {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 38px;
+}
+
+.reveal .cover-track,
+.reveal .cover-date {
+  font-size: 26px;
+  line-height: 1.28;
+}
+
+.reveal .cover-members {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 70px;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.reveal .cover-members img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ===== 深色主题覆盖 ===== */
+:root {
+  --r-background-color: #1d1d1d;
+  --r-main-color: #FFFFFFE6;
+  --r-link-color: #526cfe;
+  --r-link-color-hover: #3957ff;
+  --r-selection-background-color: #FFFFFFE6;
+  --r-selection-color: #1d1d1d;
+  --r-overlay-element-bg-color: 255, 255, 255;
+}
+
+.reveal h1, .reveal h2, .reveal h3,
+.reveal h4, .reveal h5, .reveal h6 {
+  color: #FFFFFF;
+}
+
+.reveal .slides {
+  border: 1.5px #444 solid;
+}
+
+.reveal hr {
+  border: 10px solid #1d1d1d;
+}
+.reveal .middle hr {
+  background: radial-gradient(ellipse at center,rgba(120, 148, 234, 0.324) 0,hsla(0, 0%, 100%, 0) 75%);
+}
+
+.reveal-viewport.reveal-scroll .scroll-page-content {
+  border: 1.5px #444 solid;
+}
+
+/* ===== 字体 ===== */
+html * { font-family: 'LXGW WenKai', sans-serif !important; }

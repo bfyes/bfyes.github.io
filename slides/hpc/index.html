@@ -12,8 +12,6 @@
     <link rel="stylesheet" href="./css/highlight/monokai-sublime.css" />
 
     <link rel="stylesheet" href="./assets/custom.css" />
-    <link rel="stylesheet" href="./assets/presentation-layout.css" />
-    <link rel="stylesheet" href="./assets/dark.css" />
 
   </head>
   <body>
@@ -23,29 +21,24 @@
           <textarea data-template>
             
 
-<style>
-@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css');
-html * { font-family: 'LXGW WenKai', sans-serif !important; }
-</style>
-
 <div class="cover-content">
   <h5 class="cover-title">鲲鹏 HPC 挑战赛 S2<br>优化答辩</h5>
   <strong class="cover-team">参赛队伍 · ACEtaffy喵</strong>
   <div class="cover-track">CONV / TRSM / ZGEMM</div>
   <div class="cover-date">2026.9.6</div>
   <div class="cover-members">
-    <img src="hpc/ChenyuHeee.png" alt="ChenyuHeee 头像">
+    <img src="hpc.assets/ChenyuHeee.png" alt="ChenyuHeee 头像">
     <span>ChenyuHeee · CONV、整合与验收（组长）</span>
-    <img src="hpc/bfyes.png" alt="Bill Feng 头像">
+    <img src="hpc.assets/bfyes.png" alt="Bill Feng 头像">
     <span>Bill Feng · ZGEMM</span>
-    <img src="hpc/Evelina-IS.png" alt="Evelina 头像">
+    <img src="hpc.assets/Evelina-IS.png" alt="Evelina 头像">
     <span>Evelina · TRSM</span>
   </div>
 </div>
 
 <!-- s -->
 
-<div class="middle center"><div style="width:100%"><h1>Part ε · 运行环境</h1></div></div>
+<div class="middle center"><div style="width:100%"><h1>Part ε · 背景 & 环境</h1></div></div>
 
 <!-- v -->
 
@@ -60,7 +53,7 @@ html * { font-family: 'LXGW WenKai', sans-serif !important; }
 
 # GitHub 仓库管理
 
-<center><img src="hpc/github.png" width="70%"></center>
+<center><img src="hpc.assets/github.png" width="70%"></center>
 
 - 用 Issue 记录假设和待验证的问题
 - 在分支里写代码，并在集群完成对照实验
@@ -74,7 +67,7 @@ html * { font-family: 'LXGW WenKai', sans-serif !important; }
 
 # 贡献 协作
 
-<center><img src="hpc/github2.png" width="100%"></center>
+<center><img src="hpc.assets/github2.png" width="100%"></center>
 
 <!-- v -->
 
@@ -95,7 +88,7 @@ source ./env_kunpeng.sh && bash run_all.sh
 
 # 环境/线程
 
-<center><img src="hpc/thread_scaling.png" width="96%" alt="整机线程扫描图表"></center>
+<center><img src="hpc.assets/thread_scaling.png" width="96%" alt="整机线程扫描图表"></center>
 
 - 鲲鹏 920，共 128 个物理核
 
@@ -117,7 +110,7 @@ source ./env_kunpeng.sh && bash run_all.sh
 
 # CONV 的计算与优化过程
 
-<center><img src="hpc/conv_flow.png" width="96%" alt="CONV 计算过程"></center>
+<center><img src="hpc.assets/conv_flow.png" width="96%" alt="CONV 计算过程"></center>
 
 <!-- s -->
 
@@ -136,7 +129,7 @@ source ./env_kunpeng.sh && bash run_all.sh
 
 # TRSM 的分块求解过程
 
-<center><img src="hpc/trsm_flow.png" width="96%" alt="TRSM 计算过程"></center>
+<center><img src="hpc.assets/trsm_flow.png" width="96%" alt="TRSM 计算过程"></center>
 
 <!-- s -->
 
@@ -155,7 +148,7 @@ source ./env_kunpeng.sh && bash run_all.sh
 
 # ZGEMM
 
-<center><img src="hpc/zgemm_flow.png" width="96%" alt="ZGEMM 计算过程"></center>
+<center><img src="hpc.assets/zgemm_flow.png" width="96%" alt="ZGEMM 计算过程"></center>
 
 <!-- s -->
 
@@ -181,9 +174,6 @@ source ./env_kunpeng.sh && bash run_all.sh
 
     <script src="./plugin/markdown/markdown.js"></script>
     <script src="./plugin/highlight/highlight.js"></script>
-    <script src="./plugin/zoom/zoom.js"></script>
-    <script src="./plugin/notes/notes.js"></script>
-    <script src="./plugin/math/math.js"></script>
     <script>
       function extend() {
         var target = {};
@@ -208,17 +198,14 @@ source ./env_kunpeng.sh && bash run_all.sh
         slideNumber: true,
         plugins: [
           RevealMarkdown,
-          RevealHighlight,
-          RevealZoom,
-          RevealNotes,
-          RevealMath.KaTeX
+          RevealHighlight
         ]
       };
 
       // options from URL query string
       var queryOptions = Reveal().getQueryHash() || {};
 
-      var options = extend(defaultOptions, {"transition":"slide","backgroundTransition":"slide","transitionSpeed":"fast","center":false,"slideNumber":"c/t","width":1000,"_":["slides.md"],"template":"template.html","assets-dir":"assets","assetsDir":"assets","static":"dist"}, queryOptions);
+      var options = extend(defaultOptions, {"transition":"slide","backgroundTransition":"slide","transitionSpeed":"fast","center":false,"slideNumber":"c/t","width":1000,"_":["hpc.md"],"template":"template.html","assets-dir":"assets","assetsDir":"assets","static":"../site/slides/hpc"}, queryOptions);
     </script>
 
 
