@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 from datetime import datetime
@@ -10,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
-SITE = ROOT / "site"
+os.chdir(DOCS)
 
 FRONT_MATTER = re.compile(r"\A---\s*\n.*?\n---\s*\n", re.DOTALL)
 H1 = re.compile(r"(<h1[^>]*>.*?</h1>)", re.DOTALL)
@@ -32,31 +33,6 @@ def count_words(markdown: str) -> int:
     text = LINK.sub(r"\1", text)
     text = MARKDOWN_NOISE.sub(" ", text)
     return len(CJK.findall(text)) + len(WORD.findall(text))
-
-
-def source_path_for(html_path: Path) -> Path | None:
-    """Map a generated HTML page back to its Markdown source.
-
-    Zensical emits directory URLs: both ``docs/foo.md`` and
-    ``docs/foo/index.md`` can generate ``site/foo/index.html``.
-    """
-
-    rel = html_path.relative_to(SITE)
-
-    if html_path.name != "index.html":
-        candidate = DOCS / rel.with_suffix(".md")
-        return candidate if candidate.is_file() else None
-
-    if rel == Path("index.html"):
-        candidates = [DOCS / "index.md"]
-    else:
-        parent = rel.parent
-        candidates = [
-            DOCS / parent / "index.md",
-            DOCS / parent.with_suffix(".md"),
-        ]
-
-    return next((candidate for candidate in candidates if candidate.is_file()), None)
 
 
 def git_updated(source: Path) -> datetime:
@@ -96,9 +72,8 @@ def page_info_html(source: Path, markdown: str) -> str:
     )
 
 
-def patch_page(html_path: Path) -> bool:
-    source = source_path_for(html_path)
-    if source is None:
+def patch_page(source: Path, html_path: Path) -> bool:
+    if not html_path.is_file():
         return False
 
     markdown = source.read_text(encoding="utf-8")
@@ -122,8 +97,13 @@ def patch_page(html_path: Path) -> bool:
 
 def main() -> None:
     count = 0
-    for html_path in sorted(SITE.rglob("*.html")):
-        if patch_page(html_path):
+    for source in sorted(Path(".").rglob("*.md")):
+        html_path = (
+            DOCS.parent / "site" / source.parent / "index.html"
+            if source.name == "index.md"
+            else DOCS.parent / "site" / source.with_suffix("") / "index.html"
+        )
+        if patch_page(source, html_path):
             count += 1
     print(f"patched page info: {count} pages")
 

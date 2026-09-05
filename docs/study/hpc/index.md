@@ -18,6 +18,7 @@ HPC101 课程文档：<https://hpc101.zjusct.io>
 - [Lab3: GDN Prefill 前向优化](lab3/index.md)
 - [Lab4: AMSS-NCKU 数值相对论程序优化](lab4/index.md)
 - [Lab5: Gemma4 端到端推理优化](lab5/index.md)
+- [鲲鹏 HPC 三题优化答辩](/slides/hpc/)
 
 
 

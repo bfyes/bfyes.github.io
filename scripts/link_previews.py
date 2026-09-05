@@ -17,13 +17,15 @@ The glightbox <a href> is left untouched so lightbox still uses the full image.
 
 from __future__ import annotations
 
+import os
 import re
 import struct
-import sys
 import urllib.parse
 from pathlib import Path
 
-SITE = Path(__file__).resolve().parents[1] / "site"
+ROOT = Path(__file__).resolve().parents[1]
+DOCS = ROOT / "docs"
+os.chdir(DOCS)
 
 # Match an entire <img ...> tag.
 IMG_TAG_RE = re.compile(r"<img\b[^>]*>", re.IGNORECASE)
@@ -40,12 +42,10 @@ def preview_path(original: str) -> str:
     return PREVIEW_RE.sub(".preview.jpg", original)
 
 
-def preview_exists(html_dir: Path, img_src: str, preview: str) -> bool:
+def preview_exists(html_dir: Path, preview: str) -> bool:
     """Check if the preview file actually exists on disk."""
     # HTML paths may be URL-encoded; decode for filesystem lookup.
-    src_path = urllib.parse.unquote(img_src)
-    pv_path = urllib.parse.unquote(preview)
-    candidate = (html_dir / pv_path).resolve()
+    candidate = (html_dir / urllib.parse.unquote(preview)).resolve()
     return candidate.is_file()
 
 
@@ -146,7 +146,7 @@ def process_tag(tag: str, html_dir: Path) -> str:
         pv = preview_path(original)
         if (
             pv
-            and preview_exists(html_dir, original, pv)
+            and preview_exists(html_dir, pv)
             and not re.search(r"\bdata-fullsrc=", tag, re.IGNORECASE)
         ):
             tag = re.sub(
@@ -183,14 +183,19 @@ def process_file(html_path: Path) -> bool:
 
     if changed:
         html_path.write_text(new_html, encoding="utf-8")
-        print(f"  patched: {html_path.relative_to(SITE)}")
+        print(f"  patched: {html_path}")
     return changed
 
 
 def main() -> None:
     count = 0
-    for html_file in sorted(SITE.rglob("*.html")):
-        if process_file(html_file):
+    for source in sorted(Path(".").rglob("*.md")):
+        html_file = (
+            DOCS.parent / "site" / source.parent / "index.html"
+            if source.name == "index.md"
+            else DOCS.parent / "site" / source.with_suffix("") / "index.html"
+        )
+        if html_file.is_file() and process_file(html_file):
             count += 1
     print(f"Done: {count} file(s) patched.")
 

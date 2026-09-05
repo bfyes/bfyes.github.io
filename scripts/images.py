@@ -2,13 +2,12 @@
 """Image pipeline: optimize sources and generate previews.
 
 Subcommands:
-    compress   Optimize source images in docs/ in place.
-    previews   Generate low-resolution JPEG previews beside source images.
-    all        Run compress + previews in docs/ before a normal build.
+    compress   Optimize source images in docs/ and presentations/ in place.
+    previews   Generate low-resolution JPEG previews beside docs/ source images.
+    all        Optimize docs/ and presentations/, then generate previews only in docs/.
 
-The preview mode can also target site/ with --site for compatibility with older
-build flows, although normal deploys now generate previews in docs/ first and
-let Zensical copy them into site/.
+Generated site/ output is never processed. Reveal-md copies optimized
+presentation assets during its normal static build; it does not use LQIP previews.
 """
 
 from __future__ import annotations
@@ -23,7 +22,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
-SITE = ROOT / "site"
+PRESENTATIONS = ROOT / "presentations"
+COMPRESSION_ROOTS = (DOCS, PRESENTATIONS)
+PREVIEW_ROOTS = (DOCS,)
 
 IMAGE_EXTS = {".jpg", ".jpeg", ".png"}
 PREVIEW_SUFFIX = ".preview.jpg"
@@ -70,12 +71,13 @@ def is_source_image(path: Path) -> bool:
 
 
 def iter_source_images(base: Path) -> list[Path]:
-    """Return content images, skipping the top-level assets directory."""
-    skip_dir = base / "assets"
+    """Return source images, excluding generated assets and npm dependencies."""
     return sorted(
         path
         for path in base.rglob("*")
-        if path.is_file() and is_source_image(path) and not path.is_relative_to(skip_dir)
+        if path.is_file()
+        and is_source_image(path)
+        and path.relative_to(base).parts[0] not in {"assets", "node_modules"}
     )
 
 
@@ -319,38 +321,39 @@ def compress_images(target_bytes: int, force: bool, include_small: bool) -> int:
     compressed = skipped = marked = 0
     total_before = total_after = 0
 
-    for src in iter_source_images(DOCS):
-        before = src.stat().st_size
-        total_before += before
-        rel = src.relative_to(DOCS)
+    for base in COMPRESSION_ROOTS:
+        for src in iter_source_images(base):
+            before = src.stat().st_size
+            total_before += before
+            rel = src.relative_to(ROOT)
 
-        if has_compress_marker(src) and not force:
-            total_after += before
-            skipped += 1
-            continue
+            if has_compress_marker(src) and not force:
+                total_after += before
+                skipped += 1
+                continue
 
-        if before <= target_bytes and not include_small:
-            total_after += before
-            skipped += 1
-            continue
+            if before <= target_bytes and not include_small:
+                total_after += before
+                skipped += 1
+                continue
 
-        print(f"压缩图片: {rel} ...", end=" ")
-        sys.stdout.flush()
-        changed, old_size, new_size = compress_one(src, target_bytes)
+            print(f"压缩图片: {rel} ...", end=" ")
+            sys.stdout.flush()
+            changed, old_size, new_size = compress_one(src, target_bytes)
 
-        if write_compress_marker(src, target_bytes):
-            marked += 1
-            new_size = src.stat().st_size
+            if write_compress_marker(src, target_bytes):
+                marked += 1
+                new_size = src.stat().st_size
 
-        if changed:
-            pct = (1 - new_size / old_size) * 100
-            print(f"{human_size(old_size)} -> {human_size(new_size)}（减小 {pct:.0f}%）")
-            compressed += 1
-            total_after += new_size
-        else:
-            print(f"跳过（{human_size(new_size)}）")
-            skipped += 1
-            total_after += new_size
+            if changed:
+                pct = (1 - new_size / old_size) * 100
+                print(f"{human_size(old_size)} -> {human_size(new_size)}（减小 {pct:.0f}%）")
+                compressed += 1
+                total_after += new_size
+            else:
+                print(f"跳过（{human_size(new_size)}）")
+                skipped += 1
+                total_after += new_size
 
     if compressed:
         pct = (1 - total_after / total_before) * 100
@@ -430,9 +433,8 @@ def generate_preview(src: Path, out: Path) -> None:
 def clean_stale_previews(base: Path) -> int:
     """Delete preview files whose source image no longer exists."""
     removed = 0
-    skip_dir = base / "assets"
     for pv in sorted(base.rglob(f"*{PREVIEW_SUFFIX}")):
-        if not pv.is_file() or pv.is_relative_to(skip_dir):
+        if not pv.is_file() or pv.relative_to(base).parts[0] in {"assets", "node_modules"}:
             continue
         stem = pv.stem.replace(".preview", "")
         src_jpg = pv.with_name(f"{stem}.jpg")
@@ -481,16 +483,18 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Compress source images and generate preview images.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    compress_parser = subparsers.add_parser("compress", help="optimize source images in docs/")
+    compress_parser = subparsers.add_parser("compress", help="optimize source images in docs/ and presentations/")
     compress_parser.add_argument("--all", action="store_true", help="also optimize images already under target")
     compress_parser.add_argument("--force", action="store_true", help="ignore embedded markers")
     compress_parser.add_argument("--target-mb", type=float, default=2.0, help="target size in MB, default: 2.0")
 
-    preview_parser = subparsers.add_parser("previews", help="generate low-resolution previews")
-    preview_parser.add_argument("--site", action="store_true", help="generate in site/ instead of docs/")
+    preview_parser = subparsers.add_parser("previews", help="generate low-resolution previews for docs/ source images")
     preview_parser.add_argument("--force", action="store_true", help="regenerate all previews")
 
-    all_parser = subparsers.add_parser("all", help="compress docs/ and generate docs/ previews")
+    all_parser = subparsers.add_parser(
+        "all",
+        help="compress docs/ and presentations/, then generate previews only in docs/",
+    )
     all_parser.add_argument("--all", action="store_true", help="also optimize images already under target")
     all_parser.add_argument("--force", action="store_true", help="ignore embedded markers")
     all_parser.add_argument("--target-mb", type=float, default=2.0, help="target size in MB, default: 2.0")
@@ -499,25 +503,21 @@ def main() -> int:
     if not sips_available():
         return 1
 
-    if args.command == "compress":
-        return compress_images(
+    if args.command in ("compress", "all"):
+        status = compress_images(
             int(args.target_mb * 1_000_000),
             args.force,
             args.all,
         )
+        if status != 0:
+            return status
 
-    if args.command == "previews":
-        base = SITE if args.site else DOCS
-        return generate_previews(base, args.force)
+    if args.command in ("previews", "all"):
+        for base in PREVIEW_ROOTS:
+            if generate_previews(base, args.force) != 0:
+                return 1
 
-    status = compress_images(
-        int(args.target_mb * 1_000_000),
-        args.force,
-        args.all,
-    )
-    if status != 0:
-        return status
-    return generate_previews(DOCS, args.force)
+    return 0
 
 
 if __name__ == "__main__":

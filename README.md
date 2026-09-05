@@ -8,7 +8,7 @@ bfyes 的个人文档站，使用 Zensical/MkDocs 构建，主题层基于 GitHu
 git clone https://github.com/bfyes/bfyes.github.io.git
 cd bfyes.github.io
 uv sync    # 安装依赖
-make       # 本地预览 http://127.0.0.1:8000
+make       # 预览文档；PPT 会在启动时静态构建到 /slides/<name>/
 make deploy # 构建并部署到 GitHub Pages
 ```
 
@@ -45,13 +45,14 @@ docs/              # 站点内容
   theme/data/      # 贡献图 JSON（构建期生成）
 overrides/         # main.html + partials（comments/page-info/logo）
 scripts/           # 构建期脚本
+presentations/      # Reveal-md 演示源码，构建到 /slides/<name>/
 zensical.toml      # 站点配置
 ```
 
 ## 生成流程
 
 ```text
-contributions → pdfs → images(all) → zensical build → blocks → link_previews → metadata → push gh-pages
+contributions → pdfs → images(all) → zensical build → blocks → link_previews → metadata → presentations/build → push gh-pages
 ```
 
 ## 写作约定

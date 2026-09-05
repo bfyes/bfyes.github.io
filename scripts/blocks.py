@@ -24,13 +24,16 @@ dreamem0ra1n | dreamem0ra1n | https://dreamem0ra1n.github.io/ISYS/ | ISYS
 from __future__ import annotations
 
 import html
+import os
 import re
 from pathlib import Path
 from urllib.parse import quote
 
 import markdown
 
-SITE = Path(__file__).resolve().parents[1] / "site"
+ROOT = Path(__file__).resolve().parents[1]
+DOCS = ROOT / "docs"
+os.chdir(DOCS)
 
 
 def friend_initials(name: str, github: str) -> str:
@@ -67,12 +70,6 @@ def render_avatar(name: str, github: str) -> str:
         else ""
     )
     return f'<span class="site-friend-card__avatar">{initials}{img}</span>'
-
-
-def parse_block(content: str, tag: str) -> str | None:
-    """提取 ::tag:: ... ::/tag:: 块内容。"""
-    m = re.search(rf"::{tag}::\s*(.*?)\s*::/{tag}::", content, re.DOTALL)
-    return m.group(1) if m else None
 
 
 def render_inline_markdown(text: str) -> str:
@@ -281,14 +278,19 @@ def process_file(path: Path) -> bool:
         return False
 
     path.write_text(patched, encoding="utf-8")
-    print(f"  patched: {path.relative_to(SITE)}")
+    print(f"  patched: {path}")
     return True
 
 
 def main() -> None:
     count = 0
-    for html_file in SITE.rglob("*.html"):
-        if process_file(html_file):
+    for source in Path(".").rglob("*.md"):
+        html_file = (
+            DOCS.parent / "site" / source.parent / "index.html"
+            if source.name == "index.md"
+            else DOCS.parent / "site" / source.with_suffix("") / "index.html"
+        )
+        if html_file.is_file() and process_file(html_file):
             count += 1
     print(f"Done: {count} files patched")
 
