@@ -1,9 +1,11 @@
 .DEFAULT_GOAL := preview
 
-.PHONY: preview kill deploy contributions previews images clean
+.PHONY: preview kill deploy contributions previews images clean slides
 
 PREVIEW_PORT ?= 8000
 PREVIEW_HOST ?= 0.0.0.0
+OPEN_BROWSER ?= 1
+PREVIEW_LOCAL_URL := http://127.0.0.1:$(PREVIEW_PORT)/
 SLIDES_DIR := slides
 
 previews: ## 生成 docs/ 图片的低分辨率预览图
@@ -21,12 +23,16 @@ kill: ## 停止 8000 端口上的统一预览服务
 		echo "$(PREVIEW_PORT) 端口没有运行中的预览服务"; \
 	fi
 
+# 单独保留递归 make，避免 Makefile Tools 的 `make -n` 将预览服务命令误判为
+# 必须执行的递归配方；后者会导致 VS Code 配置阶段意外启动浏览器并超时。
+slides: ## 构建 Reveal 幻灯片
+	$(MAKE) -C $(SLIDES_DIR) build
+
 # Zensical 原生监听文档变化；幻灯片仅在启动预览时静态构建到 site/slides/。
-preview: previews kill ## 预览文档站；启动时构建 PPT（端口 8000）
-	@uv run zensical serve --dev-addr $(PREVIEW_HOST):$(PREVIEW_PORT) --open & \
+preview: previews kill slides ## 预览文档站；启动时构建 PPT（端口 8000）
+	@uv run zensical serve --dev-addr $(PREVIEW_HOST):$(PREVIEW_PORT) & \
 		zensical_pid=$$!; \
 		sleep 1.5; \
-		$(MAKE) -C $(SLIDES_DIR) build && \
 		uv run python scripts/blocks.py && \
 		uv run python scripts/link_previews.py && \
 		uv run python scripts/metadata.py; \
@@ -35,11 +41,24 @@ preview: previews kill ## 预览文档站；启动时构建 PPT（端口 8000）
 			host_ip="$$(ifconfig | awk '/inet / && $$2 !~ /^127\./ { print $$2; exit }')"; \
 		fi; \
 		echo ""; \
-		echo "本机预览：http://127.0.0.1:$(PREVIEW_PORT)/"; \
+		echo "本机预览：$(PREVIEW_LOCAL_URL)"; \
 		if [ -n "$$host_ip" ]; then \
 			echo "局域网预览：http://$$host_ip:$(PREVIEW_PORT)/"; \
 		else \
 			echo "未检测到局域网 IPv4；请连接 Wi-Fi 或手机热点后重新运行 make。"; \
+		fi; \
+		if [ "$(OPEN_BROWSER)" = "1" ]; then \
+			for attempt in $$(seq 1 40); do \
+				if curl -fsS "$(PREVIEW_LOCAL_URL)" >/dev/null 2>&1; then \
+					if command -v open >/dev/null 2>&1; then \
+						open "$(PREVIEW_LOCAL_URL)"; \
+					elif command -v xdg-open >/dev/null 2>&1; then \
+						xdg-open "$(PREVIEW_LOCAL_URL)"; \
+					fi; \
+					break; \
+				fi; \
+				sleep 0.25; \
+			done; \
 		fi; \
 		wait $$zensical_pid
 
@@ -54,7 +73,7 @@ deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run python scripts/blocks.py
 	uv run python scripts/link_previews.py
 	uv run python scripts/metadata.py
-	$(MAKE) -C $(SLIDES_DIR) build
+	$(MAKE) slides
 	cd site && git add -A && git commit -m "deploy" --allow-empty && git push --force origin HEAD:gh-pages
 
 clean: ## 清理 site 目录并重新初始化 git 仓库（不影响主仓库）
