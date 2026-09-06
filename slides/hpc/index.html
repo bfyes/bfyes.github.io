@@ -42,11 +42,11 @@
 
 <!-- v -->
 
-| 题目 | 名称 | 要完成的计算 | 本题的优化重点 |
-| :-- | :-- | :-- | :-- |
-| **CONV** | Convolution，二维卷积 | 用卷积核扫描输入，得到输出特征图 | 保持 FP32 累加顺序，同时计算更多输出 |
-| **TRSM** | Triangular Solve，三角方程求解 | 求解 `L × X = B`，其中 `L` 是下三角矩阵 | 按依赖顺序求解，把更新阶段并行化 |
-| **ZGEMM** | 双精度复数矩阵乘法 | 计算 `C = alpha × A × B + beta × C` | 组织复数数据、寄存器块和缓存访问 |
+| 缩写 | 英文全称 | 中文含义 | 要完成的计算 | 本题的优化重点 |
+| :-- | :-- | :-- | :-- | :-- |
+| **CONV** | Convolution | 二维卷积 | 用卷积核扫描输入，得到输出特征图 | 保持 FP32 累加顺序，同时计算更多输出 |
+| **TRSM** | Triangular Solve | 三角方程求解 | 求解 `L × X = B`，其中 `L` 是下三角矩阵 | 按依赖顺序求解，把更新阶段并行化 |
+| **ZGEMM** | Double-precision complex General Matrix-Matrix Multiplication | 双精度复数通用矩阵乘法 | 计算 `C = alpha × A × B + beta × C` | 组织复数数据、寄存器块和缓存访问 |
 
 
 <!-- v -->
@@ -91,6 +91,7 @@ source ./env_kunpeng.sh && bash run_all.sh
 <center><img src="hpc.assets/thread_scaling.png" width="96%" alt="整机线程扫描图表"></center>
 
 - 鲲鹏 920，共 128 个物理核
+- NEON 是 ARM 架构提供的 SIMD 向量指令，一条指令可以同时处理多个数据
 
 
 <!-- s -->
@@ -158,9 +159,12 @@ source ./env_kunpeng.sh && bash run_all.sh
 
 # 总结
 
-- CONV：不改每个输出点的计算顺序。把相邻的一小块输出放在一起算。
+- CONV：不改每个输出点的计算顺序。把相邻的一小块输出放在一起算
 - TRSM：该按顺序算的地方按顺序算；能同时更新的地方就交给多个线程
 - ZGEMM：提前把数据整理好，让 CPU 少花时间找数据，多花时间做计算
+
+<center><img src="hpc.assets/result.png" width="96%" alt="ZGEMM 计算过程"></center>
+
 
 <!-- s -->
 
