@@ -2,12 +2,12 @@
 """Image pipeline: optimize sources and generate previews.
 
 Subcommands:
-    compress   Optimize source images in docs/ and presentations/ in place.
+    compress   Optimize source images in docs/ and slides/ in place.
     previews   Generate low-resolution JPEG previews beside docs/ source images.
-    all        Optimize docs/ and presentations/, then generate previews only in docs/.
+    all        Optimize docs/ and slides/, then generate previews only in docs/.
 
 Generated site/ output is never processed. Reveal-md copies optimized
-presentation assets during its normal static build; it does not use LQIP previews.
+slide assets during its normal static build; it does not use LQIP previews.
 """
 
 from __future__ import annotations
@@ -22,8 +22,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
-PRESENTATIONS = ROOT / "presentations"
-COMPRESSION_ROOTS = (DOCS, PRESENTATIONS)
+SLIDES = ROOT / "slides"
+COMPRESSION_ROOTS = (DOCS, SLIDES)
 PREVIEW_ROOTS = (DOCS,)
 
 IMAGE_EXTS = {".jpg", ".jpeg", ".png"}
@@ -483,7 +483,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Compress source images and generate preview images.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    compress_parser = subparsers.add_parser("compress", help="optimize source images in docs/ and presentations/")
+    compress_parser = subparsers.add_parser("compress", help="optimize source images in docs/ and slides/")
     compress_parser.add_argument("--all", action="store_true", help="also optimize images already under target")
     compress_parser.add_argument("--force", action="store_true", help="ignore embedded markers")
     compress_parser.add_argument("--target-mb", type=float, default=2.0, help="target size in MB, default: 2.0")
@@ -493,7 +493,7 @@ def main() -> int:
 
     all_parser = subparsers.add_parser(
         "all",
-        help="compress docs/ and presentations/, then generate previews only in docs/",
+        help="compress docs/ and slides/, then generate previews only in docs/",
     )
     all_parser.add_argument("--all", action="store_true", help="also optimize images already under target")
     all_parser.add_argument("--force", action="store_true", help="ignore embedded markers")

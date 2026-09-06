@@ -240,32 +240,19 @@ html.print-pdf .reveal pre code {
   font-size: 1em;
 }
 
-.reveal-viewport.reveal-scroll .slide-background {
-  width: var(--slide-width) !important;
-  height: var(--slide-height) !important;
-}
-
+/*
+ * Reveal 的阅读（scroll）模式会让 `.scroll-page-content` 填满视口，
+ * 并仅对其中的 section 缩放、居中。不要覆盖该容器的尺寸或 transform：
+ * 否则窄屏竖屏会把整个页面按桌面幻灯片尺寸定位，导致居中和页边距失效。
+ */
 .reveal-viewport.reveal-scroll .slides {
   border: none;
 }
 
-.reveal-viewport.reveal-scroll .scroll-page-content {
-  width: var(--slide-width) !important;
-  height: var(--slide-height) !important;
-  top: 50% !important;
-  left: 50% !important;
-  opacity: 1 !important;
-  transform: scale(var(--slide-scale)) translate(-50%, -50%) !important;
-  transform-style: flat !important;
-  transform-origin: 0 0 !important;
+.reveal-viewport.reveal-scroll .scroll-page section {
+  box-sizing: border-box;
   border: 1.5px #ddd solid;
   border-radius: 7px;
-}
-
-.reveal-viewport.reveal-scroll .scroll-page section {
-  top: unset !important;
-  left: unset !important;
-  transform: none !important;
 }
 
 /* ===== 通用版式 ===== */
@@ -280,7 +267,8 @@ html.print-pdf .reveal pre code {
 /* A single, visible safe area on every slide. Padding remains inside Reveal's
  * fixed 1000 × 700 slide box, so it does not affect Reveal's transforms. */
 .reveal .slides > section:not(.stack),
-.reveal .slides > section.stack > section {
+.reveal .slides > section.stack > section,
+.reveal-viewport.reveal-scroll .scroll-page section {
   box-sizing: border-box;
   padding: var(--deck-page-margin) !important;
 }
@@ -293,7 +281,8 @@ html.print-pdf .reveal pre code {
  * Flex then centers the heading on both axes.
  */
 .reveal .slides > section:not(.stack) > .middle,
-.reveal .slides > section.stack > section > .middle {
+.reveal .slides > section.stack > section > .middle,
+.reveal-viewport.reveal-scroll .scroll-page section > .middle {
   box-sizing: border-box;
   width: 100%;
   height: calc(700px - 2 * var(--deck-page-margin));
@@ -305,7 +294,8 @@ html.print-pdf .reveal pre code {
 /* The Markdown cover used ordinary flow, so Reveal shrank that section to its
  * contents. Give the cover one padded slide-height and center its content as a
  * single unit, without changing any other slide's established layout. */
-.reveal .slides > section:first-child:not(.stack) > .cover-content {
+.reveal .slides > section:first-child:not(.stack) > .cover-content,
+.reveal-viewport.reveal-scroll .scroll-page section > .cover-content {
   min-height: calc(700px - 2 * var(--deck-page-margin));
   box-sizing: border-box;
   display: flex;
@@ -379,8 +369,8 @@ html.print-pdf .reveal pre code {
   background: radial-gradient(ellipse at center,rgba(120, 148, 234, 0.324) 0,hsla(0, 0%, 100%, 0) 75%);
 }
 
-.reveal-viewport.reveal-scroll .scroll-page-content {
-  border: 1.5px #444 solid;
+.reveal-viewport.reveal-scroll .scroll-page section {
+  border-color: #444;
 }
 
 /* ===== 字体 ===== */

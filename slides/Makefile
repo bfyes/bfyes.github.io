@@ -1,19 +1,23 @@
-# Reveal-md 子项目。
-# 约定：foo.md 构建为 /slides/foo/；foo.assets/ 放 foo.md 使用的图片等资源。
+# Reveal-md 幻灯片子项目。
+# 约定：foo.md 构建为 /slides/foo/；foo.assets/ 存放 foo.md 使用的图片等资源。
+# 依赖清单和 node_modules 均放在 .reveal/，首次构建时会自动执行 npm ci。
 .DEFAULT_GOAL := build
 
-NODE_MODULES := node_modules/.package-lock.json
-REVEAL_MD := ./node_modules/.bin/reveal-md
+REVEAL_DIR := .reveal
+PACKAGE_JSON := $(REVEAL_DIR)/package.json
+PACKAGE_LOCK := $(REVEAL_DIR)/package-lock.json
+NODE_MODULES := $(REVEAL_DIR)/node_modules/.package-lock.json
+REVEAL_MD := ./$(REVEAL_DIR)/node_modules/.bin/reveal-md
 TEMPLATE := template.html
 ASSETS_DIR := assets
 SITE_SLIDES_DIR := ../site/slides
 SLIDES := $(wildcard *.md)
 .PHONY: build clean help
 
-$(NODE_MODULES): package-lock.json package.json
-	npm ci
+$(NODE_MODULES): $(PACKAGE_JSON) $(PACKAGE_LOCK)
+	npm ci --prefix "$(REVEAL_DIR)"
 
-build: $(NODE_MODULES) ## 构建 presentations/ 下全部 Markdown 演示
+build: $(NODE_MODULES) ## 构建 slides/ 下全部 Markdown 幻灯片
 	@set -e; \
 	for source in $(SLIDES); do \
 		name="$${source%.md}"; \

@@ -23,5 +23,5 @@ docs/theme/data/
 # 本地私有资料，不进入 Git，也不参与 Zensical 构建
 private/
 
-# Reveal-md 演示项目的本地依赖
-/presentations/node_modules/
+# Reveal-md 幻灯片项目的本地依赖
+/slides/.reveal/node_modules/

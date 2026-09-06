@@ -1,8 +1,8 @@
 {
-  "name": "presentations-reveal-md",
+  "name": "slides-reveal-md",
   "private": true,
   "version": "1.0.0",
-  "description": "Reveal-md 演示文稿构建工具",
+  "description": "Reveal-md 幻灯片构建工具",
   "devDependencies": {
     "reveal-md": "6.1.4"
   },

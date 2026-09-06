@@ -33,6 +33,7 @@ chenyuheee | ChenyuHeee | https://hechenyu.xin
 ## Changelog
 
 ::changelog::
+2026.09.06: 新特性：reveal-md & 更新 hpc 答辩 PPT。
 2026.08.26: 新特性：toc 折叠
 2026.08.23: 增加导航切换时正文区宽度的平滑过渡，解决困扰我很久的宽度跳变问题。
 2026.08.22: Zensical 版本更新 (UI 部分修复了我之前的 issue)，关闭动态背景大幅提升流畅性^ ^

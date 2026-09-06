@@ -45,14 +45,14 @@ docs/              # 站点内容
   theme/data/      # 贡献图 JSON（构建期生成）
 overrides/         # main.html + partials（comments/page-info/logo）
 scripts/           # 构建期脚本
-presentations/      # Reveal-md 演示源码，构建到 /slides/<name>/
+slides/             # Reveal-md 幻灯片源码，构建到 /slides/<name>/
 zensical.toml      # 站点配置
 ```
 
 ## 生成流程
 
 ```text
-contributions → pdfs → images(all) → zensical build → blocks → link_previews → metadata → presentations/build → push gh-pages
+contributions → pdfs → images(all) → zensical build → blocks → link_previews → metadata → slides/build → push gh-pages
 ```
 
 ## 写作约定
