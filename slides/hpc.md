@@ -87,6 +87,18 @@ source ./env_kunpeng.sh && bash run_all.sh
 - 鲲鹏 920，共 128 个物理核
 - NEON 是 ARM 架构提供的 SIMD 向量指令，一条指令可以同时处理多个数据
 
+<!-- v -->
+
+```c
+#include <arm_neon.h>
+
+float32x4_t acc = vdupq_n_f32(0);      // 4 个 FP32 累加器
+float32x4_t x   = vld1q_f32(input);     // 一次加载 4 个数据
+acc = vfmaq_n_f32(acc, x, weight);     // 4 路同时做乘加
+vst1q_f32(output, acc);                // 写回 4 个结果
+```
+
+这段代码来自 `CONV/conv2d.c` 的向量化路径；`float32x4_t` 表示 4 个单精度浮点数，`vld1q`、`vfmaq_n` 和 `vst1q` 分别完成向量加载、乘加和存储。
 
 <!-- s -->
 
@@ -107,6 +119,45 @@ source ./env_kunpeng.sh && bash run_all.sh
 
 <center><img src="hpc.assets/conv_flow.png" width="96%" alt="CONV 计算过程"></center>
 
+<!-- v -->
+
+# 保留累加顺序
+
+```c
+for (int kh = 0; kh < kH; ++kh) {
+    for (int kw = 0; kw < kW; ++kw) {
+        acc += input[row + kh][col + kw] * kernel[kh][kw];
+    }
+}
+```
+
+优化没有重排单个输出点的累加链，先保证结果和参考实现一致，再从多个输出点之间寻找并行性。
+
+<!-- v -->
+
+# NEON 向量化
+
+```c
+float32x4_t x = vld1q_f32(inrow);
+q0 = vfmaq_n_f32(q0, x, k0);
+q1 = vfmaq_n_f32(q1, x, k1);
+```
+
+一次加载 4 个 FP32 数据，并同时更新多个输出累加器。向量化放在不改变单个输出顺序的位置。
+
+<!-- v -->
+
+# 四行复用输入
+
+```c
+q0 = vfmaq_n_f32(q0, x, k0);
+q1 = vfmaq_n_f32(q1, x, k1);
+q2 = vfmaq_n_f32(q2, x, k2);
+q3 = vfmaq_n_f32(q3, x, k3);
+```
+
+同一批输入服务四个输出累加器，减少重复加载。凑不满向量的边界区域则走收尾路径。
+
 <!-- s -->
 
 <div class="middle center"><div style="width:100%"><h1>Part 2 · TRSM</h1></div></div>
@@ -126,6 +177,46 @@ source ./env_kunpeng.sh && bash run_all.sh
 
 <center><img src="hpc.assets/trsm_flow.png" width="96%" alt="TRSM 计算过程"></center>
 
+<!-- v -->
+
+# 按矩阵形状分派
+
+```c
+if (nrhs >= n) {
+    solve_by_columns(L, B, nrhs);
+} else {
+    solve_right_looking(L, B, n, nrhs);
+}
+```
+
+右端矩阵矮而宽时优先利用列并行，高而窄时转向右视分块，避免线程没有足够的独立列块可做。
+
+<!-- v -->
+
+# 对角块与更新阶段
+
+```c
+solve_diagonal_block(Bc, Lc);
+#pragma omp parallel for schedule(dynamic)
+for (int b = bs; b < n; b += bs)
+    update_trailing_block(Bc, Lc, b);
+```
+
+先完成有依赖的对角块，再并行更新后面的区域。并行从依赖允许的位置开始。
+
+<!-- v -->
+
+# 完整块与边界块
+
+```c
+if (mr == 4 && nr == 8)
+    micro_asm_4x8(Ap, Bp, C);
+else
+    micro_neon_edge(Ap, Bp, C, mr, nr);
+```
+
+完整块使用 AArch64 汇编微核，边缘尺寸使用 NEON 兜底，兼顾主路径效率和任意尺寸的正确性。
+
 <!-- s -->
 
 <div class="middle center"><div style="width:100%"><h1>Part 3 · ZGEMM</h1></div></div>
@@ -144,6 +235,36 @@ source ./env_kunpeng.sh && bash run_all.sh
 # ZGEMM
 
 <center><img src="hpc.assets/zgemm_flow.png" width="96%" alt="ZGEMM 计算过程"></center>
+
+<!-- v -->
+
+# 数据打包与复数计算
+
+```c
+// A、B 按微核需要的布局打包
+pack_A(A, Ap);
+pack_B(B, Bp);
+
+// 复数乘法拆成实部和虚部的实数乘加
+real = ar * br - ai * bi;
+imag = ar * bi + ai * br;
+```
+
+先把 A 和 B 整理成连续布局，再把复数乘法拆成实部和虚部的实数乘加，便于使用 NEON。A 在打包时融合 `alpha`，第一次读取 C 小块时处理 `beta`。
+
+<!-- v -->
+
+# 4×2 复数微核
+
+```c
+for (int k = 0; k < K; ++k) {
+    acc[0] += Ap[k] * Bp[2 * k + 0];
+    acc[1] += Ap[k] * Bp[2 * k + 1];
+}
+store_4x2(C, acc);
+```
+
+微核一次计算 C 中的一个 4×2 小块，把中间结果放在寄存器中持续累加，最后集中写回，减少数据搬运。
 
 <!-- s -->
 
