@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="540" viewBox="0 0 1000 540">
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans CJK SC",Arial,sans-serif;fill:#202124}.title{font-size:22px;font-weight:700}.label{font-size:14px}.small{font-size:12px;fill:#5f6368}.value{font-size:13px;font-weight:600}</style>
+<rect width="100%" height="100%" fill="white"/>
+<text x="55" y="45" class="title">PyTorch Profiler：decode 的主要 CUDA kernel</text>
+<text x="55" y="70" class="small">job 175669，1000-token prompt 后连续 8 个 eager decode step；仅列示互不作为 Python 包装层的底层 kernel</text>
+<text x="75" y="160" class="label">_gemv_kernel</text>
+<rect x="330" y="135" width="548.0" height="46" rx="4" fill="#3b6fb6"/>
+<text x="888.0" y="156" class="value">913.3 ms</text>
+<text x="888.0" y="174" class="small">2624 calls, 348.0 us/call</text>
+<text x="75" y="260" class="label">_dequant_kernel</text>
+<rect x="330" y="235" width="111.0" height="46" rx="4" fill="#2ca6a0"/>
+<text x="451.0" y="256" class="value">185.1 ms</text>
+<text x="451.0" y="274" class="small">328 calls, 564.3 us/call</text>
+<text x="75" y="360" class="label">Tensor Core GEMM kernel</text>
+<rect x="330" y="335" width="197.9" height="46" rx="4" fill="#8a6db1"/>
+<text x="537.9" y="356" class="value">329.8 ms</text>
+<text x="537.9" y="374" class="small">232 calls, 1.42 ms/call</text>
+<text x="75" y="445" class="small">8 个 decode step 的 CUDA 时间为 1.23 s，单 step 为 152.3–156.0 ms。</text>
+<text x="75" y="470" class="small">融合 INT4 GEMV 共 2624 次，占 profiler 记录的自 CUDA 时间 40.0%，是 decode 的首要优化对象。</text>
+</svg>
