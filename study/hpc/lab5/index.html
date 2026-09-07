@@ -29,7 +29,7 @@
     
     
       
-        <title>Lab5: Gemma4 端到端推理优化 - BillFeng 的文档站</title>
+        <title>Lab 5：Gemma4 端到端推理优化 - BillFeng 的文档站</title>
       
     
     
@@ -126,7 +126,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#lab5-gemma4-端到端推理优化" class="md-skip">
+        <a href="#lab-5gemma4-端到端推理优化" class="md-skip">
           Skip to content
         </a>
       
@@ -163,7 +163,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Lab5: Gemma4 端到端推理优化
+              Lab 5：Gemma4 端到端推理优化
             
           </span>
         </div>
@@ -431,8 +431,6 @@
         <div class="md-main__inner md-grid">
           
             
-              
-                
               
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
@@ -1830,6 +1828,23 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab5: Gemma4推理优化
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="././" class="md-nav__link md-nav__link--active">
         
   
@@ -1845,6 +1860,331 @@
   
 
       </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#总览更新日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        总览（更新日志？）
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#量化正确性任务一总览" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        量化正确性（任务一总览）
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#任务二总览" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        任务二总览
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="任务二总览">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-反量化基线" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Python 反量化基线
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#性能演进" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        性能演进
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#主要性能优化" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        主要性能优化
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主要性能优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#triton-反量化--cublas" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Triton 反量化 + cuBLAS
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prefill注意力" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        prefill注意力
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decode-注意力" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        decode 注意力
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int4-融合-gemv" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        INT4 融合 GEMV
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cuda-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        CUDA Graph
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分块参数" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        分块参数
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#性能分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        性能分析
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#内核与显存分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        内核与显存分析
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="内核与显存分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gemv-分块测试" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GEMV 分块测试
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#w4a16-权重显存" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        W4A16 权重显存
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kv-cache-显存" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        KV Cache 显存
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#失败或未保留方案" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        失败或未保留方案
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#最终配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        最终配置
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#稳定性复测agent闲的保留下来好了" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        稳定性复测（<span style="text-decoration:line-through;">Agent闲的，保留下来好了</span>）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#思考题" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        思考题
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="思考题">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#w4a16-权重与-kv-cache-显存推导" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        W4A16 权重与 KV Cache 显存推导
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#运行时稀疏注意力" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        运行时稀疏注意力
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分层量化与推理-offloading-的异同" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        分层量化与推理 Offloading 的异同
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Source Code
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -3031,9 +3371,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   
                     
@@ -3041,6 +3379,11 @@
                     
                       
                     
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
                     
                   
                   <div class="md-sidebar__inner">
@@ -3053,6 +3396,319 @@
   
     
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#总览更新日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        总览（更新日志？）
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#量化正确性任务一总览" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        量化正确性（任务一总览）
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#任务二总览" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        任务二总览
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="任务二总览">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#python-反量化基线" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Python 反量化基线
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#性能演进" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        性能演进
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#主要性能优化" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        主要性能优化
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="主要性能优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#triton-反量化--cublas" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Triton 反量化 + cuBLAS
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prefill注意力" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        prefill注意力
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decode-注意力" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        decode 注意力
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#int4-融合-gemv" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        INT4 融合 GEMV
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cuda-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        CUDA Graph
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分块参数" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        分块参数
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#性能分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        性能分析
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="性能分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#内核与显存分析" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        内核与显存分析
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="内核与显存分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gemv-分块测试" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GEMV 分块测试
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#w4a16-权重显存" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        W4A16 权重显存
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kv-cache-显存" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        KV Cache 显存
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#失败或未保留方案" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        失败或未保留方案
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#最终配置" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        最终配置
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#稳定性复测agent闲的保留下来好了" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        稳定性复测（<span style="text-decoration:line-through;">Agent闲的，保留下来好了</span>）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#思考题" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        思考题
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="思考题">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#w4a16-权重与-kv-cache-显存推导" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        W4A16 权重与 KV Cache 显存推导
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#运行时稀疏注意力" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        运行时稀疏注意力
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#分层量化与推理-offloading-的异同" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        分层量化与推理 Offloading 的异同
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Source Code
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -3091,14 +3747,954 @@
 
 
 
-<h1 id="lab5-gemma4-端到端推理优化">Lab5: Gemma4 端到端推理优化<a class="headerlink" href="#lab5-gemma4-端到端推理优化" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-07-10T02:17:39+08:00">2026/07/10</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 10 字</span></div>
-<p>TODO</p>
-<!--
-<iframe src="lab5.pdf" width="100%" height="800px" style="border:none;">
-</iframe>
--->
+<h1 id="lab-5gemma4-端到端推理优化">Lab 5：Gemma4 端到端推理优化<a class="headerlink" href="#lab-5gemma4-端到端推理优化" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-07-10T02:17:39+08:00">2026/07/10</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 4605 字</span></div>
+<div class="admonition abstract">
+<p class="admonition-title">写在前面</p>
+<p><strong>实验平台：H800 PCIe MIG 1g.10gb，PyTorch / Triton / CUDA Graph</strong></p>
+<p><a href="./lab5.pdf">点击查看报告 PDF 版</a></p>
+</div>
+<details class="note">
+<summary>相关学习资料</summary>
+<p>【[LLM推理] 深入理解大模型量化：GPTQ 原理解析】 <a href="https://www.bilibili.com/video/BV1UjiuBFECB">https://www.bilibili.com/video/BV1UjiuBFECB</a></p>
+<p><a href="https://bfyes.github.io/study/hpc/notes/0716p/#prefilldecode-与推理调度">https://bfyes.github.io/study/hpc/notes/0716p/#prefilldecode-与推理调度</a></p>
+<p><a href="https://bfyes.github.io/study/hpc/notes/0717a/#高效-attention-与内存访问">https://bfyes.github.io/study/hpc/notes/0717a/#高效-attention-与内存访问</a></p>
+<p><a href="https://bfyes.github.io/study/hpc/notes/0717a/#量化推理与服务调度">https://bfyes.github.io/study/hpc/notes/0717a/#量化推理与服务调度</a></p>
+</details>
+<p>本次实验中我们使用的是剥离多模态 tokenizer 后的 Gemma4-12B 模型</p>
+<p>以 <code>delta_nll</code> 验证量化质量；以 <code>elapsed_s</code>、首token时延（TTFT）和逐token时延（TPOT）记录推理性能。</p>
+<p>OJ 四舍五入成绩：100（99.597）。ΔNLL=0.092529，性能用时=36.806s，Task 1=100.00，Task 2=99.33。</p>
+<h2 id="总览更新日志">总览（更新日志？）<a class="headerlink" href="#总览更新日志" title="Permanent link"></a></h2>
+<p><span style="text-decoration:line-through;">其实看这些就够了💦💦💦</span></p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>改动</th>
+<th>质量/性能</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RTN Round‑To‑Nearest</td>
+<td>INT4 取整</td>
+<td><code>delta_nll=0.290577</code></td>
+<td>质量基线</td>
+</tr>
+<tr>
+<td>GPTQ v1 Generative Pre‑trained Transformer Quantization</td>
+<td>初版 Hessian 误差传播</td>
+<td>符号写反<code>delta_nll=0.411300</code></td>
+<td>修复传播公式</td>
+</tr>
+<tr>
+<td>GPTQ v2/v5/v6</td>
+<td>对称量化、阻尼与校准扫参</td>
+<td>质量不稳定</td>
+<td>保留最大值阻尼 <code>0.01</code></td>
+</tr>
+<tr>
+<td>GPTQ v7</td>
+<td>非对称 INT4、层间误差传播</td>
+<td><code>delta_nll=0.097174</code></td>
+<td>作为性能优化检查点（checkpoint）</td>
+</tr>
+<tr>
+<td>v7 稳定化</td>
+<td><code>max_tokens=4096</code>、确定性量化</td>
+<td><code>delta_nll=0.092529</code></td>
+<td>固定最终量化配置</td>
+</tr>
+<tr>
+<td>Python dequant 反量化</td>
+<td>解包→BF16 权重【存入显存】→调用 API</td>
+<td><code>165.418s</code></td>
+<td>定位到重复反量化，现存反复写入/读取</td>
+</tr>
+<tr>
+<td>Triton 反量化， cuBLAS 完成矩阵相关任务</td>
+<td><strong>prefill</strong> 反量化放到 Triton</td>
+<td><code>115.214s</code></td>
+<td>保留prefill 路径</td>
+</tr>
+<tr>
+<td>SDPA Scaled Dot‑Product Attention，缩放点积注意力</td>
+<td>prefill使用 Flash Attention</td>
+<td><code>88.851s</code></td>
+<td>保留，避免手工注意力计算</td>
+</tr>
+<tr>
+<td>Triton 融合 INT4 GEMV 矩阵‑向量乘</td>
+<td><strong>decode</strong> 中解包并直接点积 【采用寄存器】</td>
+<td><code>55.311s</code></td>
+<td>decode 主路径</td>
+</tr>
+<tr>
+<td>CUDA Graph / 静态缓冲区</td>
+<td>减少decode调度与临时张量</td>
+<td>约 <code>42.1s</code></td>
+<td>保留</td>
+</tr>
+<tr>
+<td>分块参数重调</td>
+<td><code>BLOCK_N=16, BLOCK_PK=128</code></td>
+<td>多次复测中位约 <code>36.92s</code></td>
+<td>👌</td>
+</tr>
+</tbody>
+</table>
+<p>每 6 层中有 5 个滑动窗口注意力层、1 个全局注意力层（交替，共 40 个滑动窗口层和 8 个全局层。</p>
+<p>生成阶段每个 token 都要经过 48 层、328 个 Linear（线性算子），decode因而成为主要耗时；KV 缓存则可按层处理：滑动窗口层只保留最近 1024 个token的环形缓冲区，全局层保留完整上下文。</p>
+<p><a class="glightbox" data-type="image" href="./lab5.assets/image-20260829202633370.png"><img width="1450" height="752" class="lqip" alt="image-20260829202633370" src="./lab5.assets/image-20260829202633370.preview.jpg" data-fullsrc="./lab5.assets/image-20260829202633370.png" /></a></p>
+<p>有了 RTN 基线，接下来开始优化。任务一要满足量化的正确性（正确性也是任务二速度优化的前提）。量化对时间卡的没那么死，可能是因为这是一次性的工作🤔（？）</p>
+<p>报告中任务一不会强调时间问题。</p>
+<h2 id="量化正确性任务一总览">量化正确性（任务一总览）<a class="headerlink" href="#量化正确性任务一总览" title="Permanent link"></a></h2>
+<p>RTN 按组取整，<code>delta_nll=0.290577</code>；修正符号错误后的对称 GPTQ 仍为 <code>0.212204</code>，说明仅有 Hessian 补偿不足以覆盖该模型的权重分布。</p>
+<table>
+<thead>
+<tr>
+<th>版本</th>
+<th>改动</th>
+<th style="text-align: right;">mean_nll</th>
+<th style="text-align: right;">delta_nll</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BF16</td>
+<td>参考结果</td>
+<td style="text-align: right;">2.308456</td>
+<td style="text-align: right;">0.000000</td>
+</tr>
+<tr>
+<td>RTN</td>
+<td>按组 INT4 直接取整</td>
+<td style="text-align: right;">2.599032</td>
+<td style="text-align: right;">0.290577</td>
+</tr>
+<tr>
+<td>GPTQ v1</td>
+<td>误差传播符号错误</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">0.411300</td>
+</tr>
+<tr>
+<td>GPTQ v2</td>
+<td>修正符号，对称量化</td>
+<td style="text-align: right;">2.520659</td>
+<td style="text-align: right;">0.212204</td>
+</tr>
+<tr>
+<td>GPTQ v5</td>
+<td><code>阻尼大小 damp_percent=0.001</code></td>
+<td style="text-align: right;">2.545289</td>
+<td style="text-align: right;">0.236834</td>
+</tr>
+<tr>
+<td>GPTQ v6</td>
+<td>均值阻尼，0.01</td>
+<td style="text-align: right;">2.566976</td>
+<td style="text-align: right;">0.258521</td>
+</tr>
+<tr>
+<td>GPTQ v7</td>
+<td>非对称量化</td>
+<td style="text-align: right;">2.405629</td>
+<td style="text-align: right;">0.097174</td>
+</tr>
+<tr>
+<td>最终配置</td>
+<td>扩大校准并固定确定性设置</td>
+<td style="text-align: right;">2.400984</td>
+<td style="text-align: right;">0.092529</td>
+</tr>
+</tbody>
+</table>
+<p>最终量化采用 GPTQ INT4，分组 128，求解块 128，阻尼 1%(<code>group_size=128</code>、<code>block_size=128</code>、<code>damp_percent=0.01</code>)，非对称量化，开启层间误差传播。</p>
+<p><a class="glightbox" data-type="image" href="lab5.assets/quality_progression.png"><img width="1709" height="846" class="lqip" alt="质量优化路径" src="lab5.assets/quality_progression.preview.jpg" data-fullsrc="lab5.assets/quality_progression.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="./lab5.assets/image-20260830122323415.png"><img width="1460" height="614" class="lqip" alt="image-20260830122323415" src="./lab5.assets/image-20260830122323415.preview.jpg" data-fullsrc="./lab5.assets/image-20260830122323415.png" /></a></p>
+<p>非对称量化将 <code>delta_nll</code> 从 <code>0.2122</code> 降至 <code>0.0972</code>。阻尼过小和均值阻尼均使结果退化，因此最终保留最大对角线基准的 <code>0.01</code> 阻尼。v3、v4 未形成有效结果文件，不列入比较。</p>
+<p><span style="text-decoration:underline;">v7 在不同 MIG 实例上曾出现 <code>delta_nll=0.0956</code> （计算节点）与 <code>0.1203</code>（OJ） 的差异。</span></p>
+<ul>
+<li>将校准 <code>max_tokens</code> 从 1024 扩至 4096 （用更长的校准序列，Hessian 的统计更充分，降低对 GPU 浮点归约微小噪声的敏感度，减轻不同 GPU 实例之间结果漂移。）</li>
+<li>启用确定性算法（让 GPU 运算尽量固定浮点计算顺序，消除随机归约带来微小浮点数差异。）</li>
+<li>固定 cuBLAS 工作区（不让 cuBLAS 动态改变内部分块策略，避免不同运行路径带来浮点偏差。）</li>
+<li>禁用量化阶段的非确定性 Flash SDPA 后端。</li>
+</ul>
+<p>最终质量评测为：<code>nll_sum</code>=49023.297301, <code>token_count</code>=20418, <code>mean_nll</code>（平均）=2.400984293, </p>
+<p>参考<code>mean_nll</code>=2.308455530, <code>delta_nll</code>=0.092528763。</p>
+<p>2048 长度桶的 <code>delta_nll=0.112533215</code> 仍高于其他长度桶，说明长序列对校准覆盖和 KV 缓存实现更敏感。</p>
+<h2 id="任务二总览">任务二总览<a class="headerlink" href="#任务二总览" title="Permanent link"></a></h2>
+<h3 id="python-反量化基线">Python 反量化基线<a class="headerlink" href="#python-反量化基线" title="Permanent link"></a></h3>
+<p>最初每个线性层都先由 PyTorch 解包 INT4、逐元素反量化并展开（物化）临时 BF16 权重，再调用矩阵乘法。328 个线性层在每个 decode 步骤重复这一过程；临时权重写回、再次读取及频繁启动同时放大了带宽、分配和调度开销。</p>
+<p>基线端到端时间为 <code>165.418s</code>。</p>
+<p><a class="glightbox" data-type="image" href="./lab5.assets/image-20260827140039490.png"><img width="3390" height="1964" class="lqip" alt="PyTorch Profiler：未优化的“反量化后再 F.linear”单步生成" src="./lab5.assets/image-20260827140039490.preview.jpg" data-fullsrc="./lab5.assets/image-20260827140039490.png" /></a></p>
+<p><code>QuantizedLinear</code> 走 PyTorch 的解包、逐元素 scale/zero 计算、展开 BF16 权重，再执行 <code>F.linear</code>。GPU 轨道中混杂大量逐元素复制（aten::copy_）和 GEMM 内核。该单步的 profiler CUDA 时间为 <code>1.646s</code>；融合路径的稳定decode步骤为 <code>152–156ms</code>。</p>
+<h3 id="性能演进">性能演进<a class="headerlink" href="#性能演进" title="Permanent link"></a></h3>
+<table>
+<thead>
+<tr>
+<th>版本</th>
+<th>改动</th>
+<th style="text-align: right;">elapsed_s</th>
+<th style="text-align: right;">generated_tokens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python 反量化基线</td>
+<td>逐元素反量化 + BF16 matmul</td>
+<td style="text-align: right;">165.418173</td>
+<td style="text-align: right;">276</td>
+</tr>
+<tr>
+<td>Triton 反量化 + cuBLAS</td>
+<td>快速反量化后走 cuBLAS</td>
+<td style="text-align: right;">115.214324</td>
+<td style="text-align: right;">320</td>
+</tr>
+<tr>
+<td>+ SDPA</td>
+<td>prefill使用 Flash Attention</td>
+<td style="text-align: right;">88.851122</td>
+<td style="text-align: right;">238</td>
+</tr>
+<tr>
+<td>+ INT4 GEMV</td>
+<td>decode不再物化 BF16 权重</td>
+<td style="text-align: right;">55.311296</td>
+<td style="text-align: right;">292</td>
+</tr>
+<tr>
+<td>+ 预热 / 调度优化</td>
+<td>预编译内核，减少首次开销</td>
+<td style="text-align: right;">约 42.1</td>
+<td style="text-align: right;">320</td>
+</tr>
+<tr>
+<td>+ CUDA Graph / 生成优化</td>
+<td>图捕获，消除 Python 开销</td>
+<td style="text-align: right;">36.371238</td>
+<td style="text-align: right;">320</td>
+</tr>
+</tbody>
+</table>
+<p>GEMV: GEneral Matrix Vector Multiply</p>
+<p><a class="glightbox" data-type="image" href="lab5.assets/performance_progression.png"><img width="1746" height="881" class="lqip" alt="性能优化路径" src="lab5.assets/performance_progression.preview.jpg" data-fullsrc="lab5.assets/performance_progression.png" /></a></p>
+<h2 id="主要性能优化">主要性能优化<a class="headerlink" href="#主要性能优化" title="Permanent link"></a></h2>
+<h3 id="triton-反量化--cublas">Triton 反量化 + cuBLAS<a class="headerlink" href="#triton-反量化--cublas" title="Permanent link"></a></h3>
+<p>第一版优化将反量化移入 Triton，再把 BF16 权重交给 cuBLAS GEMM。（prefill GEMM）</p>
+<p>端到端时间从约 <code>165.4s</code> 降至 <code>115.2s</code>。完整 BF16 权重的写回和读取仍未消除。</p>
+<h3 id="prefill注意力">prefill注意力<a class="headerlink" href="#prefill注意力" title="Permanent link"></a></h3>
+<p>prefill 是多token场景，适合直接使用 PyTorch SDPA：</p>
+<pre class="highlight"><code class="language-python">F.scaled_dot_product_attention(
+    query,
+    key,
+    value,
+    scale=1.0,
+    is_causal=True,
+    enable_gqa=True,
+)</code></pre>
+<p>原始手工实现没有做 <span class="arithmatex">\(1/\sqrt{d_k}\)</span> 缩放，为了保持模型语义一致，SDPA 也必须显式传 <code>scale=1.0</code>。</p>
+<p><code>enable_gqa=True</code>。否则 16 个 Q head 和 8 个 KV head 的形状不匹配；如果先 <code>repeat_kv</code>，又会引入额外复制。</p>
+<p>SDPA 后端选择如下：</p>
+<table>
+<thead>
+<tr>
+<th>条件</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enable_gqa=True + is_causal=True</code></td>
+<td>Flash Attention</td>
+</tr>
+<tr>
+<td><code>enable_gqa=True + is_causal=False</code></td>
+<td>Flash Attention</td>
+</tr>
+<tr>
+<td>布尔掩码（bool mask）+ scale</td>
+<td>退化为数学后端（math backend）</td>
+</tr>
+<tr>
+<td>未显式 <code>enable_gqa=True</code></td>
+<td>Q/KV head 数不匹配</td>
+</tr>
+</tbody>
+</table>
+<p>首个 prefill 分块使用因果 SDPA；多分块时才使用位置感知掩码。</p>
+<p><a class="glightbox" data-type="image" href="./lab5.assets/image-20260827134913301.png"><img width="3390" height="1964" class="lqip" alt="PyTorch Profiler：1000 tokenprefill的 CPU 与 GPU 时间线" src="./lab5.assets/image-20260827134913301.preview.jpg" data-fullsrc="./lab5.assets/image-20260827134913301.png" /></a></p>
+<p>图中一次 <code>lab5::prefill</code> 同时包含 Triton 反量化、矩阵乘法和注意力相关内核；GPU 侧以较长的 Tensor Core/GEMM 片段为主。它与 decode 中的大量短内核不同，因此两条路径分别采用 SDPA + 反量化 GEMM 和融合 GEMV。</p>
+<h3 id="decode-注意力">decode 注意力<a class="headerlink" href="#decode-注意力" title="Permanent link"></a></h3>
+<p><code>q_len=1</code>（Query），SDPA 的调度开销占比更高，因此将 query 重排为 <code>[batch, kv_heads, group, head_dim]</code>；group = q_heads / kv_heads，key/value 保持 <code>[batch, kv_heads, seq_len, head_dim]</code>，再用 <code>einsum</code> 计算：</p>
+<div class="arithmatex">\[
+\text{score} = \sum_d Q_{h,g,d}K_{h,t,d}
+\]</div>
+<div class="arithmatex">\[
+O_{h,g,d} = \sum_t \text{softmax}(\text{score})_{h,g,t}V_{h,t,d}
+\]</div>
+<p>这样避免 <code>repeat_kv</code> 物化复制，也避免 SDPA 对单 token query 的 dispatch 开销。</p>
+<h3 id="int4-融合-gemv">INT4 融合 GEMV<a class="headerlink" href="#int4-融合-gemv" title="Permanent link"></a></h3>
+<p>decode时线性层输入为 <code>[1, hidden]</code>，属于 GEMV。最终内核直接读取 packed INT4 权重，在<span style="background:#E0E0E0; color:#FF0000;">寄存器</span>中解包、按组应用 scale/zero 并与输入向量点积，全程不物化 BF16 权重矩阵。</p>
+<p>最终 kernel 配置：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th style="text-align: right;">数值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BLOCK_N</code></td>
+<td style="text-align: right;">16</td>
+<td>每个分块负责 16 个输出行</td>
+</tr>
+<tr>
+<td><code>BLOCK_PK</code></td>
+<td style="text-align: right;">128</td>
+<td>每个分块处理 128 个 packed byte</td>
+</tr>
+<tr>
+<td>每 byte</td>
+<td style="text-align: right;">2 个 INT4</td>
+<td>little nibble packing</td>
+</tr>
+<tr>
+<td>每分块输入元素</td>
+<td style="text-align: right;">256</td>
+<td>对应 2 个量化组</td>
+</tr>
+</tbody>
+</table>
+<p>该版本把端到端时间从约 <code>88.9s</code> 降至 <code>55.3s</code>。</p>
+<p>为确认内核语义一致，使用随机 INT4 权重、FP16 scale/zero 和 BF16 输入，对比 Triton 路径与“PyTorch 反量化 + <code>F.linear</code>”参考路径。测试覆盖三个代表性形状，并同时测试 <code>M=1</code> 的融合 GEMV 和 <code>M=128</code> 的prefill路径</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">形状 <code>(N,K)</code></th>
+<th style="text-align: right;">M</th>
+<th style="text-align: right;">max abs error</th>
+<th style="text-align: right;">mean abs error</th>
+<th style="text-align: right;">relative RMSE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>(4096,3840)</code></td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.03125</td>
+<td style="text-align: right;">0.00323849</td>
+<td style="text-align: right;">0.00243019</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>(4096,3840)</code></td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0.06250</td>
+<td style="text-align: right;">0.00513259</td>
+<td style="text-align: right;">0.00342605</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>(15360,3840)</code></td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.06250</td>
+<td style="text-align: right;">0.00326463</td>
+<td style="text-align: right;">0.00269273</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>(15360,3840)</code></td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0.06250</td>
+<td style="text-align: right;">0.00516908</td>
+<td style="text-align: right;">0.00342978</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>(3840,15360)</code></td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.06250</td>
+<td style="text-align: right;">0.00653317</td>
+<td style="text-align: right;">0.00254138</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>(3840,15360)</code></td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0.12500</td>
+<td style="text-align: right;">0.01042142</td>
+<td style="text-align: right;">0.00344118</td>
+</tr>
+</tbody>
+</table>
+<p>最大绝对误差来自 BF16 输出和浮点累加顺序差异，但相对均方根误差（relative RMSE）稳定在 <code>0.25%–0.35%</code>。更重要的是，同一量化检查点在 <code>BPK=256</code> 和 <code>BPK=128</code> 下的端到端 <code>delta_nll</code> 完全一致，说明分块参数重调没有引入语义变化。</p>
+<p><a class="glightbox" data-type="image" href="lab5.assets/triton_correctness.png"><img width="1635" height="808" class="lqip" alt="Triton kernel 正确性" src="lab5.assets/triton_correctness.preview.jpg" data-fullsrc="lab5.assets/triton_correctness.png" /></a></p>
+<p>收益主要来自 decode 的访存路径：</p>
+<ul>
+<li>权重只读一遍；</li>
+<li>输入向量可以放在寄存器或 shared memory 中复用；</li>
+<li>每次只输出一个 token；</li>
+<li>生成完整 BF16 权重矩阵的中间写回完全浪费。</li>
+</ul>
+<p>融合 GEMV 把“读 INT4、解包、写 BF16、再读 BF16做乘法”变成“读 INT4、寄存器解包、直接乘加”。</p>
+<p>下面三张图来自 PyTorch Profiler</p>
+<p>在 1000 token提示词（prompt）后采集 8 个即时执行（eager）decode 步骤。第一张给出连续步骤全貌；后两张放大 <code>decode_step_4</code>，展示 CPU 侧 PyTorch 调用、CUDA 启动与 GPU 上重复 <code>_gemv_kernel</code> 的对应关系。</p>
+<p><a class="glightbox" data-type="image" href="./lab5.assets/image-20260827134455543.png"><img width="3390" height="1964" class="lqip" alt="PyTorch Profiler：8 个decode步骤的整体时间线" src="./lab5.assets/image-20260827134455543.preview.jpg" data-fullsrc="./lab5.assets/image-20260827134455543.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="./lab5.assets/image-20260827134740816.png"><img width="3390" height="1964" class="lqip" alt="PyTorch Profiler：decode_step_4 的 kernel 调用序列" src="./lab5.assets/image-20260827134740816.preview.jpg" data-fullsrc="./lab5.assets/image-20260827134740816.png" /></a></p>
+<p><a class="glightbox" data-type="image" href="./lab5.assets/image-20260827134649148.png"><img width="3390" height="1964" class="lqip" alt="PyTorch Profiler：decode_step_4 的局部放大" src="./lab5.assets/image-20260827134649148.preview.jpg" data-fullsrc="./lab5.assets/image-20260827134649148.png" /></a></p>
+<p>8 个步骤共调用 <code>_gemv_kernel</code> 2624 次，内核自身 CUDA 时间为 <code>913.275ms</code>，占采集区间的 <code>40.0%</code>，平均 <code>348us/次</code>。48 层中的多个线性层均在 <code>M=1</code> 时触发融合 INT4 GEMV；瓶颈是高频、带宽受限的短 GEMV 序列。</p>
+<h3 id="cuda-graph">CUDA Graph<a class="headerlink" href="#cuda-graph" title="Permanent link"></a></h3>
+<p>INT4 GEMV 之后，剩余瓶颈变成 Python 调度和大量短内核启动。CUDA Graph 将一次完整的 decode前向捕获为静态图，之后每个token只重放一次。</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>原因</th>
+<th>修复</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>graph capture 中出现 CPU tensor</td>
+<td><code>embed_scale</code> 等标量在 forward 中创建 CPU tensor</td>
+<td>初始化时预分配到 GPU</td>
+</tr>
+<tr>
+<td>OOM</td>
+<td>数据类型转换和临时显存生命周期管理不当</td>
+<td>静态预分配缓冲区</td>
+</tr>
+<tr>
+<td><code>inference_mode</code> 不兼容</td>
+<td>inference tensor 不能保存进 graph</td>
+<td>capture/replay 包在 <code>inference_mode(False)</code> 中</td>
+</tr>
+<tr>
+<td>meta 设备缓冲区</td>
+<td>捕获时不是真实 CUDA 内存</td>
+<td>全部移动到 GPU</td>
+</tr>
+<tr>
+<td>KV 缓存读到未初始化值</td>
+<td><code>torch.empty</code> 未初始化</td>
+<td>改成 <code>torch.zeros</code></td>
+</tr>
+<tr>
+<td>每步 token/position/length 动态创建</td>
+<td>图输入不稳定</td>
+<td>静态预分配张量</td>
+</tr>
+</tbody>
+</table>
+<p>最终 CUDA Graph 只捕获一次，decode 每步重放。开启 <code>synchronize_metrics=false</code> 后，逐步 CPU/GPU 同步也被去掉。</p>
+<p>CUDA Graph 只减少 decode 的调度开销；prefill和 MIG 实例波动仍需由 SDPA、GEMV、分块与调度优化处理。</p>
+<h3 id="分块参数">分块参数<a class="headerlink" href="#分块参数" title="Permanent link"></a></h3>
+<p>在融合 GEMV 和 CUDA Graph 之后，剩余时间主要来自固定调度开销与每层 GEMV 的分块参数选择。</p>
+<table>
+<thead>
+<tr>
+<th>分块参数</th>
+<th style="text-align: right;">每层 7 个线性层合计时间 (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BLOCK_N=16, BLOCK_PK=128</code></td>
+<td style="text-align: right;">1.269</td>
+</tr>
+<tr>
+<td><code>BLOCK_N=16, BLOCK_PK=256</code></td>
+<td style="text-align: right;">1.307</td>
+</tr>
+<tr>
+<td><code>BLOCK_N=32, BLOCK_PK=128</code></td>
+<td style="text-align: right;">1.313</td>
+</tr>
+</tbody>
+</table>
+<h2 id="性能分析">性能分析<a class="headerlink" href="#性能分析" title="Permanent link"></a></h2>
+<p>prefill合计约 <code>11.3s</code>，随提示词长度增长；decode耗时为 <code>131–182ms/token</code>。CUDA Graph 后单步生成约 <code>80.54ms</code>，其中 Python 开销约 <code>0.43ms</code>；328 个线性层的 INT4 GEMV 约占 <code>73ms/步</code>，262144 词表输出 logits 的 GEMV 约占 <code>8.67ms/步</code>。</p>
+<p><a class="glightbox" data-type="image" href="lab5.assets/request_breakdown.png"><img width="1745" height="845" class="lqip" alt="请求耗时分解" src="lab5.assets/request_breakdown.preview.jpg" data-fullsrc="lab5.assets/request_breakdown.png" /></a></p>
+<h3 id="内核与显存分析">内核与显存分析<a class="headerlink" href="#内核与显存分析" title="Permanent link"></a></h3>
+<h4 id="gemv-分块测试">GEMV 分块测试<a class="headerlink" href="#gemv-分块测试" title="Permanent link"></a></h4>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th style="text-align: right;">输出维度</th>
+<th style="text-align: right;"><code>BN=32,BPK=512</code> ms/次</th>
+<th style="text-align: right;"><code>BN=16,BPK=256</code> ms/次</th>
+<th style="text-align: right;">加速</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>q_proj</td>
+<td style="text-align: right;">4096</td>
+<td style="text-align: right;">0.171</td>
+<td style="text-align: right;">0.098</td>
+<td style="text-align: right;">43%</td>
+</tr>
+<tr>
+<td>k_proj</td>
+<td style="text-align: right;">2048</td>
+<td style="text-align: right;">0.089</td>
+<td style="text-align: right;">0.052</td>
+<td style="text-align: right;">42%</td>
+</tr>
+<tr>
+<td>o_proj</td>
+<td style="text-align: right;">3840</td>
+<td style="text-align: right;">0.157</td>
+<td style="text-align: right;">0.093</td>
+<td style="text-align: right;">41%</td>
+</tr>
+<tr>
+<td>gate_proj</td>
+<td style="text-align: right;">15360</td>
+<td style="text-align: right;">0.569</td>
+<td style="text-align: right;">0.337</td>
+<td style="text-align: right;">41%</td>
+</tr>
+<tr>
+<td>up_proj</td>
+<td style="text-align: right;">15360</td>
+<td style="text-align: right;">0.569</td>
+<td style="text-align: right;">0.337</td>
+<td style="text-align: right;">41%</td>
+</tr>
+<tr>
+<td>down_proj</td>
+<td style="text-align: right;">3840</td>
+<td style="text-align: right;">0.634</td>
+<td style="text-align: right;">0.338</td>
+<td style="text-align: right;">47%</td>
+</tr>
+<tr>
+<td>每层合计</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">2.290</td>
+<td style="text-align: right;">1.210</td>
+<td style="text-align: right;">47%</td>
+</tr>
+</tbody>
+</table>
+<p><a class="glightbox" data-type="image" href="lab5.assets/gemv_tile_benchmark.png"><img width="1745" height="846" class="lqip" alt="GEMV 分块基准测试" src="lab5.assets/gemv_tile_benchmark.preview.jpg" data-fullsrc="lab5.assets/gemv_tile_benchmark.png" /></a></p>
+<p>该图比较早期 <code>BN=32,BPK=512</code> 和 <code>BN=16,BPK=256</code>，表明减小输出分块可降低寄存器压力。最终版本进一步采用 <code>BLOCK_N=16, BLOCK_PK=128</code>；该参数由前文独立扫描确定。</p>
+<h4 id="w4a16-权重显存">W4A16 权重显存<a class="headerlink" href="#w4a16-权重显存" title="Permanent link"></a></h4>
+<p>最终量化目标共 328 个 Linear，原始权重参数量为：</p>
+<div class="arithmatex">\[
+P=10{,}899{,}947{,}520
+\]</div>
+<p>按 <code>group_size=128</code>：</p>
+<div class="arithmatex">\[
+G=\frac{P}{128}=85{,}155{,}840
+\]</div>
+<p>存储组成为：</p>
+<table>
+<thead>
+<tr>
+<th>数据</th>
+<th style="text-align: right;">每组/每参数大小</th>
+<th style="text-align: right;">总字节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>qweight</td>
+<td style="text-align: right;">每参数 0.5 byte</td>
+<td style="text-align: right;">5,449,973,760</td>
+</tr>
+<tr>
+<td>scales</td>
+<td style="text-align: right;">FP16，每组 2 bytes</td>
+<td style="text-align: right;">170,311,680</td>
+</tr>
+<tr>
+<td>zeros</td>
+<td style="text-align: right;">uint8，每组 1 byte</td>
+<td style="text-align: right;">85,155,840</td>
+</tr>
+<tr>
+<td><strong>合计</strong></td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;"><strong>5,705,441,280</strong></td>
+</tr>
+</tbody>
+</table>
+<p>即约 <code>5.31 GiB</code>。再加上：</p>
+<ul>
+<li>embedding：<code>262144 × 3840 × 2 ≈ 1.88 GiB</code>；</li>
+<li>各层 RMSNorm、final norm 等小张量；</li>
+<li>PyTorch allocator、CUDA context 和 kernel workspace。</li>
+</ul>
+<p>所以实际权重加载后已经占据显存的大头。这也是 BF16 权重缓存必然失败的原因。目标 Linear 的 BF16 权重就要约 20GB 以上，远超 10GB MIG。</p>
+<h4 id="kv-cache-显存">KV Cache 显存<a class="headerlink" href="#kv-cache-显存" title="Permanent link"></a></h4>
+<p>每个 KV cache 层以 <code>[batch, kv_heads, cache_size, head_dim]</code> 存储；BF16 的 K/V 两个张量字节数为：</p>
+<div class="arithmatex">\[
+4B\sum_i H_iD_iL_i
+\]</div>
+<p>其中 <span class="arithmatex">\(B\)</span> 是 batch size，<span class="arithmatex">\(L_i\)</span> 是第 <span class="arithmatex">\(i\)</span> 层实际保留长度。</p>
+<p>本模型有 40 个 sliding 层和 8 个 full 层：</p>
+<div class="arithmatex">\[
+\text{KV bytes}
+=
+4B(
+40\cdot 8\cdot 256\cdot \min(L,1024)
++8\cdot 1\cdot 512\cdot L
+)
+\]</div>
+<p>化简为：</p>
+<div class="arithmatex">\[
+\text{KV bytes}
+=
+B(
+327680\min(L,1024)+16384L
+)
+\]</div>
+<p>当 <code>B=1, L=2048</code> 时：</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th style="text-align: right;">大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>40 个滑动窗口层环形缓冲区</td>
+<td style="text-align: right;">335,544,320 bytes</td>
+</tr>
+<tr>
+<td>8 个全局层完整缓存</td>
+<td style="text-align: right;">33,554,432 bytes</td>
+</tr>
+<tr>
+<td>KV tensor 合计</td>
+<td style="text-align: right;">369,098,752 bytes</td>
+</tr>
+<tr>
+<td>环形缓冲区 <code>slot_positions</code> 元数据</td>
+<td style="text-align: right;">327,680 bytes</td>
+</tr>
+<tr>
+<td><strong>总计</strong></td>
+<td style="text-align: right;"><strong>约 369.4 MB</strong></td>
+</tr>
+</tbody>
+</table>
+<p>若不用环形缓冲区，所有层都按完整长度保留：</p>
+<div class="arithmatex">\[
+4B(
+40\cdot 8\cdot 256L
++8\cdot 1\cdot 512L
+)
+=345088BL
+\]</div>
+<p><code>B=1, L=2048</code> 时约 <code>705.9 MB</code>。因此滑动窗口 KV cache 节省约 <code>336.8 MB</code>。</p>
+<h3 id="失败或未保留方案">失败或未保留方案<a class="headerlink" href="#失败或未保留方案" title="Permanent link"></a></h3>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>现象</th>
+<th>原因</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BF16 权重缓存</td>
+<td>OOM 风险高</td>
+<td>10GB MIG 无法完整缓存 BF16 权重</td>
+<td>回退</td>
+</tr>
+<tr>
+<td>gate/up 双输出融合 GEMV</td>
+<td>复杂度和寄存器压力上升</td>
+<td>双 accumulator 竞争资源</td>
+<td>回退为两个 GEMV</td>
+</tr>
+<tr>
+<td><code>BLOCK_N=32/64/128</code></td>
+<td>性能下降</td>
+<td>寄存器溢出、占用率不足</td>
+<td>保留 <code>BLOCK_N=16</code></td>
+</tr>
+<tr>
+<td>SDPA decode</td>
+<td>比 GQA 广播慢</td>
+<td><code>q_len=1</code> 时调度开销占比高</td>
+<td>改为手工路径</td>
+</tr>
+<tr>
+<td>CUDA Graph 初版</td>
+<td>OOM / <code>inference_mode</code> 兼容问题</td>
+<td>静态图和显存生命周期管理不当</td>
+<td>修复后启用</td>
+</tr>
+<tr>
+<td>修改 attention 排列</td>
+<td>质量下降</td>
+<td>GQA head 与 KV head 映射不稳</td>
+<td>回退并验证映射</td>
+</tr>
+</tbody>
+</table>
+<p>这些对照实验表明：</p>
+<ul>
+<li>
+<p>14 SM 的 MIG 上复杂融合会受寄存器和占用率影响；</p>
+</li>
+<li>
+<p>decode与prefill应采用不同后端；</p>
+</li>
+<li>
+<p>CUDA Graph 必须配合静态内存；</p>
+</li>
+<li>
+<p>注意力排列的任何改动都要先通过质量复测。</p>
+</li>
+</ul>
+<h3 id="最终配置">最终配置<a class="headerlink" href="#最终配置" title="Permanent link"></a></h3>
+<p><code>config.yaml</code> 关键项：</p>
+<pre class="highlight"><code class="language-yaml">engine:
+  dtype: bfloat16
+  device: cuda
+  max_batch_size: 1
+  seed: 42
+  synchronize_metrics: false
+  prefill_chunk_size: 2048
 
-  
+quantization:
+  algorithm: gptq
+  bits: 4
+  group_size: 128
+  symmetric: false
+  scale_dtype: float16
+  propagate_quantized: true
+  calibration:
+    gptq:
+      block_size: 128
+      damp_percent: 0.01
+
+calibration:
+  limit: 256
+  micro_batch_size: 1
+  max_tokens: 4096</code></pre>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>最终改动</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config.yaml</code></td>
+<td>稳定校准、关闭逐步同步、扩大 prefill 分块</td>
+</tr>
+<tr>
+<td><code>engine.py</code></td>
+<td>精确预热、CUDA Graph、静态生成缓冲区</td>
+</tr>
+<tr>
+<td><code>attention.py</code></td>
+<td>prefill 走 SDPA Flash Attention，decode 走 GQA 广播</td>
+</tr>
+<tr>
+<td><code>linear.py</code></td>
+<td>decode走融合 INT4 GEMV，prefill 走 Triton 反量化 + cuBLAS</td>
+</tr>
+<tr>
+<td><code>triton_kernels.py</code></td>
+<td>INT4 反量化 GEMV，最终 <code>BLOCK_N=16, BLOCK_PK=128</code></td>
+</tr>
+<tr>
+<td><code>quantization/cli.py</code></td>
+<td>确定性算法，固定 cuBLAS 工作区（workspace）</td>
+</tr>
+<tr>
+<td><code>quantization/methods/gptq.py</code></td>
+<td>误差传播符号、非对称量化、阻尼和分块</td>
+</tr>
+</tbody>
+</table>
+<h3 id="稳定性复测agent闲的保留下来好了">稳定性复测（<span style="text-decoration:line-through;">Agent闲的，保留下来好了</span>）<a class="headerlink" href="#稳定性复测agent闲的保留下来好了" title="Permanent link"></a></h3>
+<p><a class="glightbox" data-type="image" href="lab5.assets/final_stability.png"><img width="1672" height="845" class="lqip" alt="最终版本稳定性复测" src="lab5.assets/final_stability.preview.jpg" data-fullsrc="lab5.assets/final_stability.png" /></a></p>
+<h2 id="思考题">思考题<a class="headerlink" href="#思考题" title="Permanent link"></a></h2>
+<h3 id="w4a16-权重与-kv-cache-显存推导">W4A16 权重与 KV Cache 显存推导<a class="headerlink" href="#w4a16-权重与-kv-cache-显存推导" title="Permanent link"></a></h3>
+<p><a class="glightbox" data-type="image" href="./lab5.assets/image-20260829221419482.png"><img width="1304" height="818" class="lqip" alt="image-20260829221419482" src="./lab5.assets/image-20260829221419482.preview.jpg" data-fullsrc="./lab5.assets/image-20260829221419482.png" /></a></p>
+<p>前面的“<strong>4.1 内核与显存分析</strong>”分别计算了 W4A16 目标权重和 KV Cache</p>
+<p><strong>W4A16 权重结果</strong>见前文“<strong>4.1.2 W4A16 权重显存</strong>”：328 个量化 Linear 的参数总数为</p>
+<div class="arithmatex">\[
+P=10{,}899{,}947{,}520,
+\qquad
+G=P/128=85{,}155{,}840.
+\]</div>
+<p>前文表格中的三部分相加为：</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th style="text-align: right;">前文结果（bytes）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>INT4 <code>qweight</code></td>
+<td style="text-align: right;">5,449,973,760</td>
+</tr>
+<tr>
+<td>FP16 <code>scales</code></td>
+<td style="text-align: right;">170,311,680</td>
+</tr>
+<tr>
+<td>uint8 <code>zeros</code></td>
+<td style="text-align: right;">85,155,840</td>
+</tr>
+<tr>
+<td><strong>W4A16 目标 Linear 合计</strong></td>
+<td style="text-align: right;"><strong>5,705,441,280</strong></td>
+</tr>
+</tbody>
+</table>
+<p>即 <code>5,705,441,280 / 2^30 = 5.314 GiB</code>。这是量化 Linear 的裸权重，不包含 embedding（词嵌入层：输入 token id，查表输出向量）、RMSNorm（归一化层）、RoPE（旋转位置编码） 等未量化张量。</p>
+<p>前文给出 BF16 embedding</p>
+<div class="arithmatex">\[
+262144\times3840\times2
+=2{,}013{,}265{,}920\text{ bytes}
+=1.875\text{ GiB}.
+\]</div>
+<p><strong>环形 KV Cache 结果</strong>见前文“<strong>4.1.3 KV Cache 显存</strong>”：40 个滑动窗口层保留 <code>1024</code> 个位置，8 个全局层保留完整的 <code>2048</code> 个位置。因此 K/V 数据本体为：</p>
+<div class="arithmatex">\[
+4(
+40\times8\times256\times1024
++8\times1\times512\times2048
+)
+=369{,}098{,}752\text{ bytes}.
+\]</div>
+<p>其中系数 <span class="arithmatex">\(4=2\,(\mathrm{K/V})\times2\,(\mathrm{BF16\ bytes})\)</span>。环形缓冲区还需要 <span class="arithmatex">\(40\times1024\times8=327{,}680\)</span> bytes 的 <code>slot_positions</code>，以及 48 个层长度计数共 <span class="arithmatex">\(48\times8=384\)</span> bytes，所以：</p>
+<div class="arithmatex">\[
+\text{KV Cache}_{\text{ring}}
+=369{,}098{,}752+327{,}680+384
+=369{,}426{,}816\text{ bytes}
+=352.313\text{ MiB}.
+\]</div>
+<p>只计算“W4A16 目标 Linear + 环形 KV Cache”时：</p>
+<div class="arithmatex">\[
+5{,}705{,}441{,}280
++369{,}426{,}816
+=6{,}074{,}868{,}096\text{ bytes}
+=5.658\text{ GiB}.
+\]</div>
+<p>若再加上前文单独列出的 embedding，则为：</p>
+<div class="arithmatex">\[
+6{,}074{,}868{,}096
++2{,}013{,}265{,}920
+=8{,}088{,}134{,}016\text{ bytes}
+=7.533\text{ GiB}.
+\]</div>
+<p>这里仍未包含 norm、RoPE 等小张量以及运行时工作区，因此它不是完整推理引擎的峰值显存。</p>
+<p><strong>实测</strong></p>
+<p>集群上提交 Lab 5 GPU 任务，加载 <code>/home/&lt;user&gt;/quant_gptq_v7</code> 的 W4A16 checkpoint；随后按上述 40 个滑动窗口层与 8 个全局层的形状显式分配环形 KV Cache。每一步调用 <code>torch.cuda.synchronize()</code> 后读取 <code>torch.cuda.memory_allocated()</code>。该测试测量的是已加载模型 + KV Cache 的张量分配，不包含生成时可能出现的临时 workspace 或 CUDA Graph 工作区。</p>
+<table>
+<thead>
+<tr>
+<th>集群测量项</th>
+<th style="text-align: right;">实测值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>W4A16 <code>qweight + scales + zeros</code></td>
+<td style="text-align: right;">5,705,441,280 bytes（5.314 GiB）</td>
+</tr>
+<tr>
+<td>其余模型张量（embedding / norm / RoPE 等）</td>
+<td style="text-align: right;">2,249,686,624 bytes（2.095 GiB）</td>
+</tr>
+<tr>
+<td>模型加载后 <code>memory_allocated()</code></td>
+<td style="text-align: right;">7,955,152,384 bytes（7.409 GiB）</td>
+</tr>
+<tr>
+<td>环形 KV Cache 分配增量</td>
+<td style="text-align: right;">369,451,008 bytes（352.336 MiB）</td>
+</tr>
+<tr>
+<td>模型 + 环形 KV Cache <code>memory_allocated()</code></td>
+<td style="text-align: right;"><strong>8,324,603,392 bytes（7.753 GiB）</strong></td>
+</tr>
+<tr>
+<td>不使用环形缓冲区的 KV Cache</td>
+<td style="text-align: right;">704,643,456 bytes（672.000 MiB）</td>
+</tr>
+<tr>
+<td>环形缓冲区实测节省</td>
+<td style="text-align: right;"><strong>335,216,640 bytes（319.688 MiB）</strong></td>
+</tr>
+</tbody>
+</table>
+<p>张量字节数直接相加也得到：</p>
+<div class="arithmatex">\[
+5{,}705{,}441{,}280
++2{,}249{,}686{,}624
++369{,}426{,}816
+=8{,}324{,}554{,}720\text{ bytes}
+=7.753\text{ GiB}.
+\]</div>
+<p><strong>理论与实测的差异。</strong> 加入前文单独估算的 embedding 后，<code>7.533 GiB</code> 比实测少约 <code>0.220 GiB</code>。</p>
+<p>原因是该估算只包含 embedding，而没有包含其余未量化张量。将集群实测到的“其余模型张量”一并纳入后，完整张量理论值为 <code>7.753 GiB</code>，与 <code>memory_allocated()</code> 的实测值仅相差 <code>48,672</code> bytes（约 <code>0.046 MiB</code>）；<span style="color:#808080;">这一极小差值来自 PyTorch 的张量分配/对齐开销。因此，简化理论值应更少、实际值会更大；但完整地计入所有模型张量后，理论与实测几乎一致。</span></p>
+<p>环形 KV Cache 使“模型 + Cache”保留约 <code>2 GiB</code> 的余量；若改成所有层都保存完整 2048 长度，KV Cache 将多占约 <code>320 MiB</code>，在 10GB MIG 上会明显压缩临时张量和工作区的可用空间。</p>
+<h3 id="运行时稀疏注意力">运行时稀疏注意力<a class="headerlink" href="#运行时稀疏注意力" title="Permanent link"></a></h3>
+<p><a href="https://bfyes.github.io/study/hpc/notes/0717a/#高效-attention-与内存访问">https://bfyes.github.io/study/hpc/notes/0717a/#高效-attention-与内存访问</a></p>
+<p>如果不知道注意力掩码形状，可以把稀疏模式变成运行时决策。可行方案包括</p>
+<ol>
+<li><strong>Top-k 注意力</strong>：先计算查询与少量标记token（landmark token）的粗分数，再只保留 top-k KV。</li>
+<li><strong>分块选择（block selection）</strong>：将 KV 切成分块，先以低精度粗评分选块，再对选中块做精确注意力。</li>
+<li><strong>学习式路由</strong>：训练轻量路由器（router）预测每个查询应访问哪些 KV 分块。</li>
+<li><strong>哈希/聚类注意力</strong>：将语义相近的查询和键聚到同一桶，只在桶内计算。</li>
+<li><strong>动态窗口</strong>：保留局部窗口，同时对远处 token 做 importance scoring，按需扩展。</li>
+</ol>
+<p>相比固定滑动窗口，动态稀疏可能获得更好的语义覆盖：部分token需要长程信息，部分token只需要局部上下文，静态窗口无法区分，但代价也很明显</p>
+<ul>
+<li>top-k 或路由器本身需要额外计算；</li>
+<li>动态索引会造成负载不均；</li>
+<li>Flash Attention 更适合规则分块，不规则访问会破坏其访存模式；</li>
+<li>prefill中查询和键的依赖关系更复杂；</li>
+<li>稀疏选择一旦出错，质量损失比静态窗口更难预测。</li>
+</ul>
+<p>动态稀疏在长上下文和更大批量时更有潜力；但在本实验条件下，固定滑动窗口加环形 KV 缓存是更稳定的选择。</p>
+<h3 id="分层量化与推理-offloading-的异同">分层量化与推理 Offloading 的异同<a class="headerlink" href="#分层量化与推理-offloading-的异同" title="Permanent link"></a></h3>
+<p><strong>相同点</strong></p>
+<p>两者都把全模型一次性驻留的问题拆成 layer 级别的数据管理问题：</p>
+<ol>
+<li>都需要明确每层数据的生命周期；</li>
+<li>都依赖预取和缓存来隐藏搬运开销；</li>
+<li>都要避免重复加载或重复计算；</li>
+<li>都需要处理静态 shape 和异步执行。</li>
+</ol>
+<p><strong>不同点</strong></p>
+<p>分层量化是一次性的离线过程</p>
+<ul>
+<li>输入是 BF16 权重和校准激活；</li>
+<li>每层需要收集 Hessian；</li>
+<li>当前层量化后可以释放 BF16 权重；</li>
+<li>输出是永久的 INT4 权重；</li>
+<li>关心的是<span style="text-decoration:underline;">数值稳定和层间误差传播</span>，而不是单次延迟。</li>
+</ul>
+<p>推理 Offloading 是反复执行的在线过程</p>
+<ul>
+<li>输入是已量化权重和用户请求；</li>
+<li>每层权重在需要时从 CPU/NVMe 搬到 GPU；</li>
+<li>KV cache 和激活必须与请求生命周期绑定；</li>
+<li>必须用计算掩盖 PCIe/内存延迟；</li>
+<li>关心的是 <span style="text-decoration:underline;">TTFT、TPOT 和吞吐量</span>。</li>
+</ul>
+<p>换句话说，量化阶段的“分层”是为了压缩和写出，Offloading 阶段的“分层”是为了按需加载。前者可以接受较长的离线时间来换取确定性，后者必须在每 token 的延迟预算内完成数据搬运。</p>
+<h2 id="source-code">Source Code<a class="headerlink" href="#source-code" title="Permanent link"></a></h2>
+<p>已提交在 oj 上。</p>
 
 
 
@@ -3108,13 +4704,8 @@
 
 
 
-  
-  
 
 
-
-
-  
 
 
 
@@ -3168,8 +4759,6 @@
         <footer class="md-footer">
   
     
-      
-        
       
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         

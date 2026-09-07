@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="540" viewBox="0 0 1000 540">
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans CJK SC",Arial,sans-serif;fill:#202124}.title{font-size:22px;font-weight:700}.label{font-size:14px}.small{font-size:12px;fill:#5f6368}.value{font-size:13px;font-weight:600}</style>
+<rect width="100%" height="100%" fill="white"/>
+<text x="55" y="45" class="title">INT4 GEMV tile 重调</text>
+<text x="55" y="70" class="small">每层 7 个 Linear 合计时间；独立 tile benchmark，单位 ms/layer</text>
+<text x="75" y="172" class="label">BN=16, BPK=256</text>
+<rect x="290" y="145" width="606.8" height="48" rx="4" fill="#7fb3d5"/>
+<text x="906.8" y="175" class="value">1.307 ms</text>
+<text x="75" y="277" class="label">BN=16, BPK=128（最终）</text>
+<rect x="290" y="250" width="589.2" height="48" rx="4" fill="#3b6fb6"/>
+<text x="889.2" y="280" class="value">1.269 ms</text>
+<text x="75" y="382" class="label">BN=32, BPK=128</text>
+<rect x="290" y="355" width="609.6" height="48" rx="4" fill="#c0504d"/>
+<text x="909.6" y="385" class="value">1.313 ms</text>
+<text x="75" y="405" class="small">BPK 256 → 128：每层减少 0.038 ms；48 层、320 token 的理论收益约 0.58 s。</text>
+<text x="75" y="430" class="small">端到端复测：BPK=128 的 6/6 次均低于 37 s，中位数约 36.92 s。</text>
+</svg>
