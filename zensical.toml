@@ -53,7 +53,7 @@ nav = [
             { "Project2" = "study/fds/project2/index.md" },
             { "Project3" = "study/fds/project3/index.md" },
         ] },
-        { "HPC 101" = [
+        { "HPC101" = [
             "study/hpc/index.md",
             { "课程笔记" = [
                 { "集群软硬件及运维基础" = "study/hpc/notes/0706p.md" },
@@ -77,7 +77,7 @@ nav = [
             { "lab4: 数值相对论优化" = "study/hpc/lab4/index.md" },
             { "lab5: Gemma4推理优化" = "study/hpc/lab5/index.md" },
         ] },
-        { "CTF 101" = [
+        { "CTF101" = [
             "study/ctf/index.md",
             { "lab0" = "study/ctf/lab0/index.md" },
             { "lab1" = [
