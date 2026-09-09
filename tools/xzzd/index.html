@@ -3291,7 +3291,7 @@
 
 
 
-<h1 id="如何查看部分学在浙大和-pintia-上未公布的评分">如何查看部分学在浙大和 Pintia 上未公布的评分<a class="headerlink" href="#如何查看部分学在浙大和-pintia-上未公布的评分" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-09T23:47:21+08:00">2026/09/09</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 767 字</span></div>
+<h1 id="如何查看部分学在浙大和-pintia-上未公布的评分">如何查看部分学在浙大和 Pintia 上未公布的评分<a class="headerlink" href="#如何查看部分学在浙大和-pintia-上未公布的评分" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-09T23:47:21+08:00">2026/09/09</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 765 字</span></div>
 <blockquote>
 <p>鸽了两个月后我终于把它补上了。</p>
 <p>查看<strong>当前已登录账号</strong>在页面请求中收到的数据。不绕过登录或权限控制。</p>
@@ -3321,8 +3321,8 @@
 <h3 id="通过开发者工具查看">通过开发者工具查看<a class="headerlink" href="#通过开发者工具查看" title="Permanent link"></a></h3>
 <ol>
 <li>登录 <a href="https://courses.zju.edu.cn/">学在浙大</a>，进入对应课程页面。</li>
-<li>按 <kbd>F12</kbd>（或右键“检查”）打开开发者工具，进入“网络 / Network”面板，筛选 <strong>Fetch/XHR</strong>。</li>
-<li>刷新课程页面，在请求列表中找到 <code>activity-reads-for-user</code>。</li>
+<li>按 <kbd>F12</kbd>（或右键“检查”）打开开发者工具，进入“网络 / Network”面板后<strong>刷新</strong>课程页面。</li>
+<li>待请求列表加载后，找到 <code>activity-reads-for-user</code>。</li>
 <li>打开该请求的“预览 / Preview”或“响应 / Response”，搜索 <code>"score"</code>；若活动记录中有 <code>data.score</code>，即可查看该活动返回的分数。</li>
 </ol>
 <p><a class="glightbox" href="../xzzd.assets/1Capture%202026-09-09%2023.08.57.png" data-type="image"><img width="3072" height="1932" class="lqip" src="../xzzd.assets/1Capture%202026-09-09%2023.08.57.preview.jpg" data-fullsrc="../xzzd.assets/1Capture%202026-09-09%2023.08.57.png" alt="学在浙大课程页面中，通过开发者工具查看 activity-reads-for-user 请求响应" style="display: block; margin: 0 auto;"></a></p>
@@ -3347,8 +3347,8 @@ https://courses.zju.edu.cn/api/courses/&lt;课程 ID&gt;/exams</code></pre>
 <p>不想安装用户脚本时，直接在开发者工具中查看对应响应即可。</p>
 <ol>
 <li>登录 <a href="https://pintia.cn/">PTA</a>，打开目标考试的概览页。</li>
-<li>按 <kbd>F12</kbd>（或右键“检查”）打开开发者工具，进入“网络 / Network”面板，筛选 <strong>Fetch/XHR</strong>。</li>
-<li>刷新页面，在请求列表中找到名称或地址包含 <code>exams</code> 的请求。</li>
+<li>按 <kbd>F12</kbd>（或右键“检查”）打开开发者工具，进入“网络 / Network”面板后<strong>刷新</strong>页面。</li>
+<li>待请求列表加载后，找到名称或地址包含 <code>exams</code> 的请求。</li>
 <li>打开“预览 / Preview”或“响应 / Response”，搜索 <code>"score"</code>；通常可在 <code>exam.score</code> 中看到当前响应返回的成绩。</li>
 </ol>
 <p><a class="glightbox" href="../xzzd.assets/1Capture%202026-09-09%2023.12.50.png" data-type="image"><img width="3072" height="1932" class="lqip" src="../xzzd.assets/1Capture%202026-09-09%2023.12.50.preview.jpg" data-fullsrc="../xzzd.assets/1Capture%202026-09-09%2023.12.50.png" alt="PTA 考试概览页中，通过开发者工具查看 exams 请求响应" style="display: block; margin: 0 auto;"></a></p>
