@@ -30,7 +30,11 @@ slides: ## 构建 Reveal 幻灯片
 # Zensical 原生监听文档变化；幻灯片仅在启动预览时静态构建到 site/slides/。
 preview: previews kill ## 预览文档站；启动时构建 PPT（端口 8000）
 	@uv run zensical serve --dev-addr $(PREVIEW_HOST):$(PREVIEW_PORT) & \
-		 zensical_pid=$$!; \
+		zensical_pid=$$!; \
+		cleanup() { kill "$$zensical_pid" 2>/dev/null || true; wait "$$zensical_pid" 2>/dev/null || true; }; \
+		on_interrupt() { trap - EXIT INT TERM; cleanup; exit 0; }; \
+		trap on_interrupt INT TERM; \
+		trap cleanup EXIT; \
 		sleep 1.5; \
 		make -C "$(SLIDES_DIR)" build && \
 		uv run python scripts/blocks.py && \
