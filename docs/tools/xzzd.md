@@ -37,8 +37,8 @@
 ### 通过开发者工具查看
 
 1. 登录 [学在浙大](https://courses.zju.edu.cn/)，进入对应课程页面。
-2. 按 <kbd>F12</kbd>（或右键“检查”）打开开发者工具，进入“网络 / Network”面板，筛选 **Fetch/XHR**。
-3. 刷新课程页面，在请求列表中找到 `activity-reads-for-user`。
+2. 按 <kbd>F12</kbd>（或右键“检查”）打开开发者工具，进入“网络 / Network”面板后**刷新**课程页面。
+3. 待请求列表加载后，找到 `activity-reads-for-user`。
 4. 打开该请求的“预览 / Preview”或“响应 / Response”，搜索 `"score"`；若活动记录中有 `data.score`，即可查看该活动返回的分数。
 
 <img src="xzzd.assets/1Capture%202026-09-09%2023.08.57.png" alt="学在浙大课程页面中，通过开发者工具查看 activity-reads-for-user 请求响应" style="display: block; margin: 0 auto;" />
@@ -76,8 +76,8 @@ PTA 的考试概览页同样会为当前登录账号请求考试数据。
 不想安装用户脚本时，直接在开发者工具中查看对应响应即可。
 
 1. 登录 [PTA](https://pintia.cn/)，打开目标考试的概览页。
-2. 按 <kbd>F12</kbd>（或右键“检查”）打开开发者工具，进入“网络 / Network”面板，筛选 **Fetch/XHR**。
-3. 刷新页面，在请求列表中找到名称或地址包含 `exams` 的请求。
+2. 按 <kbd>F12</kbd>（或右键“检查”）打开开发者工具，进入“网络 / Network”面板后**刷新**页面。
+3. 待请求列表加载后，找到名称或地址包含 `exams` 的请求。
 4. 打开“预览 / Preview”或“响应 / Response”，搜索 `"score"`；通常可在 `exam.score` 中看到当前响应返回的成绩。
 
 <img src="xzzd.assets/1Capture%202026-09-09%2023.12.50.png" alt="PTA 考试概览页中，通过开发者工具查看 exams 请求响应" style="display: block; margin: 0 auto;" />
