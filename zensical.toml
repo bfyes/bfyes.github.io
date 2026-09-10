@@ -104,6 +104,7 @@ nav = [
         { "Vivado on Mac" = "tools/vivado.md" },
         { "Mac 记事本" = "tools/notepadnext.md" },
         { "学在浙大 & PTA" = "tools/xzzd.md"},
+        { "签到" = "tools/autosign.md"},
         { "校园跑" = "tools/run.md"},
     ] },
     { "随笔" = [
@@ -111,6 +112,7 @@ nav = [
         { "2025 年度十图" = "diaries/fa25_review.md" },
         { "sp26 半期总结" = "diaries/sp26_midterm.md" },
         { "sp26 期末总结" = "diaries/sp26_final.md" },
+        { "fa26 暑假总结" = "diaries/fa26_vacation.md" },
     ] },
     #{ "电脑" = [
     #    { "MacBook Pro 16 (2019)" = "computers/mbp16_2019.md" },
