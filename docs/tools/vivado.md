@@ -30,9 +30,9 @@ fold_toc: true
 
 目标是在 **Apple Silicon Mac + Parallels Desktop + Ubuntu 24.04 ARM64** 上运行 **Vivado 2022.2**。
 
-- 宿主机：macOS（Apple Silicon）
-- 虚拟化：Parallels Desktop 26
-- 虚拟机系统：Ubuntu 24.04 with Rosetta
+- 宿主机：Apple Silicon Mac
+- 已验证的宿主机 / 虚拟化组合：**macOS 26 + Parallels Desktop 26**；**macOS 27.0（build 26A428）+ Parallels Desktop 27.0.1（58670）**
+- 虚拟机系统：Ubuntu 24.04 ARM64，通过 **Ubuntu with Rosetta** 创建；Parallels Tools 应安装并与所用 Parallels Desktop 版本匹配（已验证的 PD 27 组合为 27.0.1-58670）
 - Vivado 版本：**2022.2**
 
 ## 需要下载的内容
@@ -92,45 +92,66 @@ echo "$XDG_SESSION_TYPE"
 
 ### 安装 Ubuntu 基础依赖
 
-这一步的目的：让系统具备“识别并接管 x86_64 程序”的基础能力。
+RosettaLinux 负责 Vivado 的 x86_64 转译；`binfmt-support` 用于管理默认路由。QEMU 可以保留，用于后文所说的**显式**运行，不需要为了 Vivado 单独安装或禁用它。
 
 ```bash
 sudo apt update
-sudo apt install -y binfmt-support qemu-user-static
+sudo apt install -y binfmt-support
 ```
 
 ### 配置 RosettaLinux 的 binfmt 路由
 
-这条指令在mac中的终端执行，其余均为linux终端指令：
+#### 适用环境与前置检查
+
+本文已验证两组可用组合，二者都使用 Apple Silicon、Ubuntu 24.04 ARM64 与 **Ubuntu with Rosetta** 虚拟机：
+
+| macOS | Parallels Desktop | 说明 |
+| --- | --- | --- |
+| macOS 26 | Parallels Desktop 26 | 已可用的旧环境 |
+| macOS 27.0（build 26A428） | Parallels Desktop 27.0.1（58670） | 当前已可用环境；Guest Tools 为 27.0.1-58670 |
+
+在 Parallels 虚拟机配置中确认 **Rosetta Linux = on**，并保持 Guest Tools 已安装。macOS 宿主机执行下列命令可以确认当前版本；如系统提示安装 Apple Rosetta，再执行第一条：
 
 ```bash
 softwareupdate --install-rosetta --agree-to-license
+sw_vers
+prlctl --version
 ```
 
-
-
-这一步的目的：告诉 Ubuntu “遇到 x86_64 程序时该交给谁来运行”。
-
-先检查：
+Ubuntu 客体内必须满足以下条件：
 
 ```bash
-ls /proc/sys/fs/binfmt_misc
-cat /proc/sys/fs/binfmt_misc/RosettaLinux
+uname -m                         # 预期：aarch64
+systemctl is-active prltoolsd    # 预期：active
+test -x /media/psf/RosettaLinux/rosetta && echo 'rosetta: ok'
+test -x /media/psf/RosettaLinux/rosettad && echo 'rosettad: ok'
 ```
 
-如果 `x86_64` 被 box64 接管，先禁用：
+如果 `rosetta` 或 `rosettad` 不存在，先检查虚拟机的 **Rosetta Linux** 开关和 Parallels Tools；不要通过修改 Vivado、Makefile 或 Verilog 绕过这个问题。
+
+#### Vivado 默认走 Rosetta；QEMU 保留给显式调用
+
+本虚拟机的用途是让直接启动的 Vivado x86_64 程序走 Parallels Rosetta。当前实际验证结果是：直接执行一个 x86_64 ELF 时，内核启动的是 `/media/psf/RosettaLinux/rosetta`。
+
+同时，`qemu-x86_64` **保持启用是正常且有意的**：它不是 Vivado 的默认路由，而是供其他任务在命令中显式指定 QEMU 时使用。因此不要因为同时看到 Rosetta 和 QEMU 注册项就删除、屏蔽或互相替换它们。
+
+检查当前注册状态：
 
 ```bash
-echo -1 | sudo tee /proc/sys/fs/binfmt_misc/x86_64
+for name in RosettaLinux x86_64 qemu-x86_64; do
+  [ -e "/proc/sys/fs/binfmt_misc/$name" ] || continue
+  echo "===== $name ====="
+  cat "/proc/sys/fs/binfmt_misc/$name"
+done
 ```
 
-启用 RosettaLinux：
+当前这台虚拟机的预期状态如下：
 
-```bash
-sudo update-binfmts --enable RosettaLinux
-```
+- `RosettaLinux`：启用，解释器为 `/media/psf/RosettaLinux/rosetta`；
+- `x86_64`：启用，解释器同样为 `/media/psf/RosettaLinux/rosetta`；
+- `qemu-x86_64`：可以启用，解释器为 QEMU；**保留它，不要禁用**。
 
-持久化（重启后仍生效）：
+如果 Rosetta 的规则丢失，可按以下方式恢复两个既有 Rosetta 注册名。不要创建 QEMU 屏蔽文件，也不要删除 `/usr/lib/binfmt.d/qemu-x86_64.conf`。
 
 ```bash
 sudo install -d /etc/binfmt.d
@@ -146,8 +167,20 @@ EOF
 sudo systemctl restart systemd-binfmt
 ```
 
+需要明确选择解释器时，不依赖 binfmt 的默认匹配，直接指定即可：
 
-下面指令解决 psf 可能晚挂载导致开机失效的问题。（笔者的Rosetta在挂载目录中）
+```bash
+# 显式用 Rosetta 运行某个 x86_64 程序
+/media/psf/RosettaLinux/rosetta /path/to/x86_64-program
+
+# 显式用 QEMU 运行某个 x86_64 程序（本机命令为 /usr/bin/qemu-x86_64）
+qemu-x86_64 /path/to/x86_64-program
+```
+
+#### 持久化：处理 `/media/psf` 晚挂载
+
+Rosetta 解释器位于 Parallels 的共享挂载目录，可能晚于 `systemd-binfmt` 出现。以下服务在每次开机时等待解释器，再重新加载已有的 Rosetta 路由；它不会禁用或修改 QEMU 的路由：
+
 ```bash
 cat <<'EOF' | sudo tee /usr/local/sbin/refresh-rosetta-binfmt >/dev/null
 #!/usr/bin/env bash
@@ -167,7 +200,7 @@ sudo chmod +x /usr/local/sbin/refresh-rosetta-binfmt
 
 cat <<'EOF' | sudo tee /etc/systemd/system/refresh-rosetta-binfmt.service >/dev/null
 [Unit]
-Description=Refresh Rosetta binfmt after shared folders are ready
+Description=Refresh Parallels Rosetta binfmt after shared folders are ready
 After=multi-user.target
 
 [Service]
@@ -182,7 +215,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now refresh-rosetta-binfmt.service
 ```
 
-> 如果报错且您没有头绪，请咨询Agent。
+> 这一步只保证 Vivado 的 x86_64 路由可用。若 Vivado 或其自带 JRE 仍以 `139`（segmentation fault）退出，应作为 Rosetta / 运行时稳定性问题单独排查。
 
 ### 安装 Vivado 所需 amd64 运行库
 

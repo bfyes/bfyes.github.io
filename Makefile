@@ -74,6 +74,7 @@ deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run python scripts/pdfs.py
 	uv run python scripts/images.py all
 	uv run zensical build
+	@test ! -f docs/CNAME || cp docs/CNAME site/CNAME
 	uv run python scripts/blocks.py
 	uv run python scripts/link_previews.py
 	uv run python scripts/metadata.py

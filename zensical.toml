@@ -16,7 +16,7 @@
 # --------------------------------------------------------------------------
 [project]
 site_name = "BillFeng 的文档站"
-site_url = "https://bfyes.github.io"
+site_url = "https://docs.bfyes.cn"
 repo_url = "https://github.com/bfyes/bfyes.github.io"
 repo_name = "bfyes.github.io"
 edit_uri = "edit/main/docs/"
