@@ -12,7 +12,7 @@
         <meta name="author" content="BillFeng">
       
       
-        <link rel="canonical" href="https://bfyes.github.io/tools/vivado/">
+        <link rel="canonical" href="https://docs.bfyes.cn/tools/vivado/">
       
       
         <link rel="prev" href="../rosetta/">
@@ -2708,6 +2708,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="配置 RosettaLinux 的 binfmt 路由">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#适用环境与前置检查" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        适用环境与前置检查
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vivado-默认走-rosettaqemu-保留给显式调用" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Vivado 默认走 Rosetta；QEMU 保留给显式调用
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#持久化处理-mediapsf-晚挂载" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        持久化：处理 <code>/media/psf</code> 晚挂载
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -3494,6 +3533,45 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="配置 RosettaLinux 的 binfmt 路由">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#适用环境与前置检查" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        适用环境与前置检查
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vivado-默认走-rosettaqemu-保留给显式调用" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Vivado 默认走 Rosetta；QEMU 保留给显式调用
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#持久化处理-mediapsf-晚挂载" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        持久化：处理 <code>/media/psf</code> 晚挂载
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -3644,7 +3722,7 @@
     
 
 
-<h1 id="vivado含可用的batch模式-20222-on-ubuntu-with-rosetta不完善">Vivado（含可用的Batch模式） 2022.2 on Ubuntu with Rosetta（不完善）<a class="headerlink" href="#vivado含可用的batch模式-20222-on-ubuntu-with-rosetta不完善" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-26T00:59:45+08:00">2026/08/26</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 1529 字</span></div>
+<h1 id="vivado含可用的batch模式-20222-on-ubuntu-with-rosetta不完善">Vivado（含可用的Batch模式） 2022.2 on Ubuntu with Rosetta（不完善）<a class="headerlink" href="#vivado含可用的batch模式-20222-on-ubuntu-with-rosetta不完善" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-20T17:44:40+08:00">2026/09/20</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 2001 字</span></div>
 <h3 id="引用文章来自csdn利用-rosetta-在-m-系列-mac-上高效运行-x86-linux-应用的完整指南点击跳转至整理归档">引用文章来自CSDN：利用 Rosetta 在 M 系列 Mac 上高效运行 x86 Linux 应用的完整指南[<a href="../rosetta/">点击跳转至整理归档</a>]<a class="headerlink" href="#引用文章来自csdn利用-rosetta-在-m-系列-mac-上高效运行-x86-linux-应用的完整指南点击跳转至整理归档" title="Permanent link"></a></h3>
 <div class="admonition information">
 <p class="admonition-title">Information</p>
@@ -3670,9 +3748,9 @@
 <h2 id="目标与版本">目标与版本<a class="headerlink" href="#目标与版本" title="Permanent link"></a></h2>
 <p>目标是在 <strong>Apple Silicon Mac + Parallels Desktop + Ubuntu 24.04 ARM64</strong> 上运行 <strong>Vivado 2022.2</strong>。</p>
 <ul>
-<li>宿主机：macOS（Apple Silicon）</li>
-<li>虚拟化：Parallels Desktop 26</li>
-<li>虚拟机系统：Ubuntu 24.04 with Rosetta</li>
+<li>宿主机：Apple Silicon Mac</li>
+<li>已验证的宿主机 / 虚拟化组合：<strong>macOS 26 + Parallels Desktop 26</strong>；<strong>macOS 27.0（build 26A428）+ Parallels Desktop 27.0.1（58670）</strong></li>
+<li>虚拟机系统：Ubuntu 24.04 ARM64，通过 <strong>Ubuntu with Rosetta</strong> 创建；Parallels Tools 应安装并与所用 Parallels Desktop 版本匹配（已验证的 PD 27 组合为 27.0.1-58670）</li>
 <li>Vivado 版本：<strong>2022.2</strong></li>
 </ul>
 <h2 id="需要下载的内容">需要下载的内容<a class="headerlink" href="#需要下载的内容" title="Permanent link"></a></h2>
@@ -3716,21 +3794,59 @@
 <pre class="highlight"><code class="language-bash">echo "$XDG_SESSION_TYPE"</code></pre>
 <p>输出为 <code>x11</code> 说明已在 Xorg 会话；输出为 <code>wayland</code> 则建议切换（登出并重新登陆时右下角的小齿轮中选择）后再做 GUI 相关步骤。</p>
 <h3 id="安装-ubuntu-基础依赖">安装 Ubuntu 基础依赖<a class="headerlink" href="#安装-ubuntu-基础依赖" title="Permanent link"></a></h3>
-<p>这一步的目的：让系统具备“识别并接管 x86_64 程序”的基础能力。</p>
+<p>RosettaLinux 负责 Vivado 的 x86_64 转译；<code>binfmt-support</code> 用于管理默认路由。QEMU 可以保留，用于后文所说的<strong>显式</strong>运行，不需要为了 Vivado 单独安装或禁用它。</p>
 <pre class="highlight"><code class="language-bash">sudo apt update
-sudo apt install -y binfmt-support qemu-user-static</code></pre>
+sudo apt install -y binfmt-support</code></pre>
 <h3 id="配置-rosettalinux-的-binfmt-路由">配置 RosettaLinux 的 binfmt 路由<a class="headerlink" href="#配置-rosettalinux-的-binfmt-路由" title="Permanent link"></a></h3>
-<p>这条指令在mac中的终端执行，其余均为linux终端指令：</p>
-<pre class="highlight"><code class="language-bash">softwareupdate --install-rosetta --agree-to-license</code></pre>
-<p>这一步的目的：告诉 Ubuntu “遇到 x86_64 程序时该交给谁来运行”。</p>
-<p>先检查：</p>
-<pre class="highlight"><code class="language-bash">ls /proc/sys/fs/binfmt_misc
-cat /proc/sys/fs/binfmt_misc/RosettaLinux</code></pre>
-<p>如果 <code>x86_64</code> 被 box64 接管，先禁用：</p>
-<pre class="highlight"><code class="language-bash">echo -1 | sudo tee /proc/sys/fs/binfmt_misc/x86_64</code></pre>
-<p>启用 RosettaLinux：</p>
-<pre class="highlight"><code class="language-bash">sudo update-binfmts --enable RosettaLinux</code></pre>
-<p>持久化（重启后仍生效）：</p>
+<h4 id="适用环境与前置检查">适用环境与前置检查<a class="headerlink" href="#适用环境与前置检查" title="Permanent link"></a></h4>
+<p>本文已验证两组可用组合，二者都使用 Apple Silicon、Ubuntu 24.04 ARM64 与 <strong>Ubuntu with Rosetta</strong> 虚拟机：</p>
+<table>
+<thead>
+<tr>
+<th>macOS</th>
+<th>Parallels Desktop</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>macOS 26</td>
+<td>Parallels Desktop 26</td>
+<td>已可用的旧环境</td>
+</tr>
+<tr>
+<td>macOS 27.0（build 26A428）</td>
+<td>Parallels Desktop 27.0.1（58670）</td>
+<td>当前已可用环境；Guest Tools 为 27.0.1-58670</td>
+</tr>
+</tbody>
+</table>
+<p>在 Parallels 虚拟机配置中确认 <strong>Rosetta Linux = on</strong>，并保持 Guest Tools 已安装。macOS 宿主机执行下列命令可以确认当前版本；如系统提示安装 Apple Rosetta，再执行第一条：</p>
+<pre class="highlight"><code class="language-bash">softwareupdate --install-rosetta --agree-to-license
+sw_vers
+prlctl --version</code></pre>
+<p>Ubuntu 客体内必须满足以下条件：</p>
+<pre class="highlight"><code class="language-bash">uname -m                         # 预期：aarch64
+systemctl is-active prltoolsd    # 预期：active
+test -x /media/psf/RosettaLinux/rosetta &amp;&amp; echo 'rosetta: ok'
+test -x /media/psf/RosettaLinux/rosettad &amp;&amp; echo 'rosettad: ok'</code></pre>
+<p>如果 <code>rosetta</code> 或 <code>rosettad</code> 不存在，先检查虚拟机的 <strong>Rosetta Linux</strong> 开关和 Parallels Tools；不要通过修改 Vivado、Makefile 或 Verilog 绕过这个问题。</p>
+<h4 id="vivado-默认走-rosettaqemu-保留给显式调用">Vivado 默认走 Rosetta；QEMU 保留给显式调用<a class="headerlink" href="#vivado-默认走-rosettaqemu-保留给显式调用" title="Permanent link"></a></h4>
+<p>本虚拟机的用途是让直接启动的 Vivado x86_64 程序走 Parallels Rosetta。当前实际验证结果是：直接执行一个 x86_64 ELF 时，内核启动的是 <code>/media/psf/RosettaLinux/rosetta</code>。</p>
+<p>同时，<code>qemu-x86_64</code> <strong>保持启用是正常且有意的</strong>：它不是 Vivado 的默认路由，而是供其他任务在命令中显式指定 QEMU 时使用。因此不要因为同时看到 Rosetta 和 QEMU 注册项就删除、屏蔽或互相替换它们。</p>
+<p>检查当前注册状态：</p>
+<pre class="highlight"><code class="language-bash">for name in RosettaLinux x86_64 qemu-x86_64; do
+  [ -e "/proc/sys/fs/binfmt_misc/$name" ] || continue
+  echo "===== $name ====="
+  cat "/proc/sys/fs/binfmt_misc/$name"
+done</code></pre>
+<p>当前这台虚拟机的预期状态如下：</p>
+<ul>
+<li><code>RosettaLinux</code>：启用，解释器为 <code>/media/psf/RosettaLinux/rosetta</code>；</li>
+<li><code>x86_64</code>：启用，解释器同样为 <code>/media/psf/RosettaLinux/rosetta</code>；</li>
+<li><code>qemu-x86_64</code>：可以启用，解释器为 QEMU；<strong>保留它，不要禁用</strong>。</li>
+</ul>
+<p>如果 Rosetta 的规则丢失，可按以下方式恢复两个既有 Rosetta 注册名。不要创建 QEMU 屏蔽文件，也不要删除 <code>/usr/lib/binfmt.d/qemu-x86_64.conf</code>。</p>
 <pre class="highlight"><code class="language-bash">sudo install -d /etc/binfmt.d
 
 cat &lt;&lt;'EOF' | sudo tee /etc/binfmt.d/rosetta-linux.conf &gt;/dev/null
@@ -3742,7 +3858,14 @@ cat &lt;&lt;'EOF' | sudo tee /etc/binfmt.d/x86_64-rosetta.conf &gt;/dev/null
 EOF
 
 sudo systemctl restart systemd-binfmt</code></pre>
-<p>下面指令解决 psf 可能晚挂载导致开机失效的问题。（笔者的Rosetta在挂载目录中）
+<p>需要明确选择解释器时，不依赖 binfmt 的默认匹配，直接指定即可：</p>
+<pre class="highlight"><code class="language-bash"># 显式用 Rosetta 运行某个 x86_64 程序
+/media/psf/RosettaLinux/rosetta /path/to/x86_64-program
+
+# 显式用 QEMU 运行某个 x86_64 程序（本机命令为 /usr/bin/qemu-x86_64）
+qemu-x86_64 /path/to/x86_64-program</code></pre>
+<h4 id="持久化处理-mediapsf-晚挂载">持久化：处理 <code>/media/psf</code> 晚挂载<a class="headerlink" href="#持久化处理-mediapsf-晚挂载" title="Permanent link"></a></h4>
+<p>Rosetta 解释器位于 Parallels 的共享挂载目录，可能晚于 <code>systemd-binfmt</code> 出现。以下服务在每次开机时等待解释器，再重新加载已有的 Rosetta 路由；它不会禁用或修改 QEMU 的路由：</p>
 <pre class="highlight"><code class="language-bash">cat &lt;&lt;'EOF' | sudo tee /usr/local/sbin/refresh-rosetta-binfmt &gt;/dev/null
 #!/usr/bin/env bash
 set -euo pipefail
@@ -3761,7 +3884,7 @@ sudo chmod +x /usr/local/sbin/refresh-rosetta-binfmt
 
 cat &lt;&lt;'EOF' | sudo tee /etc/systemd/system/refresh-rosetta-binfmt.service &gt;/dev/null
 [Unit]
-Description=Refresh Rosetta binfmt after shared folders are ready
+Description=Refresh Parallels Rosetta binfmt after shared folders are ready
 After=multi-user.target
 
 [Service]
@@ -3773,9 +3896,9 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable --now refresh-rosetta-binfmt.service</code></pre></p>
+sudo systemctl enable --now refresh-rosetta-binfmt.service</code></pre>
 <blockquote>
-<p>如果报错且您没有头绪，请咨询Agent。</p>
+<p>这一步只保证 Vivado 的 x86_64 路由可用。若 Vivado 或其自带 JRE 仍以 <code>139</code>（segmentation fault）退出，应作为 Rosetta / 运行时稳定性问题单独排查。</p>
 </blockquote>
 <h3 id="安装-vivado-所需-amd64-运行库">安装 Vivado 所需 amd64 运行库<a class="headerlink" href="#安装-vivado-所需-amd64-运行库" title="Permanent link"></a></h3>
 <p>这一步的目的：补齐 Vivado 自带 x86_64 JRE 需要的运行库，避免启动时报错。</p>
