@@ -21,6 +21,8 @@ Bill Feng | bfyes | https://github.com/bfyes | 嗨，我是BillFeng，来自浙�
 
 ## Links
 
+欢迎在评论区交换友情链接！
+
 ::friends::
 gE | gE0650 | https://0-rangE.cn | Orange
 dreamem0ra1n | dreamem0ra1n | https://dreamem0ra1n.github.io/ISYS/ | ISYS 信安文档站
