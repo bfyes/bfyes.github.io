@@ -375,3 +375,36 @@ html.print-pdf .reveal pre code {
 
 /* ===== 字体 ===== */
 html * { font-family: 'LXGW WenKai', sans-serif !important; }
+
+/* ===== PDF 导出（reveal-print）===== */
+/*
+ * Reveal 打印时会把每个 section 移进新建的 .pdf-page 容器，并给
+ * `html.reveal-print .reveal .slides section` 打上 `padding: 0 !important`，
+ * 导致上面的页边距与垂直居中在打印视图里失效。这里用同等或更高的
+ * 选择器权重补一份打印专用规则。
+ */
+html.reveal-print .reveal .slides .pdf-page > section:not(.stack),
+html.reveal-print .reveal .slides .pdf-page > section.stack > section {
+  box-sizing: border-box;
+  padding: var(--deck-page-margin) !important;
+}
+
+html.reveal-print .reveal .slides .pdf-page > section:not(.stack) > .middle,
+html.reveal-print .reveal .slides .pdf-page > section.stack > section > .middle {
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(700px - 2 * var(--deck-page-margin));
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+}
+
+html.reveal-print .reveal .slides .pdf-page > section > .cover-content {
+  min-height: calc(700px - 2 * var(--deck-page-margin));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
