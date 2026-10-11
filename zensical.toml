@@ -258,6 +258,12 @@ slugify = { object = "pymdownx.slugs.slugify", kwds = { case = "lower" } }
 [project.plugins.glightbox]
 [project.plugins.tags]
 
+# 旧 URL 重定向：源写旧文件路径，值写新文件路径（或完整外链 URL）。
+# 源文件已不存在时也会在原地址生成一个跳转页，避免旧链接 404。
+[project.plugins.redirects]
+[project.plugins.redirects.redirect_maps]
+"diaries/fa26_vacation.md" = "diaries/sp26_vacation.md"
+
 # --------------------------------------------------------------------------
 # 07. Extra（MkDocs 的 extra 配置，zenpartials 用它控制 footer generator 等）
 # --------------------------------------------------------------------------

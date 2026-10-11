@@ -4,7 +4,7 @@
 
 这个暑假的主线大概就是“短学期”课程了。我同时选了 CTF101 (一种信息安全相关的夺旗赛) 和 HPC101 (高性能计算,<span style="color:#2B77BF;">101的意思是零基础课程</span>)，并且后者几乎占据了我的假期。这两门课程为我进一步打开了对计算机世界的认识，也激发了一些我对学习过程和方法、使用人工智能的思考。虽然没学到太多东西，但感谢公司赞助和学校/学长们的资源，我体验到了很不错的大模型，接触到了一点点前沿知识。
 
-![短学期平台用量](fa26_vacation.assets/01-shortterm-platform.png)
+![短学期平台用量](sp26_vacation.assets/01-shortterm-platform.png)
 
 <span style="font-size:0.75em; color:#808080;">下面图是短学期平台中截出来的，用量太多所以打码了，可以理解为AI一直连轴转……</span>
 
@@ -20,33 +20,33 @@ CTF 在某些方面有点像脑筋急转弯之类的游戏，绕过一些限制�
 
 上面有点过于正经了。这个假期中间还穿插了多次练车，开了高速，最后甚至有点上瘾，开车去接朋友吃饭，哈哈（<span style="text-decoration:line-through;">由于空间感不强，我还把车给磕了</span>）。末尾我去了云南游玩，感谢我的好兄弟们，如果不是你们带上我，我恐怕真要一直窝着了，哈哈。佩服你们的超强计划能力和在陌生环境认路寻找方向的能力。
 
-| ![](fa26_vacation.assets/02-yunnan-1.jpg) | ![](fa26_vacation.assets/03-yunnan-2.jpg) |
+| ![](sp26_vacation.assets/02-yunnan-1.jpg) | ![](sp26_vacation.assets/03-yunnan-2.jpg) |
 | :--: | :--: |
-| ![](fa26_vacation.assets/04-yunnan-3.jpg) | ![](fa26_vacation.assets/05-yunnan-4.jpg) |
+| ![](sp26_vacation.assets/04-yunnan-3.jpg) | ![](sp26_vacation.assets/05-yunnan-4.jpg) |
 
-![](fa26_vacation.assets/06-yunnan-5.png)
+![](sp26_vacation.assets/06-yunnan-5.png)
 
-![](fa26_vacation.assets/07-yunnan-6.png)
+![](sp26_vacation.assets/07-yunnan-6.png)
 
-![](fa26_vacation.assets/08-yunnan-7.png)
+![](sp26_vacation.assets/08-yunnan-7.png)
 
 下图是玉龙雪山的索道。登顶之后下来买的烤肠是真好吃吧（
 
-![](fa26_vacation.assets/09-yulong-cableway.jpg)
+![](sp26_vacation.assets/09-yulong-cableway.jpg)
 
-![](fa26_vacation.assets/10-blue-moon-valley.png)
+![](sp26_vacation.assets/10-blue-moon-valley.png)
 
 小牛小羊
 
-![](fa26_vacation.assets/11-calf.png)
+![](sp26_vacation.assets/11-calf.png)
 
-![](fa26_vacation.assets/12-lamb.png)
+![](sp26_vacation.assets/12-lamb.png)
 
 后来，开学前，一个高中的同学来杭州找我玩（9.12）；十一假期期间，另一位同学来杭州（10.3）；假期最后两天天气大好，我去合肥找了同学玩。三段很美好的经历！
 
-![](fa26_vacation.assets/13-sunset.jpg)
+![](sp26_vacation.assets/13-sunset.jpg)
 
-| ![](fa26_vacation.assets/14-walk-record.png) | ![](fa26_vacation.assets/15-cycling-record.png) |
+| ![](sp26_vacation.assets/14-walk-record.png) | ![](sp26_vacation.assets/15-cycling-record.png) |
 | :--: | :--: |
 
 音乐依旧是继续听，琴还是没开始弹，不知道什么时候能捡回来。
