@@ -105,7 +105,7 @@ nav = [
         { "Mac 记事本" = "tools/notepadnext.md" },
         { "学在浙大 & PTA" = "tools/xzzd.md"},
         { "签到" = "tools/autosign.md"},
-        { "校园跑" = "tools/run.md"},
+        { "98 动态头像" = "tools/cc98-avatar.md"},
     ] },
     { "随笔" = [
         "diaries/index.md",
@@ -219,6 +219,9 @@ toggle.name = "深色模式"
 # pymdownx 扩展
 [project.markdown_extensions.pymdownx.arithmatex]
 generic = true
+
+[project.markdown_extensions.pymdownx.caret]
+smart_insert = true
 
 [project.markdown_extensions.pymdownx.critic]
 [project.markdown_extensions.pymdownx.details]
