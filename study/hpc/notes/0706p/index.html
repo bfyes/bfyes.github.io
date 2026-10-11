@@ -1,0 +1,4463 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="BillFeng 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。">
+      
+      
+        <meta name="author" content="BillFeng">
+      
+      
+        <link rel="canonical" href="https://docs.bfyes.cn/study/hpc/notes/0706p/">
+      
+      
+        <link rel="prev" href="../../">
+      
+      
+        <link rel="next" href="../0707p/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../theme/assets/favicon.svg">
+      <meta name="generator" content="zensical-0.0.60">
+    
+    
+      
+        <title>集群软硬件及运维基础 - BillFeng 的文档站</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../../../../assets/stylesheets/modern/main.ce62732f.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/modern/palette.812a03bb.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../theme/css/variables.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/main.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/features.css">
+    
+      <link rel="stylesheet" href="../../../../theme/css/home.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  
+  <script>
+    (function () {
+      try {
+        var dark = matchMedia("(prefers-color-scheme: dark)").matches;
+        var scheme = dark ? "slate" : "default";
+        document.documentElement.setAttribute("data-md-color-scheme", scheme);
+        var link = document.createElement("link");
+        link.id = "hljs-theme";
+        link.rel = "stylesheet";
+        link.href = dark
+          ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+          : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
+        document.head.appendChild(link);
+        // body 加载后同步 attribute（bundle 切换主题时写 body，这里保证 html 跟随）
+        var attach = function () {
+          document.body.setAttribute("data-md-color-scheme", scheme);
+          new MutationObserver(function () {
+            var s = document.body.getAttribute("data-md-color-scheme");
+            if (s) document.documentElement.setAttribute("data-md-color-scheme", s);
+          }).observe(document.body, {
+            attributes: true,
+            attributeFilter: ["data-md-color-scheme"],
+          });
+        };
+        if (document.body) attach();
+        else new MutationObserver(function (_, obs) {
+          if (document.body) { attach(); obs.disconnect(); }
+        }).observe(document.documentElement, { childList: true });
+      } catch (e) {}
+    })();
+  </script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#07-06-下午集群软硬件及运维基础" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="BillFeng 的文档站" class="md-header__button md-logo" aria-label="BillFeng 的文档站" data-md-component="logo">
+      <!-- Logo：复用 favicon.svg 的方角图标 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="bf-logo" role="img" aria-label="BillFeng" width="64" height="64">
+  <rect width="64" height="64" rx="12" ry="12" fill="#409ba5"/>
+  <text x="32" y="46" text-anchor="middle"
+        font-family="Courier New, Courier, monospace"
+        font-size="42" font-weight="700" fill="#ffffff">B</text>
+</svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BillFeng 的文档站
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              集群软硬件及运维基础
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="跟随系统"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="跟随系统" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun-moon" viewBox="0 0 24 24"><path d="M12 2v2M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715M16 12a4 4 0 0 0-4-4M19 5l-1.256 1.256M20 12h2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="浅色模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="深色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="深色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon-star" viewBox="0 0 24 24"><path d="M18 5h4M20 3v4M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/bfyes/bfyes.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bfyes.github.io
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  主页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../" class="md-tabs__link">
+          
+  
+  学习
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../tools/" class="md-tabs__link">
+          
+  
+  工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../diaries/" class="md-tabs__link">
+          
+  
+  随笔
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../games/" class="md-tabs__link">
+          
+  
+  游戏
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="BillFeng 的文档站" class="md-nav__button md-logo" aria-label="BillFeng 的文档站" data-md-component="logo">
+      <!-- Logo：复用 favicon.svg 的方角图标 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="bf-logo" role="img" aria-label="BillFeng" width="64" height="64">
+  <rect width="64" height="64" rx="12" ry="12" fill="#409ba5"/>
+  <text x="32" y="46" text-anchor="middle"
+        font-family="Courier New, Courier, monospace"
+        font-size="42" font-weight="700" fill="#ffffff">B</text>
+</svg>
+    </a>
+    BillFeng 的文档站
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bfyes/bfyes.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bfyes.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  主页
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学习
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  学习
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../ismath/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  信息安全原理与数学基础
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  信息安全原理与数学基础
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ismath/discrete/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  离散数学
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ismath/probability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Probability and Statistics
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../asm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  汇编语言设计与调试
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../sys1/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  SYS1
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  SYS1
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0: 环境准备
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1: MUX/七段数码管
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2: 64位全加减法器
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3: 时序电路/FSM
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab4: 卷积模块
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/lab5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab5: RISC-V 汇编
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../sys1/project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  project: 单周期CPU
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../fds/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  FDS
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  FDS
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../fds/project1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project1
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../fds/project2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project2
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../fds/project3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project3
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC101
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  HPC101
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  课程笔记
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  课程笔记
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  集群软硬件及运维基础
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  集群软硬件及运维基础
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#从个人电脑到集群作业" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        从个人电脑到集群作业
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#网络接口与链路层" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        网络接口与链路层
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="网络接口与链路层">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#管理网络与计算网络" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        管理网络与计算网络
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ip子网与默认网关" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        IP、子网与默认网关
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dnstcp-与-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        DNS、TCP 与 SSH
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DNS、TCP 与 SSH">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#按层检查网络连接" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        按层检查网络连接
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#从三条输出判断问题位置" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        从三条输出判断问题位置
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#linux-内核与用户空间" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Linux 内核与用户空间
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Linux 内核与用户空间">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#文件接口与文件描述符" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        文件接口与文件描述符
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#路径挂载与工作目录" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        路径、挂载与工作目录
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#用户用户组和文件权限" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        用户、用户组和文件权限
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shell管道与作业脚本" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Shell、管道与作业脚本
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssh-远程登录与密钥" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SSH 远程登录与密钥
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#编译库与软件环境" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        编译、库与软件环境
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="编译、库与软件环境">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#环境变量与模块的作用域" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        环境变量与模块的作用域
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Git
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#编译与链接的边界" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        编译与链接的边界
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#模块包管理器与项目环境" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        模块、包管理器与项目环境
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#进程前台任务与日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        进程、前台任务与日志
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#从源码到可运行程序" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        从源码到可运行程序
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="从源码到可运行程序">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#动态库定位的实际检查" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        动态库定位的实际检查
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#集群上的数据移动与共享目录" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        集群上的数据移动与共享目录
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#容器与资源隔离" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        容器与资源隔离
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#集群节点与带外管理" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        集群节点与带外管理
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#记录运行环境" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        记录运行环境
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#常见问题的检查顺序" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        常见问题的检查顺序
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0707p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 中的计算机系统 1
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0708p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 中的计算机系统 2
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0710p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  向量化并行计算基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0712a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  OpenMP/MPI 基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0712p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  性能分析基础 Profiling
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0713a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  高性能计算高级话题
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0713p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CUDA 编程基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  从文本到下一个 token
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0716a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习基础（上）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0716p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习基础（下）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0717a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习高级话题（上）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../0717p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习高级话题（下）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0: Linux Crash Course
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1: Mini Cluster
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2: MoE向量化计算
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3: GDN Prefill优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab4: 数值相对论优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lab5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab5: Gemma4推理优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../ctf/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CTF101
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  CTF101
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_3" id="__nav_2_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab1
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1/pwn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Pwn
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1/rev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reverse
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab1/web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Web
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_4" id="__nav_2_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab2
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab2/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab2/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_5" id="__nav_2_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab3
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab3/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ctf/lab3/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../tools/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  工具
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  工具
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/xp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  XP on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/rosetta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Rosetta on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/vivado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Vivado on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/notepadnext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Mac 记事本
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/xzzd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学在浙大 & PTA
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/autosign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  签到
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/cc98-avatar/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  98 动态头像
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../diaries/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  随笔
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  随笔
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../diaries/fa25_review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  2025 年度十图
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../diaries/sp26_midterm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 半期总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../diaries/sp26_final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 期末总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../diaries/sp26_vacation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 暑假总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../games/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  游戏
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  游戏
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/4D_Intuition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  四维直觉
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/Shenzhen_IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  深圳I/O
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/The_Farmer_Was_Replaced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  编程农场
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/Turing_Complete/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  图灵完备
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../games/test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  样式测试
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#从个人电脑到集群作业" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        从个人电脑到集群作业
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#网络接口与链路层" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        网络接口与链路层
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="网络接口与链路层">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#管理网络与计算网络" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        管理网络与计算网络
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ip子网与默认网关" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        IP、子网与默认网关
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dnstcp-与-ssh" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        DNS、TCP 与 SSH
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DNS、TCP 与 SSH">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#按层检查网络连接" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        按层检查网络连接
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#从三条输出判断问题位置" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        从三条输出判断问题位置
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#linux-内核与用户空间" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Linux 内核与用户空间
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Linux 内核与用户空间">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#文件接口与文件描述符" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        文件接口与文件描述符
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#路径挂载与工作目录" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        路径、挂载与工作目录
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#用户用户组和文件权限" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        用户、用户组和文件权限
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shell管道与作业脚本" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Shell、管道与作业脚本
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ssh-远程登录与密钥" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SSH 远程登录与密钥
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#编译库与软件环境" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        编译、库与软件环境
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="编译、库与软件环境">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#环境变量与模块的作用域" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        环境变量与模块的作用域
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#git" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Git
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#编译与链接的边界" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        编译与链接的边界
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#模块包管理器与项目环境" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        模块、包管理器与项目环境
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#进程前台任务与日志" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        进程、前台任务与日志
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#从源码到可运行程序" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        从源码到可运行程序
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="从源码到可运行程序">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#动态库定位的实际检查" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        动态库定位的实际检查
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#集群上的数据移动与共享目录" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        集群上的数据移动与共享目录
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#容器与资源隔离" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        容器与资源隔离
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#集群节点与带外管理" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        集群节点与带外管理
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#记录运行环境" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        记录运行环境
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#常见问题的检查顺序" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        常见问题的检查顺序
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+  
+  
+                  
+  
+    <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/study/hpc/notes/0706p.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-pen" viewBox="0 0 24 24"><path d="M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/bfyes/bfyes.github.io/raw/main/docs/study/hpc/notes/0706p.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-code-2" viewBox="0 0 24 24"><path d="M4 12.15V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-3.35"/><path d="M14 2v5a1 1 0 0 0 1 1h5M5 16l-3 3 3 3M9 22l3-3-3-3"/></svg>
+    </a>
+  
+
+
+
+
+
+
+
+
+<h1 id="07-06-下午集群软硬件及运维基础">07-06 下午：集群软硬件及运维基础<a class="headerlink" href="#07-06-下午集群软硬件及运维基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-04T19:56:01+08:00">2026/09/04</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 6856 字</span></div>
+<p>下面是一条最小的课程项目路径。假设本机已有 <code>solver/</code> 源码，集群登录节点叫 <code>login.example.edu</code>，项目放在家目录下。</p>
+<pre class="highlight"><code class="language-bash"># 本机：把源码同步到登录节点
+rsync -avP ./solver/ user@login.example.edu:~/solver/
+
+# 登录节点：准备工具链并构建
+ssh user@login.example.edu
+cd ~/solver
+module load gcc openmpi
+cmake -S . -B build
+cmake --build build -j 4
+
+# 登录节点：提交作业，计算节点随后执行脚本
+sbatch run.sbatch
+squeue -u "$USER"</code></pre>
+<p>这几行命令已经跨过三个不同的位置。本机负责发起连接和传输文件；登录节点负责编辑、配置、编译与提交；计算节点由调度器分配后才运行 <code>run.sbatch</code> 中的 <code>srun ./build/solver ...</code>。日志通常写回共享目录，因此作业结束后仍在登录节点查看。</p>
+<p>其中任何一步停住，都应从该步的直接输出开始。<code>rsync</code> 连接不上时先看本机路由、域名和 SSH；构建时报头文件或库错误时检查模块、路径和编译命令；作业排队时查看分区、资源请求和 Slurm 状态。把编译错误拿去修改网络、或在登录节点上直接长时间运行数值程序，都不会缩小问题范围。<sup id="fnref:slurm-overview"><a class="footnote-ref" href="#fn:slurm-overview">2</a></sup></p>
+<div class="admonition quote">
+<p class="admonition-title">命令行建议</p>
+<p>在终端中排查问题时，命令的输出比猜测更可靠。先用一个小命令观察文件、路径、进程或网络状态，再根据输出缩小范围。<sup id="fnref3:ustc-linux101"><a class="footnote-ref" href="#fn:ustc-linux101">1</a></sup></p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">保留一份可复查的运行记录</p>
+<p>记录实际执行的命令、时间、主机名、退出码和标准错误。<code>ssh -vvv</code>、<code>module list</code>、<code>srun hostname</code>、<code>ldd</code> 和作业输出文件观察的对象不同。一次只让一条命令回答一个问题，后面的判断才有依据。</p>
+</div>
+<h2 id="从个人电脑到集群作业">从个人电脑到集群作业<a class="headerlink" href="#从个人电脑到集群作业" title="Permanent link"></a></h2>
+<p>登录、构建和提交使用的是同一份项目文件，却不处在同一个运行环境。SSH 连接建立后，shell 仍在登录节点；<code>sbatch</code> 只登记资源请求和脚本；真正的程序进程要等调度器选定计算节点后才启动。</p>
+<p>一个脚本通常同时写下三类信息。</p>
+<table>
+<thead>
+<tr>
+<th>脚本部分</th>
+<th>谁读取它</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>#SBATCH</code> 行</td>
+<td><code>sbatch</code></td>
+<td>请求节点、CPU、GPU、内存和时间上限</td>
+</tr>
+<tr>
+<td><code>module load</code>、<code>export</code>、<code>cd</code></td>
+<td>作业启动后的 shell</td>
+<td>选择工具链、环境变量和工作目录</td>
+</tr>
+<tr>
+<td><code>srun ./solver ...</code></td>
+<td>Slurm 与计算节点</td>
+<td>在已分配的资源中启动实际进程</td>
+</tr>
+</tbody>
+</table>
+<p>这一区分解释了常见现象。脚本能提交但运行时找不到 <code>mpicc</code>，通常是 <code>module load</code> 没有写进脚本；本机能看到的相对路径在作业中失效，通常是脚本开始时的工作目录不同；<code>squeue</code> 显示 <code>PD</code> 时，程序尚未开始执行，先看资源与分区状态。</p>
+<p>下面各节会依次展开这条路径中的网络、Linux 文件接口、权限、编译库和作业日志。Lab 0 和 Lab 1 的命令都可以放回这条路径理解。</p>
+<h2 id="网络接口与链路层">网络接口与链路层<a class="headerlink" href="#网络接口与链路层" title="Permanent link"></a></h2>
+<p>主机通过网络接口控制器（NIC，网络接口控制器）接入网络。Linux 用统一的接口名表示物理网卡、Wi-Fi、回环接口和各种虚拟接口。</p>
+<p>因此，看到一个接口名时，先检查它是否存在、是否启用、有没有地址，以及去某个目标时会不会经过它。物理网卡、回环接口和虚拟接口都通过同一套 <code>iproute2</code> 命令观察。<sup id="fnref:iproute"><a class="footnote-ref" href="#fn:iproute">3</a></sup></p>
+<p>容器常用 <code>veth</code>（virtual Ethernet，成对出现的虚拟以太网接口）。VPN（Virtual Private Network，虚拟专用网络）常创建隧道接口；TUN（tunnel device，隧道虚拟设备）则以 IP 包为单位承载这类流量。</p>
+<pre class="highlight"><code class="language-bash">ip -br link             # 接口名称、链路状态
+ip -br addr             # 各接口上的 IPv4/IPv6 地址
+ip route                # 路由表与默认路由
+ip route get 10.0.0.10  # 到某个目标实际会走的路径</code></pre>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/network-interface-cards.jpg"><img width="1280" height="720" class="lqip" alt="图中展示服务器使用的多种网卡形态。操作系统通过驱动把 PCIe（Peripheral Component Interconnect Express，高速外设互连）网卡或虚拟设备暴露为网络接口。" src="../assets/0706p/network-interface-cards.preview.jpg" data-fullsrc="../assets/0706p/network-interface-cards.jpg" /></a></p>
+<p><em>图中展示不同形态的 NIC。排障时以 <code>ip link</code> 和路由表中的接口名为准。</em></p>
+<p>以太网帧在同一二层网络内按 MAC（Media Access Control，媒体访问控制）地址转发。二层网络可以先理解为一组由交换机直接连接的接口，帧在这组接口之间转发时不需要经过路由器。</p>
+<p>交换机收到帧后，会从源 MAC 学习这个地址在哪个端口。目的 MAC 已知时，帧只会被发到对应端口。目的 MAC 尚未记录时，交换机会把帧复制到其他端口，这称为泛洪。</p>
+<p>跨出本地网络后，路由器开始按 IP（Internet Protocol，互联网协议）前缀和路由表工作。它选择下一跳，也就是这个 IP 包接下来应交给的路由设备或目标主机。MAC 表和路由表回答的是不同层次的问题，因此 ARP（Address Resolution Protocol，地址解析协议）/邻居表与 <code>ip route</code> 也要分开看。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/switch-mac-learning.jpg"><img width="1280" height="720" class="lqip" alt="图中交换机从帧的源 MAC 学习端口，随后依据目的 MAC 表决定定向转发或泛洪。" src="../assets/0706p/switch-mac-learning.preview.jpg" data-fullsrc="../assets/0706p/switch-mac-learning.jpg" /></a></p>
+<p><em>图中 MAC 表只在一个二层广播域内有意义。广播域指交换机转发一帧广播消息时能够到达的那一组接口；路由器通常会把不同广播域隔开。跨网段访问仍需通过 IP 路由。</em></p>
+<h3 id="管理网络与计算网络">管理网络与计算网络<a class="headerlink" href="#管理网络与计算网络" title="Permanent link"></a></h3>
+<p>集群常同时有管理网络和计算网络。管理网络用于 SSH、部署、监控和带外管理。带外管理是独立于操作系统业务网络的管理员控制通道，常用于查看硬件状态或远程开关机。</p>
+<p>计算网络负责节点间的 MPI、RDMA（Remote Direct Memory Access，远程直接内存访问）和加速器通信。能 SSH 到登录节点，只能说明管理访问可用。计算节点之间的高速互连、GPU 互连和并行文件系统带宽仍需单独验证。</p>
+<p>普通用户程序通过 MPI、NCCL（NVIDIA Collective Communications Library，NVIDIA 集合通信库）或系统库使用这张网络，不需要直接配置交换机。</p>
+<h2 id="ip子网与默认网关">IP、子网与默认网关<a class="headerlink" href="#ip子网与默认网关" title="Permanent link"></a></h2>
+<p>IPv4 地址和 CIDR（Classless Inter-Domain Routing，无类别域间路由）前缀共同描述接口所在子网。以 <code>192.168.136.23/24</code> 为例，前 24 位表示网络部分，等价掩码为 <code>255.255.255.0</code>。</p>
+<p>目标地址落在同一前缀时，主机在本地网段内通过 MAC 地址寻找目标。目标不在本地子网时，主机把 IP 包交给默认网关。默认网关通常是一台出口路由器，后续转发由它完成。IPv6 也用前缀长度表示网络范围。<sup id="fnref:rfc8200"><a class="footnote-ref" href="#fn:rfc8200">4</a></sup></p>
+<pre class="highlight"><code class="language-bash">ip route
+# default via 192.168.136.1 dev enp0s31f6
+# 192.168.136.0/24 dev enp0s31f6 proto kernel scope link src 192.168.136.23</code></pre>
+<p>上例中，<code>192.168.136.0/24</code> 表示直接可达的本地网段；<code>default via ...</code> 表示其他目标默认交给网关。VPN 和代理经常同时引入新接口、路由规则和 DNS 策略。浏览器可访问网页而 SSH 无法连接时，仍应使用 <code>ip route get 目标地址</code> 确认内核选择的实际出接口。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/network-layering.jpg"><img width="1060" height="560" class="lqip" alt="图中比较同一局域网和跨网段访问。MAC 地址用于本地网段内接口定位，IP 地址和默认网关用于跨网段转发。" src="../assets/0706p/network-layering.preview.jpg" data-fullsrc="../assets/0706p/network-layering.jpg" /></a></p>
+<p><em>图中只说明 MAC/IP 的职责边界，不包含完整 TCP/IP 协议栈。DNS、TCP 与 SSH 在下一节分别说明。</em></p>
+<h2 id="dnstcp-与-ssh">DNS、TCP 与 SSH<a class="headerlink" href="#dnstcp-与-ssh" title="Permanent link"></a></h2>
+<p>DNS（Domain Name System，域名系统）、TCP 和 SSH 处在不同层次。DNS 先把主机名解析为地址。TCP 再在两端建立可靠、按序的字节流。SSH 在 TCP 之上完成主机身份确认、用户认证和加密会话。</p>
+<p>因此，主机名解析失败时先检查 DNS。端口不可达时检查路由、防火墙或服务。只有网络连接建立后，私钥和用户名等认证问题才有意义。<sup id="fnref:ssh-man"><a class="footnote-ref" href="#fn:ssh-man">5</a></sup></p>
+<pre class="highlight"><code class="language-bash">getent hosts login.example.edu    # 系统实际采用的名称解析结果
+dig +short login.example.edu      # 直接查看 DNS 应答（若安装 dig）
+nc -vz login.example.edu 22       # 只验证 TCP 端口连通性
+ssh -vvv user@login.example.edu   # 认证和配置排障时才启用详细日志</code></pre>
+<p><code>ping</code> 测试的是 ICMP（Internet Control Message Protocol，网际控制报文协议）是否回应。集群、云主机和校园网可能限制 ICMP，因此 ping 失败不能单独证明 SSH 或 TCP 22 不可达；相反，ping 成功也不证明目标主机的 SSH 服务和用户认证配置正确。</p>
+<h3 id="按层检查网络连接">按层检查网络连接<a class="headerlink" href="#按层检查网络连接" title="Permanent link"></a></h3>
+<p>可按从近到远的顺序检查。</p>
+<ul>
+<li><code>ip -br link</code> 查看接口是否存在和是否处于 <code>UP</code>。</li>
+<li><code>ip -br addr</code> 查看接口是否获得预期地址。</li>
+<li><code>ip route get 主机地址</code> 查看内核选择的网卡和下一跳。</li>
+<li><code>getent hosts 主机名</code> 查看主机名是否解析到预期地址。</li>
+<li><code>nc -vz 主机名 端口</code> 查看 TCP 建连是否得到响应。</li>
+<li><code>ssh -vvv</code> 查看主机密钥、用户名和密钥认证在哪一步失败。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>报错</th>
+<th>检查</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Could not resolve hostname</code></td>
+<td>DNS、主机名、VPN 的 DNS</td>
+<td>尚未得到可连接地址</td>
+</tr>
+<tr>
+<td><code>No route to host</code></td>
+<td>路由表、网关、目标网段</td>
+<td>本机找不到到目标的路径</td>
+</tr>
+<tr>
+<td><code>Connection refused</code></td>
+<td>目标主机、端口、服务</td>
+<td>通常已到达目标，端口没有服务监听</td>
+</tr>
+<tr>
+<td><code>Connection timed out</code></td>
+<td>地址、ACL（Access Control List，访问控制列表）/ 防火墙、目标状态</td>
+<td>请求可能被丢弃，原因需结合路径判断</td>
+</tr>
+<tr>
+<td><code>Permission denied (publickey)</code></td>
+<td>用户名、私钥、公钥授权</td>
+<td>网络已基本正常，失败在认证阶段</td>
+</tr>
+</tbody>
+</table>
+<h3 id="从三条输出判断问题位置">从三条输出判断问题位置<a class="headerlink" href="#从三条输出判断问题位置" title="Permanent link"></a></h3>
+<p>设要连接 <code>login.example.edu</code>。先让名称解析、路由选择和端口测试各给出一条输出。</p>
+<pre class="highlight"><code class="language-bash">$ getent hosts login.example.edu
+10.12.0.25    login.example.edu
+
+$ ip route get 10.12.0.25
+10.12.0.25 via 192.168.136.1 dev enp0s31f6 src 192.168.136.23
+
+$ nc -vz login.example.edu 22
+Connection to login.example.edu port 22 [tcp/ssh] succeeded!</code></pre>
+<p>这三行分别说明主机名已得到地址、内核已选出出接口和下一跳、目标 TCP 22 端口接受连接。随后若 <code>ssh</code> 报 <code>Permission denied (publickey)</code>，排查范围就收缩到用户名、私钥选择和服务器端公钥授权。</p>
+<p>若第一条命令没有输出，后两步没有可靠的目标地址，先检查 DNS 或 VPN 的 DNS 配置。若第二条命令显示 <code>unreachable</code>，应查看路由表和网关；若第三条超时，名称和路由可能正确，问题转到防火墙、ACL 或目标主机状态。</p>
+<h2 id="linux-内核与用户空间">Linux 内核与用户空间<a class="headerlink" href="#linux-内核与用户空间" title="Permanent link"></a></h2>
+<p>Linux 内核管理调度、虚拟内存、文件系统、设备驱动和网络协议栈。普通应用在用户空间运行，需要通过系统调用请求内核服务。</p>
+<p>这种边界限制了进程能直接做什么。用户程序不能任意读取物理内存、操作设备寄存器或访问其他用户的文件。权限、挂载点、资源限制和容器隔离都建立在这层边界上。<sup id="fnref:linux-syscall"><a class="footnote-ref" href="#fn:linux-syscall">6</a></sup></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/user-kernel-boundary.jpg"><img width="1280" height="720" class="lqip" alt="图中将普通应用、系统调用边界和内核管理的硬件/资源分开。程序通过内核接口请求资源，不能直接绕过权限和调度规则。" src="../assets/0706p/user-kernel-boundary.preview.jpg" data-fullsrc="../assets/0706p/user-kernel-boundary.jpg" /></a></p>
+<p><em>用户态与内核态的分界是保护和资源管理的基础。系统调用会跨越该边界，普通函数调用不会。</em></p>
+<h3 id="文件接口与文件描述符">文件接口与文件描述符<a class="headerlink" href="#文件接口与文件描述符" title="Permanent link"></a></h3>
+<p>Linux 将普通文件、目录、设备、管道和套接字统一为可通过文件描述符操作的对象。文件描述符是进程打开这些对象后获得的小整数句柄。标准输入、输出、错误通常对应描述符 <code>0</code>、<code>1</code>、<code>2</code>。重定向并不改变程序的计算，只是把这些描述符连接到文件或管道。</p>
+<pre class="highlight"><code class="language-bash">./solver input.dat &gt; result.txt 2&gt; error.txt
+./solver input.dat 2&gt;&amp;1 | tee run.log</code></pre>
+<p><code>&gt;</code> 覆盖文件，<code>&gt;&gt;</code> 追加文件。<code>2&gt;&amp;1</code> 将当前标准错误重定向到当前标准输出，因此 <code>./solver &gt; result.txt 2&gt;&amp;1</code> 会把两类输出写进同一文件。批处理作业应保留标准错误，因为动态库、权限和 MPI 错误经常只写在这里。</p>
+<h3 id="路径挂载与工作目录">路径、挂载与工作目录<a class="headerlink" href="#路径挂载与工作目录" title="Permanent link"></a></h3>
+<p>绝对路径从 <code>/</code> 开始，相对路径以当前工作目录为基准。路径能否访问不只取决于最后一个文件，也取决于沿途每一级目录是否允许穿过。</p>
+<p>挂载点是把一个文件系统接到目录树某个位置的目录。例如外接磁盘或 NFS 目录会挂到 <code>/mnt/...</code> 或课程目录下。<code>findmnt -T</code> 可显示某个路径来自哪个挂载点，<code>namei -l</code> 可逐级检查路径权限。<sup id="fnref:path-resolution"><a class="footnote-ref" href="#fn:path-resolution">7</a></sup></p>
+<pre class="highlight"><code class="language-bash">pwd
+realpath ./output/result.txt
+findmnt -T "$PWD"
+namei -l /home/user/project/output/result.txt</code></pre>
+<p>集群中的家目录、共享项目目录、scratch 和节点本地 <code>/tmp</code> 往往来自不同文件系统。</p>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>常见用途</th>
+<th>需要确认的风险</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$HOME</code></td>
+<td>源码、配置、小结果</td>
+<td>配额、元数据压力</td>
+</tr>
+<tr>
+<td>共享项目/scratch</td>
+<td>大输入、检查点、跨节点结果</td>
+<td>清理策略、并行 I/O 负载</td>
+</tr>
+<tr>
+<td>节点本地 <code>/tmp</code></td>
+<td>本作业临时文件、缓存</td>
+<td>作业结束/节点重启后丢失</td>
+</tr>
+<tr>
+<td>容器可写层</td>
+<td>临时运行状态</td>
+<td>容器重建后丢失</td>
+</tr>
+</tbody>
+</table>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/shared-mounts.jpg"><img width="1280" height="720" class="lqip" alt="图中区分主机本地路径与共享挂载路径。多个节点看到相同目录树不代表该路径无配额、无延迟或适合大量小文件。" src="../assets/0706p/shared-mounts.preview.jpg" data-fullsrc="../assets/0706p/shared-mounts.jpg" /></a></p>
+<p><em>图中共享挂载使各节点看到同一数据。带宽和并发写入正确性仍需由文件系统和程序共同保证。</em></p>
+<h2 id="用户用户组和文件权限">用户、用户组和文件权限<a class="headerlink" href="#用户用户组和文件权限" title="Permanent link"></a></h2>
+<p>Linux 文件权限由属主、属组和其他用户三组 <code>r</code>、<code>w</code>、<code>x</code> 位表示。普通文件的 <code>x</code> 表示可执行；目录的 <code>x</code> 表示可穿过目录并按名字访问其中对象。缺少目录的 <code>x</code> 时，即使文件本身可读，也可能无法打开。<sup id="fnref2:path-resolution"><a class="footnote-ref" href="#fn:path-resolution">7</a></sup></p>
+<pre class="highlight"><code class="language-bash">id
+ls -ld project project/output
+chmod u+x run.sh
+chmod 640 secret.txt</code></pre>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/linux-permission-model.jpg"><img width="1280" height="720" class="lqip" alt="图中将 owner、group、others 三组权限与读、写、执行位对应。目录的执行位和普通文件的执行位含义不同，排查路径问题时必须区分。" src="../assets/0706p/linux-permission-model.preview.jpg" data-fullsrc="../assets/0706p/linux-permission-model.jpg" /></a></p>
+<p><em>图中权限位只表达访问规则的一部分。ACL、挂载选项、SELinux/AppArmor 等由系统额外执行的安全策略，以及网络文件系统策略，还可能叠加额外限制。</em></p>
+<p>共享项目不应使用 <code>chmod -R 777</code> 作为默认方案。先建立正确的项目组和目录权限，再用 <code>umask</code> 控制新文件默认权限；私钥、token、配置密钥只允许必要用户读取。<code>ls -l</code> 只显示最后一级，遇到 <code>Permission denied</code> 时优先运行 <code>namei -l 路径</code>。</p>
+<h2 id="shell管道与作业脚本">Shell、管道与作业脚本<a class="headerlink" href="#shell管道与作业脚本" title="Permanent link"></a></h2>
+<p>Shell 解析命令、展开变量、建立重定向和管道并启动子进程。脚本第一行 shebang 指定解释器；<code>set -euo pipefail</code> 能较早暴露未定义变量、单条命令失败和管道前段失败，但它不替代对输入、输出和返回码的业务检查。<sup id="fnref:bash-man"><a class="footnote-ref" href="#fn:bash-man">8</a></sup></p>
+<pre class="highlight"><code class="language-bash">#!/usr/bin/env bash
+set -euo pipefail
+
+input=${1:?usage: $0 INPUT}
+out=${2:-result.txt}
+mkdir -p logs
+./solver "$input" &gt; "$out" 2&gt; logs/solver.err</code></pre>
+<p>变量展开默认可能按空白拆词并触发通配符扩展，因此路径和用户输入通常应置于双引号中。运行脚本前先用一个小输入验证参数、输出目录和错误处理；提交作业前再把相同命令写进 Slurm 脚本，避免交互环境与批处理环境不一致。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/ustc-linux101-pipe.png"><img width="897" height="198" class="lqip" alt="Linux 101 用示意图说明管道。前一条命令的标准输出经由管道成为后一条命令的标准输入。" src="../assets/0706p/ustc-linux101-pipe.preview.jpg" data-fullsrc="../assets/0706p/ustc-linux101-pipe.png" /></a></p>
+<p><em>图中管道传递的是字节流。命令的标准错误仍需用 <code>2&gt;</code> 或 <code>2&gt;&amp;1</code> 单独处理。图源为 Linux 101 - USTC。<sup id="fnref:ustc-linux101"><a class="footnote-ref" href="#fn:ustc-linux101">1</a></sup></em></p>
+<h2 id="ssh-远程登录与密钥">SSH 远程登录与密钥<a class="headerlink" href="#ssh-远程登录与密钥" title="Permanent link"></a></h2>
+<p>SSH 先用服务器主机密钥确认目标服务器身份，再使用密码、公开密钥或其他方法认证用户。私钥仅保存在客户端；公钥可放入服务器 <code>~/.ssh/authorized_keys</code>。OpenSSH 会拒绝权限过宽的私钥或配置文件，以降低本机其他用户读取密钥的风险。<sup id="fnref2:ssh-man"><a class="footnote-ref" href="#fn:ssh-man">5</a></sup></p>
+<pre class="highlight"><code class="language-bash">ssh-keygen -t ed25519 -C "hpc-course"
+ssh-copy-id user@login.example.edu      # 服务器允许时
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/id_ed25519</code></pre>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/ssh-config.jpg"><img width="1060" height="560" class="lqip" alt="图中展示 ~/.ssh/config 中常用的 Host、HostName、User、Port 与 IdentityFile 字段。配置将重复的连接参数集中在客户端，不应保存密码或 API key。" src="../assets/0706p/ssh-config.preview.jpg" data-fullsrc="../assets/0706p/ssh-config.jpg" /></a></p>
+<p><em>图中 <code>Host</code> 是本机别名，<code>HostName</code> 是实际服务器地址。使用多个课程或集群账号时，可用不同别名和 <code>IdentityFile</code> 避免选错密钥。</em></p>
+<p>首次连接时应核对主机密钥指纹；已经信任的主机突然提示密钥变化，也应先确认原因。使用 <code>ssh -G 别名</code> 可查看 OpenSSH 最终采用的配置，使用 <code>ssh -vvv</code> 可判断客户端尝试了哪些密钥。端口转发和代理跳板应以课程或集群管理员文档为准，避免将私钥或本地敏感服务暴露到不受控网络。</p>
+<h2 id="编译库与软件环境">编译、库与软件环境<a class="headerlink" href="#编译库与软件环境" title="Permanent link"></a></h2>
+<p>从源码到可执行文件至少经过预处理、编译、汇编和链接。编译期找不到头文件，链接期找不到符号，运行期找不到共享库，发生在不同阶段；把三者分开能快速缩小错误范围。<sup id="fnref:gcc-link"><a class="footnote-ref" href="#fn:gcc-link">9</a></sup></p>
+<pre class="highlight"><code class="language-bash">cc -O2 -g main.c -o main -lm
+# 编译期：fatal error: xxx.h: No such file or directory
+# 链接期：undefined reference to `xxx'
+# 运行期：error while loading shared libraries: libxxx.so: cannot open...</code></pre>
+<h3 id="环境变量与模块的作用域">环境变量与模块的作用域<a class="headerlink" href="#环境变量与模块的作用域" title="Permanent link"></a></h3>
+<p>环境变量只传给当前 shell 启动的子进程。<code>export</code> 后，编译器、MPI launcher 和作业脚本才能继承它；修改 <code>.bashrc</code> 通常只影响以后启动的新 shell。HPC 环境使用模块（environment module）在同一系统中提供多套编译器、MPI 和数学库。构建和运行必须使用兼容的一组模块。<sup id="fnref:lmod"><a class="footnote-ref" href="#fn:lmod">10</a></sup></p>
+<pre class="highlight"><code class="language-bash">module purge
+module load gcc openmpi
+module list
+which mpicc
+mpicc --showme:command</code></pre>
+<p>将 <code>module list</code>、编译器版本、<code>mpicc --showme:command</code> 和 Git 提交写入日志。特别是 MPI 程序，编译时链接到的 MPI 实现和运行时加载的库不一致时，可能产生符号错误、启动失败或难以复现的性能差异。</p>
+<h3 id="git">Git<a class="headerlink" href="#git" title="Permanent link"></a></h3>
+<p>Git 应保存源码、构建脚本、运行说明和少量配置，不应提交私钥、token、大型下载缓存、构建目录或受限数据。开始实验前先提交一个可编译、可通过小输入的基线；之后每一步性能改动单独提交，便于对比与回退。<sup id="fnref:git-book"><a class="footnote-ref" href="#fn:git-book">11</a></sup></p>
+<pre class="highlight"><code class="language-bash">git status
+git diff --check
+git add src/ CMakeLists.txt README.md
+git commit -m "建立可运行的基线"</code></pre>
+<h3 id="编译与链接的边界">编译与链接的边界<a class="headerlink" href="#编译与链接的边界" title="Permanent link"></a></h3>
+<p>下面用一个只有加法函数的小项目区分头文件、链接符号和运行期共享库。目录结构如下。</p>
+<pre class="highlight"><code class="language-text">mini-lib/
+├── include/add.h
+├── src/add.c
+└── src/main.c</code></pre>
+<p><code>add.h</code> 声明函数，<code>add.c</code> 提供实现，<code>main.c</code> 调用它。</p>
+<pre class="highlight"><code class="language-c">/* include/add.h */
+int add(int a, int b);
+
+/* src/add.c */
+#include "add.h"
+int add(int a, int b) { return a + b; }
+
+/* src/main.c */
+#include &lt;stdio.h&gt;
+#include "add.h"
+int main(void) {
+  printf("%d\n", add(2, 3));
+  return 0;
+}</code></pre>
+<p>先把实现编译为共享库，再链接主程序。</p>
+<pre class="highlight"><code class="language-bash">mkdir -p build lib
+cc -fPIC -Iinclude -c src/add.c -o build/add.o
+cc -shared build/add.o -o lib/libadd.so
+cc -Iinclude src/main.c -Llib -ladd \
+  -Wl,-rpath,'$ORIGIN/../lib' -o build/demo
+./build/demo                    # 输出 5</code></pre>
+<p>三类报错可以直接放回这条命令链理解。</p>
+<table>
+<thead>
+<tr>
+<th>现象</th>
+<th>最早发生的位置</th>
+<th>应检查什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add.h: No such file or directory</code></td>
+<td>编译 <code>main.c</code> 时</td>
+<td>头文件路径、<code>-Iinclude</code>、文件是否安装到预期前缀</td>
+</tr>
+<tr>
+<td><code>undefined reference to add</code></td>
+<td>链接主程序时</td>
+<td>是否漏写 <code>-ladd</code>，库目录是否在 <code>-Llib</code> 中，库的顺序是否正确</td>
+</tr>
+<tr>
+<td><code>libadd.so: cannot open shared object file</code></td>
+<td>执行 <code>build/demo</code> 时</td>
+<td>动态加载器的搜索路径、rpath、模块环境和运行节点的挂载</td>
+</tr>
+</tbody>
+</table>
+<p><code>-Wl,-rpath,'$ORIGIN/../lib'</code> 将运行期查找路径写入可执行文件。<code>$ORIGIN</code> 表示可执行文件所在目录，因此这里会找到同级 <code>lib/</code> 目录。课程项目更常通过环境模块或管理员提供的安装前缀管理这类路径，命令本身仍能帮助定位问题发生在编译、链接还是运行阶段。</p>
+<p>静态库通常以 <code>.a</code> 结尾。链接时，所需对象代码会被复制到程序中。共享库通常以 <code>.so</code> 结尾，程序启动时由动态加载器定位并装入。</p>
+<p>Linux 上的可执行文件和共享库通常采用 ELF（Executable and Linkable Format，可执行与可链接格式）。C++ 与 C、不同编译器版本或不同 C++ 标准库之间还会涉及 ABI（Application Binary Interface，应用二进制接口）。它决定编译后的函数调用、对象布局和库链接约定是否兼容。</p>
+<p>Lab 1 自行构建 OpenMPI（开源 MPI 实现）、BLAS（Basic Linear Algebra Subprograms，基础线性代数子程序库）和 HPL（High Performance Linpack，高性能 Linpack 基准）时，应记录安装前缀、编译器、依赖库和配置参数。<sup id="fnref2:gcc-link"><a class="footnote-ref" href="#fn:gcc-link">9</a></sup></p>
+<pre class="highlight"><code class="language-bash">ldd ./solver                       # ELF（可执行与可链接格式）文件；仅对可信文件使用
+readelf -d ./solver | grep NEEDED</code></pre>
+<h3 id="模块包管理器与项目环境">模块、包管理器与项目环境<a class="headerlink" href="#模块包管理器与项目环境" title="Permanent link"></a></h3>
+<p>系统包管理器负责操作系统级依赖；Python 的 <code>venv</code>、<code>uv</code> 或 Conda 负责项目级解释器和包；环境模块负责 HPC 工具链切换。它们服务范围不同。项目 Python 依赖应固定在项目环境中，不应随意用管理员权限修改系统解释器。<sup id="fnref:python-venv"><a class="footnote-ref" href="#fn:python-venv">12</a></sup></p>
+<pre class="highlight"><code class="language-bash">python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt</code></pre>
+<h2 id="进程前台任务与日志">进程、前台任务与日志<a class="headerlink" href="#进程前台任务与日志" title="Permanent link"></a></h2>
+<p>Shell 启动外部命令后会等待其结束；命令末尾的 <code>&amp;</code> 让它进入当前 shell 的后台任务表。SSH 会话关闭时，依赖该终端的任务可能收到挂断信号。数小时计算应由 Slurm 管理，日志和资源状态也随作业一起保存。<sup id="fnref:proc"><a class="footnote-ref" href="#fn:proc">13</a></sup></p>
+<pre class="highlight"><code class="language-bash">sleep 300 &amp;
+jobs -l
+ps -o pid,ppid,stat,etime,cmd -p "$!"</code></pre>
+<p>进程状态可能显示运行、可中断睡眠、等待不可中断 I/O、停止或僵尸等。观察时把 CPU 使用率、内存、I/O、输入规模与日志一起看；单次 CPU 百分比无法区分计算、锁等待和 I/O 等待。作业输出应包含命令行、hostname、输入版本和标准错误，避免只留下一个最终数字。</p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/ustc-linux101-pid.png"><img width="690" height="113" class="lqip" alt="Linux 101 的进程列表截图标出 PID、用户、CPU、内存和命令列。定位异常进程时，先确认 PID、所属用户和启动命令，再决定是否查看日志或终止任务。" src="../assets/0706p/ustc-linux101-pid.preview.jpg" data-fullsrc="../assets/0706p/ustc-linux101-pid.png" /></a></p>
+<p><em>图中 <code>ps</code>、<code>top</code> 和 <code>htop</code> 展示的列会因工具和系统配置不同而变化。图源为 Linux 101 - USTC。<sup id="fnref2:ustc-linux101"><a class="footnote-ref" href="#fn:ustc-linux101">1</a></sup></em></p>
+<h2 id="从源码到可运行程序">从源码到可运行程序<a class="headerlink" href="#从源码到可运行程序" title="Permanent link"></a></h2>
+<p>CMake 推荐在源目录外创建构建目录，使生成文件和二进制可整体删除而不污染源代码。配置阶段检查依赖并生成构建规则；构建阶段调用编译器；测试阶段执行已注册测试。<sup id="fnref:cmake-tutorial"><a class="footnote-ref" href="#fn:cmake-tutorial">14</a></sup></p>
+<pre class="highlight"><code class="language-bash">cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j 4
+ctest --test-dir build --output-on-failure</code></pre>
+<p>调试版本通常保留符号并关闭或降低优化，性能版本保留必要符号并启用经验证的优化选项。每次切换编译器、模块或架构选项后，最好使用干净构建目录；旧对象文件可能与新头文件、ABI 或链接器设置不兼容。</p>
+<h3 id="动态库定位的实际检查">动态库定位的实际检查<a class="headerlink" href="#动态库定位的实际检查" title="Permanent link"></a></h3>
+<p>Linux 动态加载器按 RPATH/RUNPATH（Runtime Search Path，运行时搜索路径）、<code>LD_LIBRARY_PATH</code>、系统缓存等规则寻找共享库。登录节点与计算节点的模块或挂载路径不同，可能使同一可执行文件在两处加载到不同库或无法启动。在作业脚本中打印关键环境和 <code>ldd</code> 输出，能快速确认实际加载的库版本。<sup id="fnref:ldso"><a class="footnote-ref" href="#fn:ldso">15</a></sup></p>
+<pre class="highlight"><code class="language-bash">printf 'host: '; hostname
+printf 'compiler: '; cc --version | head -n 1
+printf 'modules:\n'; module list 2&gt;&amp;1 || true
+ldd ./build/solver</code></pre>
+<h2 id="集群上的数据移动与共享目录">集群上的数据移动与共享目录<a class="headerlink" href="#集群上的数据移动与共享目录" title="Permanent link"></a></h2>
+<p><code>scp</code> 与 <code>rsync</code> 通过 SSH 传输文件。<code>rsync -avP</code> 适合中断后继续、只同步变化文件和显示进度；同步结束后可用文件数、大小或校验和验证完整性。不要把 build、缓存、密钥和大量临时结果无选择地同步到共享家目录。<sup id="fnref:rsync"><a class="footnote-ref" href="#fn:rsync">16</a></sup></p>
+<pre class="highlight"><code class="language-bash">rsync -avP --exclude 'build/' --exclude '.venv/' ./ \
+  user@login.example.edu:~/project/
+rsync -avP user@login.example.edu:~/project/logs/ ./logs/</code></pre>
+<p>NFS（Network File System，网络文件系统）或其他共享文件系统让多个节点看到同一目录树。它不自动解决多个进程并发写同一文件的布局、锁和失败恢复问题；大量小文件也会给元数据服务带来额外压力。Lab 1 配置共享目录后，先用小文件确认所有节点都能读写，再运行 MPI/HPL。</p>
+<h2 id="容器与资源隔离">容器与资源隔离<a class="headerlink" href="#容器与资源隔离" title="Permanent link"></a></h2>
+<p>容器使用宿主机内核，通过 namespace 和 cgroup 隔离进程视图与资源。它打包的是用户态依赖，不等同于完整虚拟机；镜像无法绕过宿主机的 GPU 驱动、网络策略、文件权限和调度配额。<sup id="fnref:docker-containers"><a class="footnote-ref" href="#fn:docker-containers">17</a></sup></p>
+<p><a class="glightbox" data-type="image" href="../assets/0706p/container-vm-stack.jpg"><img width="1280" height="720" class="lqip" alt="图中比较虚拟机与容器。虚拟机包含各自的 guest OS，容器共享宿主机内核并隔离用户态进程与文件视图。" src="../assets/0706p/container-vm-stack.preview.jpg" data-fullsrc="../assets/0706p/container-vm-stack.jpg" /></a></p>
+<p><em>图中容器减少用户态环境差异，仍需要与宿主机的内核、驱动、挂载目录和资源限制兼容。</em></p>
+<p>在共享集群上应使用管理员支持的运行时，例如 Apptainer/Singularity 或课程平台指定的容器方式。提交前明确镜像版本、绑定目录、MPI 兼容性、GPU 映射和可写路径；先用一个节点的小输入验证，再扩大规模。容器能启动不代表多节点通信、共享存储和 GPU 访问已经正确。</p>
+<h2 id="集群节点与带外管理">集群节点与带外管理<a class="headerlink" href="#集群节点与带外管理" title="Permanent link"></a></h2>
+<p>典型集群包含登录节点、计算节点、存储节点和管理服务。登录节点用于编辑、编译、提交、查询和轻量测试；计算节点由调度器按申请资源分配。不要在登录节点长期占满 CPU、内存或 GPU，这会影响其他用户和管理服务。<sup id="fnref2:slurm-overview"><a class="footnote-ref" href="#fn:slurm-overview">2</a></sup></p>
+<p>带外管理由 BMC（Baseboard Management Controller，主板管理控制器）提供独立于操作系统的硬件监控、远程控制台和电源管理。管理员通过这条通道查看硬件日志、远程控制台和电源状态；它在业务网络故障或操作系统崩溃时仍可能可用。</p>
+<h2 id="记录运行环境">记录运行环境<a class="headerlink" href="#记录运行环境" title="Permanent link"></a></h2>
+<p>一次可复现运行需要留下源代码、环境、输入、资源、正确性和测量方式。建议在项目根目录保留 <code>RUNBOOK.md</code>，或由脚本自动生成同样的运行记录。</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>记录内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>源码</td>
+<td>Git commit、分支、是否有未提交修改</td>
+</tr>
+<tr>
+<td>环境</td>
+<td>模块列表、编译器、MPI、Python/容器版本</td>
+</tr>
+<tr>
+<td>构建</td>
+<td>配置命令、编译选项、安装前缀</td>
+</tr>
+<tr>
+<td>输入</td>
+<td>数据版本、shape、随机种子</td>
+</tr>
+<tr>
+<td>资源</td>
+<td>节点、task、CPU、GPU、内存、walltime（作业允许运行的最长时间）</td>
+</tr>
+<tr>
+<td>正确性</td>
+<td>参考输出、校验和或误差容限</td>
+</tr>
+<tr>
+<td>测量</td>
+<td>命令、预热次数、重复次数和统计量</td>
+</tr>
+</tbody>
+</table>
+<p>这份记录应能和提交脚本、标准输出、性能报告对上。程序变慢或结果变化时，先与上一次可用记录逐项比较。这样才能判断变化来自代码、编译器、资源分配、数据位置，还是共享系统负载。</p>
+<h2 id="常见问题的检查顺序">常见问题的检查顺序<a class="headerlink" href="#常见问题的检查顺序" title="Permanent link"></a></h2>
+<p>连接失败时，先检查接口、路由、DNS 和端口。认证失败时，再检查主机密钥、用户名和私钥。</p>
+<p>程序无法启动时，检查路径、权限、模块和动态库。作业未启动时，查看 Slurm 状态和资源形状。运行变慢时，再测计算、内存、I/O、网络和同步。</p>
+<p>每条命令只验证一个可观察条件。这样留下的日志才能形成可复查的证据链。</p>
+<div class="admonition question">
+<p class="admonition-title">Lab 1 前自测</p>
+<p>在配置 NFS、OpenMPI 与 Slurm 之前，请确认自己能够完成以下操作。</p>
+<ol>
+<li>使用 SSH 密钥登录 Linux 主机，并解释私钥为何不能提交到 Git。</li>
+<li>使用 <code>ip route get</code>、<code>getent hosts</code>、<code>nc -vz</code> 区分路由、DNS 与端口问题。</li>
+<li>用 <code>namei -l</code> 找出路径中阻止访问的目录权限。</li>
+<li>在独立构建目录中编译程序，分辨头文件、链接符号和运行期共享库错误。</li>
+<li>用 <code>rsync</code> 同步项目并排除构建产物与密钥。</li>
+<li>记录一次运行的 Git 提交、模块、命令、资源和正确性判据。</li>
+</ol>
+<details class="tip">
+<summary>详细答案与检查方法</summary>
+<ol>
+<li>私钥用于证明用户身份。提交到 Git 后，仓库历史、镜像或他人的 clone 都可能得到该私钥，因此私钥只应保存在本机受限路径中。</li>
+<li><code>ip route get</code> 检查内核选择的出接口和下一跳；<code>getent hosts</code> 检查域名解析；<code>nc -vz</code> 检查目标 TCP 端口。三者分别对应路由、DNS 和服务可达性。</li>
+<li><code>namei -l /完整/路径</code> 会逐级显示目录和文件的属主、属组与权限。任一级目录缺少必要的执行权限，都可能阻止访问。</li>
+<li>头文件错误发生在编译期，常见信息是 <code>No such file or directory</code>；符号错误发生在链接期，常见信息是 <code>undefined reference</code>；共享库错误发生在运行期，可用 <code>ldd</code> 检查实际依赖。</li>
+<li><code>rsync -avP --exclude 'build/' --exclude '.venv/'</code> 适合同步项目。私钥、token、下载缓存和大体积构建产物应加入排除规则或 <code>.gitignore</code>。</li>
+<li>至少记录 Git commit、模块列表、构建命令、输入或随机种子、Slurm 资源参数、正确性检查和计时方式。这样才可比较两次运行的差异。</li>
+</ol>
+</details>
+</div>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:ustc-linux101">
+<p>USTC Linux User Group, <em>Linux 101</em>, <a href="https://101.lug.ustc.edu.cn/">https://101.lug.ustc.edu.cn/</a>.&#160;<a class="footnote-backref" href="#fnref:ustc-linux101" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:ustc-linux101" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:ustc-linux101" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:slurm-overview">
+<p>SchedMD, <em>Slurm Workload Manager Overview</em>, <a href="https://slurm.schedmd.com/overview.html">https://slurm.schedmd.com/overview.html</a>.&#160;<a class="footnote-backref" href="#fnref:slurm-overview" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:slurm-overview" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:iproute">
+<p>Linux man-pages, <em>ip(8)</em>, <a href="https://man7.org/linux/man-pages/man8/ip.8.html">https://man7.org/linux/man-pages/man8/ip.8.html</a>.&#160;<a class="footnote-backref" href="#fnref:iproute" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:rfc8200">
+<p>S. Deering and R. Hinden, <em>Internet Protocol, Version 6 (IPv6) Specification</em>, RFC 8200, <a href="https://www.rfc-editor.org/rfc/rfc8200">https://www.rfc-editor.org/rfc/rfc8200</a>.&#160;<a class="footnote-backref" href="#fnref:rfc8200" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:ssh-man">
+<p>OpenBSD, <em>ssh(1)</em> and <em>ssh_config(5)</em>, <a href="https://man.openbsd.org/ssh">https://man.openbsd.org/ssh</a>.&#160;<a class="footnote-backref" href="#fnref:ssh-man" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:ssh-man" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:linux-syscall">
+<p>Linux Kernel Documentation, <em>System calls in the Linux kernel</em>, <a href="https://docs.kernel.org/process/adding-syscalls.html">https://docs.kernel.org/process/adding-syscalls.html</a>.&#160;<a class="footnote-backref" href="#fnref:linux-syscall" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:path-resolution">
+<p>Linux man-pages, <em>path_resolution(7)</em>, <a href="https://man7.org/linux/man-pages/man7/path_resolution.7.html">https://man7.org/linux/man-pages/man7/path_resolution.7.html</a>.&#160;<a class="footnote-backref" href="#fnref:path-resolution" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:path-resolution" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:bash-man">
+<p>GNU, <em>Bash Reference Manual</em>, <a href="https://www.gnu.org/software/bash/manual/bash.html">https://www.gnu.org/software/bash/manual/bash.html</a>.&#160;<a class="footnote-backref" href="#fnref:bash-man" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:gcc-link">
+<p>GCC, <em>Link Options</em>, <a href="https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html">https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html</a>.&#160;<a class="footnote-backref" href="#fnref:gcc-link" title="Jump back to footnote 9 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:gcc-link" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:lmod">
+<p>TACC, <em>Lmod User Guide</em>, <a href="https://lmod.readthedocs.io/en/latest/010_user.html">https://lmod.readthedocs.io/en/latest/010_user.html</a>.&#160;<a class="footnote-backref" href="#fnref:lmod" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:git-book">
+<p>Scott Chacon and Ben Straub, <em>Pro Git</em>, <a href="https://git-scm.com/book/zh/v2">https://git-scm.com/book/zh/v2</a>.&#160;<a class="footnote-backref" href="#fnref:git-book" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+<li id="fn:python-venv">
+<p>Python Software Foundation, <em>venv — Creation of virtual environments</em>, <a href="https://docs.python.org/3/library/venv.html">https://docs.python.org/3/library/venv.html</a>.&#160;<a class="footnote-backref" href="#fnref:python-venv" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+<li id="fn:proc">
+<p>Linux man-pages, <em>proc(5)</em>, <a href="https://man7.org/linux/man-pages/man5/proc.5.html">https://man7.org/linux/man-pages/man5/proc.5.html</a>.&#160;<a class="footnote-backref" href="#fnref:proc" title="Jump back to footnote 13 in the text">&#8617;</a></p>
+</li>
+<li id="fn:cmake-tutorial">
+<p>Kitware, <em>CMake Tutorial</em>, <a href="https://cmake.org/cmake/help/latest/guide/tutorial/index.html">https://cmake.org/cmake/help/latest/guide/tutorial/index.html</a>.&#160;<a class="footnote-backref" href="#fnref:cmake-tutorial" title="Jump back to footnote 14 in the text">&#8617;</a></p>
+</li>
+<li id="fn:ldso">
+<p>Linux man-pages, <em>ld.so(8)</em>, <a href="https://man7.org/linux/man-pages/man8/ld.so.8.html">https://man7.org/linux/man-pages/man8/ld.so.8.html</a>.&#160;<a class="footnote-backref" href="#fnref:ldso" title="Jump back to footnote 15 in the text">&#8617;</a></p>
+</li>
+<li id="fn:rsync">
+<p>Rsync Project, <em>rsync(1) manual page</em>, <a href="https://download.samba.org/pub/rsync/rsync.1">https://download.samba.org/pub/rsync/rsync.1</a>.&#160;<a class="footnote-backref" href="#fnref:rsync" title="Jump back to footnote 16 in the text">&#8617;</a></p>
+</li>
+<li id="fn:docker-containers">
+<p>Docker, <em>What is a container?</em>, <a href="https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/">https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/</a>.&#160;<a class="footnote-backref" href="#fnref:docker-containers" title="Jump back to footnote 17 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+  
+<div class="page-info">
+  <span class="page-info__item page-info__stars">
+    <span class="page-info__label">
+      有用的话请给我个
+      <a href="https://github.com/bfyes/bfyes.github.io/stargazers">star</a>
+      =&gt;
+    </span>
+    <span class="page-info__value">
+      <a href="https://github.com/bfyes/bfyes.github.io/stargazers" aria-label="GitHub Stars">
+        <img
+          alt="Stars"
+          src="https://img.shields.io/github/stars/bfyes/bfyes.github.io?label=Stars&amp;style=flat"
+        >
+      </a>
+    </span>
+  </span>
+  <span class="page-info__item" id="busuanzi_container_site_pv">
+    <span class="page-info__label">本站总浏览</span>
+    <span class="page-info__value"><span id="busuanzi_value_site_pv"></span></span>
+  </span>
+</div>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  <!-- Giscus 评论区（加载与主题同步逻辑见 features/enhancements.js 的 Giscus 模块）
+     本文件只负责在需要评论的页面放置容器并声明 giscus 配置。 -->
+
+<div class="giscus"></div>
+
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../../" class="md-footer__link md-footer__link--prev" aria-label="Previous: HPC 高性能计算">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                HPC 高性能计算
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../0707p/" class="md-footer__link md-footer__link--next" aria-label="Next: HPC 中的计算机系统 1">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                HPC 中的计算机系统 1
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"../../../..","features":["content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.progress","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.share","search.suggest","toc.follow"],"search":"../../../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.88ee1349.min.js"></script>
+      
+        <script src="../../../../theme/js/core.js"></script>
+      
+        <script src="../../../../theme/js/mathjax.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../../../theme/js/highlight.js"></script>
+      
+        <script src="../../../../theme/js/features/content.js"></script>
+      
+        <script src="../../../../theme/js/features/pdf.js"></script>
+      
+        <script src="../../../../theme/js/features/enhancements.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,4171 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="BillFeng 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。">
+      
+      
+        <meta name="author" content="BillFeng">
+      
+      
+        <link rel="canonical" href="https://docs.bfyes.cn/tools/vivado/">
+      
+      
+        <link rel="prev" href="../rosetta/">
+      
+      
+        <link rel="next" href="../notepadnext/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../theme/assets/favicon.svg">
+      <meta name="generator" content="zensical-0.0.60">
+    
+    
+      
+        <title>Vivado on Mac - BillFeng 的文档站</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.ce62732f.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/modern/palette.812a03bb.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../theme/css/variables.css">
+    
+      <link rel="stylesheet" href="../../theme/css/main.css">
+    
+      <link rel="stylesheet" href="../../theme/css/features.css">
+    
+      <link rel="stylesheet" href="../../theme/css/home.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  
+  <script>
+    (function () {
+      try {
+        var dark = matchMedia("(prefers-color-scheme: dark)").matches;
+        var scheme = dark ? "slate" : "default";
+        document.documentElement.setAttribute("data-md-color-scheme", scheme);
+        var link = document.createElement("link");
+        link.id = "hljs-theme";
+        link.rel = "stylesheet";
+        link.href = dark
+          ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+          : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
+        document.head.appendChild(link);
+        // body 加载后同步 attribute（bundle 切换主题时写 body，这里保证 html 跟随）
+        var attach = function () {
+          document.body.setAttribute("data-md-color-scheme", scheme);
+          new MutationObserver(function () {
+            var s = document.body.getAttribute("data-md-color-scheme");
+            if (s) document.documentElement.setAttribute("data-md-color-scheme", s);
+          }).observe(document.body, {
+            attributes: true,
+            attributeFilter: ["data-md-color-scheme"],
+          });
+        };
+        if (document.body) attach();
+        else new MutationObserver(function (_, obs) {
+          if (document.body) { attach(); obs.disconnect(); }
+        }).observe(document.documentElement, { childList: true });
+      } catch (e) {}
+    })();
+  </script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#vivado含可用的batch模式-20222-on-ubuntu-with-rosetta不完善" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="BillFeng 的文档站" class="md-header__button md-logo" aria-label="BillFeng 的文档站" data-md-component="logo">
+      <!-- Logo：复用 favicon.svg 的方角图标 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="bf-logo" role="img" aria-label="BillFeng" width="64" height="64">
+  <rect width="64" height="64" rx="12" ry="12" fill="#409ba5"/>
+  <text x="32" y="46" text-anchor="middle"
+        font-family="Courier New, Courier, monospace"
+        font-size="42" font-weight="700" fill="#ffffff">B</text>
+</svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BillFeng 的文档站
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Vivado on Mac
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="跟随系统"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="跟随系统" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun-moon" viewBox="0 0 24 24"><path d="M12 2v2M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715M16 12a4 4 0 0 0-4-4M19 5l-1.256 1.256M20 12h2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="浅色模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="深色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="深色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon-star" viewBox="0 0 24 24"><path d="M18 5h4M20 3v4M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/bfyes/bfyes.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bfyes.github.io
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  主页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../study/" class="md-tabs__link">
+          
+  
+  学习
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../diaries/" class="md-tabs__link">
+          
+  
+  随笔
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../games/" class="md-tabs__link">
+          
+  
+  游戏
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="BillFeng 的文档站" class="md-nav__button md-logo" aria-label="BillFeng 的文档站" data-md-component="logo">
+      <!-- Logo：复用 favicon.svg 的方角图标 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="bf-logo" role="img" aria-label="BillFeng" width="64" height="64">
+  <rect width="64" height="64" rx="12" ry="12" fill="#409ba5"/>
+  <text x="32" y="46" text-anchor="middle"
+        font-family="Courier New, Courier, monospace"
+        font-size="42" font-weight="700" fill="#ffffff">B</text>
+</svg>
+    </a>
+    BillFeng 的文档站
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bfyes/bfyes.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bfyes.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  主页
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../study/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学习
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  学习
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../study/ismath/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  信息安全原理与数学基础
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  信息安全原理与数学基础
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ismath/discrete/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  离散数学
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ismath/probability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Probability and Statistics
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/asm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  汇编语言设计与调试
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../study/sys1/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  SYS1
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  SYS1
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/sys1/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0: 环境准备
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/sys1/lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1: MUX/七段数码管
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/sys1/lab2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2: 64位全加减法器
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/sys1/lab3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3: 时序电路/FSM
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/sys1/lab4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab4: 卷积模块
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/sys1/lab5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab5: RISC-V 汇编
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/sys1/project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  project: 单周期CPU
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../study/fds/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  FDS
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  FDS
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/fds/project1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project1
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/fds/project2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project2
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/fds/project3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project3
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../study/hpc/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC101
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  HPC101
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  课程笔记
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  课程笔记
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0706p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  集群软硬件及运维基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0707p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 中的计算机系统 1
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0708p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 中的计算机系统 2
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0710p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  向量化并行计算基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0712a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  OpenMP/MPI 基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0712p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  性能分析基础 Profiling
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0713a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  高性能计算高级话题
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0713p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CUDA 编程基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  从文本到下一个 token
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0716a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习基础（上）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0716p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习基础（下）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0717a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习高级话题（上）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/notes/0717p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习高级话题（下）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0: Linux Crash Course
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1: Mini Cluster
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/lab2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2: MoE向量化计算
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/lab3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3: GDN Prefill优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/lab4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab4: 数值相对论优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/hpc/lab5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab5: Gemma4推理优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../study/ctf/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CTF101
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  CTF101
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ctf/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_3" id="__nav_2_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab1
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ctf/lab1/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ctf/lab1/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ctf/lab1/pwn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Pwn
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ctf/lab1/rev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reverse
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ctf/lab1/web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Web
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_4" id="__nav_2_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab2
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ctf/lab2/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ctf/lab2/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_5" id="__nav_2_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab3
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ctf/lab3/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../study/ctf/lab3/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  工具
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  工具
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  XP on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rosetta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Rosetta on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Vivado on Mac
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Vivado on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#引用文章来自csdn利用-rosetta-在-m-系列-mac-上高效运行-x86-linux-应用的完整指南点击跳转至整理归档" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        引用文章来自CSDN：利用 Rosetta 在 M 系列 Mac 上高效运行 x86 Linux 应用的完整指南[点击跳转至整理归档]
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#目标与版本" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        目标与版本
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#需要下载的内容" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        需要下载的内容
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="需要下载的内容">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parallels-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <strong>Parallels Desktop</strong>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ubuntu-2404-arm64-镜像在-parallels-中创建虚拟机" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <strong>Ubuntu 24.04 ARM64 镜像</strong>（在 Parallels 中创建虚拟机）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vivado-20222-linux-安装包" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <strong>Vivado 2022.2 Linux 安装包</strong>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#执行指令并部署" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        执行指令并部署
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="执行指令并部署">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xorg-会话背景" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Xorg 会话背景
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#安装-ubuntu-基础依赖" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        安装 Ubuntu 基础依赖
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#配置-rosettalinux-的-binfmt-路由" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        配置 RosettaLinux 的 binfmt 路由
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配置 RosettaLinux 的 binfmt 路由">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#适用环境与前置检查" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        适用环境与前置检查
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vivado-默认走-rosettaqemu-保留给显式调用" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Vivado 默认走 Rosetta；QEMU 保留给显式调用
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#持久化处理-mediapsf-晚挂载" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        持久化：处理 <code>/media/psf</code> 晚挂载
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#安装-vivado-所需-amd64-运行库" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        安装 Vivado 所需 amd64 运行库
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#下载并解包-vivado-20222" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        下载并解包 Vivado 2022.2
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#修改-xsetup-架构检查" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        修改 <code>xsetup</code> 架构检查
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#运行安装器" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        运行安装器
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#切换到-xorg-会话gui-相关步骤前" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        切换到 Xorg 会话（GUI 相关步骤前）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#安装好后修改官方-gui-启动脚本" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        安装好后，修改官方 GUI 启动脚本
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#验证batch" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        验证（Batch）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gui-启动统一入口" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GUI 启动（统一入口）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#复现检查" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        复现检查
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notepadnext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Mac 记事本
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xzzd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学在浙大 & PTA
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../autosign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  签到
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cc98-avatar/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  98 动态头像
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../diaries/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  随笔
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  随笔
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../diaries/fa25_review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  2025 年度十图
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../diaries/sp26_midterm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 半期总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../diaries/sp26_final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 期末总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../diaries/sp26_vacation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 暑假总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../games/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  游戏
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  游戏
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../games/4D_Intuition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  四维直觉
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../games/Shenzhen_IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  深圳I/O
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../games/The_Farmer_Was_Replaced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  编程农场
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../games/Turing_Complete/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  图灵完备
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../games/test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  样式测试
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#引用文章来自csdn利用-rosetta-在-m-系列-mac-上高效运行-x86-linux-应用的完整指南点击跳转至整理归档" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        引用文章来自CSDN：利用 Rosetta 在 M 系列 Mac 上高效运行 x86 Linux 应用的完整指南[点击跳转至整理归档]
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#目标与版本" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        目标与版本
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#需要下载的内容" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        需要下载的内容
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="需要下载的内容">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parallels-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <strong>Parallels Desktop</strong>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ubuntu-2404-arm64-镜像在-parallels-中创建虚拟机" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <strong>Ubuntu 24.04 ARM64 镜像</strong>（在 Parallels 中创建虚拟机）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vivado-20222-linux-安装包" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        <strong>Vivado 2022.2 Linux 安装包</strong>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#执行指令并部署" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        执行指令并部署
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="执行指令并部署">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#xorg-会话背景" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Xorg 会话背景
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#安装-ubuntu-基础依赖" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        安装 Ubuntu 基础依赖
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#配置-rosettalinux-的-binfmt-路由" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        配置 RosettaLinux 的 binfmt 路由
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="配置 RosettaLinux 的 binfmt 路由">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#适用环境与前置检查" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        适用环境与前置检查
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vivado-默认走-rosettaqemu-保留给显式调用" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Vivado 默认走 Rosetta；QEMU 保留给显式调用
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#持久化处理-mediapsf-晚挂载" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        持久化：处理 <code>/media/psf</code> 晚挂载
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#安装-vivado-所需-amd64-运行库" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        安装 Vivado 所需 amd64 运行库
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#下载并解包-vivado-20222" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        下载并解包 Vivado 2022.2
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#修改-xsetup-架构检查" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        修改 <code>xsetup</code> 架构检查
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#运行安装器" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        运行安装器
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#切换到-xorg-会话gui-相关步骤前" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        切换到 Xorg 会话（GUI 相关步骤前）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#安装好后修改官方-gui-启动脚本" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        安装好后，修改官方 GUI 启动脚本
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#验证batch" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        验证（Batch）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gui-启动统一入口" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GUI 启动（统一入口）
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#复现检查" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        复现检查
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+  
+  
+                  
+  
+    <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/tools/vivado.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-pen" viewBox="0 0 24 24"><path d="M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/bfyes/bfyes.github.io/raw/main/docs/tools/vivado.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-code-2" viewBox="0 0 24 24"><path d="M4 12.15V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-3.35"/><path d="M14 2v5a1 1 0 0 0 1 1h5M5 16l-3 3 3 3M9 22l3-3-3-3"/></svg>
+    </a>
+  
+
+
+  <script>document.body.setAttribute("data-page-fold-toc", "true");</script>
+
+
+
+
+
+
+  <div data-page-fold-toc="true">
+    
+
+
+<h1 id="vivado含可用的batch模式-20222-on-ubuntu-with-rosetta不完善">Vivado（含可用的Batch模式） 2022.2 on Ubuntu with Rosetta（不完善）<a class="headerlink" href="#vivado含可用的batch模式-20222-on-ubuntu-with-rosetta不完善" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-09-20T17:44:40+08:00">2026/09/20</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 2001 字</span></div>
+<h3 id="引用文章来自csdn利用-rosetta-在-m-系列-mac-上高效运行-x86-linux-应用的完整指南点击跳转至整理归档">引用文章来自CSDN：利用 Rosetta 在 M 系列 Mac 上高效运行 x86 Linux 应用的完整指南[<a href="../rosetta/">点击跳转至整理归档</a>]<a class="headerlink" href="#引用文章来自csdn利用-rosetta-在-m-系列-mac-上高效运行-x86-linux-应用的完整指南点击跳转至整理归档" title="Permanent link"></a></h3>
+<div class="admonition information">
+<p class="admonition-title">Information</p>
+<p>配置过程繁琐，且不一定100%有效。这种配置方式的唯二优点：可以直接从 Makefile 生成 bitstream (<strong><em>Batch</em></strong>方便且快速)；调用 Mac 的 Rosetta 转译，效率较高。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>由于其不稳定性，不建议用此方法。仍建议x86_64原生环境或优先采用实验文档中 docker 容器的方法！如果您尝试用 Apple ，请做好文件备份，并准备备用机（可以是 Windows 电脑，也可以是后文提及的PD虚拟机里的 Windows 11），以防万一。</p>
+</div>
+<p>注：笔者能力十分有限，只能写到这个程度。如果以后能力有提升会完善这篇文章。</p>
+<p>另注：如果您很需要，可以联系我copy一份虚拟机。</p>
+<blockquote>
+<p>本文的部署流程是通过Agent辅助完成的，总结这篇文章也是为了记录在 linux 系统里的“摸爬滚打”。这篇文章<strong>没有任何技术含量</strong>，只是记录我装机折腾的种种过程。现在列出步骤只是为了说明该方案的可行性。笔者刚刚接触 linux，是小白，实在不熟悉这个系统的环境和操作。步骤只是大致的框架，如遇到任何问题，请把此文喂给Agent并让其操作，这对他们来说是小菜一碟。</p>
+</blockquote>
+<p>详见：github copilot 学生认证。<a href="https://github.com/education/students">https://github.com/education/students</a></p>
+<p>在 Ubuntu 中打开 VSCode 的 Agent ，直接让它帮你来（hhh）。</p>
+<blockquote>
+<p>更新：Copilot 免费额度大减，考虑安装 DeepSeek 插件。</p>
+</blockquote>
+<ul>
+<li>写作工具：Typora；环境：Ubuntu 24.04 ARM64；网页构建工具：Mkdocs。</li>
+</ul>
+<h2 id="目标与版本">目标与版本<a class="headerlink" href="#目标与版本" title="Permanent link"></a></h2>
+<p>目标是在 <strong>Apple Silicon Mac + Parallels Desktop + Ubuntu 24.04 ARM64</strong> 上运行 <strong>Vivado 2022.2</strong>。</p>
+<ul>
+<li>宿主机：Apple Silicon Mac</li>
+<li>已验证的宿主机 / 虚拟化组合：<strong>macOS 26 + Parallels Desktop 26</strong>；<strong>macOS 27.0（build 26A428）+ Parallels Desktop 27.0.1（58670）</strong></li>
+<li>虚拟机系统：Ubuntu 24.04 ARM64，通过 <strong>Ubuntu with Rosetta</strong> 创建；Parallels Tools 应安装并与所用 Parallels Desktop 版本匹配（已验证的 PD 27 组合为 27.0.1-58670）</li>
+<li>Vivado 版本：<strong>2022.2</strong></li>
+</ul>
+<h2 id="需要下载的内容">需要下载的内容<a class="headerlink" href="#需要下载的内容" title="Permanent link"></a></h2>
+<h3 id="parallels-desktop"><strong>Parallels Desktop</strong><a class="headerlink" href="#parallels-desktop" title="Permanent link"></a></h3>
+<ul>
+<li>
+<p><strong>这个步骤可能是文章唯一给出的<span style="color:#FF0000;">有用信息</span>hhh。</strong></p>
+<p>上链接：<a href="https://macwk.cn/app/2941.html">https://macwk.cn/app/2941.html</a>。</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><span style="color:#FF0000;"><strong>叠甲</strong></span> 仅供学习使用！请在24小时之内删除。请支持正版软件。</p>
+</div>
+<p>如果签名失败，请先将安装容器的所有文件<strong>复制并粘贴到一个新建文件夹</strong>中，然后执行：</p>
+<pre class="highlight"><code class="language-bash">xattr -cr "你的文件名"   # 可以通过拖拽的方式添加，不要直接添加安装包中的文件。</code></pre>
+<p>可能需要在[设置] - [隐私与安全性]中按指纹解锁权限继续安装。</p>
+</li>
+</ul>
+<h3 id="ubuntu-2404-arm64-镜像在-parallels-中创建虚拟机"><strong>Ubuntu 24.04 ARM64 镜像</strong>（在 Parallels 中创建虚拟机）<a class="headerlink" href="#ubuntu-2404-arm64-镜像在-parallels-中创建虚拟机" title="Permanent link"></a></h3>
+<p>点击新建选项，选择<code>下载 Ubuntu with Rosetta</code>，等待自动下载完毕。该软件完成度很高，几乎不用手动操作。</p>
+<p><a class="glightbox" href="../vivado.assets/1Capture%202026-03-26%2018.15.01-1774520136604-2.png" data-type="image"><img width="1944" height="1368" class="lqip" src="../vivado.assets/1Capture%202026-03-26%2018.15.01-1774520136604-2.preview.jpg" data-fullsrc="../vivado.assets/1Capture%202026-03-26%2018.15.01-1774520136604-2.png" alt="1Capture 2026-03-26 18.15.01"></a></p>
+<h3 id="vivado-20222-linux-安装包"><strong>Vivado 2022.2 Linux 安装包</strong><a class="headerlink" href="#vivado-20222-linux-安装包" title="Permanent link"></a></h3>
+<p>常见文件名示例（以官方实际页面为准）：</p>
+<ul>
+<li><code>Xilinx_Unified_2022.2_1014_8888_Lin64.bin</code></li>
+</ul>
+<p>具体下载方式请见课程文档。</p>
+<h2 id="执行指令并部署">执行指令并部署<a class="headerlink" href="#执行指令并部署" title="Permanent link"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>这些指令只是根据此前聊天记录中试错后有效的指令，并未在全新的环境中测试。如有卡壳，请找Agent。</p>
+</div>
+<h4 id="xorg-会话背景">Xorg 会话背景<a class="headerlink" href="#xorg-会话背景" title="Permanent link"></a></h4>
+<p>这一步的目的：解释为什么文中后续会强调 <code>x11/xorg</code>。</p>
+<ul>
+<li>Ubuntu 24.04 桌面默认更偏向 Wayland，但 Vivado 2022.2 的 GUI 组件对 Wayland 兼容并不稳定。</li>
+<li>在 Wayland 下常见现象是：启动后闪退、窗口渲染异常、焦点/输入异常，或者偶发段错误。</li>
+<li><code>GDK_BACKEND=x11</code> 只能告诉 GTK 尽量走 X11 后端，但它<strong>不能替代登录级别的会话切换</strong>。</li>
+<li>所以Vivado GUI 场景尽量在 <strong>Xorg 会话（<code>XDG_SESSION_TYPE=x11</code>）</strong> 下运行。</li>
+</ul>
+<p>快速判断当前会话：</p>
+<pre class="highlight"><code class="language-bash">echo "$XDG_SESSION_TYPE"</code></pre>
+<p>输出为 <code>x11</code> 说明已在 Xorg 会话；输出为 <code>wayland</code> 则建议切换（登出并重新登陆时右下角的小齿轮中选择）后再做 GUI 相关步骤。</p>
+<h3 id="安装-ubuntu-基础依赖">安装 Ubuntu 基础依赖<a class="headerlink" href="#安装-ubuntu-基础依赖" title="Permanent link"></a></h3>
+<p>RosettaLinux 负责 Vivado 的 x86_64 转译；<code>binfmt-support</code> 用于管理默认路由。QEMU 可以保留，用于后文所说的<strong>显式</strong>运行，不需要为了 Vivado 单独安装或禁用它。</p>
+<pre class="highlight"><code class="language-bash">sudo apt update
+sudo apt install -y binfmt-support</code></pre>
+<h3 id="配置-rosettalinux-的-binfmt-路由">配置 RosettaLinux 的 binfmt 路由<a class="headerlink" href="#配置-rosettalinux-的-binfmt-路由" title="Permanent link"></a></h3>
+<h4 id="适用环境与前置检查">适用环境与前置检查<a class="headerlink" href="#适用环境与前置检查" title="Permanent link"></a></h4>
+<p>本文已验证两组可用组合，二者都使用 Apple Silicon、Ubuntu 24.04 ARM64 与 <strong>Ubuntu with Rosetta</strong> 虚拟机：</p>
+<table>
+<thead>
+<tr>
+<th>macOS</th>
+<th>Parallels Desktop</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>macOS 26</td>
+<td>Parallels Desktop 26</td>
+<td>已可用的旧环境</td>
+</tr>
+<tr>
+<td>macOS 27.0（build 26A428）</td>
+<td>Parallels Desktop 27.0.1（58670）</td>
+<td>当前已可用环境；Guest Tools 为 27.0.1-58670</td>
+</tr>
+</tbody>
+</table>
+<p>在 Parallels 虚拟机配置中确认 <strong>Rosetta Linux = on</strong>，并保持 Guest Tools 已安装。macOS 宿主机执行下列命令可以确认当前版本；如系统提示安装 Apple Rosetta，再执行第一条：</p>
+<pre class="highlight"><code class="language-bash">softwareupdate --install-rosetta --agree-to-license
+sw_vers
+prlctl --version</code></pre>
+<p>Ubuntu 客体内必须满足以下条件：</p>
+<pre class="highlight"><code class="language-bash">uname -m                         # 预期：aarch64
+systemctl is-active prltoolsd    # 预期：active
+test -x /media/psf/RosettaLinux/rosetta &amp;&amp; echo 'rosetta: ok'
+test -x /media/psf/RosettaLinux/rosettad &amp;&amp; echo 'rosettad: ok'</code></pre>
+<p>如果 <code>rosetta</code> 或 <code>rosettad</code> 不存在，先检查虚拟机的 <strong>Rosetta Linux</strong> 开关和 Parallels Tools；不要通过修改 Vivado、Makefile 或 Verilog 绕过这个问题。</p>
+<h4 id="vivado-默认走-rosettaqemu-保留给显式调用">Vivado 默认走 Rosetta；QEMU 保留给显式调用<a class="headerlink" href="#vivado-默认走-rosettaqemu-保留给显式调用" title="Permanent link"></a></h4>
+<p>本虚拟机的用途是让直接启动的 Vivado x86_64 程序走 Parallels Rosetta。当前实际验证结果是：直接执行一个 x86_64 ELF 时，内核启动的是 <code>/media/psf/RosettaLinux/rosetta</code>。</p>
+<p>同时，<code>qemu-x86_64</code> <strong>保持启用是正常且有意的</strong>：它不是 Vivado 的默认路由，而是供其他任务在命令中显式指定 QEMU 时使用。因此不要因为同时看到 Rosetta 和 QEMU 注册项就删除、屏蔽或互相替换它们。</p>
+<p>检查当前注册状态：</p>
+<pre class="highlight"><code class="language-bash">for name in RosettaLinux x86_64 qemu-x86_64; do
+  [ -e "/proc/sys/fs/binfmt_misc/$name" ] || continue
+  echo "===== $name ====="
+  cat "/proc/sys/fs/binfmt_misc/$name"
+done</code></pre>
+<p>当前这台虚拟机的预期状态如下：</p>
+<ul>
+<li><code>RosettaLinux</code>：启用，解释器为 <code>/media/psf/RosettaLinux/rosetta</code>；</li>
+<li><code>x86_64</code>：启用，解释器同样为 <code>/media/psf/RosettaLinux/rosetta</code>；</li>
+<li><code>qemu-x86_64</code>：可以启用，解释器为 QEMU；<strong>保留它，不要禁用</strong>。</li>
+</ul>
+<p>如果 Rosetta 的规则丢失，可按以下方式恢复两个既有 Rosetta 注册名。不要创建 QEMU 屏蔽文件，也不要删除 <code>/usr/lib/binfmt.d/qemu-x86_64.conf</code>。</p>
+<pre class="highlight"><code class="language-bash">sudo install -d /etc/binfmt.d
+
+cat &lt;&lt;'EOF' | sudo tee /etc/binfmt.d/rosetta-linux.conf &gt;/dev/null
+:RosettaLinux:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00:\xff\xff\xff\xff\xff\xfe\xfe\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/media/psf/RosettaLinux/rosetta:OCF
+EOF
+
+cat &lt;&lt;'EOF' | sudo tee /etc/binfmt.d/x86_64-rosetta.conf &gt;/dev/null
+:x86_64:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x3e\x00::/media/psf/RosettaLinux/rosetta:OCF
+EOF
+
+sudo systemctl restart systemd-binfmt</code></pre>
+<p>需要明确选择解释器时，不依赖 binfmt 的默认匹配，直接指定即可：</p>
+<pre class="highlight"><code class="language-bash"># 显式用 Rosetta 运行某个 x86_64 程序
+/media/psf/RosettaLinux/rosetta /path/to/x86_64-program
+
+# 显式用 QEMU 运行某个 x86_64 程序（本机命令为 /usr/bin/qemu-x86_64）
+qemu-x86_64 /path/to/x86_64-program</code></pre>
+<h4 id="持久化处理-mediapsf-晚挂载">持久化：处理 <code>/media/psf</code> 晚挂载<a class="headerlink" href="#持久化处理-mediapsf-晚挂载" title="Permanent link"></a></h4>
+<p>Rosetta 解释器位于 Parallels 的共享挂载目录，可能晚于 <code>systemd-binfmt</code> 出现。以下服务在每次开机时等待解释器，再重新加载已有的 Rosetta 路由；它不会禁用或修改 QEMU 的路由：</p>
+<pre class="highlight"><code class="language-bash">cat &lt;&lt;'EOF' | sudo tee /usr/local/sbin/refresh-rosetta-binfmt &gt;/dev/null
+#!/usr/bin/env bash
+set -euo pipefail
+for i in $(seq 1 120); do
+  if [ -x /media/psf/RosettaLinux/rosetta ]; then
+    systemctl restart systemd-binfmt
+    exit 0
+  fi
+  sleep 1
+done
+echo "Rosetta interpreter not found: /media/psf/RosettaLinux/rosetta" &gt;&amp;2
+exit 1
+EOF
+
+sudo chmod +x /usr/local/sbin/refresh-rosetta-binfmt
+
+cat &lt;&lt;'EOF' | sudo tee /etc/systemd/system/refresh-rosetta-binfmt.service &gt;/dev/null
+[Unit]
+Description=Refresh Parallels Rosetta binfmt after shared folders are ready
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/refresh-rosetta-binfmt
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now refresh-rosetta-binfmt.service</code></pre>
+<blockquote>
+<p>这一步只保证 Vivado 的 x86_64 路由可用。若 Vivado 或其自带 JRE 仍以 <code>139</code>（segmentation fault）退出，应作为 Rosetta / 运行时稳定性问题单独排查。</p>
+</blockquote>
+<h3 id="安装-vivado-所需-amd64-运行库">安装 Vivado 所需 amd64 运行库<a class="headerlink" href="#安装-vivado-所需-amd64-运行库" title="Permanent link"></a></h3>
+<p>这一步的目的：补齐 Vivado 自带 x86_64 JRE 需要的运行库，避免启动时报错。</p>
+<pre class="highlight"><code class="language-bash">sudo dpkg --add-architecture amd64
+sudo apt update
+sudo apt install -y zlib1g:amd64 libstdc++6:amd64 libc6:amd64</code></pre>
+<h3 id="下载并解包-vivado-20222">下载并解包 Vivado 2022.2<a class="headerlink" href="#下载并解包-vivado-20222" title="Permanent link"></a></h3>
+<p>这一步的目的：拿到 <code>xsetup</code> 安装器文件。</p>
+<pre class="highlight"><code class="language-bash">cd ~/Desktop # 假设.bin文件放置在桌面
+chmod +x Xilinx_Unified_2022.2_1014_8888_Lin64.bin
+./Xilinx_Unified_2022.2_1014_8888_Lin64.bin --target ~/xilinx_2022.2</code></pre>
+<p>解包完成后，<code>xsetup</code> 路径通常是：<code>~/xilinx_2022.2/xsetup</code>。</p>
+<h3 id="修改-xsetup-架构检查">修改 <code>xsetup</code> 架构检查<a class="headerlink" href="#修改-xsetup-架构检查" title="Permanent link"></a></h3>
+<p>只改“报错退出”的架构判断分支，其他安装逻辑不要动。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>仅需把<code>exit1</code>前面加<code>#</code>注释掉即可。图片中是AI修改后的片段，不必这么麻烦。</p>
+<p><a class="glightbox" href="../vivado.assets/image-20260326184049178.png" data-type="image"><img width="1644" height="1284" class="lqip" src="../vivado.assets/image-20260326184049178.preview.jpg" data-fullsrc="../vivado.assets/image-20260326184049178.png" alt="image-20260326184049178"></a></p>
+</div>
+<h3 id="运行安装器">运行安装器<a class="headerlink" href="#运行安装器" title="Permanent link"></a></h3>
+<p>这一步的目的：正式安装 Vivado 到系统目录。</p>
+<pre class="highlight"><code class="language-bash">cd ~/xilinx_2022.2
+./xsetup</code></pre>
+<p>按默认路径，推荐安装到 <code>/opt/Xilinx</code>，与仓库中Makefile的写法一致。</p>
+<h3 id="切换到-xorg-会话gui-相关步骤前">切换到 Xorg 会话（GUI 相关步骤前）<a class="headerlink" href="#切换到-xorg-会话gui-相关步骤前" title="Permanent link"></a></h3>
+<p>这一步的目的：让后续 GUI 启动脚本配置在更稳定的显示栈上工作。</p>
+<ol>
+<li>先退出登录（不是重启也可以）。</li>
+<li>在登录界面选中你的用户后，点击右下角齿轮图标。</li>
+<li>选择 <strong>Ubuntu on Xorg</strong>（或带 Xorg 字样的会话）。</li>
+<li>登录后执行：</li>
+</ol>
+<pre class="highlight"><code class="language-bash">echo "$XDG_SESSION_TYPE"</code></pre>
+<p>若输出为 <code>x11</code>，再继续第 7 步。</p>
+<h3 id="安装好后修改官方-gui-启动脚本">安装好后，修改官方 GUI 启动脚本<a class="headerlink" href="#安装好后修改官方-gui-启动脚本" title="Permanent link"></a></h3>
+<p>这一步的目的：把 GUI 兼容参数收敛到官方入口。</p>
+<p>先备份：</p>
+<pre class="highlight"><code class="language-bash">sudo cp /opt/Xilinx/Vivado/2022.2/bin/vivado /opt/Xilinx/Vivado/2022.2/bin/vivado.bak</code></pre>
+<p>编辑文件 <code>/opt/Xilinx/Vivado/2022.2/bin/vivado</code>，下面是AI修改后的启动脚本。务必做好备份，不要盲目修改。建议让AI接管。</p>
+<pre class="highlight"><code class="language-bash">#!/bin/bash
+. "`dirname \"$0\"`/setupEnv.sh"
+# Set XILINX_VIVADO
+XILINX_VIVADO=`dirname "$RDI_BINROOT"`
+export XILINX_VIVADO
+
+export RDI_DEPENDENCY="XILINX_VIVADO_HLS:XILINX_HLS"
+export _RDI_NEEDS_PYTHON=True
+export RDI_USE_JDK11=True
+
+RDI_LAUNCH_MODE="gui"
+while [ $# -gt 0 ]; do
+    if [ "$1" = "-mode" ] &amp;&amp; [ $# -ge 2 ]; then
+        RDI_LAUNCH_MODE="$2"
+        break
+    fi
+    shift
+done
+
+if [ -n "${HOME:-}" ]; then
+    mkdir -p "$HOME/.Xilinx/Vivado/2022.2/data/layouts" 2&gt;/dev/null || true
+fi
+
+export GDK_BACKEND=${GDK_BACKEND:-x11}
+export SWT_GTK3=${SWT_GTK3:-0}
+export LIBGL_ALWAYS_SOFTWARE=${LIBGL_ALWAYS_SOFTWARE:-1}
+if [ "${XDG_SESSION_TYPE:-}" = "x11" ]; then
+    export _JAVA_AWT_WM_NONREPARENTING=0
+else
+    export _JAVA_AWT_WM_NONREPARENTING=1
+fi
+export XLNX_USE_NATIVE_DECORATION=${XLNX_USE_NATIVE_DECORATION:-1}
+if [ "$RDI_LAUNCH_MODE" = "gui" ]; then
+    if [ -n "${HOME:-}" ]; then
+        rm -f "$HOME/.Xilinx/Vivado/2022.2/data/layouts/application/default.layout" 2&gt;/dev/null || true
+    fi
+    export _VIVADO_STABLE_JAVA_OPTS="-Xint -XX:+UseSerialGC -Dsun.java2d.xrender=false -Dsun.java2d.opengl=false -Dsun.awt.disablegrab=true -Dsun.java2d.uiScale=1.0 -Dawt.useSystemAAFontSettings=on"
+    export _JAVA_OPTIONS="$_VIVADO_STABLE_JAVA_OPTS"
+    export JAVA_TOOL_OPTIONS="$_VIVADO_STABLE_JAVA_OPTS"
+    export JDK_JAVA_OPTIONS="$_VIVADO_STABLE_JAVA_OPTS"
+else
+    export _VIVADO_STABLE_JAVA_OPTS="-Dsun.java2d.xrender=false -Dsun.awt.disablegrab=true"
+    [ -z "${_JAVA_OPTIONS:-}" ] &amp;&amp; export _JAVA_OPTIONS="$_VIVADO_STABLE_JAVA_OPTS"
+    [ -z "${JAVA_TOOL_OPTIONS:-}" ] &amp;&amp; export JAVA_TOOL_OPTIONS="$_VIVADO_STABLE_JAVA_OPTS"
+    [ -z "${JDK_JAVA_OPTIONS:-}" ] &amp;&amp; export JDK_JAVA_OPTIONS="$_VIVADO_STABLE_JAVA_OPTS"
+fi
+
+# CR-1074520: Disable bmalloc memory allocator and use the system default one 
+#   instead. This prevents WebKit from overindulging in virtual memory on high
+#   memory machines. https://trac.webkit.org/wiki/EnvironmentVariables
+export Malloc=1
+##
+# Launch the loader and specify the executable to launch
+##
+#
+# Loader arguments:
+#   -exec   -- Name of executable to launch
+##
+RDI_PROG=`basename "$0"`
+"$RDI_BINROOT"/loader -exec $RDI_PROG "$@"</code></pre>
+<blockquote>
+<p>不要把这两个变量写到 <code>/etc/profile</code> 或 <code>/etc/profile.d</code>。</p>
+</blockquote>
+<h3 id="验证batch">验证（Batch）<a class="headerlink" href="#验证batch" title="Permanent link"></a></h3>
+<p>打开实验仓库，修改Makefile，执行<code>make bitstream</code>，如果成功生成二进制文件，则完成。否则，如果没有头绪，请继续让Agent帮忙调试。（实在是无奈，我们本<strong>不该过度依赖AI</strong>的…奈何刚接触这个环境…）</p>
+<h3 id="gui-启动统一入口">GUI 启动（统一入口）<a class="headerlink" href="#gui-启动统一入口" title="Permanent link"></a></h3>
+<p>点击桌面图标，查看是否进入程序。点击任意项目，生成波形。</p>
+<p>建议先确认会话类型：</p>
+<pre class="highlight"><code class="language-bash">echo "$XDG_SESSION_TYPE"</code></pre>
+<p>如不是 <code>x11</code>，优先切换 Xorg 后再测 GUI。</p>
+<p><a class="glightbox" href="../vivado.assets/image-20260326185039563.png" data-type="image"><img width="3416" height="2146" class="lqip" src="../vivado.assets/image-20260326185039563.preview.jpg" data-fullsrc="../vivado.assets/image-20260326185039563.png" alt="image-20260326185039563"></a></p>
+<h2 id="复现检查">复现检查<a class="headerlink" href="#复现检查" title="Permanent link"></a></h2>
+<p>分别登出和重启后重新尝试验证。</p>
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+  </div>
+
+                
+  
+<div class="page-info">
+  <span class="page-info__item page-info__stars">
+    <span class="page-info__label">
+      有用的话请给我个
+      <a href="https://github.com/bfyes/bfyes.github.io/stargazers">star</a>
+      =&gt;
+    </span>
+    <span class="page-info__value">
+      <a href="https://github.com/bfyes/bfyes.github.io/stargazers" aria-label="GitHub Stars">
+        <img
+          alt="Stars"
+          src="https://img.shields.io/github/stars/bfyes/bfyes.github.io?label=Stars&amp;style=flat"
+        >
+      </a>
+    </span>
+  </span>
+  <span class="page-info__item" id="busuanzi_container_site_pv">
+    <span class="page-info__label">本站总浏览</span>
+    <span class="page-info__value"><span id="busuanzi_value_site_pv"></span></span>
+  </span>
+</div>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  <!-- Giscus 评论区（加载与主题同步逻辑见 features/enhancements.js 的 Giscus 模块）
+     本文件只负责在需要评论的页面放置容器并声明 giscus 配置。 -->
+
+<div class="giscus"></div>
+
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../rosetta/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Rosetta on Mac">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Rosetta on Mac
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../notepadnext/" class="md-footer__link md-footer__link--next" aria-label="Next: Mac 记事本">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Mac 记事本
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.progress","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.share","search.suggest","toc.follow"],"search":"../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88ee1349.min.js"></script>
+      
+        <script src="../../theme/js/core.js"></script>
+      
+        <script src="../../theme/js/mathjax.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../theme/js/highlight.js"></script>
+      
+        <script src="../../theme/js/features/content.js"></script>
+      
+        <script src="../../theme/js/features/pdf.js"></script>
+      
+        <script src="../../theme/js/features/enhancements.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,4210 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="BillFeng 的个人文档站仓库，内容以学习笔记、工具折腾记录、电脑体验和随笔为主。站点使用Zensical/MkDocs 风格的文档结构构建，并在主题层加入了若干自定义前端能力。">
+      
+      
+        <meta name="author" content="BillFeng">
+      
+      
+        <link rel="canonical" href="https://docs.bfyes.cn/study/ismath/probability/">
+      
+      
+        <link rel="prev" href="../discrete/">
+      
+      
+        <link rel="next" href="../../asm/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../theme/assets/favicon.svg">
+      <meta name="generator" content="zensical-0.0.60">
+    
+    
+      
+        <title>Probability and Statistics - BillFeng 的文档站</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../../../assets/stylesheets/modern/main.ce62732f.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/modern/palette.812a03bb.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../theme/css/variables.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/main.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/features.css">
+    
+      <link rel="stylesheet" href="../../../theme/css/home.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  
+  <script>
+    (function () {
+      try {
+        var dark = matchMedia("(prefers-color-scheme: dark)").matches;
+        var scheme = dark ? "slate" : "default";
+        document.documentElement.setAttribute("data-md-color-scheme", scheme);
+        var link = document.createElement("link");
+        link.id = "hljs-theme";
+        link.rel = "stylesheet";
+        link.href = dark
+          ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+          : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
+        document.head.appendChild(link);
+        // body 加载后同步 attribute（bundle 切换主题时写 body，这里保证 html 跟随）
+        var attach = function () {
+          document.body.setAttribute("data-md-color-scheme", scheme);
+          new MutationObserver(function () {
+            var s = document.body.getAttribute("data-md-color-scheme");
+            if (s) document.documentElement.setAttribute("data-md-color-scheme", s);
+          }).observe(document.body, {
+            attributes: true,
+            attributeFilter: ["data-md-color-scheme"],
+          });
+        };
+        if (document.body) attach();
+        else new MutationObserver(function (_, obs) {
+          if (document.body) { attach(); obs.disconnect(); }
+        }).observe(document.documentElement, { childList: true });
+      } catch (e) {}
+    })();
+  </script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#概率论与数理统计" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="BillFeng 的文档站" class="md-header__button md-logo" aria-label="BillFeng 的文档站" data-md-component="logo">
+      <!-- Logo：复用 favicon.svg 的方角图标 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="bf-logo" role="img" aria-label="BillFeng" width="64" height="64">
+  <rect width="64" height="64" rx="12" ry="12" fill="#409ba5"/>
+  <text x="32" y="46" text-anchor="middle"
+        font-family="Courier New, Courier, monospace"
+        font-size="42" font-weight="700" fill="#ffffff">B</text>
+</svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BillFeng 的文档站
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Probability and Statistics
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="跟随系统"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="跟随系统" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun-moon" viewBox="0 0 24 24"><path d="M12 2v2M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715M16 12a4 4 0 0 0-4-4M19 5l-1.256 1.256M20 12h2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="浅色模式"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="浅色模式" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="深色模式"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="深色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon-star" viewBox="0 0 24 24"><path d="M18 5h4M20 3v4M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/bfyes/bfyes.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bfyes.github.io
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  主页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  学习
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../tools/" class="md-tabs__link">
+          
+  
+  工具
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../diaries/" class="md-tabs__link">
+          
+  
+  随笔
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+      
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../games/" class="md-tabs__link">
+          
+  
+  游戏
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="BillFeng 的文档站" class="md-nav__button md-logo" aria-label="BillFeng 的文档站" data-md-component="logo">
+      <!-- Logo：复用 favicon.svg 的方角图标 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="bf-logo" role="img" aria-label="BillFeng" width="64" height="64">
+  <rect width="64" height="64" rx="12" ry="12" fill="#409ba5"/>
+  <text x="32" y="46" text-anchor="middle"
+        font-family="Courier New, Courier, monospace"
+        font-size="42" font-weight="700" fill="#ffffff">B</text>
+</svg>
+    </a>
+    BillFeng 的文档站
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bfyes/bfyes.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    bfyes.github.io
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  主页
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学习
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  学习
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  信息安全原理与数学基础
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  信息安全原理与数学基础
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../discrete/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  离散数学
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Probability and Statistics
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="././" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Probability and Statistics
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#probability-and-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Probability and Statistics
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Probability and Statistics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#填空题" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        填空题
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#计算题" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        计算题
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#概率论术语表" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        概率论术语表
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../asm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  汇编语言设计与调试
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../sys1/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  SYS1
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  SYS1
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sys1/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0: 环境准备
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sys1/lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1: MUX/七段数码管
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sys1/lab2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2: 64位全加减法器
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sys1/lab3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3: 时序电路/FSM
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sys1/lab4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab4: 卷积模块
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sys1/lab5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab5: RISC-V 汇编
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sys1/project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  project: 单周期CPU
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../fds/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  FDS
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  FDS
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../fds/project1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project1
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../fds/project2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project2
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../fds/project3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Project3
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../hpc/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC101
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  HPC101
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  课程笔记
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  课程笔记
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0706p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  集群软硬件及运维基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0707p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 中的计算机系统 1
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0708p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  HPC 中的计算机系统 2
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0710p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  向量化并行计算基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0712a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  OpenMP/MPI 基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0712p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  性能分析基础 Profiling
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0713a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  高性能计算高级话题
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0713p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CUDA 编程基础
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/llm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  从文本到下一个 token
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0716a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习基础（上）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0716p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习基础（下）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0717a/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习高级话题（上）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/notes/0717p/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  机器学习高级话题（下）
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0: Linux Crash Course
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/lab1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1: Mini Cluster
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/lab2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2: MoE向量化计算
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/lab3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3: GDN Prefill优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/lab4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab4: 数值相对论优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hpc/lab5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab5: Gemma4推理优化
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../ctf/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  CTF101
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  CTF101
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ctf/lab0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab0
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_3" id="__nav_2_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab1
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab1
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ctf/lab1/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ctf/lab1/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ctf/lab1/pwn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Pwn
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ctf/lab1/rev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reverse
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ctf/lab1/web/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Web
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_4" id="__nav_2_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab2
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab2
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ctf/lab2/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ctf/lab2/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_5" id="__nav_2_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  lab3
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  lab3
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ctf/lab3/crypto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Crypto
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ctf/lab3/misc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Misc
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../tools/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  工具
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  工具
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/xp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  XP on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/rosetta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Rosetta on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/vivado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Vivado on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/notepadnext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Mac 记事本
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/xzzd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学在浙大 & PTA
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/autosign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  签到
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/cc98-avatar/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  98 动态头像
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../diaries/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  随笔
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  随笔
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../diaries/fa25_review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  2025 年度十图
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../diaries/sp26_midterm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 半期总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../diaries/sp26_final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 期末总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../diaries/sp26_vacation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 暑假总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../games/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  游戏
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+  游戏
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../games/4D_Intuition/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  四维直觉
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../games/Shenzhen_IO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  深圳I/O
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../games/The_Farmer_Was_Replaced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  编程农场
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../games/Turing_Complete/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  图灵完备
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../games/test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  样式测试
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#probability-and-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Probability and Statistics
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Probability and Statistics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#填空题" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        填空题
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#计算题" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        计算题
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#概率论术语表" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        概率论术语表
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+  
+  
+                  
+  
+    <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/study/ismath/probability.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-pen" viewBox="0 0 24 24"><path d="M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/bfyes/bfyes.github.io/raw/main/docs/study/ismath/probability.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-code-2" viewBox="0 0 24 24"><path d="M4 12.15V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-3.35"/><path d="M14 2v5a1 1 0 0 0 1 1h5M5 16l-3 3 3 3M9 22l3-3-3-3"/></svg>
+    </a>
+  
+
+
+
+
+
+
+
+
+<h1 id="概率论与数理统计">概率论与数理统计<a class="headerlink" href="#概率论与数理统计" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-17T16:45:43+08:00">2026/08/17</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 3017 字</span></div>
+<h2 id="probability-and-statistics">Probability and Statistics<a class="headerlink" href="#probability-and-statistics" title="Permanent link"></a></h2>
+<h3 id="填空题">填空题<a class="headerlink" href="#填空题" title="Permanent link"></a></h3>
+<div class="admonition question">
+<p class="admonition-title">1. [推测] — 分布模型匹配</p>
+<p>Match the following scenarios to the corresponding discrete probability distribution models:</p>
+<p>(a) A factory produces parts, each with probability <span class="arithmatex">\(p\)</span> of being defective. Inspect <strong>one</strong> part to see if it is defective.</p>
+<p>(b) Inspect <span class="arithmatex">\(n\)</span> parts and count the number of defective ones.</p>
+<p>(c) On average, <span class="arithmatex">\(\alpha\)</span> customers visit a store per hour. Count the number of customers arriving in one hour.</p>
+<p>(d) Repeatedly inspect parts until the <span class="arithmatex">\(k\)</span>-th defective part is found. Count the total number of inspections.</p>
+<p>(e) Repeatedly toss a coin until the first head appears. Count the total number of tosses.</p>
+<p>(f) Randomly select one integer from <span class="arithmatex">\(\{k, k+1, \dots, l\}\)</span>, where each integer is equally likely.</p>
+<p>Distribution models: Bernoulli / Binomial / Poisson / Pascal / Geometric / Discrete Uniform</p>
+<details class="info">
+<summary>点击查看参考翻译</summary>
+<p>将以下场景与对应的离散概率分布模型匹配：</p>
+<p>(a) 工厂生产零件，每个零件有概率 <span class="arithmatex">\(p\)</span> 为次品。检验<strong>一个</strong>零件看它是否为次品。</p>
+<p>(b) 检验 <span class="arithmatex">\(n\)</span> 个零件，统计次品数量。</p>
+<p>(c) 平均每小时有 <span class="arithmatex">\(\alpha\)</span> 位顾客光顾商店。统计一小时内到达的顾客数。</p>
+<p>(d) 反复检验零件直到发现第 <span class="arithmatex">\(k\)</span> 个次品。统计总检验次数。</p>
+<p>(e) 反复抛硬币直到第一次出现正面。统计总抛掷次数。</p>
+<p>(f) 从 <span class="arithmatex">\(\{k, k+1, \dots, l\}\)</span> 中随机等可能地选取一个整数。</p>
+<p>分布模型：伯努利分布 / 二项分布 / 泊松分布 / 帕斯卡分布 / 几何分布 / 离散均匀分布</p>
+</details>
+<details class="info">
+<summary>点击查看答案</summary>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">场景</th>
+<th style="text-align: center;">分布模型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">(a)</td>
+<td style="text-align: center;"><strong>Bernoulli</strong>（两点分布）</td>
+<td>单次试验，成功/失败</td>
+</tr>
+<tr>
+<td style="text-align: center;">(b)</td>
+<td style="text-align: center;"><strong>Binomial</strong>（二项分布）</td>
+<td><span class="arithmatex">\(n\)</span> 次独立试验中成功的次数</td>
+</tr>
+<tr>
+<td style="text-align: center;">(c)</td>
+<td style="text-align: center;"><strong>Poisson</strong>（泊松分布）</td>
+<td>单位时间内事件发生的次数</td>
+</tr>
+<tr>
+<td style="text-align: center;">(d)</td>
+<td style="text-align: center;"><strong>Pascal</strong>（帕斯卡分布）</td>
+<td>直到第 <span class="arithmatex">\(k\)</span> 次成功所需的试验次数</td>
+</tr>
+<tr>
+<td style="text-align: center;">(e)</td>
+<td style="text-align: center;"><strong>Geometric</strong>（几何分布）</td>
+<td>直到第一次成功（Pascal 的特例 <span class="arithmatex">\(k=1\)</span>）</td>
+</tr>
+<tr>
+<td style="text-align: center;">(f)</td>
+<td style="text-align: center;"><strong>Discrete Uniform</strong>（离散均匀分布）</td>
+<td>有限个等可能结果</td>
+</tr>
+</tbody>
+</table>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">2. [23-24 真题]</p>
+<p>The probability of fog in a city on any given day is <span class="arithmatex">\(0.4\)</span>. On foggy days, the probability that a resident wears a mask is <span class="arithmatex">\(0.2\)</span>; on non-foggy days, the probability is <span class="arithmatex">\(0.01\)</span>.</p>
+<p>(1) Find the probability that a randomly selected resident wears a mask on a randomly chosen day;</p>
+<p>(2) Suppose there are three residents whose mask-wearing behaviors are mutually independent. Find the probability that at least one of them wears a mask.</p>
+<details class="info">
+<summary>点击查看参考翻译</summary>
+<p>某城市任意一天有雾的概率为 <span class="arithmatex">\(0.4\)</span>。有雾天居民戴口罩的概率为 <span class="arithmatex">\(0.2\)</span>；无雾天戴口罩的概率为 <span class="arithmatex">\(0.01\)</span>。</p>
+<p>(1) 求随机选取一天，随机选取一位居民戴口罩的概率；</p>
+<p>(2) 假设有三位居民，他们的戴口罩行为相互独立。求至少一人戴口罩的概率。</p>
+</details>
+<details class="info">
+<summary>点击查看答案</summary>
+<p><strong>(1)</strong></p>
+<div class="arithmatex">\[
+\begin{aligned}
+P(\text{戴口罩}) &amp;= P(\text{有雾})\cdot P(\text{戴口罩}\mid\text{有雾}) + P(\text{无雾})\cdot P(\text{戴口罩}\mid\text{无雾}) \\
+&amp;= 0.4\times 0.2 + 0.6\times 0.01 = 0.08 + 0.006 = 0.086
+\end{aligned}
+\]</div>
+<p><strong>(2)</strong></p>
+<div class="arithmatex">\[P(\text{至少一人戴}) = 1 - (1-0.086)^3 = 1 - 0.914^3 \approx 1 - 0.7636 = 0.2364\]</div>
+</details>
+<details class="info">
+<summary>解法提示</summary>
+<p><strong>全概率公式</strong>：<span class="arithmatex">\(P(A)=P(B_1)P(A\mid B_1)+P(B_2)P(A\mid B_2)\)</span></p>
+<ul>
+<li><span class="arithmatex">\(B_1\)</span> = 有雾，<span class="arithmatex">\(B_2\)</span> = 无雾</li>
+<li>先算 <span class="arithmatex">\(P(\text{戴口罩})\)</span>，再算 <span class="arithmatex">\(P(\text{至少一人戴})=1-(1-p)^3\)</span></li>
+</ul>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">3. [24-25 真题]</p>
+<p>The probability of haze in a city is <span class="arithmatex">\(0.2\)</span>. On hazy days, the probability that a resident wears a mask is <span class="arithmatex">\(0.3\)</span>; on non-hazy days, the probability is <span class="arithmatex">\(0.05\)</span>.</p>
+<p>(1) Find the probability that a randomly selected resident wears a mask;</p>
+<p>(2) If there are <span class="arithmatex">\(3\)</span> mutually independent residents on the street, find the probability that at least one of them wears a mask.</p>
+<details class="info">
+<summary>点击查看参考翻译</summary>
+<p>某城市有霾的概率为 <span class="arithmatex">\(0.2\)</span>。有霾天居民戴口罩的概率为 <span class="arithmatex">\(0.3\)</span>；无霾天戴口罩的概率为 <span class="arithmatex">\(0.05\)</span>。</p>
+<p>(1) 求随机选取一位居民戴口罩的概率；</p>
+<p>(2) 如果街上有 3 位相互独立的居民，求至少一人戴口罩的概率。</p>
+</details>
+<details class="info">
+<summary>点击查看答案</summary>
+<p><strong>(1)</strong></p>
+<div class="arithmatex">\[P(\text{戴口罩}) = 0.2\times 0.3 + 0.8\times 0.05 = 0.06 + 0.04 = 0.10\]</div>
+<p><strong>(2)</strong></p>
+<div class="arithmatex">\[P(\text{至少一人戴}) = 1 - (1-0.10)^3 = 1 - 0.9^3 = 1 - 0.729 = 0.271\]</div>
+</details>
+<details class="info">
+<summary>解法提示</summary>
+<p><strong>全概率公式</strong>：<span class="arithmatex">\(P(A)=P(B_1)P(A\mid B_1)+P(B_2)P(A\mid B_2)\)</span>，其中 <span class="arithmatex">\(B_1,B_2\)</span> 是样本空间的一个分割。</p>
+<ul>
+<li>本题 <span class="arithmatex">\(B_1\)</span> = 有霾，<span class="arithmatex">\(B_2\)</span> = 无霾</li>
+<li>先算 <span class="arithmatex">\(P(\text{戴口罩})\)</span>，再用补事件算 <span class="arithmatex">\(P(\text{至少一人戴})=1-(1-p)^3\)</span></li>
+</ul>
+</details>
+</div>
+<hr />
+<h3 id="计算题">计算题<a class="headerlink" href="#计算题" title="Permanent link"></a></h3>
+<div class="admonition question">
+<p class="admonition-title">1. [23-24 真题] — 中心极限定理</p>
+<p>A random binary string of length <span class="arithmatex">\(1\,000\,000\)</span> is generated, with each bit independently and equally likely to be <span class="arithmatex">\(0\)</span> or <span class="arithmatex">\(1\)</span>. Use the Central Limit Theorem to estimate the probability that the string contains at least <span class="arithmatex">\(502\,000\)</span> ones.</p>
+<details class="info">
+<summary>点击查看参考翻译</summary>
+<p>生成长度为 <span class="arithmatex">\(1\,000\,000\)</span> 的随机二进制串，每位独立等可能为 <span class="arithmatex">\(0\)</span> 或 <span class="arithmatex">\(1\)</span>。使用中心极限定理估计该串包含至少 <span class="arithmatex">\(502\,000\)</span> 个 <span class="arithmatex">\(1\)</span> 的概率。</p>
+</details>
+<details class="info">
+<summary>点击查看答案</summary>
+<p><span class="arithmatex">\(X\sim\text{二项分布}(n=10^6,p=0.5)\)</span>。</p>
+<p>由 De Moivre-Laplace 中心极限定理：</p>
+<p><span class="arithmatex">\(\mu = np = 500\,000\)</span>，<span class="arithmatex">\(\sigma = \sqrt{np(1-p)} = \sqrt{250\,000} = 500\)</span>。</p>
+<p><span class="arithmatex">\(Z = \dfrac{502\,000 - 500\,000}{500} = 4\)</span>。</p>
+<p><span class="arithmatex">\(P(X \ge 502\,000) \approx 1 - \Phi(4) \approx 1 - 0.9999683 \approx 3.17\times 10^{-5}\)</span>。</p>
+</details>
+<details class="info">
+<summary>解法提示</summary>
+<p>二项分布用 CLT 近似（De Moivre-Laplace 公式）：</p>
+<ul>
+<li><span class="arithmatex">\(\mu=np\)</span>，<span class="arithmatex">\(\sigma=\sqrt{np(1-p)}\)</span></li>
+<li>标准化：<span class="arithmatex">\(Z=\dfrac{X-np}{\sqrt{np(1-p)}}\approx N(0,1)\)</span></li>
+<li><span class="arithmatex">\(P(X\ge k)\approx 1-\Phi(Z)\)</span>，查标准正态表得概率</li>
+</ul>
+<p><strong>连续性校正</strong>：二项分布离散，正态分布连续，严格来说 <span class="arithmatex">\(P(X\ge 502\,000)\)</span> 应对应 <span class="arithmatex">\(Z=\dfrac{501\,999.5-500\,000}{500}=3.999\)</span>（边界左移 <span class="arithmatex">\(0.5\)</span>）。但 <span class="arithmatex">\(n=10^6\)</span> 极大，校正量 <span class="arithmatex">\(0.5/\sigma=0.001\)</span>，对结果几乎无影响，可省略。</p>
+<p>本题与 <strong>LLN</strong>（大数定律）的区别：LLN 说样本均值趋近期望，不给具体概率；CLT 给出近似分布，能算具体概率。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">2. [24-25 真题] — 泊松分布</p>
+<p>Customer arrivals at a store follow a Poisson distribution, with an average of <span class="arithmatex">\(10\)</span> customers arriving in <span class="arithmatex">\(20\)</span> minutes.</p>
+<p>(1) Find the probability that at least <span class="arithmatex">\(1\)</span> customer arrives in <span class="arithmatex">\(20\)</span> minutes;</p>
+<p>(2) Find the probability that exactly <span class="arithmatex">\(2\)</span> customers arrive in <span class="arithmatex">\(8\)</span> minutes.</p>
+<details class="info">
+<summary>点击查看参考翻译</summary>
+<p>某商店顾客到达服从泊松分布，平均每 <span class="arithmatex">\(20\)</span> 分钟有 <span class="arithmatex">\(10\)</span> 位顾客到达。</p>
+<p>(1) 求 <span class="arithmatex">\(20\)</span> 分钟内至少 <span class="arithmatex">\(1\)</span> 位顾客到达的概率；</p>
+<p>(2) 求 <span class="arithmatex">\(8\)</span> 分钟内恰好 <span class="arithmatex">\(2\)</span> 位顾客到达的概率。</p>
+</details>
+<details class="info">
+<summary>点击查看答案</summary>
+<p><span class="arithmatex">\(X\sim\text{泊松分布}(\alpha=10)\)</span>（每 20 分钟）。</p>
+<p><strong>(1)</strong></p>
+<div class="arithmatex">\[P(X\ge 1) = 1 - P(X=0) = 1 - e^{-10} \approx 1 - 4.54\times10^{-5} \approx 0.99995\]</div>
+<p><strong>(2)</strong> 8 分钟参数：<span class="arithmatex">\(\alpha_8 = 10\times\frac{8}{20}=4\)</span>。</p>
+<div class="arithmatex">\[P(X_8=2) = \dfrac{e^{-4}\cdot 4^2}{2!} = e^{-4}\cdot 8 \approx 0.1465\]</div>
+</details>
+<details class="info">
+<summary>解法提示</summary>
+<p>泊松分布公式：<span class="arithmatex">\(P(X=k)=\dfrac{\alpha^k e^{-\alpha}}{k!}\)</span>，期望和方差均为 <span class="arithmatex">\(\alpha\)</span>。</p>
+<ul>
+<li>
+<p><strong><span class="arithmatex">\(\alpha\)</span> 按时间比例缩放</strong>：如本题每 20 分钟 <span class="arithmatex">\(\alpha=10\)</span>，则 8 分钟 <span class="arithmatex">\(\alpha_8=10\times\frac{8}{20}=4\)</span></p>
+</li>
+<li>
+<p><strong>至少一个</strong>用补事件：<span class="arithmatex">\(P(X\ge 1)=1-P(X=0)=1-e^{-\alpha}\)</span></p>
+</li>
+<li>
+<p><strong>恰好 k 个</strong>直接代入公式</p>
+</li>
+</ul>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">3. [23-24 真题] — 切比雪夫 + CLT</p>
+<p>Let <span class="arithmatex">\(W = \dfrac{X_1+X_2+X_3+X_4}{4}\)</span>, where <span class="arithmatex">\(E(X_i)=5\)</span>, <span class="arithmatex">\(\text{Var}(X_i)=20\)</span>, and <span class="arithmatex">\(X_1,X_2,X_3,X_4\)</span> are mutually independent.</p>
+<p>(1) Find the mean and variance of <span class="arithmatex">\(W\)</span>;</p>
+<p>(2) Use Chebyshev inequality to estimate <span class="arithmatex">\(P[W \ge 20]\)</span>;</p>
+<p>(3) Use the Central Limit Theorem to approximate <span class="arithmatex">\(P[W \ge 20]\)</span>.</p>
+<details class="info">
+<summary>点击查看参考翻译</summary>
+<p>设 <span class="arithmatex">\(W = \dfrac{X_1+X_2+X_3+X_4}{4}\)</span>，其中 <span class="arithmatex">\(E(X_i)=5\)</span>，<span class="arithmatex">\(\text{Var}(X_i)=20\)</span>，且 <span class="arithmatex">\(X_1,X_2,X_3,X_4\)</span> 相互独立。</p>
+<p>(1) 求 <span class="arithmatex">\(W\)</span> 的均值和方差；</p>
+<p>(2) 使用切比雪夫不等式估计 <span class="arithmatex">\(P[W \ge 20]\)</span>；</p>
+<p>(3) 使用中心极限定理近似 <span class="arithmatex">\(P[W \ge 20]\)</span>。</p>
+</details>
+<details class="info">
+<summary>点击查看答案</summary>
+<p><strong>(1)</strong></p>
+<div class="arithmatex">\[E(W) = \dfrac{4\times5}{4} = 5,\qquad \text{Var}(W) = \dfrac{4\times 20}{16} = 5\]</div>
+<p><strong>(2)</strong> 切比雪夫不等式：</p>
+<div class="arithmatex">\[P(W\ge 20) = P(W-5\ge 15) \le P(|W-5|\ge 15) \le \dfrac{5}{15^2} = \dfrac{5}{225} \approx 0.0222\]</div>
+<p><strong>(3)</strong> 中心极限定理：
+<span class="arithmatex">\(Z = \dfrac{20-5}{\sqrt{5}} = \dfrac{15}{\sqrt{5}} \approx 6.708\)</span></p>
+<div class="arithmatex">\[P(W\ge 20) \approx 1 - \Phi(6.708) \approx 0 \quad \text{（极其小）}\]</div>
+</details>
+<details class="info">
+<summary>解法提示</summary>
+<ul>
+<li><strong>马尔科夫不等式</strong>（Markov Inequality）：<span class="arithmatex">\(P[X\ge c]\le E[X]/c\)</span></li>
+<li><strong>切比雪夫不等式</strong>（Chebyshev Inequality）：<span class="arithmatex">\(P[|Y-\mu_Y|\ge c]\le \mathrm{Var}[Y]/c^2\)</span></li>
+</ul>
+<p><strong>期望/方差运算</strong>（独立时）：</p>
+<ul>
+<li><span class="arithmatex">\(E(aX+bY)=aE(X)+bE(Y)\)</span></li>
+<li><span class="arithmatex">\(\mathrm{Var}(aX+bY)=a^2\mathrm{Var}(X)+b^2\mathrm{Var}(Y)\)</span>（协方差项为 0）</li>
+</ul>
+<p><strong>CLT</strong>：<span class="arithmatex">\(Z=\dfrac{W-\mu_W}{\sigma_W}\approx N(0,1)\)</span>，查标准正态表得概率。</p>
+<p>本题中 <span class="arithmatex">\(W=\frac{X_1+X_2+X_3+X_4}{4}\)</span>，<span class="arithmatex">\(E(W)=5\)</span>，<span class="arithmatex">\(\mathrm{Var}(W)=5\)</span>。切比雪夫给出上界约 0.0222，CLT 给出近似值约 0（<span class="arithmatex">\(Z=6.708\)</span> 远在 3<span class="arithmatex">\(\sigma\)</span> 之外）。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">4. [23-24 真题] — 联合分布 / 协方差 / 相关系数</p>
+<p>The joint frequency distribution of a two-dimensional discrete random variable <span class="arithmatex">\((X,Y)\)</span> is given below:</p>
+<table>
+<thead>
+<tr>
+<th><span class="arithmatex">\(Y\backslash X\)</span></th>
+<th><span class="arithmatex">\(0\)</span></th>
+<th><span class="arithmatex">\(1\)</span></th>
+<th><span class="arithmatex">\(2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(0\)</span></td>
+<td><span class="arithmatex">\(160\)</span></td>
+<td><span class="arithmatex">\(80\)</span></td>
+<td><span class="arithmatex">\(120\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(1\)</span></td>
+<td><span class="arithmatex">\(240\)</span></td>
+<td><span class="arithmatex">\(40\)</span></td>
+<td><span class="arithmatex">\(160\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>(1) Find the marginal distributions (frequency tables) of <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span>;</p>
+<p>(2) Determine whether <span class="arithmatex">\(X\)</span> and <span class="arithmatex">\(Y\)</span> are independent;</p>
+<p>(3) Compute the covariance <span class="arithmatex">\(\text{Cov}(X,Y)\)</span>;</p>
+<p>(4) Compute the correlation coefficient <span class="arithmatex">\(\rho_{XY}\)</span>.</p>
+<details class="info">
+<summary>点击查看参考翻译</summary>
+<p>二维离散随机变量 <span class="arithmatex">\((X,Y)\)</span> 的联合频数分布如下表：</p>
+<table>
+<thead>
+<tr>
+<th><span class="arithmatex">\(Y\backslash X\)</span></th>
+<th><span class="arithmatex">\(0\)</span></th>
+<th><span class="arithmatex">\(1\)</span></th>
+<th><span class="arithmatex">\(2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(0\)</span></td>
+<td><span class="arithmatex">\(160\)</span></td>
+<td><span class="arithmatex">\(80\)</span></td>
+<td><span class="arithmatex">\(120\)</span></td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(1\)</span></td>
+<td><span class="arithmatex">\(240\)</span></td>
+<td><span class="arithmatex">\(40\)</span></td>
+<td><span class="arithmatex">\(160\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>(1) 求 <span class="arithmatex">\(X\)</span> 和 <span class="arithmatex">\(Y\)</span> 的边缘分布（频数表）；</p>
+<p>(2) 判断 <span class="arithmatex">\(X\)</span> 和 <span class="arithmatex">\(Y\)</span> 是否独立；</p>
+<p>(3) 计算协方差 <span class="arithmatex">\(\text{Cov}(X,Y)\)</span>；</p>
+<p>(4) 计算相关系数 <span class="arithmatex">\(\rho_{XY}\)</span>。</p>
+</details>
+<details class="info">
+<summary>点击查看答案</summary>
+<p>总频数 <span class="arithmatex">\(N = 160+80+120+240+40+160 = 800\)</span>。</p>
+<p><strong>(1)</strong> <span class="arithmatex">\(X\)</span> 的边缘分布：
+<span class="arithmatex">\(P(X=0)=\frac{400}{800}=0.5\)</span>，<span class="arithmatex">\(P(X=1)=\frac{120}{800}=0.15\)</span>，<span class="arithmatex">\(P(X=2)=\frac{280}{800}=0.35\)</span>。</p>
+<p><span class="arithmatex">\(Y\)</span> 的边缘分布：<span class="arithmatex">\(P(Y=0)=\frac{360}{800}=0.45\)</span>，<span class="arithmatex">\(P(Y=1)=\frac{440}{800}=0.55\)</span>。</p>
+<p><strong>(2)</strong> 检验 <span class="arithmatex">\(P(X=0,Y=0)=\frac{160}{800}=0.2\)</span>，而 <span class="arithmatex">\(P(X=0)P(Y=0)=0.5\times0.45=0.225\neq0.2\)</span>。<strong>不独立。</strong></p>
+<p><strong>(3)</strong>
+<span class="arithmatex">\(E(X)=0\cdot0.5+1\cdot0.15+2\cdot0.35=0.85\)</span>，</p>
+<p><span class="arithmatex">\(E(Y)=0\cdot0.45+1\cdot0.55=0.55\)</span>。</p>
+<p><span class="arithmatex">\(E(XY)=0.05+0.4=0.45\)</span>。</p>
+<p><span class="arithmatex">\(\text{Cov}(X,Y)=0.45-0.85\times0.55=-0.0175\)</span>。</p>
+<p><strong>(4)</strong>
+<span class="arithmatex">\(\text{Var}(X)=E(X^2)-(E(X))^2=1.55-0.7225=0.8275\)</span>。</p>
+<p><span class="arithmatex">\(\text{Var}(Y)=0.55-0.55^2=0.2475\)</span>。</p>
+<p><span class="arithmatex">\(\rho_{XY}=\dfrac{-0.0175}{\sqrt{0.8275\times0.2475}}\approx -0.0386\)</span>。</p>
+</details>
+<details class="info">
+<summary>解法提示</summary>
+<p>离散二元联合频数表：</p>
+<ol>
+<li><strong>频数转概率</strong>：每个格子 <span class="arithmatex">\(\div\)</span> 总数 <span class="arithmatex">\(N\)</span> 得 <span class="arithmatex">\(P(X=x_i,Y=y_j)\)</span></li>
+<li><strong>边缘 PMF</strong>：对行求和得 <span class="arithmatex">\(P(Y=y_j)\)</span>，对列求和得 <span class="arithmatex">\(P(X=x_i)\)</span></li>
+<li><strong>判独立</strong>：检查 <span class="arithmatex">\(P(X=x_i,Y=y_j) \stackrel{?}{=} P(X=x_i)P(Y=y_j)\)</span></li>
+<li><strong>协方差/相关系数</strong>：</li>
+</ol>
+<ul>
+<li><span class="arithmatex">\(E(X)=\sum x_i P(X=x_i)\)</span>，<span class="arithmatex">\(E(Y)=\sum y_j P(Y=y_j)\)</span></li>
+<li><span class="arithmatex">\(E(XY)=\sum\sum x_i y_j P(X=x_i,Y=y_j)\)</span></li>
+<li><span class="arithmatex">\(\mathrm{Cov}(X,Y)=E(XY)-E(X)E(Y)\)</span></li>
+<li><span class="arithmatex">\(\rho_{XY}=\dfrac{\mathrm{Cov}(X,Y)}{\sqrt{\mathrm{Var}(X)\mathrm{Var}(Y)}}\)</span></li>
+</ul>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">5. [24-25 真题] — 联合分布 / 协方差 / 相关系数</p>
+<p>For a total of <span class="arithmatex">\(1200\)</span> samples, the joint frequencies of hair color (<span class="arithmatex">\(0\)</span> = white / <span class="arithmatex">\(1\)</span> = grey / <span class="arithmatex">\(2\)</span> = dark) and length (<span class="arithmatex">\(0\)</span> = short / <span class="arithmatex">\(1\)</span> = long) are as follows:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>white(<span class="arithmatex">\(0\)</span>)</th>
+<th>grey(<span class="arithmatex">\(1\)</span>)</th>
+<th>dark(<span class="arithmatex">\(2\)</span>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>short(<span class="arithmatex">\(0\)</span>)</td>
+<td><span class="arithmatex">\(300\)</span></td>
+<td><span class="arithmatex">\(150\)</span></td>
+<td><span class="arithmatex">\(30\)</span></td>
+</tr>
+<tr>
+<td>long(<span class="arithmatex">\(1\)</span>)</td>
+<td><span class="arithmatex">\(360\)</span></td>
+<td><span class="arithmatex">\(240\)</span></td>
+<td><span class="arithmatex">\(120\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>(1) Write the joint probability mass function (Joint PMF);</p>
+<p>(2) Write the marginal probability mass functions (Marginal PMF);</p>
+<p>(3) Compute the covariance <span class="arithmatex">\(\text{Cov}(X,Y)\)</span>;</p>
+<p>(4) Compute the correlation coefficient <span class="arithmatex">\(\rho_{XY}\)</span>.</p>
+<details class="info">
+<summary>点击查看参考翻译</summary>
+<p>共 <span class="arithmatex">\(1200\)</span> 个样本，头发颜色（<span class="arithmatex">\(0\)</span> = 白 / <span class="arithmatex">\(1\)</span> = 灰 / <span class="arithmatex">\(2\)</span> = 黑）和长度（<span class="arithmatex">\(0\)</span> = 短 / <span class="arithmatex">\(1\)</span> = 长）的联合频数如下：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>白(<span class="arithmatex">\(0\)</span>)</th>
+<th>灰(<span class="arithmatex">\(1\)</span>)</th>
+<th>黑(<span class="arithmatex">\(2\)</span>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>短(<span class="arithmatex">\(0\)</span>)</td>
+<td><span class="arithmatex">\(300\)</span></td>
+<td><span class="arithmatex">\(150\)</span></td>
+<td><span class="arithmatex">\(30\)</span></td>
+</tr>
+<tr>
+<td>长(<span class="arithmatex">\(1\)</span>)</td>
+<td><span class="arithmatex">\(360\)</span></td>
+<td><span class="arithmatex">\(240\)</span></td>
+<td><span class="arithmatex">\(120\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>(1) 写出联合概率质量函数（Joint PMF）；</p>
+<p>(2) 写出边缘概率质量函数（Marginal PMF）；</p>
+<p>(3) 计算协方差 <span class="arithmatex">\(\text{Cov}(X,Y)\)</span>；</p>
+<p>(4) 计算相关系数 <span class="arithmatex">\(\rho_{XY}\)</span>。</p>
+</details>
+<details class="info">
+<summary>点击查看答案</summary>
+<p><span class="arithmatex">\(N=1200\)</span>。联合 PMF = 频数 <span class="arithmatex">\(\div\ 1200\)</span>。</p>
+<p><strong>(1)</strong> 联合 PMF：
+<span class="arithmatex">\(P(X=0,Y=0)=0.25\)</span>，<span class="arithmatex">\(P(X=1,Y=0)=0.125\)</span>，<span class="arithmatex">\(P(X=2,Y=0)=0.025\)</span>，
+<span class="arithmatex">\(P(X=0,Y=1)=0.3\)</span>，<span class="arithmatex">\(P(X=1,Y=1)=0.2\)</span>，<span class="arithmatex">\(P(X=2,Y=1)=0.1\)</span>。</p>
+<p><strong>(2)</strong> <span class="arithmatex">\(X\)</span> 边缘 PMF：<span class="arithmatex">\(P(X=0)=0.55\)</span>，<span class="arithmatex">\(P(X=1)=0.325\)</span>，<span class="arithmatex">\(P(X=2)=0.125\)</span>。
+<span class="arithmatex">\(Y\)</span> 边缘 PMF：<span class="arithmatex">\(P(Y=0)=0.4\)</span>，<span class="arithmatex">\(P(Y=1)=0.6\)</span>。</p>
+<p><strong>(3)</strong>
+<span class="arithmatex">\(E(X)=0\cdot0.55+1\cdot0.325+2\cdot0.125=0.575\)</span>，<span class="arithmatex">\(E(Y)=0\cdot0.4+1\cdot0.6=0.6\)</span>。
+<span class="arithmatex">\(E(XY)=1\cdot1\cdot0.2+2\cdot1\cdot0.1=0.4\)</span>。
+<span class="arithmatex">\(\text{Cov}(X,Y)=0.4-0.575\times0.6=0.055\)</span>。</p>
+<p><strong>(4)</strong>
+<span class="arithmatex">\(\text{Var}(X)=E(X^2)-0.575^2=(1\cdot0.325+4\cdot0.125)-0.3306=0.825-0.3306=0.4944\)</span>。
+<span class="arithmatex">\(\text{Var}(Y)=0.6-0.6^2=0.24\)</span>。
+<span class="arithmatex">\(\rho_{XY}=0.055/\sqrt{0.4944\times0.24}\approx 0.1597\)</span>。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">6. [23-24 真题] — 连续型随机变量 PDF/CDF</p>
+<p>Let the probability density function of a random variable <span class="arithmatex">\(X\)</span> be</p>
+<div class="arithmatex">\[f_X(x)=\begin{cases}k(1-x),&amp;0&lt;x&lt;1\\[4pt]\dfrac{1}{2}x,&amp;1\le x\le 2\\[4pt]0,&amp;\text{otherwise}\end{cases}\]</div>
+<p>(1) Find the constant <span class="arithmatex">\(k\)</span>;</p>
+<p>(2) Find the cumulative distribution function <span class="arithmatex">\(F_X(x)\)</span>;</p>
+<p>(3) Find <span class="arithmatex">\(P[X\ge 1.5]\)</span>.</p>
+<details class="info">
+<summary>点击查看参考翻译</summary>
+<p>设随机变量 <span class="arithmatex">\(X\)</span> 的概率密度函数为 <span class="arithmatex">\(f_X(x)\)</span>（如上式）。</p>
+<p>(1) 求常数 <span class="arithmatex">\(k\)</span>；</p>
+<p>(2) 求累积分布函数 <span class="arithmatex">\(F_X(x)\)</span>；</p>
+<p>(3) 求 <span class="arithmatex">\(P[X\ge 1.5]\)</span>。</p>
+</details>
+<details class="info">
+<summary>点击查看答案</summary>
+<p><strong>(1)</strong> 由归一化条件：</p>
+<div class="arithmatex">\[\int_0^1 k(1-x)\mathrm{d}x + \int_1^2 \frac{1}{2}x\,\mathrm{d}x = k\cdot\frac{1}{2} + \frac{1}{4}(2^2-1^2) = \frac{k}{2} + \frac{3}{4} = 1 \;\Rightarrow\; k = \frac{1}{2}\]</div>
+<p><strong>(2)</strong> 累积分布函数：</p>
+<div class="arithmatex">\[F_X(x)=\begin{cases}0,&amp;x\le 0\\[4pt]\displaystyle\int_0^x\frac{1}{2}(1-t)\mathrm{d}t=\frac{x}{2}-\frac{x^2}{4},&amp;0&lt;x&lt;1\\[8pt]\dfrac{1}{4}+\displaystyle\int_1^x\frac{t}{2}\mathrm{d}t=\dfrac{x^2}{4},&amp;1\le x\le 2\\[8pt]1,&amp;x&gt;2\end{cases}\]</div>
+<p><strong>(3)</strong></p>
+<div class="arithmatex">\[P[X\ge 1.5] = 1 - F_X(1.5) = 1 - \dfrac{2.25}{4} = 1 - 0.5625 = 0.4375\]</div>
+</details>
+<details class="info">
+<summary>解法提示</summary>
+<p>给 PDF 求 常数/CDF/概率 ：</p>
+<ul>
+<li><strong>求常数</strong>：<span class="arithmatex">\(\displaystyle\int_{-\infty}^{\infty}f_X(x)\,\mathrm{d}x=1\)</span>，分段积分解出常数</li>
+<li><strong>求 CDF</strong>：<span class="arithmatex">\(F_X(x)=\displaystyle\int_{-\infty}^x f_X(t)\,\mathrm{d}t\)</span>，分段积分，每段累积</li>
+<li><strong>求概率</strong>：<span class="arithmatex">\(P(a&lt;X&lt;b)=F_X(b)-F_X(a)\)</span></li>
+</ul>
+<p>本题 PDF 分段：<span class="arithmatex">\(0&lt;x&lt;1\)</span> 时 <span class="arithmatex">\(f(x)=k(1-x)\)</span>，<span class="arithmatex">\(1\le x\le2\)</span> 时 <span class="arithmatex">\(f(x)=\frac12 x\)</span>，注意分段积分时 CDF 每段要加上前一段的累积值。</p>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">7. [24-25 真题] — 连续型随机变量 PDF/CDF</p>
+<p>Let the probability density function of a random variable <span class="arithmatex">\(X\)</span> be</p>
+<div class="arithmatex">\[f_X(x)=\begin{cases}c(4-x^2),&amp;0&lt;x&lt;2\\[4pt]0,&amp;\text{otherwise}\end{cases}\]</div>
+<p>(1) Find the constant <span class="arithmatex">\(c\)</span>;</p>
+<p>(2) Find the cumulative distribution function <span class="arithmatex">\(F_X(x)\)</span>;</p>
+<p>(3) Find <span class="arithmatex">\(P[-1&lt;X&lt;1.5]\)</span>.</p>
+<details class="info">
+<summary>点击查看参考翻译</summary>
+<p>设随机变量 <span class="arithmatex">\(X\)</span> 的概率密度函数为 <span class="arithmatex">\(f_X(x)\)</span>（如上式）。</p>
+<p>(1) 求常数 <span class="arithmatex">\(c\)</span>；</p>
+<p>(2) 求累积分布函数 <span class="arithmatex">\(F_X(x)\)</span>；</p>
+<p>(3) 求 <span class="arithmatex">\(P[-1&lt;X&lt;1.5]\)</span>。</p>
+</details>
+<details class="info">
+<summary>点击查看答案</summary>
+<p><strong>(1)</strong> 由归一化条件：</p>
+<div class="arithmatex">\[\int_0^2 c(4-x^2)\mathrm{d}x = c\left[4x-\frac{x^3}{3}\right]_0^2 = c(8-\frac{8}{3}) = c\cdot\frac{16}{3} = 1 \;\Rightarrow\; c = \dfrac{3}{16}\]</div>
+<p><strong>(2)</strong> 累积分布函数：</p>
+<div class="arithmatex">\[F_X(x)=\begin{cases}0,&amp;x\le 0\\[4pt]\displaystyle\int_0^x\frac{3}{16}(4-t^2)\mathrm{d}t=\frac{3}{16}\Bigl(4x-\frac{x^3}{3}\Bigr),&amp;0&lt;x&lt;2\\[8pt]1,&amp;x\ge 2\end{cases}\]</div>
+<p><strong>(3)</strong></p>
+<div class="arithmatex">\[P[-1&lt;X&lt;1.5] = F_X(1.5) - F_X(0) = \dfrac{3}{16}\Bigl(4\cdot1.5-\dfrac{3.375}{3}\Bigr) = \dfrac{3}{16}(6-1.125) \approx 0.9141\]</div>
+</details>
+</div>
+<div class="admonition question">
+<p class="admonition-title">8. [23-24/24-25 真题] — 联合 PDF / 边缘 / 条件</p>
+<p>Let the joint probability density function of <span class="arithmatex">\((X,Y)\)</span> be</p>
+<div class="arithmatex">\[f_{X,Y}(x,y)=\begin{cases}\dfrac{5}{4}x,&amp;y^2&lt;x&lt;1\\[4pt]0,&amp;\text{otherwise}\end{cases}\]</div>
+<p>(1) Find <span class="arithmatex">\(P[Y\le X]\)</span>;</p>
+<p>(2) Find the marginal PDF <span class="arithmatex">\(f_Y(y)\)</span>;</p>
+<p>(3) Find the conditional PDF <span class="arithmatex">\(f_{X\mid Y}(x\mid y)\)</span>.</p>
+<details class="info">
+<summary>点击查看参考翻译</summary>
+<p>设 <span class="arithmatex">\((X,Y)\)</span> 的联合概率密度函数为 <span class="arithmatex">\(f_{X,Y}(x,y)\)</span>（如上式）。</p>
+<p>(1) 求 <span class="arithmatex">\(P[Y\le X]\)</span>；</p>
+<p>(2) 求边缘 PDF <span class="arithmatex">\(f_Y(y)\)</span>；</p>
+<p>(3) 求条件 PDF <span class="arithmatex">\(f_{X\mid Y}(x\mid y)\)</span>。</p>
+</details>
+<details class="info">
+<summary>点击查看答案</summary>
+<p>积分区域：<span class="arithmatex">\(-1&lt;y&lt;1\)</span>，<span class="arithmatex">\(y^2&lt;x&lt;1\)</span>。</p>
+<p><strong>(1)</strong> 对 <span class="arithmatex">\(y\le 0\)</span>：<span class="arithmatex">\(y^2&lt;x&lt;1\)</span> 且 <span class="arithmatex">\(x&gt;0\ge y\)</span>，恒满足 <span class="arithmatex">\(y\le x\)</span>。
+对 <span class="arithmatex">\(y&gt;0\)</span>：需满足 <span class="arithmatex">\(x&gt;y\)</span> 且 <span class="arithmatex">\(x&gt;y^2\)</span>。由于 <span class="arithmatex">\(y\in(0,1)\)</span> 时 <span class="arithmatex">\(y^2&lt;y\)</span>，紧下界为 <span class="arithmatex">\(x&gt;y\)</span>。</p>
+<div class="arithmatex">\[
+\begin{aligned}
+P[Y\le X] &amp;= \int_{-1}^0\int_{y^2}^1 \frac{5}{4}x\,\mathrm{d}x\,\mathrm{d}y + \int_0^1\int_y^1 \frac{5}{4}x\,\mathrm{d}x\,\mathrm{d}y \\
+\int_a^1 \frac{5}{4}x\,\mathrm{d}x &amp;= \frac{5}{8}(1-a^2)
+\end{aligned}
+\]</div>
+<p>第一部分：<span class="arithmatex">\(\int_{-1}^0 \frac{5}{8}(1-y^4)\mathrm{d}y = \frac{5}{8}\Bigl(1-\frac{1}{5}\Bigr) = \frac{5}{8}\cdot\frac{4}{5} = \frac{1}{2}\)</span>。</p>
+<p>第二部分：<span class="arithmatex">\(\int_0^1 \frac{5}{8}(1-y^2)\mathrm{d}y = \frac{5}{8}\Bigl(1-\frac{1}{3}\Bigr) = \frac{5}{8}\cdot\frac{2}{3} = \frac{5}{12}\)</span>。</p>
+<div class="arithmatex">\[P[Y\le X] = \dfrac{1}{2}+\dfrac{5}{12} = \dfrac{11}{12}\]</div>
+<p><strong>(2)</strong> <span class="arithmatex">\(f_Y(y) = \displaystyle\int_{y^2}^1 \frac{5}{4}x\,\mathrm{d}x = \frac{5}{8}(1-y^4)\)</span>，<span class="arithmatex">\(-1&lt;y&lt;1\)</span>。</p>
+<p><strong>(3)</strong> <span class="arithmatex">\(f_{X\mid Y}(x\mid y) = \dfrac{f(x,y)}{f_Y(y)} = \dfrac{\frac{5}{4}x}{\frac{5}{8}(1-y^4)} = \dfrac{2x}{1-y^4}\)</span>，<span class="arithmatex">\(y^2&lt;x&lt;1\)</span>。</p>
+</details>
+<details class="info">
+<summary>解法提示</summary>
+<p>给联合 PDF <span class="arithmatex">\(f_{X,Y}(x,y)\)</span> 和区域（如 <span class="arithmatex">\(y^2&lt;x&lt;1\)</span>），三步走：</p>
+<ul>
+<li><strong>边缘 PDF</strong>：把另一个变量积掉 <span class="arithmatex">\(f_Y(y)=\int f_{X,Y}(x,y)\,\mathrm{d}x\)</span></li>
+<li><strong>条件 PDF</strong>：<span class="arithmatex">\(f_{X\mid Y}(x\mid y)=\dfrac{f_{X,Y}(x,y)}{f_Y(y)}\)</span></li>
+<li><strong>求概率</strong>：在给定区域上对联合 PDF 做二重积分，关键是<strong>画图确定积分限</strong></li>
+</ul>
+<p>本题区域为 <span class="arithmatex">\(-1&lt;y&lt;1\)</span>，<span class="arithmatex">\(y^2&lt;x&lt;1\)</span>。求 <span class="arithmatex">\(P[Y\le X]\)</span> 时要分 <span class="arithmatex">\(y\le0\)</span> 和 <span class="arithmatex">\(y&gt;0\)</span> 两段讨论。</p>
+</details>
+</div>
+<hr />
+<h3 id="概率论术语表">概率论术语表<a class="headerlink" href="#概率论术语表" title="Permanent link"></a></h3>
+<blockquote>
+<p>来源：语雀 <a href="https://www.yuque.com/xianyuxuan/coding/uifky8">信安数学基础 5 · 概率论</a></p>
+</blockquote>
+<p><strong>基础概念</strong></p>
+<table>
+<thead>
+<tr>
+<th>英文</th>
+<th>中文</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sample Space</td>
+<td>样本空间</td>
+</tr>
+<tr>
+<td>Event</td>
+<td>事件</td>
+</tr>
+<tr>
+<td>Mutually Exclusive</td>
+<td>互斥</td>
+</tr>
+<tr>
+<td>Collectively Exhaustive</td>
+<td>穷尽</td>
+</tr>
+<tr>
+<td>Partition</td>
+<td>分割</td>
+</tr>
+<tr>
+<td>Conditional Probability</td>
+<td>条件概率</td>
+</tr>
+<tr>
+<td>Independent Events</td>
+<td>独立事件</td>
+</tr>
+<tr>
+<td>Random Variable</td>
+<td>随机变量</td>
+</tr>
+</tbody>
+</table>
+<p><strong>离散型随机变量</strong></p>
+<table>
+<thead>
+<tr>
+<th>英文</th>
+<th>中文</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Discrete Random Variable</td>
+<td>离散型随机变量</td>
+</tr>
+<tr>
+<td>Probability Mass Function (PMF)</td>
+<td>概率质量函数</td>
+</tr>
+<tr>
+<td>Cumulative Distribution Function (CDF)</td>
+<td>累积分布函数</td>
+</tr>
+<tr>
+<td>Expected Value</td>
+<td>期望</td>
+</tr>
+<tr>
+<td>Variance</td>
+<td>方差</td>
+</tr>
+<tr>
+<td>Standard Deviation</td>
+<td>标准差</td>
+</tr>
+<tr>
+<td>Bernoulli Distribution</td>
+<td>两点分布（伯努利分布）</td>
+</tr>
+<tr>
+<td>Binomial Distribution</td>
+<td>二项分布</td>
+</tr>
+<tr>
+<td>Poisson Distribution</td>
+<td>泊松分布</td>
+</tr>
+<tr>
+<td>Pascal Distribution</td>
+<td>帕斯卡分布</td>
+</tr>
+<tr>
+<td>Geometric Distribution</td>
+<td>几何分布</td>
+</tr>
+<tr>
+<td>Discrete Uniform Distribution</td>
+<td>离散均匀分布</td>
+</tr>
+</tbody>
+</table>
+<p><strong>连续型随机变量</strong></p>
+<table>
+<thead>
+<tr>
+<th>英文</th>
+<th>中文</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Continuous Random Variable</td>
+<td>连续型随机变量</td>
+</tr>
+<tr>
+<td>Probability Density Function (PDF)</td>
+<td>概率密度函数</td>
+</tr>
+<tr>
+<td>Uniform Distribution</td>
+<td>均匀分布</td>
+</tr>
+<tr>
+<td>Standard Normal Distribution</td>
+<td>标准正态分布</td>
+</tr>
+<tr>
+<td>Gaussian / Normal Distribution</td>
+<td>高斯分布 / 正态分布</td>
+</tr>
+<tr>
+<td>Exponential Distribution</td>
+<td>指数分布</td>
+</tr>
+</tbody>
+</table>
+<p><strong>多元随机变量</strong></p>
+<table>
+<thead>
+<tr>
+<th>英文</th>
+<th>中文</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Joint PMF</td>
+<td>联合概率质量函数</td>
+</tr>
+<tr>
+<td>Marginal PMF</td>
+<td>边沿概率质量函数</td>
+</tr>
+<tr>
+<td>Joint CDF</td>
+<td>联合累积分布函数</td>
+</tr>
+<tr>
+<td>Joint PDF</td>
+<td>联合概率密度函数</td>
+</tr>
+<tr>
+<td>Marginal PDF</td>
+<td>边沿概率密度函数</td>
+</tr>
+<tr>
+<td>Covariance</td>
+<td>协方差</td>
+</tr>
+<tr>
+<td>Uncorrelated</td>
+<td>不相关</td>
+</tr>
+<tr>
+<td>Correlation Coefficient</td>
+<td>相关系数</td>
+</tr>
+<tr>
+<td>Correlation</td>
+<td>相关度</td>
+</tr>
+<tr>
+<td>Conditional PMF</td>
+<td>条件概率质量函数</td>
+</tr>
+<tr>
+<td>Conditional PDF</td>
+<td>条件概率密度函数</td>
+</tr>
+<tr>
+<td>Bivariate Gaussian</td>
+<td>二元高斯随机变量</td>
+</tr>
+</tbody>
+</table>
+<p><strong>极限定理与估计</strong></p>
+<table>
+<thead>
+<tr>
+<th>英文</th>
+<th>中文</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Central Limit Theorem (CLT)</td>
+<td>中心极限定理</td>
+</tr>
+<tr>
+<td>De Moivre-Laplace Formula (DML)</td>
+<td>拉普拉斯公式</td>
+</tr>
+<tr>
+<td>Sample Mean</td>
+<td>样本均值</td>
+</tr>
+<tr>
+<td>Markov Inequality</td>
+<td>马尔科夫不等式</td>
+</tr>
+<tr>
+<td>Chebyshev Inequality</td>
+<td>切比雪夫不等式</td>
+</tr>
+<tr>
+<td>Unbiased Estimator</td>
+<td>无偏估计</td>
+</tr>
+<tr>
+<td>Asymptotically Unbiased Estimator</td>
+<td>渐近无偏估计</td>
+</tr>
+<tr>
+<td>Mean Square Error (MSE)</td>
+<td>均方误差</td>
+</tr>
+<tr>
+<td>Consistent Estimator</td>
+<td>一致估计（consistent）</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+  
+<div class="page-info">
+  <span class="page-info__item page-info__stars">
+    <span class="page-info__label">
+      有用的话请给我个
+      <a href="https://github.com/bfyes/bfyes.github.io/stargazers">star</a>
+      =&gt;
+    </span>
+    <span class="page-info__value">
+      <a href="https://github.com/bfyes/bfyes.github.io/stargazers" aria-label="GitHub Stars">
+        <img
+          alt="Stars"
+          src="https://img.shields.io/github/stars/bfyes/bfyes.github.io?label=Stars&amp;style=flat"
+        >
+      </a>
+    </span>
+  </span>
+  <span class="page-info__item" id="busuanzi_container_site_pv">
+    <span class="page-info__label">本站总浏览</span>
+    <span class="page-info__value"><span id="busuanzi_value_site_pv"></span></span>
+  </span>
+</div>
+
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  <!-- Giscus 评论区（加载与主题同步逻辑见 features/enhancements.js 的 Giscus 模块）
+     本文件只负责在需要评论的页面放置容器并声明 giscus 配置。 -->
+
+<div class="giscus"></div>
+
+
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../discrete/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 离散数学">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                离散数学
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../asm/" class="md-footer__link md-footer__link--next" aria-label="Next: 汇编语言设计与调试">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                汇编语言设计与调试
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"../../..","features":["content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.progress","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.share","search.suggest","toc.follow"],"search":"../../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.88ee1349.min.js"></script>
+      
+        <script src="../../../theme/js/core.js"></script>
+      
+        <script src="../../../theme/js/mathjax.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
+      
+        <script src="../../../theme/js/highlight.js"></script>
+      
+        <script src="../../../theme/js/features/content.js"></script>
+      
+        <script src="../../../theme/js/features/pdf.js"></script>
+      
+        <script src="../../../theme/js/features/enhancements.js"></script>
+      
+    
+  </body>
+</html>
