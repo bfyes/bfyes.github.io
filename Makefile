@@ -79,7 +79,12 @@ deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run python scripts/link_previews.py
 	uv run python scripts/metadata.py
 	$(MAKE) slides
-	cd site && git add -A && git commit -m "deploy" --allow-empty && git push --force origin HEAD:gh-pages
+	@# 安全闸：site/ 必须自带独立 git 仓库，否则 cd site 后会落到主仓库上，
+	@# 导致源码被提交并 force-push 覆盖 gh-pages（线上站点直接 404）。
+	@test -d site/.git || { echo "错误：site/ 不是独立 git 仓库（缺少 site/.git）。"; echo "请先执行 make clean 重新初始化，再执行 make deploy。"; exit 1; }
+	git -C site add -A
+	git -C site commit -m "deploy" --allow-empty
+	git -C site push --force origin HEAD:gh-pages
 
 clean: ## 清理 site 目录并重新初始化 git 仓库（不影响主仓库）
 	rm -rf site
