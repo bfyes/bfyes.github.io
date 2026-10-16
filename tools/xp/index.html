@@ -15,6 +15,7 @@
         <link rel="canonical" href="https://docs.bfyes.cn/tools/xp/">
       
       
+      
         <link rel="prev" href="../">
       
       
@@ -25,7 +26,7 @@
       
       
       <link rel="icon" href="../../theme/assets/favicon.svg">
-      <meta name="generator" content="zensical-0.0.60">
+      <meta name="generator" content="zensical-0.0.70">
     
     
       
@@ -36,12 +37,12 @@
       
         
       
-      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.ce62732f.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.e442bf79.min.css">
       
         
           
         
-        <link rel="stylesheet" href="../../assets/stylesheets/modern/palette.812a03bb.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/modern/palette.b60ce83d.min.css">
       
       
 
@@ -81,13 +82,7 @@
         var dark = matchMedia("(prefers-color-scheme: dark)").matches;
         var scheme = dark ? "slate" : "default";
         document.documentElement.setAttribute("data-md-color-scheme", scheme);
-        var link = document.createElement("link");
-        link.id = "hljs-theme";
-        link.rel = "stylesheet";
-        link.href = dark
-          ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
-          : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
-        document.head.appendChild(link);
+        // 代码高亮已改为构建期 Pygments，不再注入 highlight.js 的 github/github-dark 主题 CSS。
         // body 加载后同步 attribute（bundle 切换主题时写 body，这里保证 html 跟随）
         var attach = function () {
           document.body.setAttribute("data-md-color-scheme", scheme);
@@ -122,14 +117,11 @@
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <label class="md-overlay" for="__drawer" aria-hidden="true"></label>
     <div data-md-component="skip">
-      
-        
-        <a href="#windows-xp-on-apple-silicon-mac" class="md-skip">
-          Skip to content
-        </a>
-      
+      <a href="#__skip" class="md-skip">
+        Skip to content
+      </a>
     </div>
     <div data-md-component="announce">
       
@@ -304,6 +296,22 @@
         </a>
       </li>
     
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../none" class="md-tabs__link">
+        
+  
+  Reverse
+
+      </a>
+    </li>
   
 
       
@@ -562,20 +570,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   学习
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -629,20 +638,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_2">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   信息安全原理与数学基础
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -666,10 +676,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -693,18 +703,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -728,10 +739,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -795,20 +806,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_4">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_4">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   SYS1
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -832,10 +844,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -859,10 +871,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -886,10 +898,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -913,10 +925,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -940,10 +952,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -967,10 +979,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -994,18 +1006,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1061,20 +1074,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_5">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_5">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   FDS
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -1098,10 +1112,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1125,10 +1139,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1152,18 +1166,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1227,20 +1242,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_6">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_6">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   HPC101
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -1305,18 +1321,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_6_2">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_6_2">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   课程笔记
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -1340,10 +1357,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1367,10 +1384,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1394,10 +1411,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1421,10 +1438,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1448,10 +1465,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1475,10 +1492,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1502,10 +1519,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1529,10 +1546,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1556,10 +1573,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1583,10 +1600,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1610,10 +1627,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1637,10 +1654,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1664,18 +1681,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1699,10 +1717,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1726,10 +1744,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1753,10 +1771,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1780,10 +1798,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1807,10 +1825,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1834,18 +1852,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1903,20 +1922,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   CTF101
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -1940,10 +1960,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1992,18 +2012,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7_3">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7_3">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   lab1
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -2027,10 +2048,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2054,10 +2075,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2081,10 +2102,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2108,10 +2129,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2135,18 +2156,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2189,18 +2211,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7_4">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7_4">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   lab2
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -2224,10 +2247,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2251,18 +2274,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2305,18 +2329,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7_5">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7_5">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   lab3
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -2340,10 +2365,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2367,27 +2392,56 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../none" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reverse
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2435,7 +2489,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -2456,26 +2510,27 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+            <label class="md-nav__title" for="__nav_4">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   工具
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
     
@@ -2707,10 +2762,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2734,10 +2789,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2761,10 +2816,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2788,10 +2843,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2815,10 +2870,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2842,10 +2897,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2869,10 +2924,11 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
@@ -2889,194 +2945,6 @@
       
         
           
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../diaries/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  随笔
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-  随笔
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../diaries/fa25_review/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  2025 年度十图
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../diaries/sp26_midterm/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  sp26 半期总结
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../diaries/sp26_final/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  sp26 期末总结
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../diaries/sp26_vacation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  sp26 暑假总结
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
         
       
         
@@ -3102,6 +2970,196 @@
         
           
           <div class="md-nav__link md-nav__container">
+            <a href="../../diaries/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  随笔
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_5">
+              <span class="md-nav__icon md-icon"></span>
+              
+  
+  随笔
+
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
+              
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../diaries/fa25_review/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  2025 年度十图
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../diaries/sp26_midterm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 半期总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../diaries/sp26_final/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 期末总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../diaries/sp26_vacation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  sp26 暑假总结
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+            </ul>
+          </nav>
+        
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
             <a href="../../games/" class="md-nav__link ">
               
   
@@ -3119,26 +3177,27 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_6">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   游戏
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -3162,10 +3221,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3189,10 +3248,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3216,10 +3275,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3243,10 +3302,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3270,10 +3329,11 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
@@ -3492,10 +3552,12 @@
             <div class="md-content" data-md-component="content">
               
               <article class="md-content__inner md-typeset">
+                <a id="__skip" tabindex="-1"></a>
                 
   
   
                   
+
   
     <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/tools/xp.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
@@ -3643,12 +3705,14 @@
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>(1/3) 安装转换工具：</p>
-<pre class="highlight"><code class="language-bash">brew install qemu</code></pre>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>brew<span class="w"> </span>install<span class="w"> </span>qemu
+</span></code></pre></div>
 </div>
 <div class="tabbed-block">
 <p>(2/3) 执行转换命令：</p>
-<pre class="highlight"><code class="language-bash">qemu-img convert -f vmdk -O qcow2 你的虚拟机文件路径.vmdk 输出文件路径.qcow2
-# 如：qemu-img convert -f vmdk -O qcow2 ~/Downloads/xp.vmdk ~/Downloads/xp.qcow2</code></pre>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>qemu-img<span class="w"> </span>convert<span class="w"> </span>-f<span class="w"> </span>vmdk<span class="w"> </span>-O<span class="w"> </span>qcow2<span class="w"> </span>你的虚拟机文件路径.vmdk<span class="w"> </span>输出文件路径.qcow2
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># 如：qemu-img convert -f vmdk -O qcow2 ~/Downloads/xp.vmdk ~/Downloads/xp.qcow2</span>
+</span></code></pre></div>
 </div>
 <div class="tabbed-block">
 <p>(3/3) 完成验证：得到可被 UTM 直接导入的 .qcow2 磁盘文件，大小应与vmdk文件类似。</p>
@@ -3707,7 +3771,8 @@
 <li>下面给出了笔者安装时的资源（可以用迅雷等打开。） 
 （注意：非官方资源，请自行甄别。也可从老师主页上的链接下载。）</li>
 </ul>
-<pre class="highlight"><code class="language-http">ed2k://|file|zh-hans_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-74070.iso|630237184|EC51916C9D9B8B931195EE0D6EE9B40E|/</code></pre>
+<div class="language-http highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="err">ed2k://|file|zh-hans_windows_xp_professional_with_service_pack_3_x86_cd_vl_x14-74070.iso|630237184|EC51916C9D9B8B931195EE0D6EE9B40E|/</span>
+</span></code></pre></div>
 </div>
 <p><strong>下载 ISO 本质上是从 ISO 恢复 XP 系统</strong></p>
 </li>
@@ -3782,7 +3847,8 @@
 </li>
 <li>
 <p>查看内网 IP 地址：</p>
-<pre class="highlight"><code class="language-bash">ifconfig | grep inet</code></pre>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ifconfig<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>inet
+</span></code></pre></div>
 <p><a class="glightbox" href="../xp.assets/1Capture%202026-03-26%2014.09.58.png" data-type="image"><img width="1360" height="970" class="lqip" src="../xp.assets/1Capture%202026-03-26%2014.09.58.preview.jpg" data-fullsrc="../xp.assets/1Capture%202026-03-26%2014.09.58.png" alt="1Capture 2026-03-26 14.09.58" style="display: block; margin: 0 auto;"></a></p>
 <p>得到并记住该地址。（高亮部分）</p>
 </li>
@@ -3836,7 +3902,8 @@
 <li>
 <p>安装 7-Zip 工具(若未安装)</p>
 <p>在终端(terminal)中输入:</p>
-<pre class="highlight"><code class="language-bash">brew install p7zip</code></pre>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>brew<span class="w"> </span>install<span class="w"> </span>p7zip
+</span></code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>压缩前请关闭虚拟机，防止磁盘映像损坏。</p>
@@ -3844,10 +3911,11 @@
 </li>
 <li>
 <p>指令示例:</p>
-<pre class="highlight"><code class="language-bash">7za a test.7z ~/Parallels/Windows\ XP.utm
-# .utm并非后缀，而是文件夹名称的一部分
-# 这里7z压缩效率较高
-# 详见“指令参考”</code></pre>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>7za<span class="w"> </span>a<span class="w"> </span>test.7z<span class="w"> </span>~/Parallels/Windows<span class="se">\ </span>XP.utm
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># .utm并非后缀，而是文件夹名称的一部分</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1"># 这里7z压缩效率较高</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># 详见“指令参考”</span>
+</span></code></pre></div>
 <details class="info">
 <summary>点击查看：7za指令参考</summary>
 <p><code>Usage: 7za &lt;command&gt; [&lt;switches&gt;...] &lt;archive_name&gt; [&lt;file_names&gt;...]</code><br />
@@ -3875,9 +3943,10 @@ x : eXtract files with full paths  </p>
 </div>
 <h2 id="结语">结语<a class="headerlink" href="#结语" title="Permanent link"></a></h2>
 <p>祝学习顺利！</p>
-<pre class="highlight"><code class="language-asm">mov al, 0
-mov ah, 4Ch
-int 21h</code></pre>
+<div class="language-asm highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nf">mov</span><span class="w"> </span><span class="no">al</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nf">mov</span><span class="w"> </span><span class="no">ah</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="no">Ch</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nf">int</span><span class="w"> </span><span class="mi">21</span><span class="no">h</span>
+</span></code></pre></div>
 
 
 
@@ -3993,34 +4062,31 @@ int 21h</code></pre>
 </footer>
       
     </div>
-    <div class="md-dialog" data-md-component="dialog">
+    <div class="md-dialog" data-md-component="dialog" role="status" aria-atomic="true">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+      
+<div class="md-progress" data-md-component="progress" role="progressbar" aria-label="Loading"></div>
     
     
     
       
       
-      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.progress","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.share","search.suggest","toc.follow"],"search":"../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+      
+      
+        
+        
+          
+        
+      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.progress","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.share","search.suggest","toc.follow"],"redirect":"../../redirect.json","search":"../../assets/javascripts/workers/search.c47bb847.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","clipboard.error":"Could not copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.88ee1349.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a2388154.min.js"></script>
       
         <script src="../../theme/js/core.js"></script>
       
         <script src="../../theme/js/mathjax.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
-      
-        <script src="../../theme/js/highlight.js"></script>
       
         <script src="../../theme/js/features/content.js"></script>
       

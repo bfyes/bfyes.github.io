@@ -15,6 +15,7 @@
         <link rel="canonical" href="https://docs.bfyes.cn/study/hpc/lab2/">
       
       
+      
         <link rel="prev" href="../lab1/">
       
       
@@ -25,7 +26,7 @@
       
       
       <link rel="icon" href="../../../theme/assets/favicon.svg">
-      <meta name="generator" content="zensical-0.0.60">
+      <meta name="generator" content="zensical-0.0.70">
     
     
       
@@ -36,12 +37,12 @@
       
         
       
-      <link rel="stylesheet" href="../../../assets/stylesheets/modern/main.ce62732f.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/modern/main.e442bf79.min.css">
       
         
           
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/modern/palette.812a03bb.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/modern/palette.b60ce83d.min.css">
       
       
 
@@ -81,13 +82,7 @@
         var dark = matchMedia("(prefers-color-scheme: dark)").matches;
         var scheme = dark ? "slate" : "default";
         document.documentElement.setAttribute("data-md-color-scheme", scheme);
-        var link = document.createElement("link");
-        link.id = "hljs-theme";
-        link.rel = "stylesheet";
-        link.href = dark
-          ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
-          : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
-        document.head.appendChild(link);
+        // 代码高亮已改为构建期 Pygments，不再注入 highlight.js 的 github/github-dark 主题 CSS。
         // body 加载后同步 attribute（bundle 切换主题时写 body，这里保证 html 跟随）
         var attach = function () {
           document.body.setAttribute("data-md-color-scheme", scheme);
@@ -122,14 +117,11 @@
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <label class="md-overlay" for="__drawer" aria-hidden="true"></label>
     <div data-md-component="skip">
-      
-        
-        <a href="#lab-2moe-的向量化计算" class="md-skip">
-          Skip to content
-        </a>
-      
+      <a href="#__skip" class="md-skip">
+        Skip to content
+      </a>
     </div>
     <div data-md-component="announce">
       
@@ -306,6 +298,22 @@
         </a>
       </li>
     
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../none" class="md-tabs__link">
+        
+  
+  Reverse
+
+      </a>
+    </li>
   
 
       
@@ -567,20 +575,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+            <label class="md-nav__title" for="__nav_2">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   学习
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -634,20 +643,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_2">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   信息安全原理与数学基础
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -671,10 +681,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -698,18 +708,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -733,10 +744,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -800,20 +811,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_4">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_4">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   SYS1
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -837,10 +849,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -864,10 +876,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -891,10 +903,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -918,10 +930,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -945,10 +957,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -972,10 +984,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -999,18 +1011,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1066,20 +1079,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_5">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_5">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   FDS
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -1103,10 +1117,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1130,10 +1144,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1157,18 +1171,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
     
@@ -1234,20 +1249,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2_6">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
+            <label class="md-nav__title" for="__nav_2_6">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   HPC101
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -1312,18 +1328,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_6_2">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_6_2">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   课程笔记
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -1347,10 +1364,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1374,10 +1391,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1401,10 +1418,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1428,10 +1445,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1455,10 +1472,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1482,10 +1499,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1509,10 +1526,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1536,10 +1553,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1563,10 +1580,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1590,10 +1607,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1617,10 +1634,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1644,10 +1661,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1671,18 +1688,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1706,10 +1724,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1733,10 +1751,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
     
@@ -1923,10 +1941,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1950,10 +1968,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1977,10 +1995,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2004,18 +2022,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2073,20 +2092,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   CTF101
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -2110,10 +2130,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2162,18 +2182,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7_3">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7_3">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   lab1
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -2197,10 +2218,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2224,10 +2245,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2251,10 +2272,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2278,10 +2299,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2305,18 +2326,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2359,18 +2381,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7_4">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7_4">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   lab2
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -2394,10 +2417,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2421,18 +2444,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2475,18 +2499,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7_5">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7_5">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   lab3
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -2510,10 +2535,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2537,27 +2562,56 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../none" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reverse
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2579,273 +2633,6 @@
       
         
       
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../../tools/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  工具
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-  工具
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../tools/xp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  XP on Mac
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../tools/rosetta/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  Rosetta on Mac
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../tools/vivado/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  Vivado on Mac
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../tools/notepadnext/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  Mac 记事本
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../tools/xzzd/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  学在浙大 & PTA
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../tools/autosign/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  签到
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../tools/cc98-avatar/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  98 动态头像
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
         
       
         
@@ -2871,6 +2658,275 @@
         
           
           <div class="md-nav__link md-nav__container">
+            <a href="../../../tools/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  工具
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_4">
+              <span class="md-nav__icon md-icon"></span>
+              
+  
+  工具
+
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
+              
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/xp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  XP on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/rosetta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Rosetta on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/vivado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Vivado on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/notepadnext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Mac 记事本
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/xzzd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学在浙大 & PTA
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/autosign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  签到
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/cc98-avatar/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  98 动态头像
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+            </ul>
+          </nav>
+        
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
             <a href="../../../diaries/" class="md-nav__link ">
               
   
@@ -2888,26 +2944,27 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_5">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   随笔
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -2931,10 +2988,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2958,10 +3015,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2985,10 +3042,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3012,10 +3069,11 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
@@ -3055,7 +3113,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -3076,26 +3134,27 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_6">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   游戏
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -3119,10 +3178,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3146,10 +3205,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3173,10 +3232,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3200,10 +3259,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3227,10 +3286,11 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
@@ -3404,10 +3464,12 @@
             <div class="md-content" data-md-component="content">
               
               <article class="md-content__inner md-typeset">
+                <a id="__skip" tabindex="-1"></a>
                 
   
   
                   
+
   
     <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/study/hpc/lab2/index.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
@@ -3495,33 +3557,36 @@
 <summary>1. 数据重排</summary>
 <p>即权重预打包，重排为 AMX/VNNI 布局。</p>
 <p>以 VNNI 为例，VNNI 布局按 64 行分块 <code>[row_block/64][K/4][256]</code>，使每条 <code>vpdpbusd</code> 的权重在一次 512-bit load 中完成。</p>
-<pre class="highlight"><code class="language-c++">// VNNI 布局：[row_block/64][K/4][256]
-//每条 vpdpbusd 的权重在一次 512b load 中完备
-static void pack_weight_vnni(const int8_t *src, int rows, int K, int8_t *out) {
-    for (int rb = 0; rb &lt; rows; rb += 64)   // 64 行一块（一个 ZMM）
-        for (int kb = 0; kb &lt; K / 4; ++kb)  // 沿 K/4
-            for (int r = 0; r &lt; 64; ++r)    // 块内 64 行
-                for (int j = 0; j &lt; 4; ++j) // 块内 4 字节连续
-                    out[((rb/64)*(K/4) + kb)*256 + r*4 + j] =
-                    src[(rb + r)*K + kb*4 + j]; // 线性打包
-}</code></pre>
+<div class="language-c++ highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// VNNI 布局：[row_block/64][K/4][256]</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1">//每条 vpdpbusd 的权重在一次 512b load 中完备</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">pack_weight_vnni</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="o">*</span><span class="n">src</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">rows</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">rb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">rb</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">rows</span><span class="p">;</span><span class="w"> </span><span class="n">rb</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">64</span><span class="p">)</span><span class="w">   </span><span class="c1">// 64 行一块（一个 ZMM）</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">kb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">kb</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">K</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">kb</span><span class="p">)</span><span class="w">  </span><span class="c1">// 沿 K/4</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">r</span><span class="p">)</span><span class="w">    </span><span class="c1">// 块内 64 行</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="c1">// 块内 4 字节连续</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">                    </span><span class="n">out</span><span class="p">[((</span><span class="n">rb</span><span class="o">/</span><span class="mi">64</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">kb</span><span class="p">)</span><span class="o">*</span><span class="mi">256</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r</span><span class="o">*</span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">                    </span><span class="n">src</span><span class="p">[(</span><span class="n">rb</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="o">*</span><span class="n">K</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">kb</span><span class="o">*</span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">j</span><span class="p">];</span><span class="w"> </span><span class="c1">// 线性打包</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
+</span></code></pre></div>
 <p>在预打包时变成线性，缓存友好，计算时下面的内联汇编在连续内存中取数据。</p>
-<pre class="highlight"><code class="language-c++">asm volatile(
-    "vpdpbusd   0(%[bp]), %[av], %[a0]\n\t"
-    "vpdpbusd  64(%[bp]), %[av], %[a1]\n\t"
-    "vpdpbusd 128(%[bp]), %[av], %[a2]\n\t"
-    "vpdpbusd 192(%[bp]), %[av], %[a3]\n\t"
-    : [a0] "+v"(a0), [a1] "+v"(a1), [a2] "+v"(a2), [a3] "+v"(a3)
-    : [av] "v"(av), [bp] "r"(bp)
-    : "memory");
-bp += 256;</code></pre>
+<div class="language-c++ highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">asm</span><span class="w"> </span><span class="k">volatile</span><span class="p">(</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="s">&quot;vpdpbusd   0(%[bp]), %[av], %[a0]</span><span class="se">\n\t</span><span class="s">&quot;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="s">&quot;vpdpbusd  64(%[bp]), %[av], %[a1]</span><span class="se">\n\t</span><span class="s">&quot;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="s">&quot;vpdpbusd 128(%[bp]), %[av], %[a2]</span><span class="se">\n\t</span><span class="s">&quot;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="s">&quot;vpdpbusd 192(%[bp]), %[av], %[a3]</span><span class="se">\n\t</span><span class="s">&quot;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="n">a0</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;+v&quot;</span><span class="p">(</span><span class="n">a0</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">a1</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;+v&quot;</span><span class="p">(</span><span class="n">a1</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">a2</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;+v&quot;</span><span class="p">(</span><span class="n">a2</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">a3</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;+v&quot;</span><span class="p">(</span><span class="n">a3</span><span class="p">)</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="n">av</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;v&quot;</span><span class="p">(</span><span class="n">av</span><span class="p">),</span><span class="w"> </span><span class="p">[</span><span class="n">bp</span><span class="p">]</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="p">(</span><span class="n">bp</span><span class="p">)</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;memory&quot;</span><span class="p">);</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="n">bp</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+</span></code></pre></div>
 </details>
 <details class="tip">
 <summary>2. 并行化 OpenMP（详见 0.1.5 的网址）</summary>
 <p>这句话的前提是在合理范围内，比如下面的节选片段并不是全用满 16 线程。</p>
-<pre class="highlight"><code class="language-c++">// S2/S3 各使用 8 个物理核，S4 使用全部 16 个逻辑线程。(S1 是常驻线程池)
-g_compute_threads = E &gt; 16 ? OPENMP_NTHREADS_S4
-: (D &gt; 256 ? OPENMP_NTHREADS_LARGE : OPENMP_NTHREADS_SMALL);</code></pre>
+<div class="language-c++ highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">// S2/S3 各使用 8 个物理核，S4 使用全部 16 个逻辑线程。(S1 是常驻线程池)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">g_compute_threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">E</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">OPENMP_NTHREADS_S4</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="n">D</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">256</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">OPENMP_NTHREADS_LARGE</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">OPENMP_NTHREADS_SMALL</span><span class="p">);</span>
+</span></code></pre></div>
 <p>经过实测，S3 8 线程效果最优，可以解释为线程更多时一个核心内部的两个线程会抢用 AMX 等计算单元导致效率下降。</p>
 <p><a class="glightbox" href="./lab2.assets/image-20260811005610974.png" data-type="image"><img width="1238" height="922" class="lqip" src="./lab2.assets/image-20260811005610974.preview.jpg" data-fullsrc="./lab2.assets/image-20260811005610974.png" alt="image-20260811005610974" style="zoom:40%;"></a></p>
 <p>题外话，S2 <strong>10核心</strong>的时候有时候能打出很好的分数，但是 oj 波动很大，最后求稳改回了 8 核心。暂时归结为玄学问题。（上图想复现，发现异常了？这个真不知道为什么）</p>
@@ -3531,57 +3596,59 @@ g_compute_threads = E &gt; 16 ? OPENMP_NTHREADS_S4
 <details class="tip">
 <summary>3. 向量/矩阵计算用并行指令集（AVX-512 VNNI + AMX）</summary>
 <p>如：用 AMX 加速的 INT8 矩阵乘加内核</p>
-<pre class="highlight"><code class="language-cpp">// ── AMX int8 GEMM: A[M][K] × B[rows][K]^T → C[M][rows] ──
-// tile: tmm0=A(M×64B), tmm1=B(16×64B), tmm2..5=四个M×16的int32输出
-// 四条C链交错: load B块i → dpbssd tile i → load B块i+1...隐藏TMUL延迟
-static inline void proj_amx(xxx) {
-    for (int col = 0; col &lt; rows; col += 64) {
-        _tile_zero(2..5);
-        for (int k = 0; k &lt; K; k += 64) {
-            _tile_loadd(0, a + k, lda);
-            const int8_t *bp = pack+(size_t)(k/4)* rows * 4 + col * 4;
-            _tile_loadd(1, bp, rows * 4);
-            _tile_dpbssd(2, 0, 1);
-            ...
-        }
-        _tile_stored(2, out + col, rows * (int)sizeof(int32_t));
-        ...
-    }
-}</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// ── AMX int8 GEMM: A[M][K] × B[rows][K]^T → C[M][rows] ──</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1">// tile: tmm0=A(M×64B), tmm1=B(16×64B), tmm2..5=四个M×16的int32输出</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1">// 四条C链交错: load B块i → dpbssd tile i → load B块i+1...隐藏TMUL延迟</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">proj_amx</span><span class="p">(</span><span class="n">xxx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">rows</span><span class="p">;</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">64</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">        </span><span class="n">_tile_zero</span><span class="p">(</span><span class="mf">2..5</span><span class="p">);</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">K</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">64</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">            </span><span class="n">_tile_loadd</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"> </span><span class="n">lda</span><span class="p">);</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="o">*</span><span class="n">bp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pack</span><span class="o">+</span><span class="p">(</span><span class="kt">size_t</span><span class="p">)(</span><span class="n">k</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span><span class="o">*</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">            </span><span class="n">_tile_loadd</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">bp</span><span class="p">,</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">            </span><span class="n">_tile_dpbssd</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">            </span><span class="p">...</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">        </span><span class="p">}</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">        </span><span class="n">_tile_stored</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">col</span><span class="p">,</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int32_t</span><span class="p">));</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">        </span><span class="p">...</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="p">}</span>
+</span></code></pre></div>
 </details>
 <details class="tip">
 <summary>4. W8A8 量化</summary>
 <ol>
 <li>
 <p>FP32-&gt;int8</p>
-<pre class="highlight"><code class="language-cpp">// 对单个 token 做 per-token 对称量化：float → int8。
-// 每个 token 用独立的 scale，把动态范围充分利用到 [-127, 127]。
-static inline void quantize_token(xxx) {
-    // 1) 扫描整个 token 向量，求所有元素的绝对值最大值 vmax
-    //    ZMM lane 上逐块取 max，最后归并成一个标量 x_amax，为了算scale
-    ...details omitted...
-
-    // 2) 算出该 token 的 scale = max/127，随后反量化时乘回它即可还原；
-    //    （若全为 0 则 scale 取 1 避免除零。
-    *s_x = (x_amax &gt; 0.0f) ? x_amax / INT8_MAX_ABS : 1.0f;
-    const __m512 inv_sx = _mm512_set1_ps(1.0f / (*s_x));
-
-    // 3) 逐 16 元素块量化：先把 x 乘上 1/scale，再 float→int32 取整，
-    //    再由 int32 压窄成 int8 存回 xq。
-    for (int d = 0; d &lt; D; d += 16) {
-        __m512i q = _mm512_cvtps_epi32
-        (_mm512_mul_ps(_mm512_loadu_ps(xt + d), inv_sx));   
-        // * (1/scale) → int32
-        _mm_storeu_si128((__m128i *)(xq + d),_mm512_cvtepi32_epi8(q));  
-        // int32 → int8
-    }
-    // 结果：xq 为量化的 int8 激活，s_x 为该 token 的量化 scale。
-}
-</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">// 对单个 token 做 per-token 对称量化：float → int8。</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1">// 每个 token 用独立的 scale，把动态范围充分利用到 [-127, 127]。</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">quantize_token</span><span class="p">(</span><span class="n">xxx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="c1">// 1) 扫描整个 token 向量，求所有元素的绝对值最大值 vmax</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="c1">//    ZMM lane 上逐块取 max，最后归并成一个标量 x_amax，为了算scale</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="p">...</span><span class="n">details</span><span class="w"> </span><span class="n">omitted</span><span class="p">...</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="c1">// 2) 算出该 token 的 scale = max/127，随后反量化时乘回它即可还原；</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="c1">//    （若全为 0 则 scale 取 1 避免除零。</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="o">*</span><span class="n">s_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">x_amax</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">x_amax</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">INT8_MAX_ABS</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">;</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">__m512</span><span class="w"> </span><span class="n">inv_sx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">1.0f</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">s_x</span><span class="p">));</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span><span class="c1">// 3) 逐 16 元素块量化：先把 x 乘上 1/scale，再 float→int32 取整，</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">    </span><span class="c1">//    再由 int32 压窄成 int8 存回 xq。</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">D</span><span class="p">;</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">        </span><span class="n">__m512i</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_cvtps_epi32</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">        </span><span class="p">(</span><span class="n">_mm512_mul_ps</span><span class="p">(</span><span class="n">_mm512_loadu_ps</span><span class="p">(</span><span class="n">xt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">d</span><span class="p">),</span><span class="w"> </span><span class="n">inv_sx</span><span class="p">));</span><span class="w">   </span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">        </span><span class="c1">// * (1/scale) → int32</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">        </span><span class="n">_mm_storeu_si128</span><span class="p">((</span><span class="kr">__m128i</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">xq</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">d</span><span class="p">),</span><span class="n">_mm512_cvtepi32_epi8</span><span class="p">(</span><span class="n">q</span><span class="p">));</span><span class="w">  </span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">        </span><span class="c1">// int32 → int8</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">    </span><span class="c1">// 结果：xq 为量化的 int8 激活，s_x 为该 token 的量化 scale。</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="p">}</span>
+</span></code></pre></div>
 </li>
 <li>
 <p>int8-&gt;int32，如 2.3 中的函数签名</p>
-<pre class="highlight"><code class="language-cpp">static inline void proj_amx(const int8_t *a, int lda, int m, int K, const int8_t *pack, int rows, int32_t *out) //int8 输入、int32 输出</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">proj_amx</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">lda</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int8_t</span><span class="w"> </span><span class="o">*</span><span class="n">pack</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">rows</span><span class="p">,</span><span class="w"> </span><span class="kt">int32_t</span><span class="w"> </span><span class="o">*</span><span class="n">out</span><span class="p">)</span><span class="w"> </span><span class="c1">//int8 输入、int32 输出</span>
+</span></code></pre></div>
 </li>
 <li>
 <p>反量化int32-&gt;FP32</p>
@@ -3597,24 +3664,25 @@ static inline void quantize_token(xxx) {
 <summary>1. 多项式函数</summary>
 <p>看可支配的精度，简化一些函数（如用低阶多项式替代 exp）</p>
 <p>不同的简化程度用于不同测试点。</p>
-<pre class="highlight"><code class="language-cpp">// exp(x) = 2^{x·log2(e)} = 2^{t+f}
-// 令 t = round(x·log2(e))，f = x·log2(e)−t ∈ [-0.5,0.5]
-// 则 exp(x) = 2^t × 2^f；2^t 直接用整数 bit-field 写入 FP32 指数位，
-// 2^f 在小区间上用多项式 p(f) ≈ 2^f 近似。
-static inline __m512 exp_simd(__m512 x) {
-    x = _mm512_mul_ps(x, _mm512_set1_ps(1.4426950408889634f));
-    __m512 t = _mm512_roundscale_ps(x, 0x00);
-    __m512 f = _mm512_sub_ps(x, t);
-    // 在 f∈[-0.5,0.5] 上近似 2^f。
-    __m512 p = _mm512_fmadd_ps(f, _mm512_set1_ps(0.009618129f), _mm512_set1_ps(0.05550411f));
-    p = _mm512_fmadd_ps(f, p, _mm512_set1_ps(0.24022650f));
-    p = _mm512_fmadd_ps(f, p, _mm512_set1_ps(0.69314718f));
-    p = _mm512_fmadd_ps(f, p, _mm512_set1_ps(1.0f));
-    // 2^t 直接写入 FP32 exponent。
-    ...
-}
-static inline __m512 exp_simd_linear(__m512 x) {
-static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">// exp(x) = 2^{x·log2(e)} = 2^{t+f}</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1">// 令 t = round(x·log2(e))，f = x·log2(e)−t ∈ [-0.5,0.5]</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1">// 则 exp(x) = 2^t × 2^f；2^t 直接用整数 bit-field 写入 FP32 指数位，</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1">// 2^f 在小区间上用多项式 p(f) ≈ 2^f 近似。</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">__m512</span><span class="w"> </span><span class="nf">exp_simd</span><span class="p">(</span><span class="n">__m512</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_mul_ps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">1.4426950408889634f</span><span class="p">));</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="n">__m512</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_roundscale_ps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="mh">0x00</span><span class="p">);</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="n">__m512</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_sub_ps</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">);</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span><span class="c1">// 在 f∈[-0.5,0.5] 上近似 2^f。</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span><span class="n">__m512</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_fmadd_ps</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">0.009618129f</span><span class="p">),</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">0.05550411f</span><span class="p">));</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_fmadd_ps</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">0.24022650f</span><span class="p">));</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_fmadd_ps</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">0.69314718f</span><span class="p">));</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">    </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_mm512_fmadd_ps</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">_mm512_set1_ps</span><span class="p">(</span><span class="mf">1.0f</span><span class="p">));</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">    </span><span class="c1">// 2^t 直接写入 FP32 exponent。</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">    </span><span class="p">...</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="p">}</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">__m512</span><span class="w"> </span><span class="nf">exp_simd_linear</span><span class="p">(</span><span class="n">__m512</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">__m512</span><span class="w"> </span><span class="n">exp_simd_quadratic</span><span class="p">(</span><span class="n">__m512</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span></code></pre></div>
 <p>不同阶数的 exp：</p>
 <p><a class="glightbox" href="./lab2.assets/exp_approx.png" data-type="image"><img width="1950" height="780" class="lqip" src="./lab2.assets/exp_approx.preview.jpg" data-fullsrc="./lab2.assets/exp_approx.png" alt="exp 各阶近似与相对误差" style="zoom:60%;"></a></p>
 <p>对应到激活函数上，各阶近似的偏差：</p>
@@ -3630,12 +3698,13 @@ static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
 <details class="tip">
 <summary>3. routed slot FP16 输出</summary>
 <p>具体说明在正文"优化记录"部分。</p>
-<pre class="highlight"><code class="language-cpp">static inline uint16_t to_bf16(float x) {
-    uint32_t bits;
-    __builtin_memcpy(&amp;bits, &amp;x, sizeof(bits));
-    bits += 0x7fffu + ((bits &gt;&gt; 16) &amp; 1u);
-    return (uint16_t)(bits &gt;&gt; 16);
-}</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">uint16_t</span><span class="w"> </span><span class="nf">to_bf16</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">bits</span><span class="p">;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="n">__builtin_memcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">bits</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">bits</span><span class="p">));</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="n">bits</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mh">0x7fffu</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">((</span><span class="n">bits</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1u</span><span class="p">);</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">uint16_t</span><span class="p">)(</span><span class="n">bits</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">16</span><span class="p">);</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="p">}</span>
+</span></code></pre></div>
 </details>
 <details class="tip">
 <summary>4. 并行计算排序所需数值</summary>
@@ -3878,34 +3947,31 @@ static inline __m512 exp_simd_quadratic(__m512 x) {</code></pre>
 </footer>
       
     </div>
-    <div class="md-dialog" data-md-component="dialog">
+    <div class="md-dialog" data-md-component="dialog" role="status" aria-atomic="true">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+      
+<div class="md-progress" data-md-component="progress" role="progressbar" aria-label="Loading"></div>
     
     
     
       
       
-      <script id="__config" type="application/json">{"annotate":null,"base":"../../..","features":["content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.progress","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.share","search.suggest","toc.follow"],"search":"../../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+      
+      
+        
+        
+          
+        
+      <script id="__config" type="application/json">{"annotate":null,"base":"../../..","features":["content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.progress","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.share","search.suggest","toc.follow"],"redirect":"../../../redirect.json","search":"../../../assets/javascripts/workers/search.c47bb847.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","clipboard.error":"Could not copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.88ee1349.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.a2388154.min.js"></script>
       
         <script src="../../../theme/js/core.js"></script>
       
         <script src="../../../theme/js/mathjax.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
-      
-        <script src="../../../theme/js/highlight.js"></script>
       
         <script src="../../../theme/js/features/content.js"></script>
       

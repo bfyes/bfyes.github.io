@@ -15,6 +15,7 @@
         <link rel="canonical" href="https://docs.bfyes.cn/study/hpc/notes/0713p/">
       
       
+      
         <link rel="prev" href="../0713a/">
       
       
@@ -25,7 +26,7 @@
       
       
       <link rel="icon" href="../../../../theme/assets/favicon.svg">
-      <meta name="generator" content="zensical-0.0.60">
+      <meta name="generator" content="zensical-0.0.70">
     
     
       
@@ -36,12 +37,12 @@
       
         
       
-      <link rel="stylesheet" href="../../../../assets/stylesheets/modern/main.ce62732f.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/modern/main.e442bf79.min.css">
       
         
           
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/modern/palette.812a03bb.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/modern/palette.b60ce83d.min.css">
       
       
 
@@ -81,13 +82,7 @@
         var dark = matchMedia("(prefers-color-scheme: dark)").matches;
         var scheme = dark ? "slate" : "default";
         document.documentElement.setAttribute("data-md-color-scheme", scheme);
-        var link = document.createElement("link");
-        link.id = "hljs-theme";
-        link.rel = "stylesheet";
-        link.href = dark
-          ? "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
-          : "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
-        document.head.appendChild(link);
+        // 代码高亮已改为构建期 Pygments，不再注入 highlight.js 的 github/github-dark 主题 CSS。
         // body 加载后同步 attribute（bundle 切换主题时写 body，这里保证 html 跟随）
         var attach = function () {
           document.body.setAttribute("data-md-color-scheme", scheme);
@@ -122,14 +117,11 @@
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <label class="md-overlay" for="__drawer" aria-hidden="true"></label>
     <div data-md-component="skip">
-      
-        
-        <a href="#07-13-下午cuda-编程基础" class="md-skip">
-          Skip to content
-        </a>
-      
+      <a href="#__skip" class="md-skip">
+        Skip to content
+      </a>
     </div>
     <div data-md-component="announce">
       
@@ -306,6 +298,22 @@
         </a>
       </li>
     
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../none" class="md-tabs__link">
+        
+  
+  Reverse
+
+      </a>
+    </li>
   
 
       
@@ -567,20 +575,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+            <label class="md-nav__title" for="__nav_2">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   学习
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -634,20 +643,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_2">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   信息安全原理与数学基础
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -671,10 +681,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -698,18 +708,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -733,10 +744,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -800,20 +811,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_4">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_4">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   SYS1
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -837,10 +849,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -864,10 +876,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -891,10 +903,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -918,10 +930,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -945,10 +957,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -972,10 +984,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -999,18 +1011,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1066,20 +1079,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_5">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_5">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   FDS
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -1103,10 +1117,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1130,10 +1144,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1157,18 +1171,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
     
@@ -1234,20 +1249,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2_6">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="true">
+            <label class="md-nav__title" for="__nav_2_6">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   HPC101
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
     
@@ -1314,18 +1330,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2_6_2">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="true">
+            <label class="md-nav__title" for="__nav_2_6_2">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   课程笔记
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -1349,10 +1366,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1376,10 +1393,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1403,10 +1420,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1430,10 +1447,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1457,10 +1474,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1484,10 +1501,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1511,10 +1528,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
     
@@ -1886,10 +1903,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1913,10 +1930,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1940,10 +1957,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1967,10 +1984,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -1994,10 +2011,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2021,18 +2038,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2056,10 +2074,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2083,10 +2101,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2110,10 +2128,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2137,10 +2155,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2164,10 +2182,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2191,18 +2209,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2260,20 +2279,21 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   CTF101
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -2297,10 +2317,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2349,18 +2369,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7_3">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_3_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7_3">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   lab1
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -2384,10 +2405,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2411,10 +2432,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2438,10 +2459,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2465,10 +2486,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2492,18 +2513,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2546,18 +2568,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7_4">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_4_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7_4">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   lab2
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -2581,10 +2604,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2608,18 +2631,19 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2662,18 +2686,19 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_7_5">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_5_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_2_7_5">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   lab3
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+                  
   
   
   
@@ -2697,10 +2722,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -2724,27 +2749,56 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../none" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Reverse
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2766,273 +2820,6 @@
       
         
       
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../../../tools/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  工具
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-  工具
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../tools/xp/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  XP on Mac
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../tools/rosetta/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  Rosetta on Mac
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../tools/vivado/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  Vivado on Mac
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../tools/notepadnext/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  Mac 记事本
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../tools/xzzd/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  学在浙大 & PTA
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../tools/autosign/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  签到
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../../tools/cc98-avatar/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-  98 动态头像
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
         
       
         
@@ -3058,6 +2845,275 @@
         
           
           <div class="md-nav__link md-nav__container">
+            <a href="../../../../tools/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  工具
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_4">
+              <span class="md-nav__icon md-icon"></span>
+              
+  
+  工具
+
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
+              
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/xp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  XP on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/rosetta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Rosetta on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/vivado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Vivado on Mac
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/notepadnext/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Mac 记事本
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/xzzd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  学在浙大 & PTA
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/autosign/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  签到
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+                
+                  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/cc98-avatar/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  98 动态头像
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+                
+              
+            </ul>
+          </nav>
+        
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
             <a href="../../../../diaries/" class="md-nav__link ">
               
   
@@ -3075,26 +3131,27 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_5">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   随笔
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -3118,10 +3175,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3145,10 +3202,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3172,10 +3229,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3199,10 +3256,11 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
@@ -3242,7 +3300,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -3263,26 +3321,27 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            
+        
+          <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+            <label class="md-nav__title" for="__nav_6">
+              <span class="md-nav__icon md-icon"></span>
+              
   
   游戏
 
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
+            </label>
+            <ul class="md-nav__list" data-md-scrollfix>
               
                 
+              
+                
+                  
   
   
   
@@ -3306,10 +3365,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3333,10 +3392,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3360,10 +3419,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3387,10 +3446,10 @@
     </li>
   
 
-              
-            
+                
               
                 
+                  
   
   
   
@@ -3414,10 +3473,11 @@
     </li>
   
 
+                
               
-            
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        
       
     </li>
   
@@ -3776,10 +3836,12 @@
             <div class="md-content" data-md-component="content">
               
               <article class="md-content__inner md-typeset">
+                <a id="__skip" tabindex="-1"></a>
                 
   
   
                   
+
   
     <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/study/hpc/notes/0713p.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
@@ -3859,28 +3921,29 @@
 </details>
 <h2 id="cuda-程序流程">CUDA 程序流程<a class="headerlink" href="#cuda-程序流程" title="Permanent link"></a></h2>
 <p>一个可调试的最小 CUDA 程序会依次分配 device 内存、复制输入、配置 grid 和 block、发射 kernel、检查错误、取得结果并释放资源。开发时可在每一步检查返回值。测性能时要区分为了排错而加入的同步，与算法真正需要的同步。<sup id="fnref:cuda-runtime"><a class="footnote-ref" href="#fn:cuda-runtime">2</a></sup></p>
-<pre class="highlight"><code class="language-cpp">#define CHECK(call) do {                                                \
-  cudaError_t e = (call);                                               \
-  if (e != cudaSuccess) {                                               \
-    fprintf(stderr, "%s:%d: %s\n", __FILE__, __LINE__, cudaGetErrorString(e)); \
-    std::abort();                                                       \
-  }                                                                     \
-} while (0)
-
-float *d_x = nullptr, *d_y = nullptr;
-CHECK(cudaMalloc(&amp;d_x, n * sizeof(float)));
-CHECK(cudaMalloc(&amp;d_y, n * sizeof(float)));
-CHECK(cudaMemcpy(d_x, h_x, n * sizeof(float), cudaMemcpyHostToDevice));
-CHECK(cudaMemcpy(d_y, h_y, n * sizeof(float), cudaMemcpyHostToDevice));
-
-int threads = 256;
-int blocks = (n + threads - 1) / threads;
-saxpy&lt;&lt;&lt;blocks, threads&gt;&gt;&gt;(n, a, d_x, d_y);
-CHECK(cudaGetLastError());             // 检查 launch 参数和即时错误
-CHECK(cudaMemcpy(h_y, d_y, n * sizeof(float), cudaMemcpyDeviceToHost));
-
-CHECK(cudaFree(d_x));
-CHECK(cudaFree(d_y));</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#define CHECK(call) do {                                                \</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="cp">  cudaError_t e = (call);                                               \</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="cp">  if (e != cudaSuccess) {                                               \</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="cp">    fprintf(stderr, &quot;%s:%d: %s\n&quot;, __FILE__, __LINE__, cudaGetErrorString(e)); \</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="cp">    std::abort();                                                       \</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="cp">  }                                                                     \</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="cp">} while (0)</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="kt">float</span><span class="w"> </span><span class="o">*</span><span class="n">d_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">d_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">nullptr</span><span class="p">;</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaMalloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">d_x</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">)));</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaMalloc</span><span class="p">(</span><span class="o">&amp;</span><span class="n">d_y</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">)));</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaMemcpy</span><span class="p">(</span><span class="n">d_x</span><span class="p">,</span><span class="w"> </span><span class="n">h_x</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span><span class="w"> </span><span class="n">cudaMemcpyHostToDevice</span><span class="p">));</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaMemcpy</span><span class="p">(</span><span class="n">d_y</span><span class="p">,</span><span class="w"> </span><span class="n">h_y</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span><span class="w"> </span><span class="n">cudaMemcpyHostToDevice</span><span class="p">));</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="kt">int</span><span class="w"> </span><span class="n">threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="p">;</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="kt">int</span><span class="w"> </span><span class="n">blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threads</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">threads</span><span class="p">;</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">saxpy</span><span class="o">&lt;&lt;&lt;</span><span class="n">blocks</span><span class="p">,</span><span class="w"> </span><span class="n">threads</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">d_x</span><span class="p">,</span><span class="w"> </span><span class="n">d_y</span><span class="p">);</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaGetLastError</span><span class="p">());</span><span class="w">             </span><span class="c1">// 检查 launch 参数和即时错误</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaMemcpy</span><span class="p">(</span><span class="n">h_y</span><span class="p">,</span><span class="w"> </span><span class="n">d_y</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">),</span><span class="w"> </span><span class="n">cudaMemcpyDeviceToHost</span><span class="p">));</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaFree</span><span class="p">(</span><span class="n">d_x</span><span class="p">));</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaFree</span><span class="p">(</span><span class="n">d_y</span><span class="p">));</span>
+</span></code></pre></div>
 <p>下面的程序图将代码中的 host 操作与 device kernel 并排放置，便于核对分配、复制、启动和回收各发生在哪一侧。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/cuda-program-flow.jpg"><img width="1280" height="720" class="lqip" alt="图中的完整 CUDA 程序同时给出 host 端与 device kernel。分配、上传、launch、同步或回拷和释放构成一次最小生命周期。" src="../assets/0713p/cuda-program-flow.preview.jpg" data-fullsrc="../assets/0713p/cuda-program-flow.jpg" /></a></p>
 <p><em>图中 <code>cudaMemcpy</code>（非 Async 版本）通常会形成同步边界。kernel launch 的异步语义在后面的 Stream 小节展开。<sup id="fnref2:cuda-runtime"><a class="footnote-ref" href="#fn:cuda-runtime">2</a></sup></em></p>
@@ -3920,9 +3983,10 @@ CHECK(cudaFree(d_y));</code></pre>
 </table>
 <p>host 用 <code>&lt;&lt;&lt;grid, block&gt;&gt;&gt;</code> 指定后两个层次的大小。例如 <code>saxpy&lt;&lt;&lt;3, 4&gt;&gt;&gt;(...)</code> 表示这一次 launch 有 3 个 block，每个 block 有 4 个 thread。CUDA 运行时再把 block 安排到 GPU 的 SM 上执行；程序不需要也不能指定“第 2 个 block 固定跑在第几个 SM”。</p>
 <p>先看一维数组。设 <code>n=10</code>，每个 thread 计算一个 <code>y[i]</code>，每个 block 放 4 个 thread。host 侧会这样计算启动参数。</p>
-<pre class="highlight"><code class="language-cpp">int threads = 4;                         // 一个 block 有 4 个 thread
-int blocks = (n + threads - 1) / threads; // (10 + 4 - 1) / 4 = 3
-saxpy&lt;&lt;&lt;blocks, threads&gt;&gt;&gt;(n, a, d_x, d_y);</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w">                         </span><span class="c1">// 一个 block 有 4 个 thread</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kt">int</span><span class="w"> </span><span class="n">blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threads</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">threads</span><span class="p">;</span><span class="w"> </span><span class="c1">// (10 + 4 - 1) / 4 = 3</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">saxpy</span><span class="o">&lt;&lt;&lt;</span><span class="n">blocks</span><span class="p">,</span><span class="w"> </span><span class="n">threads</span><span class="o">&gt;&gt;&gt;</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">d_x</span><span class="p">,</span><span class="w"> </span><span class="n">d_y</span><span class="p">);</span>
+</span></code></pre></div>
 <p>这一次 launch 形成一个 grid。它有 3 个 block、每个 block 有 4 个 thread，一共启动 12 个逻辑 thread。前 10 个 thread 覆盖数组元素 <code>0</code> 到 <code>9</code>；最后两个 thread 没有对应元素，只做边界判断后结束。</p>
 <table>
 <thead>
@@ -3955,11 +4019,12 @@ saxpy&lt;&lt;&lt;blocks, threads&gt;&gt;&gt;(n, a, d_x, d_y);</code></pre>
 </tbody>
 </table>
 <p>kernel 中的索引式正是这张表的写法。</p>
-<pre class="highlight"><code class="language-cpp">__global__ void saxpy(int n, float a, const float* x, float* y) {
-  int i = blockIdx.x * blockDim.x + threadIdx.x;
-  if (i &lt; n)
-    y[i] = a * x[i] + y[i];
-}</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">saxpy</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">}</span>
+</span></code></pre></div>
 <p><code>threadIdx.x</code> 是 thread 在本 block 内的编号，范围是 <code>0</code> 到 <code>blockDim.x-1</code>。<code>blockIdx.x</code> 是 block 在 grid 内的编号。两者相乘相加后得到数组下标。<code>if (i &lt; n)</code> 不负责分配工作，它只让多启动的边界 thread 跳过越界读写。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/nvidia-cuda-grid-of-thread-blocks.png"><img width="3620" height="1720" class="lqip" alt="NVIDIA CUDA C++ Programming Guide 的 grid 图。一次 kernel launch 产生一个 grid，grid 由多个 thread block 构成，每个 block 包含一组线程。" src="../assets/0713p/nvidia-cuda-grid-of-thread-blocks.preview.jpg" data-fullsrc="../assets/0713p/nvidia-cuda-grid-of-thread-blocks.png" /></a></p>
 <p><em>图中从小到大依次是 thread、block、grid。它描述的是程序员写出的逻辑层次。运行时会把 block 调度到 SM，图上的方块位置不表示某个固定的硬件位置。<sup id="fnref2:cuda-guide"><a class="footnote-ref" href="#fn:cuda-guide">1</a></sup></em></p>
@@ -3989,21 +4054,24 @@ saxpy&lt;&lt;&lt;blocks, threads&gt;&gt;&gt;(n, a, d_x, d_y);</code></pre>
 </tr>
 </tbody>
 </table>
-<pre class="highlight"><code class="language-cpp">__global__ void saxpy(int n, float a, const float* x, float* y) {
-  int first = blockIdx.x * blockDim.x + threadIdx.x;
-  int stride = blockDim.x * gridDim.x;
-  for (int i = first; i &lt; n; i += stride)
-    y[i] = a * x[i] + y[i];
-}</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">__global__</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">saxpy</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blockIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">stride</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blockDim</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">gridDim</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">first</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">stride</span><span class="p">)</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">}</span>
+</span></code></pre></div>
 <p>grid-stride loop 的好处是覆盖关系仍然清楚，同时可以把 block 数控制在与 SM 数量相称的范围。调试时还可以把 launch 缩小到一个或两个 block，逐步检查索引、边界和输出；性能调优时再根据寄存器、shared memory、输入规模和 profiler 选择更多 block 或不同 block 大小。</p>
 <h2 id="sm-与-warp-执行">SM 与 Warp 执行<a class="headerlink" href="#sm-与-warp-执行" title="Permanent link"></a></h2>
 <p>一个 block 在运行期间驻留在单个 SM 上，block 内线程被划分为 warp。warp 中线程通常执行同一条指令流。条件分支让部分线程走不同路径时，硬件会分别执行这些路径，并屏蔽未参与当前路径的线程。是否优化分支取决于它是否处在热点、分歧是否频繁，以及替代方案是否增加更多计算或访存。<sup id="fnref3:cuda-guide"><a class="footnote-ref" href="#fn:cuda-guide">1</a></sup></p>
-<pre class="highlight"><code class="language-cpp">if (kind[i] == 0) out[i] = f0(x[i]);
-else              out[i] = f1(x[i]);</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">kind</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f0</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">else</span><span class="w">              </span><span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f1</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></code></pre></div>
 <p>若一个 warp 中的 <code>kind[i]</code> 高度混杂，上述代码可能执行两条路径。对有大量元素的分类问题，可以尝试先分桶，让同一 warp 处理相近类别；对小规模或罕见分支，额外的重排成本可能不值得。</p>
 <h3 id="occupancy寄存器与并发-block">occupancy、寄存器与并发 block<a class="headerlink" href="#occupancy寄存器与并发-block" title="Permanent link"></a></h3>
 <p>SM 可同时驻留的 warp 数受到每线程寄存器数、每 block shared memory、线程数和硬件上限约束。占用率（occupancy）表示活跃 warp 相对于硬件上限的比例。它有助于解释能否隐藏延迟。降低寄存器以提高占用率可能引入 local-memory spill，增加设备内存流量。<sup id="fnref:cuda-best"><a class="footnote-ref" href="#fn:cuda-best">3</a></sup></p>
-<pre class="highlight"><code class="language-bash">nvcc -Xptxas=-v kernel.cu -o kernel     # 查看寄存器与 spill 的编译器报告</code></pre>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>nvcc<span class="w"> </span>-Xptxas<span class="o">=</span>-v<span class="w"> </span>kernel.cu<span class="w"> </span>-o<span class="w"> </span>kernel<span class="w">     </span><span class="c1"># 查看寄存器与 spill 的编译器报告</span>
+</span></code></pre></div>
 <p>以 128 或 256 线程的 block 作为起点通常便于控制 warp 数和边界；接着用实际形状测量。对于一维简单 kernel，block 大小的收益常小于合并访问和减少中间数据搬运的收益。</p>
 <h2 id="gpu-内存层级">GPU 内存层级<a class="headerlink" href="#gpu-内存层级" title="Permanent link"></a></h2>
 <p>GPU 的存储空间按可见范围和访问代价区分。寄存器为线程私有，速度快但数量有限。shared memory 由 block 内线程显式共享。global memory 可由同一 GPU 上的 kernel 访问，容量大但访问延迟高。<code>local memory</code> 在语义上归线程私有，通常位于设备内存，因而会带来和寄存器不同的访问代价。<sup id="fnref4:cuda-guide"><a class="footnote-ref" href="#fn:cuda-guide">1</a></sup></p>
@@ -4011,34 +4079,38 @@ else              out[i] = f1(x[i]);</code></pre>
 <p><em>使用某个存储空间时，要同时看访问范围和数据复用。block 内有实际复用或协作时，shared memory 才能摊薄加载和同步成本。<sup id="fnref5:cuda-guide"><a class="footnote-ref" href="#fn:cuda-guide">1</a></sup></em></p>
 <h3 id="shared-memory-的同步范围">shared memory 的同步范围<a class="headerlink" href="#shared-memory-的同步范围" title="Permanent link"></a></h3>
 <p>加载 shared tile 后，线程必须等到所有需要的数据都可见，才开始读取；计算结束后，如果下一轮要覆盖同一块 shared memory，也必须保证旧数据已无人使用。<code>__syncthreads()</code> 只同步一个 block，且同一 block 中所有未退出的线程必须以一致控制流到达该屏障。<sup id="fnref6:cuda-guide"><a class="footnote-ref" href="#fn:cuda-guide">1</a></sup></p>
-<pre class="highlight"><code class="language-cpp">shared[threadIdx.x] = (i &lt; n) ? x[i] : 0.0f;
-__syncthreads();
-// 此处所有线程都可读取本轮 shared[]</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">shared</span><span class="p">[</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">__syncthreads</span><span class="p">();</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1">// 此处所有线程都可读取本轮 shared[]</span>
+</span></code></pre></div>
 <p>边界线程不能在屏障前直接 <code>return</code>，否则同 block 的其他线程可能永久等待。处理边界的常见办法是让无效线程写入零值或跳过最终 store，但仍参与每一轮必要的同步。</p>
 <h2 id="合并访问和-bank-conflict">合并访问和 bank conflict<a class="headerlink" href="#合并访问和-bank-conflict" title="Permanent link"></a></h2>
 <p>global memory 的访问以 warp 为观察单位。相邻线程访问连续且对齐的元素时，硬件通常用较少内存事务完成请求。每个线程跨大步长读取时，事务数会增加，有效带宽下降。具体事务大小和合并规则随 GPU 架构、访问类型和对齐变化。布局设计应先让相邻线程访问连续元素，再根据目标设备的 profiler 指标分析事务数量。<sup id="fnref2:cuda-best"><a class="footnote-ref" href="#fn:cuda-best">3</a></sup></p>
-<pre class="highlight"><code class="language-cpp">// 连续访问。thread 0/1/2/... 分别访问 x[base+0], x[base+1], x[base+2]...
-float v = x[base + threadIdx.x];
-
-// 跨步访问。相邻线程跳过 stride 个元素
-float w = x[base + threadIdx.x * stride];</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">// 连续访问。thread 0/1/2/... 分别访问 x[base+0], x[base+1], x[base+2]...</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kt">float</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">base</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="p">];</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1">// 跨步访问。相邻线程跳过 stride 个元素</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="kt">float</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="n">base</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">stride</span><span class="p">];</span>
+</span></code></pre></div>
 <p>下面的图把两种地址映射画成内存事务。先看同一个 warp 中相邻线程落在连续地址还是跨步地址，再阅读事务数量的差别。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/memory-coalescing.jpg"><img width="1280" height="720" class="lqip" alt="一个 warp 连续访问时可合并成较少事务；跨步访问会拆成更多事务。" src="../assets/0713p/memory-coalescing.preview.jpg" data-fullsrc="../assets/0713p/memory-coalescing.jpg" /></a></p>
 <p><em>合并访问属于数据布局与线程映射问题。先决定输出索引和连续维度，再选择 block 形状。<sup id="fnref3:cuda-best"><a class="footnote-ref" href="#fn:cuda-best">3</a></sup></em></p>
 <p>shared memory 被划分为 bank。对常见的 32 位访问，相邻 32 位字分布到不同 bank。同一 warp 的多个线程若请求同一 bank 中不同地址，访问会发生冲突并被拆分。矩阵转置等场景常通过 padding 改变行跨度，例如将 <code>tile[T][T]</code> 改为 <code>tile[T][T+1]</code>。使用这种方法前，应先用 profiler 确认 bank conflict 是热点中的实际问题。<sup id="fnref4:cuda-best"><a class="footnote-ref" href="#fn:cuda-best">3</a></sup></p>
 <h2 id="矩阵乘法与-tiling">矩阵乘法与 Tiling<a class="headerlink" href="#矩阵乘法与-tiling" title="Permanent link"></a></h2>
 <p>朴素 GEMM 让每个输出元素独立从 global memory 读取 <span class="arithmatex">\(A\)</span> 的一行和 <span class="arithmatex">\(B\)</span> 的一列，同一元素会被许多线程重复读取。分块 GEMM（tiled GEMM）让一个 block 负责 <span class="arithmatex">\(C\)</span> 的一个输出 tile。线程协作加载 <span class="arithmatex">\(A\)</span> 的 <span class="arithmatex">\(BM\times BK\)</span> 子块和 <span class="arithmatex">\(B\)</span> 的 <span class="arithmatex">\(BK\times BN\)</span> 子块到 shared memory，在寄存器中累加，再处理下一段 K 维。</p>
-<pre class="highlight"><code class="language-text">global A/B  →  shared A/B tile  →  register accumulators  →  global C</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>global A/B  →  shared A/B tile  →  register accumulators  →  global C
+</span></code></pre></div>
 <p>下图将这条数据流落实到一个 block。注意 A、B 子块由线程协作载入，而每个线程把自己的部分和留在寄存器中。</p>
 <p><a class="glightbox" data-type="image" href="../assets/0713p/nvidia-cuda-matmul-shared-memory.png"><img width="550" height="558" class="lqip" alt="NVIDIA CUDA C++ Programming Guide 的共享内存矩阵乘法图。一个 block 协作载入 A、B 的子块，在 shared memory 中复用后计算 C 的一个输出子块。" src="../assets/0713p/nvidia-cuda-matmul-shared-memory.preview.jpg" data-fullsrc="../assets/0713p/nvidia-cuda-matmul-shared-memory.png" /></a></p>
 <p><em>图中展示共享内存 tiled GEMM 的数据划分。每轮 tile 都要处理边界、在加载后同步、计算后再进入下一轮。生产场景通常调用 cuBLAS 或 CUTLASS。<sup id="fnref7:cuda-guide"><a class="footnote-ref" href="#fn:cuda-guide">1</a></sup><sup id="fnref:cublas"><a class="footnote-ref" href="#fn:cublas">4</a></sup></em></p>
 <h3 id="两个同步分别保护什么">两个同步分别保护什么<a class="headerlink" href="#两个同步分别保护什么" title="Permanent link"></a></h3>
-<pre class="highlight"><code class="language-text">for k0 in 0, BK, 2BK, ...:
-    cooperative_load(A_tile, B_tile)
-    __syncthreads()              # 本轮 tile 已完整可读
-    register_accumulate(tile)
-    __syncthreads()              # 旧 tile 已无人读取，可覆盖
-store(C_tile)</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>for k0 in 0, BK, 2BK, ...:
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    cooperative_load(A_tile, B_tile)
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    __syncthreads()              # 本轮 tile 已完整可读
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    register_accumulate(tile)
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    __syncthreads()              # 旧 tile 已无人读取，可覆盖
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>store(C_tile)
+</span></code></pre></div>
 <p>第一处屏障确保生产者已经把 tile 装完，第二处确保消费者已经读完旧 tile。使用异步 copy 或多级 pipeline 时，状态会更复杂，但这两个所有权条件仍然存在。每个线程可以累加多个 <span class="arithmatex">\(C\)</span> 元素以提高复用。tile 过大又会增加寄存器与 shared memory 占用，降低可驻留 block 数，因此应使用 Nsight Compute 验证。</p>
 <h2 id="tensor-core-与矩阵乘加">Tensor Core 与矩阵乘加<a class="headerlink" href="#tensor-core-与矩阵乘加" title="Permanent link"></a></h2>
 <p>Tensor Core 是 NVIDIA GPU 中加速特定形状和精度组合矩阵乘加的硬件单元。cuBLAS（CUDA Basic Linear Algebra Subprograms，CUDA 基础线性代数库）、cuBLASLt（可调的轻量 cuBLAS 接口）、CUTLASS（CUDA Templates for Linear Algebra Subroutines，CUDA 线性代数模板库）与 WMMA（Warp Matrix Multiply and Accumulate，warp 矩阵乘加接口）提供不同的抽象层。它们对数据类型、布局、对齐、维度和累加精度都有明确约束。应先使用库实现建立正确、快速的基线，再判断自定义 kernel 是否确有无法表达的融合或布局需求。<sup id="fnref2:cublas"><a class="footnote-ref" href="#fn:cublas">4</a></sup></p>
@@ -4050,25 +4122,27 @@ store(C_tile)</code></pre>
 <p><em>这张图说明一次基础 CUDA 生命周期和 kernel launch 的异步返回。图中没有展示多 stream 的复制—计算重叠；实际重叠需要结合依赖、stream 和硬件 copy/compute 能力，在时间线中验证。<sup id="fnref:cuda-stream"><a class="footnote-ref" href="#fn:cuda-stream">5</a></sup><sup id="fnref2:ncu"><a class="footnote-ref" href="#fn:ncu">6</a></sup></em></p>
 <h2 id="kernel-启动stream-与异步">Kernel 启动、Stream 与异步<a class="headerlink" href="#kernel-启动stream-与异步" title="Permanent link"></a></h2>
 <p>同一 stream 内的操作按提交顺序建立依赖。不同 stream 的操作可在满足资源和依赖条件时并发。默认 stream 的语义还会受运行时配置影响。复杂程序应使用事件表达跨 stream 的依赖，避免依靠隐含顺序。<sup id="fnref2:cuda-stream"><a class="footnote-ref" href="#fn:cuda-stream">5</a></sup></p>
-<pre class="highlight"><code class="language-cpp">cudaEvent_t ready;
-CHECK(cudaEventCreate(&amp;ready));
-producer&lt;&lt;&lt;grid, block, 0, stream_a&gt;&gt;&gt;(...);
-CHECK(cudaEventRecord(ready, stream_a));
-CHECK(cudaStreamWaitEvent(stream_b, ready, 0));
-consumer&lt;&lt;&lt;grid, block, 0, stream_b&gt;&gt;&gt;(...);</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">cudaEvent_t</span><span class="w"> </span><span class="n">ready</span><span class="p">;</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaEventCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ready</span><span class="p">));</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">producer</span><span class="o">&lt;&lt;&lt;</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">stream_a</span><span class="o">&gt;&gt;&gt;</span><span class="p">(...);</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaEventRecord</span><span class="p">(</span><span class="n">ready</span><span class="p">,</span><span class="w"> </span><span class="n">stream_a</span><span class="p">));</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaStreamWaitEvent</span><span class="p">(</span><span class="n">stream_b</span><span class="p">,</span><span class="w"> </span><span class="n">ready</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="n">consumer</span><span class="o">&lt;&lt;&lt;</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">stream_b</span><span class="o">&gt;&gt;&gt;</span><span class="p">(...);</span>
+</span></code></pre></div>
 <h3 id="数据传输与算子融合">数据传输与算子融合<a class="headerlink" href="#数据传输与算子融合" title="Permanent link"></a></h3>
 <p>将输入上传到 device 后连续执行多个 kernel，最后再下载结果，可以减少中间张量反复经过主机内存的次数。融合连续算子还能减少 global-memory 写回和 kernel launch 次数，也可能增加寄存器压力、降低 occupancy，或使代码难以调试。先在 Nsight Systems 中确认小 kernel、复制或同步确实占据端到端时间，再决定是否融合。<sup id="fnref:nsys"><a class="footnote-ref" href="#fn:nsys">7</a></sup></p>
 <h3 id="stream事件与资源生命周期">Stream、事件与资源生命周期<a class="headerlink" href="#stream事件与资源生命周期" title="Permanent link"></a></h3>
 <p>kernel launch 返回后，device 可能仍在使用传入的缓冲区。host 必须等最后一次使用完成，才能释放、覆盖或复用这段内存。事件可表达 stream 之间的依赖，也可测量同一 stream 内的设备时间。端到端经过时间（wall-clock time）还应保留 host 准备、排队和必要同步。</p>
-<pre class="highlight"><code class="language-cpp">cudaEvent_t start, stop;
-CHECK(cudaEventCreate(&amp;start));
-CHECK(cudaEventCreate(&amp;stop));
-CHECK(cudaEventRecord(start, stream));
-kernel&lt;&lt;&lt;grid, block, 0, stream&gt;&gt;&gt;(...);
-CHECK(cudaEventRecord(stop, stream));
-CHECK(cudaEventSynchronize(stop));
-float ms = 0.0f;
-CHECK(cudaEventElapsedTime(&amp;ms, start, stop));</code></pre>
+<div class="language-cpp highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">cudaEvent_t</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">stop</span><span class="p">;</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaEventCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">start</span><span class="p">));</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaEventCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stop</span><span class="p">));</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaEventRecord</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="p">));</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="n">kernel</span><span class="o">&lt;&lt;&lt;</span><span class="n">grid</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="o">&gt;&gt;&gt;</span><span class="p">(...);</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaEventRecord</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span><span class="w"> </span><span class="n">stream</span><span class="p">));</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaEventSynchronize</span><span class="p">(</span><span class="n">stop</span><span class="p">));</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="kt">float</span><span class="w"> </span><span class="n">ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">;</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="n">CHECK</span><span class="p">(</span><span class="n">cudaEventElapsedTime</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ms</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">stop</span><span class="p">));</span>
+</span></code></pre></div>
 <h2 id="cuda-正确性与性能工程">CUDA 正确性与性能工程<a class="headerlink" href="#cuda-正确性与性能工程" title="Permanent link"></a></h2>
 <p>性能改动需要形成可复查的过程。先建立参考输出，定位端到端热点，解释一个可测现象，实施一个改动，再重新比较正确性与时间。每个 CUDA Runtime API 调用都应检查返回值。kernel launch 后调用 <code>cudaGetLastError</code>，并在真正需要结果的位置同步，检查延迟报告的错误。<sup id="fnref3:cuda-runtime"><a class="footnote-ref" href="#fn:cuda-runtime">2</a></sup></p>
 <h3 id="kernel-索引与边界掩码">Kernel 索引与边界掩码<a class="headerlink" href="#kernel-索引与边界掩码" title="Permanent link"></a></h3>
@@ -4239,34 +4313,31 @@ CHECK(cudaEventElapsedTime(&amp;ms, start, stop));</code></pre>
 </footer>
       
     </div>
-    <div class="md-dialog" data-md-component="dialog">
+    <div class="md-dialog" data-md-component="dialog" role="status" aria-atomic="true">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+      
+<div class="md-progress" data-md-component="progress" role="progressbar" aria-label="Loading"></div>
     
     
     
       
       
-      <script id="__config" type="application/json">{"annotate":null,"base":"../../../..","features":["content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.progress","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.share","search.suggest","toc.follow"],"search":"../../../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+      
+      
+        
+        
+          
+        
+      <script id="__config" type="application/json">{"annotate":null,"base":"../../../..","features":["content.action.edit","content.action.view","content.code.annotate","content.code.copy","content.code.select","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.progress","navigation.tabs","navigation.top","navigation.tracking","search.highlight","search.share","search.suggest","toc.follow"],"redirect":"../../../../redirect.json","search":"../../../../assets/javascripts/workers/search.c47bb847.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","clipboard.error":"Could not copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.88ee1349.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.a2388154.min.js"></script>
       
         <script src="../../../../theme/js/core.js"></script>
       
         <script src="../../../../theme/js/mathjax.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js"></script>
-      
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js"></script>
-      
-        <script src="../../../../theme/js/highlight.js"></script>
       
         <script src="../../../../theme/js/features/content.js"></script>
       
