@@ -85,6 +85,21 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   --bgColor-muted: #f6f8fa;
   /* 代码块背景沿用站点旧色号（GitHub 的 muted 底），不用 Material 的 --md-code-bg-color */
   --md-code-bg-color: var(--bgColor-muted);
+  /* 代码高亮贴 GitHub：色值取自 highlight.js 的 github.css。
+     这批变量同时驱动静态块（Pygments 类）与 pyodide 编辑器的 ace-zensical 主题。 */
+  --md-code-fg-color: #1f2328;
+  --md-code-hl-keyword-color: #d73a49;
+  --md-code-hl-name-color: #1f2328;
+  --md-code-hl-function-color: #6f42c1;
+  --md-code-hl-string-color: #032f62;
+  --md-code-hl-number-color: #005cc5;
+  --md-code-hl-constant-color: #e36209;
+  --md-code-hl-variable-color: #005cc5;
+  --md-code-hl-comment-color: #6a737d;
+  --md-code-hl-operator-color: #005cc5;
+  --md-code-hl-punctuation-color: #1f2328;
+  --md-code-hl-special-color: #005cc5;
+  --md-code-hl-generic-color: #6a737d;
   --bgColor-neutral-muted: rgba(129, 139, 152, 0.12);
   --borderColor-default: #d1d9e0;
   --borderColor-muted: rgba(209, 217, 224, 0.7);
@@ -105,6 +120,20 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   --bgColor-muted: #151b23;
   /* 代码块背景沿用站点旧色号（GitHub 的 muted 底），不用 Material 的 --md-code-bg-color */
   --md-code-bg-color: var(--bgColor-muted);
+  /* 代码高亮贴 GitHub，深色套 highlight.js 的 github-dark.css */
+  --md-code-fg-color: #c9d1d9;
+  --md-code-hl-keyword-color: #ff7b72;
+  --md-code-hl-name-color: #c9d1d9;
+  --md-code-hl-function-color: #d2a8ff;
+  --md-code-hl-string-color: #a5d6ff;
+  --md-code-hl-number-color: #79c0ff;
+  --md-code-hl-constant-color: #ffa657;
+  --md-code-hl-variable-color: #79c0ff;
+  --md-code-hl-comment-color: #8b949e;
+  --md-code-hl-operator-color: #79c0ff;
+  --md-code-hl-punctuation-color: #c9d1d9;
+  --md-code-hl-special-color: #79c0ff;
+  --md-code-hl-generic-color: #8b949e;
   --bgColor-neutral-muted: rgba(101, 108, 118, 0.2);
   --borderColor-default: #3d444d;
   --borderColor-muted: rgba(61, 68, 77, 0.7);
@@ -348,6 +377,12 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 .md-typeset .highlighttable tr:first-child > .linenos,
 .md-typeset .highlighttable > tbody > tr > .code > div > pre > code {
   border-radius: 0;
+}
+
+/* GitHub 把 True/False/None 这类常量标成常量色（蓝），Material 的映射把它们（.kc）
+   和普通名字（.n）一起归给了 name 变量，这里单独给出常量色。 */
+.md-typeset .highlight .kc {
+  color: var(--md-code-hl-constant-color);
 }
 
 /* ---- 行内代码（GitHub 风格） ---- */

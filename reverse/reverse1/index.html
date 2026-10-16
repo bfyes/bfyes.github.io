@@ -3223,7 +3223,7 @@
 
 
 
-<h1 id="reverse1">Reverse1<a class="headerlink" href="#reverse1" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-17T00:24:51.549379+08:00">2026/10/17</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 280 字</span></div>
+<h1 id="reverse1">Reverse1<a class="headerlink" href="#reverse1" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-17T00:34:42.092366+08:00">2026/10/17</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 305 字</span></div>
 <h2 id="ida-的基本操作">IDA 的基本操作<a class="headerlink" href="#ida-的基本操作" title="Permanent link"></a></h2>
 <table>
 <thead>
@@ -3287,17 +3287,18 @@
 <p>补充: 以mac为例, ida的视图缩放: <kbd>command</kbd>+<kbd>shift</kbd>+<kbd>+</kbd>, <kbd>command</kbd>+<kbd>-</kbd>.</p>
 </blockquote>
 <h2 id="静态分析">静态分析<a class="headerlink" href="#静态分析" title="Permanent link"></a></h2>
-<p>掌握了 ida 的基本操作，即可进行简单的静态分析。以 <a href="https://zjusec.com/challenges/26">Reverse1</a> 为例，通过静态分析可以获取答案。</p>
+<p>掌握了 IDA 的基本操作，即可进行简单的静态分析。以 <a href="https://zjusec.com/challenges/26">Reverse1</a> 为例，通过静态分析可以获取答案。</p>
 <p><a class="glightbox" data-type="image" href=".././reverse1.assets/image-20261016205824023.png"><img width="2756" height="2210" class="lqip" alt="image-20261016205824023" src=".././reverse1.assets/image-20261016205824023.preview.jpg" data-fullsrc=".././reverse1.assets/image-20261016205824023.png" /></a></p>
+<p>IDA 有特征库，已经成功识别了 <code>_printf</code> 等库函数，大大降低了阅读难度。 </p>
 <p>情况似乎比较明朗，打开即可看到疑似异或/凯撒密码加密过的flag（因为MMM太容易让人联想到AAA），在程序运行时动态加载到栈中。</p>
 <p>查看代码可知采用了异或加密，循环部分为按位检测，然后分别有两个跳出的分支，为成功或失败。</p>
 <p>根据逆向结果，将每一位与0Ch做异或即可。</p>
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="8" data-maxlines="8">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-13--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-16--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-13--editor" class="pyodide-editor">data = [
+<div><pre id="exec-16--editor" class="pyodide-editor">data = [
     0x4D, 0x4D, 0x4D, 0x77, 0x6A, 0x61, 0x75, 0x60, 0x53, 0x5D,
     0x5D, 0x53, 0x7D, 0x79, 0x62, 0x53, 0x3F, 0x34, 0x3A, 0x3B,
     0x35, 0x3A, 0x3C, 0x34, 0x3C, 0x71,
@@ -3306,9 +3307,9 @@
 flag = "".join(chr(b ^ 0x0C) for b in data)
 print(flag)</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-13--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-16--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-13--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-16--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 
