@@ -658,6 +658,17 @@ body[data-page-grid="false"]::before {
   background-color: var(--content-bg);
 }
 
+/* Material 在弹层里复用了 .md-typeset（代码注解 tooltip、复制提示弹框）。
+   上面这条会把正文底色刷进弹层，以方角盖住弹层本体 .4rem 的圆角。
+   这里把弹层内部的 .md-typeset 底色还原为透明，圆角交回弹层自己。
+
+   注意别把 .md-tooltip2 也写进来：官方 .md-tooltip2__inner 本身就带
+   background + border-radius（它也挂了 .md-typeset），盖掉会让它变透明。 */
+.md-tooltip .md-typeset,
+.md-dialog .md-typeset {
+  background-color: transparent;
+}
+
 /* ---- 彩虹背景 ----------------------------------------------------- */
 .rainbow-page {
   position: relative;
@@ -1086,11 +1097,6 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
   .md-content__inner {
     padding-inline: var(--mobile-content-padding);
   }
-
-  .md-typeset pre.highlight,
-  .md-typeset pre[class*="language-"] {
-    margin-inline: 0;
-  }
 }
 
 .md-content__inner { transition: padding 0.3s ease; }
@@ -1186,34 +1192,36 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
 /* ============================================================================
    07. 站点增强体验
    ----------------------------------------------------------------------------
-   sidebar 滚动容器与代码块横向滚动条共用一套样式：
-   Firefox 用 scrollbar-width / scrollbar-color，webkit 用 ::-webkit-scrollbar*。
+   sidebar 滚动容器与代码块横向滚动条共用一套样式：Firefox 用
+   scrollbar-width / scrollbar-color，webkit 用 ::-webkit-scrollbar*。
    尺寸与配色变量见 variables.css（--scrollbar-width / -height / -thumb /
    -thumb-hover），按 [data-md-color-scheme] 切换明暗。
+   代码块的滚动容器是内层 <code>（Pygments 的 div.highlight > pre > code 与
+   pyodide 的 .pyodide > pre > code.pyodide-output 都算）。
    ============================================================================ */
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner),
-.md-typeset :is(pre.highlight, pre[class*="language-"]) code {
+.md-typeset :is(pre.highlight, .highlight pre, .pyodide pre) > code {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar,
-.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar {
+.md-typeset :is(pre.highlight, .highlight pre, .pyodide pre) > code::-webkit-scrollbar {
   width: var(--scrollbar-width);
   height: var(--scrollbar-height);
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-track,
-.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-track {
+.md-typeset :is(pre.highlight, .highlight pre, .pyodide pre) > code::-webkit-scrollbar-track {
   background: transparent;
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-thumb,
-.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-thumb {
+.md-typeset :is(pre.highlight, .highlight pre, .pyodide pre) > code::-webkit-scrollbar-thumb {
   background-color: var(--scrollbar-thumb);
   border: 2px solid transparent;
   border-radius: 999px;
   background-clip: padding-box;
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner)::-webkit-scrollbar-thumb:hover,
-.md-typeset :is(pre.highlight, pre[class*="language-"]) code::-webkit-scrollbar-thumb:hover {
+.md-typeset :is(pre.highlight, .highlight pre, .pyodide pre) > code::-webkit-scrollbar-thumb:hover {
   background-color: var(--scrollbar-thumb-hover);
 }
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within) {
@@ -1225,8 +1233,6 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
 .md-sidebar :is(.md-sidebar__scrollwrap, .md-sidebar__inner):is(:hover, :focus-within)::-webkit-scrollbar-thumb:hover {
   background-color: var(--scrollbar-thumb-hover);
 }
-
-/* hljs 与 Material 布局兼容见 main.css（代码块 UI 归一管理） */
 
 
 /* ---- 图片渐进加载 -------------------------------------------------- */
@@ -1240,4 +1246,23 @@ img.lqip {
 }
 @media (prefers-reduced-motion: reduce) {
   img[data-fullsrc] { transition: none; }
+}
+
+/* ============================================================================
+   pyodide 编辑器（Ace）外观：去圆角 + 行号列间距
+   ----------------------------------------------------------------------------
+   zensical 自带的 ace 主题里有一条 `.md-typeset .ace-zensical .ace_gutter-cell
+   { padding-left: 0 }`，把 Ace 默认的 19px 左内边距抹掉，行号于是贴着编辑器左边缘，
+   和代码之间只剩 Ace 的 `padding-right: 13px`（折叠箭头的预留）加文本层 4px 外边距。
+   这里补回一点内边距，让行号列有呼吸感。注意 Ace 是在编辑器挂载时读取这两个
+   计算值来算列宽的，所以必须写进样式表（运行时再注入不生效）。
+   ============================================================================ */
+/* 官方 .md-typeset .pyodide 带 .4rem 圆角，这里跟随代码块一起做方角。 */
+.md-typeset .pyodide {
+  border-radius: 0;
+}
+
+.md-typeset .pyodide .ace_gutter-cell {
+  padding-left: 0px;
+  padding-right: 20px;
 }

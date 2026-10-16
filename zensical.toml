@@ -97,6 +97,9 @@ nav = [
             ] },
         ] },
     ] },
+    { "Reverse" = [
+#        "reverse/index.md",
+    ] },
     { "工具" = [
         "tools/index.md",
         { "XP on Mac" = "tools/xp.md" },
@@ -146,14 +149,15 @@ extra_css = [
 extra_javascript = [
     "theme/js/core.js",
     "theme/js/mathjax.js",
-    # highlight.js 运行时语法高亮（用法与 MathJax 相同：直接引 CDN + theme/js/highlight.js 控制渲染）
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
-    # 不在 common 子集里、需单独加载的语言（均为 IIFE 自注册到 hljs）：
-    #   x86asm 汇编、cmake、http
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js",
-    "theme/js/highlight.js",
+    # 代码高亮已改为构建期 Pygments（见 pymdownx.highlight.use_pygments）。
+    # 代码注解与行号都只支持 Pygments，hljs 会重写 innerHTML 覆盖 Pygments 的 span，
+    # 所以下面四行 CDN 与 theme/js/highlight.js 暂时不加载；要退回 hljs 就把它们放回来，
+    # 并把 use_pygments 改回 false。
+    # "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js",
+    # "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/x86asm.min.js",
+    # "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cmake.min.js",
+    # "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/http.min.js",
+    # "theme/js/highlight.js",
     "theme/js/features/content.js",
     "theme/js/features/pdf.js",
     "theme/js/features/enhancements.js",
@@ -226,8 +230,15 @@ smart_insert = true
 [project.markdown_extensions.pymdownx.critic]
 [project.markdown_extensions.pymdownx.details]
 [project.markdown_extensions.pymdownx.highlight]
-use_pygments = false
-# pygments_lang_class 仍用于给 <code> 加 language-xxx class，供 highlight.js 识别语言
+# Pygments 构建期上色。代码注解（content.code.annotate）与 linenums 行号只能由 Pygments
+# 生成，不支持运行时 JS 高亮器；原先的 hljs 方案见 extra_javascript 里的注释。
+use_pygments = true
+# 官方推荐配置（zensical docs → authoring → code blocks）：
+# anchor_linenums 让行号带锚点，line_spans 给每行包一层 <span id="__span-…">，
+# 后者是 Material 定位代码注解 marker、行高亮等特性的前提，缺了就会和官方渲染不一致。
+anchor_linenums = true
+line_spans = "__span"
+# 给 <code> 加 language-xxx class
 pygments_lang_class = true
 
 [project.markdown_extensions.pymdownx.inlinehilite]
@@ -257,6 +268,12 @@ slugify = { object = "pymdownx.slugs.slugify", kwds = { case = "lower" } }
 # --------------------------------------------------------------------------
 [project.plugins.glightbox]
 [project.plugins.tags]
+
+# 构建期执行代码块（围栏里写 exec="1"）。zensical 自带 markdown-exec 适配层，
+# 但需要装 markdown-exec 包（见 pyproject.toml 的 dev 依赖），否则构建直接报错。
+# 可选：ansi = "auto"（要另装 pygments-ansi-color）、languages = [...] 限定语言。
+[project.plugins."markdown-exec"]
+enabled = true
 
 # 旧 URL 重定向：源写旧文件路径，值写新文件路径（或完整外链 URL）。
 # 源文件已不存在时也会在原地址生成一个跳转页，避免旧链接 404。

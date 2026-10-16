@@ -218,7 +218,7 @@ $$
 
 行内代码 `#!python squares = [x ** 2 for x in data]`，`#!asm assume cs:code, ds:data`，`#!asm repne scasb`，`#!asm les di, dword ptr [bp+2]`，`#!bash cd ~/bfyes`，`#!makefile $(CC) $(CFLAGS) -o hello hello.c`，`#!c int main()`，`int main()`，以及代码块：
 
-```c
+```c linenums="67647"
 #include <stdio.h>
 #define MAX_LEN 256
 // 行注释
@@ -231,7 +231,17 @@ int main(int argc, char *argv[]) {
 }
 ```
 
-```python
+```pyodide height="8" install="numpy"
+import numpy as np
+import random
+
+print("random:", random.randint(1, 100))
+print("numpy:", np.arange(5), np.random.rand(2))
+
+print(2**100)
+```
+
+```python linenums="1"
 # 注释
 import os
 data = [1, 2, 3]

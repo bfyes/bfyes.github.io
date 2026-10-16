@@ -10,7 +10,7 @@
    02. 文档排版与阅读节奏
        正文、列表、表格、引用、块级间距与展示公式
    03. 代码、公式与技术内容
-       代码块、行内代码、复制提示、highlight.js 与脚注
+       代码块、行内代码、复制提示与脚注
    04. 标题结构与锚点
        标题编号、permalink 与定位状态
    05. 内容交互组件
@@ -29,8 +29,8 @@
    ============================================================================ */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap");
 
-/* 代码语法高亮由 highlight.js 运行时处理（见 theme/js/highlight.js 与 zensical.toml），
-   GitHub 配色由 CDN 的 github/github-dark 主题 CSS 提供，此处无需额外 CSS。 */
+/* 代码语法高亮由构建期 Pygments 上色（pymdownx.highlight，见 zensical.toml），
+   token 配色来自 Material/Zensical 官方变量，此处无需额外 CSS。 */
 
 /* ---- 字体栈与站点基础（属于 01） -------------------------------- */
 
@@ -83,6 +83,23 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   --fgColor-accent: #0969da;
   --bgColor-default: #ffffff;
   --bgColor-muted: #f6f8fa;
+  /* 代码块背景沿用站点旧色号（GitHub 的 muted 底），不用 Material 的 --md-code-bg-color */
+  --md-code-bg-color: var(--bgColor-muted);
+  /* 代码高亮贴 GitHub：色值取自 highlight.js 的 github.css。
+     这批变量同时驱动静态块（Pygments 类）与 pyodide 编辑器的 ace-zensical 主题。 */
+  --md-code-fg-color: #1f2328;
+  --md-code-hl-keyword-color: #d73a49;
+  --md-code-hl-name-color: #1f2328;
+  --md-code-hl-function-color: #6f42c1;
+  --md-code-hl-string-color: #032f62;
+  --md-code-hl-number-color: #005cc5;
+  --md-code-hl-constant-color: #e36209;
+  --md-code-hl-variable-color: #005cc5;
+  --md-code-hl-comment-color: #6a737d;
+  --md-code-hl-operator-color: #005cc5;
+  --md-code-hl-punctuation-color: #1f2328;
+  --md-code-hl-special-color: #005cc5;
+  --md-code-hl-generic-color: #6a737d;
   --bgColor-neutral-muted: rgba(129, 139, 152, 0.12);
   --borderColor-default: #d1d9e0;
   --borderColor-muted: rgba(209, 217, 224, 0.7);
@@ -101,6 +118,22 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   --fgColor-accent: #4493f8;
   --bgColor-default: #0d1117;
   --bgColor-muted: #151b23;
+  /* 代码块背景沿用站点旧色号（GitHub 的 muted 底），不用 Material 的 --md-code-bg-color */
+  --md-code-bg-color: var(--bgColor-muted);
+  /* 代码高亮贴 GitHub，深色套 highlight.js 的 github-dark.css */
+  --md-code-fg-color: #c9d1d9;
+  --md-code-hl-keyword-color: #ff7b72;
+  --md-code-hl-name-color: #c9d1d9;
+  --md-code-hl-function-color: #d2a8ff;
+  --md-code-hl-string-color: #a5d6ff;
+  --md-code-hl-number-color: #79c0ff;
+  --md-code-hl-constant-color: #ffa657;
+  --md-code-hl-variable-color: #79c0ff;
+  --md-code-hl-comment-color: #8b949e;
+  --md-code-hl-operator-color: #79c0ff;
+  --md-code-hl-punctuation-color: #c9d1d9;
+  --md-code-hl-special-color: #79c0ff;
+  --md-code-hl-generic-color: #8b949e;
   --bgColor-neutral-muted: rgba(101, 108, 118, 0.2);
   --borderColor-default: #3d444d;
   --borderColor-muted: rgba(61, 68, 77, 0.7);
@@ -213,7 +246,8 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   list-style-type: lower-alpha;
 }
 
-/* 表格（排除 GitHub 贡献图表格 .ContributionCalendar-grid，保持组件原样）
+/* 表格（排除 GitHub 贡献图表格 .ContributionCalendar-grid 与代码块表格
+   .highlighttable，两者保持组件原样）
    宽表自动收紧：容器被限制在内容区宽度内，超宽表格在其内部横向滚动，
    不溢出页面；窄表仍按内容贴合。单元格长内容可断行，避免撑破。 */
 .md-typeset .md-typeset__scrollwrap {
@@ -227,7 +261,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   margin-bottom: 0;
   vertical-align: bottom;
 }
-.md-typeset table:not(.ContributionCalendar-grid) {
+.md-typeset table:not(.ContributionCalendar-grid):not(.highlighttable) {
   border-spacing: 0;
   border-collapse: collapse;
   display: block;
@@ -235,23 +269,23 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   max-width: 100%;
   font-variant: tabular-nums;
 }
-.md-typeset .md-typeset__table > table:not(.ContributionCalendar-grid) {
+.md-typeset .md-typeset__table > table:not(.ContributionCalendar-grid):not(.highlighttable) {
   margin-bottom: 0;
 }
-.md-typeset table:not(.ContributionCalendar-grid) th {
+.md-typeset table:not(.ContributionCalendar-grid):not(.highlighttable) th {
   font-weight: var(--base-text-weight-semibold, 600);
 }
-.md-typeset table:not(.ContributionCalendar-grid) th,
-.md-typeset table:not(.ContributionCalendar-grid) td {
+.md-typeset table:not(.ContributionCalendar-grid):not(.highlighttable) th,
+.md-typeset table:not(.ContributionCalendar-grid):not(.highlighttable) td {
   padding: 6px 13px;
   border: 1px solid var(--borderColor-default);
   overflow-wrap: anywhere;
 }
-.md-typeset table:not(.ContributionCalendar-grid) tr {
+.md-typeset table:not(.ContributionCalendar-grid):not(.highlighttable) tr {
   background-color: var(--bgColor-default);
   border-top: 1px solid var(--borderColor-muted);
 }
-.md-typeset table:not(.ContributionCalendar-grid) tr:nth-child(2n) {
+.md-typeset table:not(.ContributionCalendar-grid):not(.highlighttable) tr:nth-child(2n) {
   background-color: var(--bgColor-muted);
 }
 
@@ -326,39 +360,29 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 /* ============================================================================
    03. 代码、公式与技术内容
    ----------------------------------------------------------------------------
-   代码块对齐 github-markdown-css：13.6px 字号、GitHub 背景色、不描边。
+   代码块外观交给 Material/Zensical 官方样式（.md-typeset .highlight / pre），
+   本站不再覆盖 padding、背景、行高与圆角；行号与注解也用官方实现。
    行内代码用 GitHub 风格浅底色胶囊。复制提示只保留文字。
    行间距统一块级元素底边距为 1rem，嵌套列表保持 0。
    ============================================================================ */
 
-/* ---- 代码块（GitHub 风格 + 站点行号特性） ---- */
-.md-typeset pre {
-  padding: 0;
-  overflow: visible;
-  font-size: var(--font-code);
-  line-height: 1.45;
-  color: var(--fgColor-default);
-  background-color: var(--bgColor-muted);
+/* ---- 代码块 ----
+   官方样式已覆盖所需的盒子模型与配色，这里只保留空节点，方便后续按需回补。
+
+   去圆角：官方把圆角清零写成了 `.md-content__inner > .highlight > … > code /
+   .linenos` 的直接子级链（见 main.min.css），本站正文多包了一层 article，
+   那条规则不命中，所以在这里补等价的清零规则。 */
+.md-typeset .highlight > pre > code,
+.md-typeset .highlighttable .linenos,
+.md-typeset .highlighttable tr:first-child > .linenos,
+.md-typeset .highlighttable > tbody > tr > .code > div > pre > code {
+  border-radius: 0;
 }
-.md-typeset pre > code {
-  font-size: inherit;
-  line-height: 1.45;
-  color: var(--fgColor-default);
-}
-.md-typeset .highlight pre {
-  border: 0;
-  padding: 0;
-  white-space: pre;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-.md-typeset pre code,
-.md-typeset pre tt {
-  display: block;
-  margin: 0;
-  line-height: inherit;
-  word-wrap: normal;
-  border: 0;
+
+/* GitHub 把 True/False/None 这类常量标成常量色（蓝），Material 的映射把它们（.kc）
+   和普通名字（.n）一起归给了 name 变量，这里单独给出常量色。 */
+.md-typeset .highlight .kc {
+  color: var(--md-code-hl-constant-color);
 }
 
 /* ---- 行内代码（GitHub 风格） ---- */
@@ -395,22 +419,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   font-size: inherit;
 }
 
-/* ---- highlight.js 与 Material 布局兼容 ----
-   github.min.css 会给 .hljs 加自身背景与 padding，导致与 pre 的
-   内边距/背景叠加冲突。这里让 .hljs 回归透明背景且无 padding，
-   仅保留 github 的 token 配色，padding 由 pre 统一管理。 */
-.md-typeset pre .hljs {
-  background: transparent;
-  border-radius: 0;
-  line-height: 1.45;
-}
-
-.md-typeset pre.highlight,
-.md-typeset pre,
-.md-typeset pre>code {
-  border-radius: 0;
-}
-
 /* ---- 脚注（GitHub 观感补足） ---- */
 /* 脚注 HTML 自带 <hr>；这里用容器边线替代它，避免出现两条横线。 */
 .md-typeset .footnote {
@@ -444,14 +452,15 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 .md-typeset ul,
 .md-typeset ol,
 .md-typeset dl,
-.md-typeset table:not(.ContributionCalendar-grid),
-.md-typeset pre,
+.md-typeset table:not(.ContributionCalendar-grid):not(.highlighttable),
 .md-typeset details,
 .md-typeset div.arithmatex {
   margin-top: 0;
   margin-bottom: var(--base-size-16, 1rem);
   letter-spacing: normal;
 }
+/* 代码块（pre）不再列入上表：官方 .highlighttable pre{margin:0} 需要生效，
+   否则带行号的代码块行号列会被 1rem 底边距顶歪。pre 的间距用官方值。 */
 
 /* MathJax 独立公式：取消外层容器底部边距，*/
 .md-typeset div.arithmatex {
