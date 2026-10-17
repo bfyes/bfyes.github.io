@@ -24,6 +24,8 @@
 - [apk02：让屏幕显示出那句话](<https://docs.bfyes.cn/reverse/apk02/index.md>)
 - [Reverse](<https://docs.bfyes.cn/reverse/index.md>)
 - [reverse1](<https://docs.bfyes.cn/reverse/reverse1/index.md>)
+- [Reverse2](<https://docs.bfyes.cn/reverse/reverse2/index.md>)
+- [Reverse3](<https://docs.bfyes.cn/reverse/reverse3/index.md>)
 - [汇编语言设计与调试](<https://docs.bfyes.cn/study/asm/index.md>)
 - [CTF 夺旗赛](<https://docs.bfyes.cn/study/ctf/index.md>)
 - [lab0](<https://docs.bfyes.cn/study/ctf/lab0/index.md>)
