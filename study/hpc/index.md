@@ -4,9 +4,13 @@
 >
 > **声明**
 >
-> (加紧施工中)
+> 笔记/报告仅供记录学习历程、方便复习回顾之用，请勿抄袭。侵删。
+
+> [!CAUTION]
 >
-> 笔记/报告仅供记录学习历程、方便复习回顾之用，请勿抄袭，如有侵权请联系我删除。
+> **0**
+>
+> 仅个人感想：[对于 HPC101 和 AI 的思考](<https://docs.bfyes.cn/diaries/sp26_vacation/#hpc101-ai-thoughts>)
 
 HPC101 课程文档：[https://hpc101.zjusct.io](<https://hpc101.zjusct.io>)
 

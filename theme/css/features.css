@@ -109,7 +109,7 @@
   --terminal-dot-red: #ff5c60;
   --terminal-dot-yellow: #fac800;
   --terminal-dot-green: #35c759;
-  /* GitHub 贡献图专用字体栈：与全站 --font-text 不同（Inter 优先）。 */
+  /* GitHub 贡献图专用字体栈：中文回退 Noto Sans SC。 */
   --font-ghc: "Inter", "Noto Sans SC", sans-serif;
 
   /* 功能组件的元信息字号。 */
@@ -608,14 +608,14 @@
 /* ============================================================================
    02. 页面背景
    ----------------------------------------------------------------------------
-   虚线网格背景(body::before，mask 挖空正文区)、正文/footer/编辑按钮 z-index
-   叠压，以及彩虹背景层。
+   虚线网格与彩虹层固定为 -1，页面底色在 html 上、body 透明；正文列由
+   .md-content 的不透明背景遮住，网格从两侧淡入。
    ============================================================================ */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
   background-image: var(--page-grid);
   background-position: 0 0;
@@ -632,52 +632,51 @@ body[data-page-grid="false"]::before {
   content: none;
 }
 
+/* 中间正文列不透明；两侧侧栏保持透明，让 -1 层背景透出。 */
 .md-content {
-  background-color: var(--md-default-bg-color);
-  box-shadow: none;
-  position: relative;
-  z-index: 1;
+  background-color: var(--page-bg);
 }
 
-.md-footer {
-  position: relative;
-  z-index: 1;
+/* 正文内边距按侧栏显隐逐侧出现，具体断点见下方媒体查询。 */
+.md-content__inner {
+  padding-inline: 0;
 }
 
+/* 左侧栏隐藏后，只补左侧内边距。 */
+@media screen and (max-width: 76.234375em) {
+  .md-content__inner {
+    padding-inline-start: var(--content-padding-inline);
+  }
+}
+
+/* 右侧栏也隐藏后，再补右侧内边距。 */
+@media screen and (max-width: 59.984375em) {
+  .md-content__inner {
+    padding-inline-end: var(--content-padding-inline);
+  }
+}
+
+/* 标题因左侧 headerlink 使用了 position: relative；若不抬高按钮，
+   H1 的盒会盖住官方右浮动按钮并截走点击。这里只保留这一处最小值。 */
 .md-content__button {
   position: relative;
-  z-index: 3;
-}
-
-.md-content__inner {
-  padding-inline: var(--content-padding-inline);
-}
-
-[data-md-color-scheme="default"] .md-content,
-[data-md-color-scheme="default"] .md-typeset {
-  background-color: var(--content-bg);
-}
-
-/* Material 在弹层里复用了 .md-typeset（代码注解 tooltip、复制提示弹框）。
-   上面这条会把正文底色刷进弹层，以方角盖住弹层本体 .4rem 的圆角。
-   这里把弹层内部的 .md-typeset 底色还原为透明，圆角交回弹层自己。
-
-   注意别把 .md-tooltip2 也写进来：官方 .md-tooltip2__inner 本身就带
-   background + border-radius（它也挂了 .md-typeset），盖掉会让它变透明。 */
-.md-tooltip .md-typeset,
-.md-dialog .md-typeset {
-  background-color: transparent;
+  z-index: 1;
 }
 
 /* ---- 彩虹背景 ----------------------------------------------------- */
 .rainbow-page {
   position: relative;
   min-height: 100vh;
-  isolation: isolate;
 }
 
 body[data-page-rainbow="true"] .md-sidebar__inner {
   background-color: transparent !important;
+}
+
+/* 右侧 TOC 标题是 sticky，官方给它不透明底色，防止目录项从下方穿出。
+   这里试全透明：让网格/彩虹完全透出；滚动时目录项会从标题文字下经过。 */
+.md-nav--secondary .md-nav__title {
+  background: transparent;
 }
 
 /* 窄屏（含平板）右侧 TOC 是浮层面板；展开后不能透出彩虹背景。 */
@@ -733,11 +732,6 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
-}
-
-.rainbow-backdrop::before,
-.rainbow-backdrop::after {
-  z-index: 0;
 }
 
 .rainbow-backdrop::before {
@@ -1099,9 +1093,13 @@ body[data-page-rainbow="true"] .md-sidebar__inner {
   }
 }
 
+/* 主页/正文宽度 + 侧边 1rem 内边距。 */
+.md-main__inner { transition: max-width 0.3s ease; }
 .md-content__inner { transition: padding 0.3s ease; }
-@media (prefers-reduced-motion: reduce) {
-  .md-content__inner { transition: none; }
+
+/* 主题切换标记会压掉时长，只恢复这两处。 */
+[data-md-color-switching] :is(.md-main__inner, .md-content__inner) {
+  transition-duration: 0.3s !important;
 }
 
 /* ============================================================================

@@ -2,7 +2,7 @@
    main.css —— Zensical 核心界面调整
    ----------------------------------------------------------------------------
    仅调整 Zensical / Material 已提供的页面结构与组件；新增功能位于 features.css，
-   首页特化位于 home.css。正文观感对齐 github-markdown-css。
+   首页特化位于 home.css。正文排版以 Zensical 为基线，代码/表格等细节贴 GitHub。
 
    目录
    01. 基础主题
@@ -27,19 +27,23 @@
 /* ============================================================================
    01. 基础主题：字体、站点基准与主题变量（@import 必须位于所有 CSS 规则之前）
    ============================================================================ */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+SC:wght@400&family=Noto+Serif+SC:wght@700&display=swap");
 
 /* 代码语法高亮由构建期 Pygments 上色（pymdownx.highlight，见 zensical.toml），
    token 配色来自 Material/Zensical 官方变量，此处无需额外 CSS。 */
 
 /* ---- 字体栈与站点基础（属于 01） -------------------------------- */
 
-/* 顶部导航标题：衬线字体 */
+/* 顶部导航标题：使用正文字体栈，字重/字距对齐 H2 */
 .md-header__title {
-  font-family: var(--font-serif);
-  font-weight: 700;
+  font-family: var(--font-text);
+  font-weight: 600;
+  letter-spacing: normal;
 }
-/* 正文：采用 github-markdown-css 风格的系统无衬线栈；H1 保留自定义衬线标题。 */
+.md-header__title .md-header__topic {
+  font-weight: 600;
+}
+/* 正文/导航使用 Zensical 字体栈；H1 保留衬线标题。 */
 body, .md-typeset, .md-typeset h2, .md-typeset h3, .md-typeset h4,
 .md-typeset h5, .md-typeset h6, .md-nav {
   font-family: var(--font-text);
@@ -58,16 +62,13 @@ body {
   font-feature-settings: normal !important;
 }
 
-/* 暗色模式：全局背景统一为暗色基准（GitHub #0d1117，见 variables.css --dark-bg） */
-[data-md-color-scheme="slate"] body {
-  background-color: var(--dark-bg) !important;
+/* 页面底色放在 html 上，body 保持透明，使 -1 层的网格/彩虹可见。
+   正文列由 features.css 的 .md-content 背景保持不透明，主页再单独覆盖为透明。 */
+html {
+  background-color: var(--page-bg, #fff);
 }
-/* 暗色模式：sidebar / content / footer / nav-title 保持不透明暗色背景 */
-[data-md-color-scheme="slate"] .md-sidebar__inner,
-[data-md-color-scheme="slate"] .md-content,
-[data-md-color-scheme="slate"] .md-footer,
-[data-md-color-scheme="slate"] .md-nav__title {
-  background-color: var(--dark-bg) !important;
+body {
+  background-color: transparent !important;
 }
 
 /* 等宽字体：代码 / 键盘 / 终端数字统一 */
@@ -149,17 +150,16 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
    02. 文档排版与阅读节奏
    ----------------------------------------------------------------------------
    作用域到 .md-typeset，覆盖 Material 默认。
-   正文字号对齐 GitHub 基准 16px，行高 1.5，间距变量 --base-size-* 同为 16px 系，
-   使观感与 github-markdown-css 完全一致（不受站点 root 20px 放大影响）。
+   正文字号 15px（Zensical 基准），行高 1.8，间距变量 --base-size-* 同为 16px 系，
+   标题与代码等细节保持 GitHub 风格。
    子段：标题 → 列表 → 表格 → 引用 → 分隔线 → 强调/删除线/上下标 → 键盘 → 链接
    ============================================================================ */
 .md-typeset {
   font-size: var(--font-base);
   --md-typeset-color: var(--fgColor-default);
   color: var(--fgColor-default);
-  background-color: var(--bgColor-default);
   font-weight: var(--base-text-weight-normal, 400);
-  line-height: 1.5;
+  line-height: 1.7;
   word-wrap: break-word;
   letter-spacing: normal;
   font-feature-settings: normal;
@@ -228,12 +228,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   padding-left: 0.15em;
   list-style-position: outside;
 }
-.md-typeset li + li {
-  margin-top: 0.25em;
-}
-.md-typeset li > p {
-  margin-top: var(--base-size-16, 1rem);
-}
 .md-typeset ul ul,
 .md-typeset ul ol,
 .md-typeset ol ol,
@@ -257,8 +251,7 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
    宽表自动收紧：容器被限制在内容区宽度内，超宽表格在其内部横向滚动，
    不溢出页面；窄表仍按内容贴合。单元格长内容可断行，避免撑破。 */
 .md-typeset .md-typeset__scrollwrap {
-  margin-top: 0;
-  margin-bottom: var(--base-size-16, 1rem);
+  margin-block: 1em;
 }
 .md-typeset .md-typeset__table {
   max-width: 100%;
@@ -297,7 +290,6 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 
 /* 引用（top/bottom 边距由 section 06 统一管理） */
 .md-typeset blockquote {
-  margin-inline: 0;
   padding: 0 1em;
   color: var(--fgColor-muted);
   border-left: 0.25em solid var(--borderColor-default);
@@ -450,23 +442,11 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
 
 /* ---- 文档块级节奏与展示公式间距（属于 02） ---------------------- */
 
-/* 统一块级元素 top/bottom 边距。
-   嵌套列表（ul ul 等） specificity 更高，保持 0 不受影响。
-   tabbed-set/admonition 边距见 main.css。 */
-.md-typeset p,
-.md-typeset blockquote,
-.md-typeset ul,
-.md-typeset ol,
-.md-typeset dl,
-.md-typeset table:not(.ContributionCalendar-grid):not(.highlighttable),
-.md-typeset details,
-.md-typeset div.arithmatex {
-  margin-top: 0;
-  margin-bottom: var(--base-size-16, 1rem);
-  letter-spacing: normal;
+/* Zensical 已给 p / blockquote / ul / ol / dl / pre 1em 外边距；
+   这里只补它默认不是 1em 的 details。 */
+.md-typeset details {
+  margin-block: 1em;
 }
-/* 代码块（pre）不再列入上表：官方 .highlighttable pre{margin:0} 需要生效，
-   否则带行号的代码块行号列会被 1rem 底边距顶歪。pre 的间距用官方值。 */
 
 /* MathJax 独立公式：取消外层容器底部边距，*/
 .md-typeset div.arithmatex {
@@ -683,9 +663,9 @@ body[data-page-counter="true"] .md-content__inner h4::before {
    因此不触发 @supports 时提示块完全走官方默认，此处不再有任何影响提示块的规则。
    所有自定义（边框/背景/标题栏 padding 与渐变/图标箭头定位颜色）统一在下方 @supports 块内。 */
 
-/* 退化后的标题行高恢复：main.css 的 .md-typeset { line-height:1.5 } 会连带压低提示块标题，
+/* 退化后的标题行高恢复：main.css 的 .md-typeset { line-height:1.8 } 会连带压低提示块标题，
    使图标 top:.125em 相对标题行中心偏下。此处仅对标题行恢复官方行高，
-   不影响提示块正文与其他正文的 GitHub 1.5 行高。 */
+   不影响提示块正文与其他正文的 1.8 行高。 */
 .md-typeset .admonition > .admonition-title,
 .md-typeset details > summary {
   line-height: var(--admonition-title-lh);
@@ -787,14 +767,6 @@ body[data-md-at-top="true"] .md-header--shadow {
   background-color: var(--header-bg);
   backdrop-filter: blur(var(--blur-radius));
   -webkit-backdrop-filter: blur(var(--blur-radius));
-}
-[data-md-color-scheme="slate"] .md-header,
-[data-md-color-scheme="slate"] .md-tabs {
-  background-color: var(--header-bg) !important;
-}
-
-.md-tabs__list {
-  padding-left: 0;
 }
 
 /* ---- 站点宽度 ---- */
