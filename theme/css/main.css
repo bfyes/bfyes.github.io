@@ -377,6 +377,25 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   border-radius: 0;
 }
 
+/* 窄屏左右留白：官方在 ≤44.9844em 把正文里的代码块做成通栏
+   （.md-content__inner > .highlight { margin: 1em -0.8rem }）。但 content.html
+   在部分页面给正文多包了一层 div（home / rainbow / grid:false / counter:false /
+   fold_toc），这条直接子选择器就命中不到，导致同一站里代码块时贴边、时留白。
+   两条层级都清零左右外边距，统一保持在正文列内。 */
+@media screen and (max-width: 44.984375em) {
+  .md-content__inner > .highlight,
+  .md-content__inner > div > .highlight {
+    margin-inline: 0;
+  }
+}
+
+/* 行号与代码逐行对齐：官方给 .highlighttable .linenos 的字号是 .85em，
+   代码是 .8533333333em，两者又都继承 .md-typeset pre 的 line-height: 1.5，
+   于是每行差 0.075px，五十多行就错开近 4px。把行号字号拉到与代码一致即可。 */
+.md-typeset .highlighttable .linenos {
+  font-size: .8533333333em;
+}
+
 /* GitHub 把 True/False/None 这类常量标成常量色（蓝），Material 的映射把它们（.kc）
    和普通名字（.n）一起归给了 name 变量，这里单独给出常量色。 */
 .md-typeset .highlight .kc {

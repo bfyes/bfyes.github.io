@@ -23,7 +23,7 @@
 - [apk01 baby](<https://docs.bfyes.cn/reverse/apk01 baby/index.md>)
 - [apk02：让屏幕显示出那句话](<https://docs.bfyes.cn/reverse/apk02/index.md>)
 - [Reverse](<https://docs.bfyes.cn/reverse/index.md>)
-- [reverse1](<https://docs.bfyes.cn/reverse/reverse1/index.md>)
+- [Reverse1](<https://docs.bfyes.cn/reverse/reverse1/index.md>)
 - [Reverse2](<https://docs.bfyes.cn/reverse/reverse2/index.md>)
 - [Reverse3](<https://docs.bfyes.cn/reverse/reverse3/index.md>)
 - [汇编语言设计与调试](<https://docs.bfyes.cn/study/asm/index.md>)
