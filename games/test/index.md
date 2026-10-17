@@ -1,5 +1,9 @@
 # 样式测试
 
+这个页面用于预览正文排版、提示块、代码块和常见 Markdown 元素的显示效果。
+
+## 提示块
+
 > [!NOTE]
 >
 > 这是一个在右侧的普通说明。用于确认位置。
@@ -7,10 +11,6 @@
 > Zensical supports a large number of Python Markdown extensions, which is part of what makes it so attractive for technical writing. Following is a list of all supported extensions, linking to the relevant sections of the authoring guide for which features they need to be enabled.
 >
 > The Python Markdown Extensions package is an excellent collection of additional extensions perfectly suited for advanced technical writing. Zensical lists this package as an explicit dependency, so it's automatically installed with a supported version.
-
-这个页面用于预览正文排版、提示块、代码块和常见 Markdown 元素的显示效果。
-
-## 提示块长标题测试长标题测试长标题测试长标题测试
 
 > [!NOTE]
 >
@@ -139,6 +139,22 @@
 > > > > > > > > > > **嵌套**
 > > > > > > > > > >
 > > > > > > > > > > 你成功浪费了一分钟。
+
+> [!NOTE]
+>
+> **Example**
+>
+> 这是一个在右侧的普通说明。用于确认位置。
+>
+> Zensical supports a large number of Python Markdown extensions, which is part of what makes it so attractive for technical writing. Following is a list of all supported extensions, linking to the relevant sections of the authoring guide for which features they need to be enabled.
+>
+> The Python Markdown Extensions package is an excellent collection of additional extensions perfectly suited for advanced technical writing. Zensical lists this package as an explicit dependency, so it's automatically installed with a supported version.
+
+test
+
+test
+
+### 长标题测试长标题测试长标题测试长标题测试长标题测试长标题测试
 
 ## H2 标题
 

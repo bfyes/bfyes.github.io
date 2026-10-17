@@ -25,13 +25,7 @@
 
 IDA 有特征库，已经成功识别了 `_printf()` 等库函数，大大降低了阅读难度。
 
-情况似乎比较明朗，打开即可看到疑似异或/凯撒密码加密过的flag（因为MMM太容易让人联想到AAA），在程序运行时动态加载到栈中。
-
-查看代码可知采用了异或加密，循环部分为按位检测，然后分别有两个跳出的分支，为成功或失败。
-
-根据逆向结果，将每一位与0Ch做异或即可。
-
-Editor (session: default)Run
+Editor (session: reverse1)Run
 
 ```
 data = [
@@ -40,7 +34,24 @@ data = [
     0x3F, 0x34, 0x3A, 0x3B, 0x35, 0x3A, 0x3C, 0x34, 
     0x3C, 0x71,
 ]
+print(bytes(data).decode()) # 点击 run 来写入 data，在第二个块中可以继续运行。
+```
 
+OutputClear
+
+```
+```
+
+情况似乎比较明朗，打开即可看到疑似异或/凯撒密码加密过的flag（因为MMM太容易让人联想到AAA），在程序运行时动态加载到栈中。
+
+查看代码可知采用了异或加密，循环部分为按位检测，然后分别有两个跳出的分支，为成功或失败。
+
+根据逆向结果，将每一位与0Ch做异或即可。
+
+Editor (session: reverse1)Run
+
+```
+# 先点击第一个块的 run 来写入 data，然后再点击第二个块的 run 来运行下面的代码。
 flag = "".join(chr(b ^ 0x0C) for b in data)
 print(flag)
 ```
