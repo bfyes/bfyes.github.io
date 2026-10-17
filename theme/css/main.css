@@ -200,6 +200,12 @@ code, kbd, pre, .md-typeset code, .md-typeset pre {
   border-bottom: 1px solid var(--borderColor-muted);
   font-size: 1.5em;
 }
+/* GitHub 风格的底边线画在标题盒的整个宽度上；而 inline end 提示块是
+   float，不会缩小普通块级盒，线就会一直伸到浮动块下面。让 H1/H2 建立
+   BFC，盒宽自动避开浮动块，底边线只画到浮动块左侧。 */
+.md-typeset h2 {
+  display: flow-root;
+}
 .md-typeset h3 { font-size: 1.25em; }
 .md-typeset h4 { font-size: 1em; }
 .md-typeset h5 { font-size: 0.875em; }
