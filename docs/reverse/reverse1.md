@@ -17,7 +17,7 @@
 | Enter | 跳转到函数 |
 | Esc | 返回上一层函数 |
 
-> 补充: 以mac为例, ida的视图缩放: <kbd>command</kbd>+<kbd>shift</kbd>+<kbd>+</kbd>, <kbd>command</kbd>+<kbd>-</kbd>.
+> 补充：Graph view 模式下，可以按住 ctrl + 滚轮缩放；以mac为例，ida的视图缩放快捷键：++command+shift+"\+"++，++command+"-"++。
 
 ## 静态分析
 
@@ -25,7 +25,7 @@
 
 ![image-20261016205824023](./reverse1.assets/image-20261016205824023.png)
 
-IDA 有特征库，已经成功识别了 `_printf` 等库函数，大大降低了阅读难度。 
+IDA 有特征库，已经成功识别了 `#!c _printf()` 等库函数，大大降低了阅读难度。 
 
 情况似乎比较明朗，打开即可看到疑似异或/凯撒密码加密过的flag（因为MMM太容易让人联想到AAA），在程序运行时动态加载到栈中。
 
@@ -33,11 +33,12 @@ IDA 有特征库，已经成功识别了 `_printf` 等库函数，大大降低�
 
 根据逆向结果，将每一位与0Ch做异或即可。
 
-```pyodide
+```pyodide height="10"
 data = [
-    0x4D, 0x4D, 0x4D, 0x77, 0x6A, 0x61, 0x75, 0x60, 0x53, 0x5D,
-    0x5D, 0x53, 0x7D, 0x79, 0x62, 0x53, 0x3F, 0x34, 0x3A, 0x3B,
-    0x35, 0x3A, 0x3C, 0x34, 0x3C, 0x71,
+    0x4D, 0x4D, 0x4D, 0x77, 0x6A, 0x61, 0x75, 0x60, 
+    0x53, 0x5D, 0x5D, 0x53, 0x7D, 0x79, 0x62, 0x53, 
+    0x3F, 0x34, 0x3A, 0x3B, 0x35, 0x3A, 0x3C, 0x34, 
+    0x3C, 0x71,
 ]
 
 flag = "".join(chr(b ^ 0x0C) for b in data)

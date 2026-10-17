@@ -8,6 +8,8 @@
    ============================================================================ */
 
 :root {
+  /* 首页正文单独的最大宽度；默认与全站 --page-max-width 一致，改这里即可。 */
+  --home-page-max-width: 65rem;
   --home-section-title-size: 0.92rem;
   --home-section-margin-block: 1.8rem;
   --home-section-head-gap: 1rem;
@@ -18,9 +20,12 @@
 .home-page a { text-decoration: none; }
 
 /* 首页覆盖基础正文层。 */
-body[data-page-home="true"] .md-content__inner { padding-inline: 0; }
+body[data-page-home="true"] .md-main__inner {
+  max-width: var(--home-page-max-width);
+}
 body[data-page-home="true"] .md-content,
-body[data-page-home="true"] .md-content > .md-typeset { background-color: transparent !important; }
+body[data-page-home="true"] .md-content > .md-typeset,
+body[data-page-home="true"] .md-footer { background-color: transparent !important; }
 body[data-page-home="true"]::before { content: none; }
 body[data-page-home="true"] .md-typeset h1 > .headerlink { display: none; }
 
@@ -49,9 +54,9 @@ body[data-page-home="true"] .md-typeset h1 > .headerlink { display: none; }
 .md-typeset .site-section__title,
 .md-typeset .home-section__title {
   margin: 0;
-  font-family: var(--font-section-title);
+  font-family: var(--font-text);
   font-size: var(--home-section-title-size);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1.25;
   border-bottom: none;
   padding-bottom: 0;

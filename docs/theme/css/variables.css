@@ -28,7 +28,7 @@
 :root {
   /* === 字号体系 === */
   /* 正文相关：rem 跟随 html 缩放 */
-  --font-base: 0.8rem;       /* 正文 16px */
+  --font-base: 0.75rem;       /* 正文 15px */
   --font-code: 0.68rem;      /* 代码块、admonition 13.6px */
   --font-meta: 0.65rem;      /* 页面信息 13px */
   /* UI 组件：px 固定值，不跟随缩放 */
@@ -39,13 +39,13 @@
 
   /* === 字体家族 === */
   /* 集中定义各字体栈，替换各文件里重复书写；引用处在加载时解析，顺序无关。 */
-  --font-text: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
-    "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Helvetica Neue",
-    Helvetica, Arial, sans-serif;   /* 系统无衬线：正文/导航/搜索面板 */
+  --font-text: "Inter", -apple-system, BlinkMacSystemFont, Helvetica, Arial,
+    sans-serif;   /* 正文/导航/搜索：对齐 Zensical 默认字体栈 */
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", "Noto Sans Mono CJK SC", monospace;  /* 等宽：代码/终端/键盘 */
-  --font-serif: "Noto Serif SC", serif;  /* 衬线：顶部标题/页面 H1 */
-  --font-section-title: "JetBrains Mono", "Noto Sans SC", sans-serif;
+  --font-serif: "Noto Serif SC", "Songti SC", "SimSun", "Times New Roman",
+    serif; /* 衬线：仅页面 H1 */
+
 
   /* === 标题编号 === */
   /* 集中管理 H2/H3/H4 自动编号的外观；字体与正文一致（复用 --font-text）。
@@ -53,11 +53,11 @@
      故此变量定义在 main.css 的 .md-typeset 内（:root 处无法解析该变量）。 */
   --heading-number-font: var(--font-text);
   --heading-number-weight: 550;
-  --heading-number-gap: 0.8em;            /* 编号与标题文字间距 */
+  --heading-number-gap: 0.8em;             /* 编号与标题文字间距 */
   --heading-number-letter-spacing: 0.03em; /* 编号内部的字符间距 */
 
   /* === 布局 === */
-  --page-max-width: 65rem;
+  --page-max-width: 61rem;
   --content-padding-inline: 1rem;
 
   /* === 毛玻璃 === */
@@ -87,10 +87,10 @@
   --page-info-line-height: 1.5;
   --page-info-margin-bottom: 1rem;
 
-  /* === 网格背景 === */
+  /* === 网格渐隐 === */
+  /* 中间区域透明（正文列本身也不透明），两侧淡入网格。 */
   --grid-clear-half: 22rem;
   --grid-fade: 16rem;
-  /* 网格 mask：左右显示、正文区挖空（供 features.css 的 mask-image/-webkit-mask-image 复用） */
   --grid-mask: linear-gradient(
     90deg,
     rgba(0, 0, 0, 1) calc(50% - var(--grid-clear-half) - var(--grid-fade)),
@@ -121,8 +121,8 @@
   /* === 导航栏 / 面板半透明背景 === */
   --header-bg: rgba(255, 255, 255, 0.8);
 
-  /* === 正文区域不透明背景 === */
-  --content-bg: #ffffff;
+  /* === 页面基准背景（挂在 html 上，body 保持透明） === */
+  --page-bg: #ffffff;
 
   /* === 全局高亮色（链接、导航选中、headerlink 等） === */
   --md-accent-fg-color: #0969da;
@@ -154,6 +154,6 @@
   /* === 网格 SVG（虚线，暗色更淡） === */
   --page-grid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cline x1='0' y1='0' x2='80' y2='0' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3Cline x1='0' y1='0' x2='0' y2='80' stroke='rgba(180,180,180,0.2)' stroke-width='1' stroke-dasharray='3 5'/%3E%3C/svg%3E");
 
-  /* === 暗色基准背景（main.css 暗色全局背景引用） === */
-  --dark-bg: #0d1117;
+  /* === 页面基准背景（挂在 html 上，body 保持透明） === */
+  --page-bg: #0d1117;
 }

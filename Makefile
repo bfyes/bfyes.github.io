@@ -14,11 +14,13 @@ previews: ## 生成 docs/ 图片的低分辨率预览图
 images: ## 压缩 docs/ 与 slides/ 中的源图片（排除 preview）
 	uv run python scripts/images.py compress
 
-kill: ## 停止 8000 端口上的统一预览服务
-	@pids="$$(lsof -tiTCP:$(PREVIEW_PORT) -sTCP:LISTEN 2>/dev/null)"; \
+kill: ## 停止 $(PREVIEW_PORT) 端口上的预览服务，并清理遗留的其它端口实例
+	@port_pids="$$(lsof -tiTCP:$(PREVIEW_PORT) -sTCP:LISTEN 2>/dev/null)"; \
+	stale_pids="$$(pgrep -f '$(CURDIR).*zensical serve' 2>/dev/null)"; \
+	pids="$$(printf '%s\n' $$port_pids $$stale_pids | sed '/^$$/d' | sort -u | tr '\n' ' ')"; \
 	if [ -n "$$pids" ]; then \
 		kill -9 $$pids; \
-		echo "已停止 $(PREVIEW_PORT) 端口上的预览服务"; \
+		echo "已停止预览服务：$$pids"; \
 	else \
 		echo "$(PREVIEW_PORT) 端口没有运行中的预览服务"; \
 	fi

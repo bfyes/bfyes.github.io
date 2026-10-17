@@ -2,13 +2,15 @@
 
 有没有必要“总结”呢，不管了，还是写出来吧，给以后的自己留一些回忆。（其实本该在一个月之前就写出来，奈何我一直在拖延💦）
 
-这个暑假的主线大概就是“短学期”课程了。我同时选了 CTF101 (一种信息安全相关的夺旗赛) 和 HPC101 (高性能计算,<span style="color:#2B77BF;">101的意思是零基础课程</span>)，并且后者几乎占据了我的假期。这两门课程为我进一步打开了对计算机世界的认识，也激发了一些我对学习过程和方法、使用人工智能的思考。虽然没学到太多东西，但感谢公司赞助和学校/学长们的资源，我体验到了很不错的大模型，接触到了一点点前沿知识。
+这个暑假的主线大概就是“短学期”课程了。我同时选了 CTF101 (一种信息安全相关的夺旗赛) 和 HPC101 (高性能计算, <span style="background-color:#FF0000; color:#FFFFFF; font-size:1.2em;">101的意思是零基础课程</span>)，并且后者几乎占据了我的假期。这两门课程为我进一步打开了对计算机世界的认识，也激发了一些我对学习过程和方法、使用人工智能的思考。虽然没学到太多东西，但感谢公司赞助和学校/学长们的资源，我体验到了很不错的大模型，接触到了一点点前沿知识。
 
 ![短学期平台用量](sp26_vacation.assets/01-shortterm-platform.png)
 
 <span style="font-size:0.75em; color:#808080;">下面图是短学期平台中截出来的，用量太多所以打码了，可以理解为AI一直连轴转……</span>
 
-CTF 在某些方面有点像脑筋急转弯之类的游戏，绕过一些限制，切换一些视角，从而解开一些谜题。这门课的难度和给分都是友好的，尽管做作业的时候也有些痛苦，但 ai 可以相对轻松的跑出来。而今年的 HPC 的难度就<span style="text-decoration:line-through;">比较</span>很大（至少对我的ai来说是这样），而绝大多数时间我都在<span style="text-decoration:underline; color:#2B77BF;">“许愿式”编程</span>和长时间等待<span style="text-decoration:underline; color:#2B77BF;">ai的自我迭代</span>和<span style="text-decoration:line-through; color:#2B77BF;">手动唤醒掉崩掉的 ai</span>。所以通过时间的分配来看，我的学习方法无疑是有问题的，尽管我在尝试摄取尽可能多的知识。
+<a id="hpc101-ai-thoughts"></a>
+
+CTF 在某些方面有点像脑筋急转弯之类的游戏，绕过一些限制，切换一些视角，从而解开一些谜题。这门课的难度和给分都是友好的，尽管做作业的时候也有些痛苦，但 ai 可以相对轻松的跑出来。<span style="background-color:#FF0000; color:#FFFFFF; font-size:1.2em;">今年的 HPC 的难度就<span style="text-decoration:line-through;">比较</span>很大</span>（至少对我的ai来说是这样），而绝大多数时间我都在<span style="text-decoration:underline; color:#2B77BF;">“许愿式”编程</span>和长时间等待<span style="text-decoration:underline; color:#2B77BF;">ai的自我迭代</span>和<span style="text-decoration:line-through; color:#2B77BF;">手动唤醒掉崩掉的 ai</span>。所以通过时间的分配来看，我的学习方法无疑是有问题的，尽管我在尝试摄取尽可能多的知识。
 
 ???+info "以下是对于 HPC101 和 AI 的思考。"
 

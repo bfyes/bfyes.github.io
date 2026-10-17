@@ -46,9 +46,16 @@ page_info: true
 
 # 样式测试
 
+??? note inline end "Note"
+    这是一个在右侧的普通说明。用于确认位置。
+
+    Zensical supports a large number of Python Markdown extensions, which is part of what makes it so attractive for technical writing. Following is a list of all supported extensions, linking to the relevant sections of the authoring guide for which features they need to be enabled.
+    
+    The Python Markdown Extensions package is an excellent collection of additional extensions perfectly suited for advanced technical writing. Zensical lists this package as an explicit dependency, so it's automatically installed with a supported version.
+
 这个页面用于预览正文排版、提示块、代码块和常见 Markdown 元素的显示效果。
 
-## 提示块
+## 提示块长标题测试长标题测试长标题测试长标题测试
 
 !!! note "Note"
     这是一个普通说明。用于确认标题渐变、图标位置、正文透明背景和边框颜色。
@@ -141,7 +148,7 @@ page_info: true
 
 ## 文本
 
-这是普通段落，包含 **粗体**、*斜体*、~~删除线~~、`inline code`、<kbd>⌘</kbd> + <kbd>K</kbd>、上标 X<sup>2</sup> 和下标 H<sub>2</sub>O。
+这是普通段落，包含 **粗体**、*斜体*、~~删除线~~、`inline code`、++command+shift+"\+"++ + <kbd>K</kbd>、上标 X<sup>2</sup> 和下标 H<sub>2</sub>O。
 
 这是一个链接：[github-markdown-css](https://sindresorhus.com/github-markdown-css/)。这是一个自动链接：<https://example.com>。
 
@@ -216,7 +223,7 @@ $$
 
 ## 代码&命令行
 
-行内代码 `#!python squares = [x ** 2 for x in data]`，`#!asm assume cs:code, ds:data`，`#!asm repne scasb`，`#!asm les di, dword ptr [bp+2]`，`#!bash cd ~/bfyes`，`#!makefile $(CC) $(CFLAGS) -o hello hello.c`，`#!c int main()`，`int main()`，以及代码块：
+行内代码 `#!python squares = [x ** 2 for x in data]`，`#!tasm assume cs:code, ds:data`，`#!nasm repne scasb`，`#!asm les di, dword ptr [bp+2]`，`#!bash cd ~/bfyes`，`#!makefile $(CC) $(CFLAGS) -o hello hello.c`，`#!c int main()`，`int main()`，以及代码块：
 
 ```c linenums="67647"
 #include <stdio.h>
@@ -261,7 +268,7 @@ public class Main {
 }
 ```
 
-```asm
+```nasm
 section .data
     msg db "hello", 0xA
 section .text
