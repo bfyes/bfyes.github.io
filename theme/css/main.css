@@ -564,10 +564,7 @@ body[data-page-counter="true"] .md-content__inner h4::before {
   color: var(--heading-number-color);
 }
 
-/* ---- Tabbed / Admonition 边距 ----
-   zensical 默认组件，保留 margin:1em 0（不归零 top）。
-   tabbed-content 是 display:contents/block，标签行与内容之间无间距，
-   补 padding-top 修复（main.css 行高收紧后需要补偿）。 */
+/* ---- Tabbed / Admonition 边距 ----*/
 .md-typeset .tabbed-set,
 .md-typeset .admonition {
   margin: 1em 0;
@@ -575,7 +572,6 @@ body[data-page-counter="true"] .md-content__inner h4::before {
 }
 .md-typeset .tabbed-content {
   margin-top: 0;
-  padding-top: 0.75rem;
 }
 .md-typeset .tabbed-labels {
   margin-bottom: 0;
