@@ -136,9 +136,11 @@ main 里的 int3 最终跳转到 `0x404BB4`。
 > | `RDI` | `5` | 信号编号 |
 > | `RSP` | 用户栈上的信号帧 | handler 的栈 |
 >
-> 调试器默认会截获 `SIGTRAP`，gdb 要先 `handle SIGTRAP stop noprint pass`，如下图。
+> 调试器默认会截获 `SIGTRAP`，gdb 中可以设置 `handle SIGTRAP stop noprint pass`，告诉调试器将 `SIGTRAP` 信号传递给程序，如下图。
 >
 > 第一次是程序自己的 int3 触发断点，第二次是调试器的断点。在第二次断住后，要让调试器重新截获 `SIGTRAP`，否则会重新进入 handler，陷入死循环。
+>
+> 这种切换的操作其实是在告诉寄存器 int 3 指令的归属者是谁。
 
 <mark><del>其实正确分支就在错误分支紧挨着的下方，直接一划就看到了</del></mark>
 

@@ -3156,7 +3156,7 @@
 
 
 
-<h1 id="find-me-out">find me out<a class="headerlink" href="#find-me-out" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-18T23:57:46.842544+08:00">2026/10/18</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 698 字</span></div>
+<h1 id="find-me-out">find me out<a class="headerlink" href="#find-me-out" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-19T00:27:49.723169+08:00">2026/10/19</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 739 字</span></div>
 <p>这是一个加 upx 壳的 elf 文件，并且伪装成了 .o 文件。</p>
 <p><a class="glightbox" data-type="image" href=".././find.assets/image-20261018181945540.png"><img width="1696" height="1054" class="lqip" alt="image-20261018181945540" src=".././find.assets/image-20261018181945540.preview.jpg" data-fullsrc=".././find.assets/image-20261018181945540.png" /></a></p>
 <details class="question" open="open">
@@ -3265,9 +3265,9 @@
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="15" data-maxlines="15">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-9--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-1--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-9--editor" class="pyodide-editor">M = 0xFFFFFFFF
+<div><pre id="exec-1--editor" class="pyodide-editor">M = 0xFFFFFFFF
 DELTA = 0x9E3779B9
 
 def mx(s, y, z, p, e, key):
@@ -3301,9 +3301,9 @@ key = [0xDEAD, 0xBEEF, 0xABCD, 1]
 
 print(b"".join(w.to_bytes(4, "little") for w in xxtea_decrypt(words, key)).decode())</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-9--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-1--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-9--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-1--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p>结果它是个假的。。。又一次被戏耍。</p>
@@ -3366,9 +3366,10 @@ print(b"".join(w.to_bytes(4, "little") for w in xxtea_decrypt(words, key)).decod
 </tr>
 </tbody>
 </table>
-<p>调试器默认会截获 <code>SIGTRAP</code>，gdb 要先 <code>handle SIGTRAP stop noprint pass</code>，如下图。</p>
+<p>调试器默认会截获 <code>SIGTRAP</code>，gdb 中可以设置 <code>handle SIGTRAP stop noprint pass</code>，告诉调试器将 <code>SIGTRAP</code> 信号传递给程序，如下图。</p>
 <p><a class="glightbox" data-type="image" href=".././find.assets/image-20261018233726238.png"><img width="2064" height="1872" class="lqip" alt="image-20261018233726238" src=".././find.assets/image-20261018233726238.preview.jpg" data-fullsrc=".././find.assets/image-20261018233726238.png" /></a></p>
 <p>第一次是程序自己的 int3 触发断点，第二次是调试器的断点。在第二次断住后，要让调试器重新截获 <code>SIGTRAP</code>，否则会重新进入 handler，陷入死循环。</p>
+<p>这种切换的操作其实是在告诉寄存器 int 3 指令的归属者是谁。</p>
 </details>
 <p><mark><del>其实正确分支就在错误分支紧挨着的下方，直接一划就看到了</del></mark></p>
 <p><a class="glightbox" data-type="image" href=".././find.assets/image-20261018225430491.png"><img width="2026" height="716" class="lqip" alt="image-20261018225430491" src=".././find.assets/image-20261018225430491.preview.jpg" data-fullsrc=".././find.assets/image-20261018225430491.png" /></a></p>
@@ -3395,9 +3396,9 @@ print(b"".join(w.to_bytes(4, "little") for w in xxtea_decrypt(words, key)).decod
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="23" data-maxlines="23">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-10--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-2--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-10--editor" class="pyodide-editor">s = [int.from_bytes(b"ACTF", "little")]
+<div><pre id="exec-2--editor" class="pyodide-editor">s = [int.from_bytes(b"ACTF", "little")]
 for _ in range(30):
     s.append(s[-1] * 16807 % 2147483647)
 
@@ -3421,9 +3422,9 @@ for src, ch in zip(a, T):
     o[src] = ch
 print(o.decode())</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-10--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-2--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-10--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-2--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p><a class="glightbox" data-type="image" href=".././find.assets/image-20261018234540055.png"><img width="1290" height="284" class="lqip" alt="image-20261018234540055" src=".././find.assets/image-20261018234540055.preview.jpg" data-fullsrc=".././find.assets/image-20261018234540055.png" /></a></p>
