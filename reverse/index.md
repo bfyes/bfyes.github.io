@@ -1,4 +1,4 @@
-# Reverse
+# Reverse 入门
 
 自学记录+writeup。
 
@@ -15,6 +15,7 @@
 - [Reverse2](<https://docs.bfyes.cn/reverse/reverse2/index.md>)
 - [Reverse3](<https://docs.bfyes.cn/reverse/reverse3/index.md>)
 - [Hidden Executable](<https://docs.bfyes.cn/reverse/hidden/index.md>)
+- [find me out](<https://docs.bfyes.cn/reverse/find/index.md>)
 
 > [!NOTE]
 >
