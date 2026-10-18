@@ -12,7 +12,7 @@
         <meta name="author" content="BillFeng">
       
       
-        <link rel="canonical" href="https://docs.bfyes.cn/reverse/apk01%20baby/">
+        <link rel="canonical" href="https://docs.bfyes.cn/reverse/hidden/">
       
       
         <link rel="describedby" href="../../llms.txt">
@@ -31,7 +31,7 @@
     
     
       
-        <title>apk01 baby - BillFeng 的文档站</title>
+        <title>Hidden Executable - BillFeng 的文档站</title>
       
     
     
@@ -156,7 +156,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              apk01 baby
+              Hidden Executable
             
           </span>
         </div>
@@ -3134,7 +3134,7 @@
 
 
   
-    <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/reverse/apk01 baby.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/reverse/hidden.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-pen" viewBox="0 0 24 24"><path d="M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"/></svg>
     </a>
@@ -3143,7 +3143,7 @@
     
       
     
-    <a href="https://github.com/bfyes/bfyes.github.io/raw/main/docs/reverse/apk01 baby.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/bfyes/bfyes.github.io/raw/main/docs/reverse/hidden.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-code-2" viewBox="0 0 24 24"><path d="M4 12.15V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-3.35"/><path d="M14 2v5a1 1 0 0 0 1 1h5M5 16l-3 3 3 3M9 22l3-3-3-3"/></svg>
     </a>
@@ -3156,13 +3156,51 @@
 
 
 
-<h1 id="apk01-baby">apk01 baby<a class="headerlink" href="#apk01-baby" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-17T17:48:36.984381+08:00">2026/10/17</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 67 字</span></div>
-<!-- AAA{LeadroyaL_qq_qun_386796080} -->
-
-<p>之前只接触过 x86/rv 的汇编语言，第一次打开这个反汇编还是眼花缭乱的。本题 flag 明文给出了。</p>
-<p><a class="glightbox" data-type="image" href=".././apk01 baby.assets/image-20261017170825691.png"><img width="3618" height="2232" class="lqip" alt="image-20261017170825691" src=".././apk01 baby.assets/image-20261017170825691.preview.jpg" data-fullsrc=".././apk01 baby.assets/image-20261017170825691.png" /></a></p>
-<p>右侧分支是诱饵吗……？</p>
-<p><a href="https://www.52pojie.cn/thread-1695141-1-1.html">安卓逆向系列教程（去我收藏夹里吃灰去罢！）</a></p>
+<h1 id="hidden-executable">Hidden Executable<a class="headerlink" href="#hidden-executable" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-18T16:58:25.044496+08:00">2026/10/18</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 138 字</span></div>
+<p>老叟戏顽童。</p>
+<p><a class="glightbox" data-type="image" href=".././hidden.assets/image-20261018164520860.png"><img width="2004" height="1530" class="lqip" alt="image-20261018164520860" src=".././hidden.assets/image-20261018164520860.preview.jpg" data-fullsrc=".././hidden.assets/image-20261018164520860.png" /></a></p>
+<p>这是一个 MS-DOS 文件，需要正确地选择类别。其中 seg001:0024 被默认解析成了代码，切换为数据即可。</p>
+<p><code class="language-nasm highlight"><span class="nf">repe</span><span class="w"> </span><span class="nv">cmpsw</span></code>, compare string word, repeat if equal. DS:[SI], ES:[DI].</p>
+<p>段寄存器定义为：</p>
+<div class="language-nasm highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nl">dseg:</span><span class="err">0000</span><span class="w"> </span><span class="nf">dseg</span><span class="w">            </span><span class="ow">seg</span><span class="nv">ment</span><span class="w"> </span><span class="nv">para</span><span class="w"> </span><span class="nv">stack</span><span class="w"> </span><span class="s">&#39;DATA&#39;</span><span class="w"> </span><span class="nv">use16</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nl">dseg:</span><span class="err">0000</span><span class="w">                 </span><span class="nf">assume</span><span class="w"> </span><span class="nb">cs</span><span class="p">:</span><span class="nv">dseg</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nl">dseg:</span><span class="err">0000</span><span class="w"> </span><span class="nf">aBingoWrongInpu</span><span class="w"> </span><span class="nv">db</span><span class="w"> </span><span class="s">&#39;bingo$wrong$input flag:$&#39;</span><span class="p">,</span><span class="mi">0</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nl">dseg:</span><span class="err">0019</span><span class="w">                 </span><span class="k">align</span><span class="w"> </span><span class="mh">80h</span><span class="w"> </span><span class="c1">; 校验字符串存放</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nl">dseg:</span><span class="err">0019</span><span class="w"> </span><span class="nf">dseg</span><span class="w">            </span><span class="nv">ends</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nl">seg001:</span><span class="err">0000</span><span class="w"> </span><span class="nf">start</span><span class="w">           </span><span class="nv">proc</span><span class="w"> </span><span class="nv">near</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nl">seg001:</span><span class="err">0000</span><span class="w">                 </span><span class="nf">mov</span><span class="w">     </span><span class="nb">ax</span><span class="p">,</span><span class="w"> </span><span class="ow">seg</span><span class="w"> </span><span class="nv">dseg</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nl">seg001:</span><span class="err">0003</span><span class="w">                 </span><span class="nf">mov</span><span class="w">     </span><span class="nb">ds</span><span class="p">,</span><span class="w"> </span><span class="nb">ax</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="nl">seg001:</span><span class="err">0005</span><span class="w">                 </span><span class="nf">assume</span><span class="w"> </span><span class="nb">ds</span><span class="p">:</span><span class="nv">dseg</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nl">seg001:</span><span class="err">0005</span><span class="w">                 </span><span class="nf">mov</span><span class="w">     </span><span class="nb">ax</span><span class="p">,</span><span class="w"> </span><span class="ow">seg</span><span class="w"> </span><span class="ow">seg</span><span class="mi">001</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nl">seg001:</span><span class="err">0008</span><span class="w">                 </span><span class="nf">mov</span><span class="w">     </span><span class="nb">es</span><span class="p">,</span><span class="w"> </span><span class="nb">ax</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="nl">seg001:</span><span class="err">000</span><span class="nf">A</span><span class="w">                 </span><span class="nv">assume</span><span class="w"> </span><span class="nb">es</span><span class="p">:</span><span class="ow">seg</span><span class="mi">001</span>
+</span></code></pre></div>
+<p>输入先做一次前缀和(100DC)，再从后往前累加一遍(100E9)，最后和 seg001:0024 比对。</p>
+<p>
+<div class="pyodide" data-install="" data-session="default" data-minlines="11" data-maxlines="11">
+<div class="pyodide-editor-bar">
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-79--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+</div>
+<div><pre id="exec-79--editor" class="pyodide-editor">table = bytes([
+    0x07, 0xA1, 0xCF, 0x9C, 0x02, 0xED, 0x6A, 0x78,
+    0x27, 0x61, 0x28, 0x86, 0x76, 0xFF, 0x29, 0xEF,
+    0x50, 0x4B, 0xE5, 0x0A, 0xC3, 0x08, 0xEE, 0x70,
+    0x83, 0x23, 0x64, 0x32, 0x8C, 0x71, 0xF4, 0xFA,
+])
+n = 31
+# & 0xFF 防止溢出，可以删掉试一下，会报错。
+b = [(table[i] - table[i + 1]) & 0xFF for i in range(n - 1)] + [table[n]]
+flag = [b[0]] + [(b[i] - b[i - 1]) & 0xFF for i in range(1, n)]
+print(bytes(flag).decode())</pre></div>
+<div class="pyodide-editor-bar">
+<span class="pyodide-bar-item">Output</span><span id="exec-79--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+</div>
+<pre><code id="exec-79--output" class="pyodide-output"></code></pre>
+</div>
+</p>
+<p>暂时先不用 soft-ice 验证了，操作忘记了（</p>
+<p>所以，如何做到的混淆（正如题干里的"hidden"）呢？纯 dos 实现类似功能的可执行文件不会这么大……</p>
 
 
 

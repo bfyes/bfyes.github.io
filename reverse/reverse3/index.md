@@ -121,7 +121,7 @@ OutputClear
 
 剩下 14 个字符由矩阵部分给出。
 
-`GetSquare()` 把《红楼梦》酒令用 `BinaryFormatter` 序列化。（BinaryFormatter 是 .NET Framework 的运行时功能，它按 `MS-NRBF` 格式把对象写成字节流，最后得到 195 字节的一维字节流，不是矩阵）
+`GetSquare()` 把《红楼梦》酒令用 `BinaryFormatter` 序列化。（BinaryFormatter 是 .NET Framework 的运行时功能，它按 `MS-NRBF` 格式把对象写成字节流，最后得到 195 字节的一维字节流）
 
 再按 `Square[i, j] = bytes[(7 * (i + 14 * j)) % 195] % 127` 填成 14×14。195 是序列化流的总长度，17 字节头 + `BinaryObjectString`（1 + 4 + 2 + 170）+ 1 字节 `MessageEnd(0x0B)`。
 

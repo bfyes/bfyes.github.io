@@ -3156,7 +3156,7 @@
 
 
 
-<h1 id="reverse3">Reverse3<a class="headerlink" href="#reverse3" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-17T23:40:41.021120+08:00">2026/10/17</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 410 字</span></div>
+<h1 id="reverse3">Reverse3<a class="headerlink" href="#reverse3" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-18T12:28:53.590674+08:00">2026/10/18</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 406 字</span></div>
 <p>先用 ida 静态分析，可以观察到格式基本的要求。</p>
 <p><a class="glightbox" data-type="image" href=".././reverse3.assets/image-20261017214451787.png"><img width="3618" height="2232" class="lqip" alt="image-20261017214451787" src=".././reverse3.assets/image-20261017214451787.preview.jpg" data-fullsrc=".././reverse3.assets/image-20261017214451787.png" /></a></p>
 <p><a class="glightbox" data-type="image" href=".././reverse3.assets/image-20261017223726591.png"><img width="3618" height="2232" class="lqip" alt="image-20261017223726591" src=".././reverse3.assets/image-20261017223726591.preview.jpg" data-fullsrc=".././reverse3.assets/image-20261017223726591.png" /></a></p>
@@ -3273,9 +3273,9 @@
 <p>
 <div class="pyodide" data-install="" data-session="reverse3" data-minlines="12" data-maxlines="12">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-18--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-4--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-18--editor" class="pyodide-editor">import base64
+<div><pre id="exec-4--editor" class="pyodide-editor">import base64
 
 data = base64.b64decode('d3l5d3ldRncbEB4fER4YEBg=')
 
@@ -3287,9 +3287,9 @@ for key in range(128):
     if chk == key:
         print(hex(key), cand)</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-18--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-4--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-18--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-4--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p>？！诶诶！？</p>
@@ -3308,9 +3308,9 @@ for key in range(128):
 <p>
 <div class="pyodide" data-install="" data-session="reverse3" data-minlines="8" data-maxlines="8">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-19--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-5--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-19--editor" class="pyodide-editor"># data 是上一个块里的 base64 字节
+<div><pre id="exec-5--editor" class="pyodide-editor"># data 是上一个块里的 base64 字节
 # 假设可读定义为数字字母下划线
 for key in range(128):
     cand = bytes(v ^ key for v in data).decode()
@@ -3318,13 +3318,13 @@ for key in range(128):
         print(hex(key), cand)
         tail = cand</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-19--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-5--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-19--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-5--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p>剩下 14 个字符由矩阵部分给出。</p>
-<p><code>GetSquare()</code> 把《红楼梦》酒令用 <code>BinaryFormatter</code> 序列化。（BinaryFormatter 是 .NET Framework 的运行时功能，它按 <code>MS-NRBF</code> 格式把对象写成字节流，最后得到 195 字节的一维字节流，不是矩阵）</p>
+<p><code>GetSquare()</code> 把《红楼梦》酒令用 <code>BinaryFormatter</code> 序列化。（BinaryFormatter 是 .NET Framework 的运行时功能，它按 <code>MS-NRBF</code> 格式把对象写成字节流，最后得到 195 字节的一维字节流）</p>
 <p>再按 <code>Square[i, j] = bytes[(7 * (i + 14 * j)) % 195] % 127</code> 填成 14×14。195 是序列化流的总长度，17 字节头 + <code>BinaryObjectString</code>（1 + 4 + 2 + 170）+ 1 字节 <code>MessageEnd(0x0B)</code>。</p>
 <p><code>Matrix</code> 类的 <code>Modulus</code> 是 127，<code>op_Multiply</code> 每一步都取余，所以要解的是 mod 127 下的 <code>A·x ≡ b</code>。</p>
 <details class="bug" open="open">
@@ -3334,9 +3334,9 @@ for key in range(128):
 <p>
 <div class="pyodide" data-install="" data-session="reverse3" data-minlines="14" data-maxlines="14">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-20--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-6--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-20--editor" class="pyodide-editor">def nrbf_string(s):
+<div><pre id="exec-6--editor" class="pyodide-editor">def nrbf_string(s):
     """BinaryFormatter 序列化结果当作线性字节池"""
     def i32(n):
         return n.to_bytes(4, 'little', signed=True)
@@ -3351,18 +3351,18 @@ print('序列化流长度', len(blob))
 MOD, N = 127, 14
 A = [[blob[(7 * (i + 14 * j)) % 195] % MOD for j in range(N)] for i in range(N)]</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-20--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-6--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-20--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-6--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p><code>A</code> 建好后，把常量向量拼进增广矩阵，在 <code>Z_127</code> 里做高斯消元。</p>
 <p>
 <div class="pyodide" data-install="" data-session="reverse3" data-minlines="17" data-maxlines="17">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-21--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-7--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-21--editor" class="pyodide-editor">target = [45, 77, 7, 109, 112, 98, 11, 14, 70, 77, 16, 26, 1, 106]
+<div><pre id="exec-7--editor" class="pyodide-editor">target = [45, 77, 7, 109, 112, 98, 11, 14, 70, 77, 16, 26, 1, 106]
 
 # 模 127 高斯消元
 aug = [A[i] + [target[i]] for i in range(N)]
@@ -3380,9 +3380,9 @@ mid = ''.join(chr(aug[i][N]) for i in range(N))
 print(mid)
 print(f'AAA{{{mid}{tail}}}')</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-21--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-7--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-21--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-7--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 

@@ -31,7 +31,7 @@
     
     
       
-        <title>apk02：让屏幕显示出那句话 - BillFeng 的文档站</title>
+        <title>apk02 守望起来 - BillFeng 的文档站</title>
       
     
     
@@ -156,7 +156,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              apk02：让屏幕显示出那句话
+              apk02 守望起来
             
           </span>
         </div>
@@ -3100,11 +3100,6 @@
                       
                     
                     
-                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-                      <div class="md-sidebar-button__wrapper">
-                        <label class="md-sidebar-button" for="__toc"></label>
-                      </div>
-                    
                   
                   <div class="md-sidebar__inner">
                     
@@ -3116,102 +3111,6 @@
   
     
   
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      On this page
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#应用里有什么" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        应用里有什么
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#校验逻辑" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        校验逻辑
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#那张-100-字的表" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        那张 100 字的表
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#求-password" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        求 password
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#flag-格式不在-dex-里" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        flag 格式不在 dex 里
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#结果" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        结果
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#看着可疑其实没用的几处" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        看着可疑、其实没用的几处
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#踩坑清单" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        踩坑清单
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -3257,169 +3156,70 @@
 
 
 
-<h1 id="apk02让屏幕显示出那句话">apk02：让屏幕显示出那句话<a class="headerlink" href="#apk02让屏幕显示出那句话" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-17T01:02:43+08:00">2026/10/17</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 960 字</span></div>
-<p>题目给的是个 Android 应用：输入 password，让屏幕显示出「鎏金哇卡呀库列」。flag 格式是 <code>AAA{password}</code>。</p>
-<p>附件 <code>apk02.apk</code> 1,495,763 字节（md5 <code>5fbbdec9eb65fcc35f2b63b7e455de14</code>），里面业务代码只有一个 <code>classes.dex</code>，2,338,132 字节。</p>
-<h2 id="应用里有什么">应用里有什么<a class="headerlink" href="#应用里有什么" title="Permanent link"></a></h2>
-<p><code>unzip</code> 之后翻 dex 字符串表，跟包名 <code>leadroyal.aaa.com.apk02</code> 相关的类只有三个：</p>
-<ul>
-<li><code>Lleadroyal/aaa/com/apk02/MainActivity;</code></li>
-<li><code>Lleadroyal/aaa/com/apk02/MainActivity$1;</code></li>
-<li>一堆 <code>R$***</code> 和 <code>BuildConfig</code></li>
-</ul>
-<p>没有第二个 Activity，逻辑全在 <code>MainActivity</code> 和它的匿名内部类里。</p>
-<h2 id="校验逻辑">校验逻辑<a class="headerlink" href="#校验逻辑" title="Permanent link"></a></h2>
-<p>按钮点击走 <code>MainActivity$1.onClick</code> → <code>access$000</code>（编译器生成的桥接）→ <code>MainActivity.check(String)</code>。循环那段反汇编：</p>
-<div class="language-smali highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">loc_128B92</span><span class="p">:</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>const/4<span class="w">             </span><span class="nb">v7</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>if-ge<span class="w">               </span><span class="err">i</span><span class="p">,</span><span class="w"> </span><span class="err">len</span><span class="p">,</span><span class="w"> </span><span class="err">loc_</span><span class="mi">128</span><span class="kt">BDC</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>add-int/lit8<span class="w">        </span><span class="nb">v0</span><span class="p">,</span><span class="w"> </span><span class="err">i</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span>invoke-virtual<span class="w">      </span><span class="p">{</span><span class="err">s</span><span class="p">,</span><span class="w"> </span><span class="err">i</span><span class="p">,</span><span class="w"> </span><span class="nb">v0</span><span class="p">},</span><span class="w"> </span><span class="kt">S</span><span class="err">tring</span><span class="p">.</span><span class="nf">substring</span><span class="p">(</span><span class="err">int</span><span class="p">,</span><span class="w"> </span><span class="err">int</span><span class="p">)</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span>invoke-static<span class="w">       </span><span class="p">{</span><span class="nb">v0</span><span class="p">},</span><span class="w"> </span><span class="kt">I</span><span class="err">nteger</span><span class="p">.</span><span class="nf">parseInt</span><span class="p">(</span><span class="err">ref</span><span class="p">)</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span>move-result<span class="w">         </span><span class="nb">v10</span><span class="w">                     </span><span class="c"># tp</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span>iget-object<span class="w">         </span><span class="nb">v1</span><span class="p">,</span><span class="w"> </span><span class="err">this</span><span class="p">,</span><span class="w"> </span><span class="err">MainActivity_a</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span>aget-char<span class="w">           </span><span class="nb">v1</span><span class="p">,</span><span class="w"> </span><span class="nb">v1</span><span class="p">,</span><span class="w"> </span>tp<span class="w">              </span><span class="c"># a[tp]</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="c"># StringBuilder 拼接 result</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span>add-int/lit8<span class="w">        </span><span class="err">i</span><span class="p">,</span><span class="w"> </span><span class="err">i</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span>goto<span class="w">                </span><span class="err">loc_</span><span class="mi">128</span><span class="kt">B</span><span class="mi">94</span>
+<h1 id="apk02-守望起来">apk02 守望起来<a class="headerlink" href="#apk02-守望起来" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-17T01:02:43+08:00">2026/10/17</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 376 字</span></div>
+<p><a class="glightbox" data-type="image" href=".././apk02.assets/image-20261018140707452.png"><img width="3618" height="2232" class="lqip" alt="image-20261018140707452" src=".././apk02.assets/image-20261018140707452.preview.jpg" data-fullsrc=".././apk02.assets/image-20261018140707452.png" /></a></p>
+<p>关键代码如上图。smali 汇编代码需要一段时间来熟悉。</p>
+<p>整体的逻辑是，将取出的字符串拼接到 result 中，然后与汉字字符串比较。</p>
+<p>校验通过 <code class="language-asm highlight"><span class="nl">CODE:</span><span class="err">00128</span><span class="nf">BBE</span><span class="w">   </span><span class="no">iget-object</span><span class="w">  </span><span class="no">v1</span><span class="p">,</span><span class="w"> </span><span class="no">this</span><span class="p">,</span><span class="w"> </span><span class="no">MainActivity_a</span></code> 来根据下标取出字符串。</p>
+<div class="language-asm highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nl">FIELDS:</span><span class="err">000267</span><span class="nf">C8</span><span class="w"> </span><span class="c1"># char[] leadroyal.aaa.com.apk02.MainActivity.a</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nl">FIELDS:</span><span class="err">000267</span><span class="nf">C8</span><span class="w"> </span><span class="no">MainActivity_a</span><span class="p">:</span><span class="w"> </span><span class="no">.short</span><span class="w"> </span><span class="mi">0x7F2</span><span class="w">            </span><span class="c1"># class_idx</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nl">FIELDS:</span><span class="err">000267</span><span class="nf">C8</span><span class="w">                                         </span><span class="c1"># DATA XREF: MainActivity__init_@V+14↓r</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nl">FIELDS:</span><span class="err">000267</span><span class="nf">C8</span><span class="w">                                         </span><span class="c1"># MainActivity_check@VL+56↓r</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nl">FIELDS:</span><span class="err">000267</span><span class="nf">CA</span><span class="w">                 </span><span class="no">.short</span><span class="w"> </span><span class="mi">0x809</span><span class="w">            </span><span class="c1"># type_or_proto_idx</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nl">FIELDS:</span><span class="err">000267</span><span class="nf">CC</span><span class="w">                 </span><span class="no">.int</span><span class="w"> </span><span class="mi">0x19C9</span><span class="w">             </span><span class="c1"># name_idx</span>
 </span></code></pre></div>
-<p>翻译成 Java：</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kt">void</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="na">length</span><span class="p">();</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">len</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">                              </span><span class="c1">// 长度必须偶数</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="n">show</span><span class="p">.</span><span class="na">setText</span><span class="p">(</span><span class="s">&quot;Input Error&quot;</span><span class="p">);</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">        </span><span class="k">return</span><span class="p">;</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">len</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">tp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Integer</span><span class="p">.</span><span class="na">parseInt</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="na">substring</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="p">));</span><span class="w">   </span><span class="c1">// 两位十进制 → 下标</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">StringBuilder</span><span class="p">(</span><span class="n">result</span><span class="p">).</span><span class="na">append</span><span class="p">(</span><span class="n">a</span><span class="o">[</span><span class="n">tp</span><span class="o">]</span><span class="p">).</span><span class="na">toString</span><span class="p">();</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="n">show</span><span class="p">.</span><span class="na">setText</span><span class="p">(</span><span class="n">result</span><span class="p">);</span><span class="w">                            </span><span class="c1">// 先把拼出来的串显示出来</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="na">equals</span><span class="p">(</span><span class="s">&quot;鎏金哇卡呀库列&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">        </span><span class="n">show</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\nCorrect!&quot;</span><span class="p">);</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">        </span><span class="n">pool</span><span class="p">.</span><span class="na">play</span><span class="p">(</span><span class="n">poolMap</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;win&quot;</span><span class="p">).</span><span class="na">intValue</span><span class="p">(),</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">        </span><span class="n">show</span><span class="p">.</span><span class="na">append</span><span class="p">(</span><span class="s">&quot;\nFalse!&quot;</span><span class="p">);</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">        </span><span class="n">pool</span><span class="p">.</span><span class="na">play</span><span class="p">(</span><span class="n">poolMap</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">&quot;lose&quot;</span><span class="p">).</span><span class="na">intValue</span><span class="p">(),</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">    </span><span class="p">}</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="p">}</span>
-</span></code></pre></div>
-<p>跟解题有关的几个点：</p>
-<table>
-<thead>
-<tr>
-<th>点</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>输入单位</td>
-<td>每次取两个字符，<code>Integer.parseInt</code> 按十进制解析，<code>"12"</code> 就是下标 12</td>
-</tr>
-<tr>
-<td>下标范围</td>
-<td><code>a</code> 只有 100 个元素，下标必须落在 0–99；越界直接崩（<code>tries_size = 0</code>，没有 try/catch）</td>
-</tr>
-<tr>
-<td>非数字</td>
-<td><code>parseInt</code> 抛 <code>NumberFormatException</code>，同样崩</td>
-</tr>
-<tr>
-<td>局部变量</td>
-<td><code>result</code> 每次点击都从空串重来，不累积上一次的结果</td>
-</tr>
-<tr>
-<td>音效</td>
-<td>win 播 <code>res/raw/kill.mp3</code>，lose 播 <code>res/raw/death.wma</code></td>
-</tr>
-</tbody>
-</table>
-<h2 id="那张-100-字的表">那张 100 字的表<a class="headerlink" href="#那张-100-字的表" title="Permanent link"></a></h2>
-<p><code>a</code> 是 <code>char[100]</code>，由 <code>fill-array-data</code> 载荷填充。载荷头在文件偏移 <code>0x128a70</code>：<code>00 03 | 02 00 | 64 00 00 00</code>，也就是 ident <code>0x0300</code>、元素宽 2 字节、元素数 <code>0x64</code> = 100，数据从 <code>0x128a78</code> 开始，共 200 字节。</p>
-<p>反汇编工具会把后半段合并成 <code>.int</code> 显示（一个 int 塞两个 UTF-16 码元，小端），按 int 读会看成乱码，按 short 读才对：</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a> 0 国  1 气  2 传  3 必  4 强  5 种  6 火  7 样  8 很  9 水
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>10 办 11 眼 12 鎏 13 了 14 为 15 机 16 围 17 够 18 今 19 讲
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>20 公 21 以 22 每 23 习 24 叔 25 提 26 读 27 关 28 破 29 吗
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>30 嘴 31 爱 32 位 33 动 34 金 35 再 36 何 37 候 38 岁 39 阶
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>40 军 41 报 42 义 43 夜 44 早 45 应 46 法 47 让 48 习 49 识
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>50 越 51 劳 52 开 53 哇 54 村 55 特 56 起 57 领 58 建 59 忽
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>60 库 61 何 62 工 63 道 64 息 65 展 66 收 67 找 68 观 69 道
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>70 相 71 带 72 每 73 好 74 劳 75 把 76 实 77 穿 78 带 79 呀
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>80 列 81 冲 82 作 83 体 84 样 85 直 86 卡 87 是 88 最 89 倒
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>90 话 91 师 92 底 93 头 94 车 95 紧 96 道 97 区 98 马 99 块
-</span></code></pre></div>
-<h2 id="求-password">求 password<a class="headerlink" href="#求-password" title="Permanent link"></a></h2>
-<p>反过来查表：把目标串逐字在表里找位置（下标从 0 起），每个下标写成两位十进制（不足位补 <code>0</code>），按原顺序拼起来就是 password。</p>
-<p>补零不能省。表里 100 个元素，下标 <code>7</code> 必须写成 <code>07</code>，写一位会让后面所有两字符的分组整体错位，拼出来的东西对不上。</p>
-<p>表里有几个重复字（<code>何</code>、<code>道</code>、<code>每</code>、<code>带</code>、<code>样</code>、<code>劳</code>、<code>习</code>），都不在目标串里，不影响答案。</p>
-<p>具体下标和拼出来的串就不写在这里了，按上面的方法查表即可。</p>
-<h2 id="flag-格式不在-dex-里">flag 格式不在 dex 里<a class="headerlink" href="#flag-格式不在-dex-里" title="Permanent link"></a></h2>
-<p><code>AAA{</code> 这个壳在 dex 里搜不到：整个 <code>classes.dex</code> 只有一条中文串（被判等的那句常量），既没有 <code>flag</code>，也没有 <code>AAA{</code>。</p>
-<p>它写在<strong>资源字符串</strong>里。<code>resources.arsc</code> 全局字符串池第 364 条：</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>LeadroyaL最近在玩守望py，玩着玩着就蹦出一句“鎏金哇卡呀库列”，请输入password，让屏幕显示出这句话。
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>flag格式为AAA{password}，password的最后9位是群号，做出来可以加群。
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>建议开启声音，password正确和错误的声音明显不一样。
-</span></code></pre></div>
-<p>这条资源的 id 是 <code>0x7f070016</code>，key 是 <code>over_watch</code>，被 <code>res/layout/activity_main.xml</code> 里最上面那个 TextView 的 <code>android:text</code> 引用。装到设备上跑一下，界面上就写着 flag 格式。</p>
-<p>平台页面上的描述只留了第一句，后面两句被删掉、换成「本题flag不含群号」，所以在 dex 里翻完再猜 flag 格式会一直错。</p>
-<p>顺手把界面文案一起取出来：</p>
-<table>
-<thead>
-<tr>
-<th>资源 id</th>
-<th>用途</th>
-<th>值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>0x7f070014</code></td>
-<td>application label</td>
-<td><code>apk2</code></td>
-</tr>
-<tr>
-<td><code>0x7f070015</code></td>
-<td>EditText hint</td>
-<td><code>输入密码</code></td>
-</tr>
-<tr>
-<td><code>0x7f070016</code></td>
-<td>顶部 TextView</td>
-<td>上面那段原文</td>
-</tr>
-<tr>
-<td><code>0x7f070017</code></td>
-<td><code>show</code> 初值</td>
-<td><code>显示结果</code></td>
-</tr>
-<tr>
-<td><code>0x7f070018</code></td>
-<td>Button text</td>
-<td><code>submit</code></td>
-</tr>
-</tbody>
-</table>
-<p>EditText 的 <code>inputType = 0x02</code>（<code>TYPE_CLASS_NUMBER</code>），只能输数字。</p>
-<h2 id="结果">结果<a class="headerlink" href="#结果" title="Permanent link"></a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>password = 七个两位下标拼接（此处略）
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>flag     = AAA{password}
-</span></code></pre></div>
-<h2 id="看着可疑其实没用的几处">看着可疑、其实没用的几处<a class="headerlink" href="#看着可疑其实没用的几处" title="Permanent link"></a></h2>
-<ul>
-<li><code>res/drawable/bg.jpg</code>：300×244 的源氏梗图，图上写的是「溜金哇开呀酷裂」+「竜人の剣を喰え～～～」，跟常量那句是同一个梗的不同谐音写法。<code>溜</code>、<code>酷</code>、<code>裂</code> 三个字不在表里（<code>酷</code> 在 dex 里 0 命中），图上的字没法用同一张表编码，也不是 flag。</li>
-<li><code>res/raw/kill.mp3</code>：2.712 s、256 kbps、48 kHz，113 帧刚好排到文件末尾，没有附加数据，频谱是普通音效。ID3v2.3 里留着 TIT2 <code>5f51875c5620f04241ba0a810c22cd16</code>、TRCK <code>8538</code>、COMM 提到 LameXP，这些是音频来源本身带下来的转码残留，和题目里任何字符串、任何文件的 md5 都对不上。</li>
-<li><code>res/raw/death.wma</code>：WMA 9.2，1.628 s，ASF header 里只有编码器信息，没有 Title/Author，尾部全 0。</li>
-<li><code>ic_launcher.png</code>：5 个密度目录放的是同一张 133×140 图，就是那个 Q 版源氏。</li>
-</ul>
-<h2 id="踩坑清单">踩坑清单<a class="headerlink" href="#踩坑清单" title="Permanent link"></a></h2>
-<ul>
-<li>flag 的壳是 <code>AAA{}</code>，不是 <code>flag{}</code>。课程文档里那句「flag 格式均为 <code>flag{XXX}</code>」是通用说明，这道题用作者自己的格式。</li>
-<li>flag 格式在 <code>resources.arsc</code> 的字符串资源里，dex 字符串表里没有。只翻 dex 会卡在「密码对了但不知道交什么」。</li>
-<li>反汇编里那张表的后半段是 <code>.int</code> 形式，按 int 读是乱码，按 short（小端）读才对。</li>
-<li>平台描述和 APK 里自带的题目原文不一致，原文那句「password 的最后 9 位是群号」正好解释了下标串尾部那段数字的来历。</li>
-</ul>
+<p>进入交叉引用 DATA XREF: MainActivity__init_@V+14↓r</p>
+<details class="failure">
+<summary>我点击了.short 0x7F2</summary>
+<p>分别点击了.short 0x7F2，.short 0x809，.int 0x19C9，他们跳转到了同一个位置，此时我以为稳了。结果我在这里困了很长时间。</p>
+<p>他们直接跳转到了<code class="language-asm highlight"><span class="nl">STR_IDS:</span><span class="err">00000070</span><span class="w"> </span><span class="c1"># String ids</span></code>，这是因为恰好落在了 string_ids 表里。（IDA 把所有十六进制常量都当成可跳转地址）</p>
+<p>正确的方法应该根据这三个数据算出地址，不过 ida 的交叉引用点进去是“用静态数据块填充数组v0，然后给实例赋值（见下图）”，通过<code class="language-asm highlight"><span class="nf">fill-array-data</span><span class="w"> </span><span class="no">v0</span><span class="p">,</span><span class="w"> </span><span class="no">arraydata_128A70</span></code>也可以很快定位到。</p>
+</details>
+<p><a class="glightbox" data-type="image" href=".././apk02.assets/image-20261018143412738.png"><img width="2736" height="1354" class="lqip" alt="image-20261018143412738" src=".././apk02.assets/image-20261018143412738.preview.jpg" data-fullsrc=".././apk02.assets/image-20261018143412738.png" /></a></p>
+<p>将汉字字符串转为 dd 后取对应的下标即可推出字符串。截图中，前50个字符串用 short 表示，后50个字符串用 int 表示。</p>
+<p>逆向脚本通过目标来取下标。</p>
+<p>
+<div class="pyodide" data-install="" data-session="default" data-minlines="24" data-maxlines="24">
+<div class="pyodide-editor-bar">
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-47--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+</div>
+<div><pre id="exec-47--editor" class="pyodide-editor">words = [
+    0x56FD, 0x6C14, 0x4F20, 0x5FC5, 0x5F3A, 0x79CD,
+    0x706B, 0x6837, 0x5F88, 0x6C34, 0x529E, 0x773C,
+    0x938F, 0x4E86, 0x4E3A, 0x673A, 0x56F4, 0x591F,
+    0x4ECA, 0x8BB2, 0x516C, 0x4EE5, 0x6BCF, 0x4E60,
+    0x53D4, 0x63D0, 0x8BFB, 0x5173, 0x7834, 0x5417,
+    0x5634, 0x7231, 0x4F4D, 0x52A8, 0x91D1, 0x518D,
+    0x4F55, 0x5019, 0x5C81, 0x9636, 0x519B, 0x62A5,
+    0x4E49, 0x591C, 0x65E9, 0x5E94, 0x6CD5, 0x8BA9,
+    0x4E60, 0x8BC6, 
+    0x8D8A, 0x52B3, 0x5F00, 0x54C7, 0x6751, 0x7279, # 注意小端
+    0x8D77, 0x9886, 0x5EFA, 0x5FFD, 0x5E93, 0x4F55,
+    0x5DE5, 0x9053, 0x606F, 0x5C55, 0x6536, 0x627E,
+    0x89C2, 0x9053, 0x76F8, 0x5E26, 0x6BCF, 0x597D,
+    0x52B3, 0x628A, 0x5B9E, 0x7A7F, 0x5E26, 0x5440,
+    0x5217, 0x51B2, 0x4F5C, 0x4F53, 0x6837, 0x76F4,
+    0x5361, 0x662F, 0x6700, 0x5012, 0x8BDD, 0x5E08,
+    0x5E95, 0x5934, 0x8F66, 0x7D27, 0x9053, 0x533A,
+    0x9A6C, 0x5757,
+]
+
+table = ''.join(chr(w) for w in words)
+code = ''.join('%02d' % table.index(ch) for ch in '鎏金哇卡呀库列')
+print('AAA{%s}' % code)</pre></div>
+<div class="pyodide-editor-bar">
+<span class="pyodide-bar-item">Output</span><span id="exec-47--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+</div>
+<pre><code id="exec-47--output" class="pyodide-output"></code></pre>
+</div>
+</p>
+<p><mark><strong>《本题flag不含群号》</strong></mark></p>
+<p><del>这东西好像是来捣乱的。。。走了不少弯路。。</del></p>
+<details class="example">
+<summary>关于 flag 格式</summary>
+<p><a class="glightbox" data-type="image" href=".././apk02.assets/image-20261018150802093.png"><img width="2168" height="1432" class="lqip" alt="image-20261018150802093" src=".././apk02.assets/image-20261018150802093.preview.jpg" data-fullsrc=".././apk02.assets/image-20261018150802093.png" /></a></p>
+<p>可以根据 apk 包里的 <code>resources.arsc</code> 中的信息确定。当然我感觉出题者是希望把这个包安装在安卓环境的，这样可以直观看出来，不过这次是纯静态分析了。</p>
+</details>
 
 
 

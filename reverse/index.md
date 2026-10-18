@@ -1,16 +1,20 @@
 # Reverse
 
-自学记录+writeup，暂未公开。
+自学记录+writeup。
+
+- [校巴题目地址](<https://zjusec.com/category/REVERSE>)
 
 **\- welcome -**
 
 - [Reverse1](<https://docs.bfyes.cn/reverse/reverse1/index.md>)
-- [apk01 baby](<https://docs.bfyes.cn/reverse/apk01 baby/index.md>)
+- [apk01 baby](<https://docs.bfyes.cn/reverse/apk01/index.md>)
 
 **\- emoclew -**
 
+- [apk02 守望起来](<https://docs.bfyes.cn/reverse/apk02/index.md>)
 - [Reverse2](<https://docs.bfyes.cn/reverse/reverse2/index.md>)
 - [Reverse3](<https://docs.bfyes.cn/reverse/reverse3/index.md>)
+- [Hidden Executable](<https://docs.bfyes.cn/reverse/hidden/index.md>)
 
 > [!NOTE]
 >
