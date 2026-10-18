@@ -3260,39 +3260,26 @@
 <p>掌握了 IDA 的基本操作，即可进行简单的静态分析。以 <a href="https://zjusec.com/challenges/26">Reverse1</a> 为例，通过静态分析可以获取答案。</p>
 <p><a class="glightbox" data-type="image" href=".././reverse1.assets/image-20261016205824023.png"><img width="2756" height="2210" class="lqip" alt="image-20261016205824023" src=".././reverse1.assets/image-20261016205824023.preview.jpg" data-fullsrc=".././reverse1.assets/image-20261016205824023.png" /></a></p>
 <p>IDA 有特征库，已经成功识别了 <code class="language-c highlight"><span class="n">_printf</span><span class="p">()</span></code> 等库函数，大大降低了阅读难度。 </p>
+<p>情况似乎比较明朗，打开即可看到疑似异或/凯撒密码加密过的flag（因为MMM太容易让人联想到AAA），在程序运行时动态加载到栈中。</p>
+<p>查看代码可知采用了异或加密，循环部分为按位检测，然后分别有两个跳出的分支，为成功或失败。</p>
+<p>根据逆向结果，将每一位与0Ch做异或即可。</p>
 <p>
-<div class="pyodide" data-install="" data-session="reverse1" data-minlines="8" data-maxlines="8">
+<div class="pyodide" data-install="" data-session="reverse1" data-minlines="9" data-maxlines="9">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: reverse1)</span><span id="exec-2--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: reverse1)</span><span id="exec-1--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-2--editor" class="pyodide-editor">data = [
+<div><pre id="exec-1--editor" class="pyodide-editor">data = [
     0x4D, 0x4D, 0x4D, 0x77, 0x6A, 0x61, 0x75, 0x60, 
     0x53, 0x5D, 0x5D, 0x53, 0x7D, 0x79, 0x62, 0x53, 
     0x3F, 0x34, 0x3A, 0x3B, 0x35, 0x3A, 0x3C, 0x34, 
     0x3C, 0x71,
 ]
-print(bytes(data).decode()) # 点击 run 来写入 data，在第二个块中可以继续运行。</pre></div>
-<div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-2--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
-</div>
-<pre><code id="exec-2--output" class="pyodide-output"></code></pre>
-</div>
-</p>
-<p>情况似乎比较明朗，打开即可看到疑似异或/凯撒密码加密过的flag（因为MMM太容易让人联想到AAA），在程序运行时动态加载到栈中。</p>
-<p>查看代码可知采用了异或加密，循环部分为按位检测，然后分别有两个跳出的分支，为成功或失败。</p>
-<p>根据逆向结果，将每一位与0Ch做异或即可。</p>
-<p>
-<div class="pyodide" data-install="" data-session="reverse1" data-minlines="4" data-maxlines="4">
-<div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: reverse1)</span><span id="exec-3--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
-</div>
-<div><pre id="exec-3--editor" class="pyodide-editor"># 先点击第一个块的 run 来写入 data，然后再点击第二个块的 run 来运行下面的代码。
 flag = "".join(chr(b ^ 0x0C) for b in data)
 print(flag)</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-3--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-1--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-3--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-1--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 
