@@ -22,6 +22,7 @@
 - [主页](<https://docs.bfyes.cn/index.md>)
 - [apk01 baby](<https://docs.bfyes.cn/reverse/apk01/index.md>)
 - [apk02 守望起来](<https://docs.bfyes.cn/reverse/apk02/index.md>)
+- [easy reversing](<https://docs.bfyes.cn/reverse/easy/index.md>)
 - [find me out](<https://docs.bfyes.cn/reverse/find/index.md>)
 - [Hidden Executable](<https://docs.bfyes.cn/reverse/hidden/index.md>)
 - [Reverse 入门](<https://docs.bfyes.cn/reverse/index.md>)
