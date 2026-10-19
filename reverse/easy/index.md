@@ -38,19 +38,17 @@ Editor (session: default)Run
 
 ```
 target = "AskdEjyzIe_j{_s}"
-
 buf = []
-for i, c in enumerate(target):
+for i in range(len(target)):
+    c = target[i]
     if c.isupper():
         buf.append(chr((ord(c) - ord("A") - i) % 26 + ord("A")))
     elif c.islower():
         buf.append(chr((ord(c) - ord("a") - i) % 26 + ord("a")))
     else:
         buf.append(c)
-
 for a, b in [(1, 4), (2, 8), (3, 12), (6, 9), (7, 13), (11, 14)]:
     buf[a], buf[b] = buf[b], buf[a]
-
 print("".join(buf))
 ```
 
