@@ -526,7 +526,7 @@
   gap: 0.45rem;
   min-height: 2.1rem;
   padding: 0 0.75rem;
-  border-bottom: 1px solid var(--component-border);
+  border-bottom: 0.5px solid var(--component-border);
 }
 
 .site-terminal__dot {
@@ -1255,9 +1255,11 @@ img.lqip {
    这里补回一点内边距，让行号列有呼吸感。注意 Ace 是在编辑器挂载时读取这两个
    计算值来算列宽的，所以必须写进样式表（运行时再注入不生效）。
    ============================================================================ */
-/* 官方 .md-typeset .pyodide 带 .4rem 圆角，这里跟随代码块一起做方角。 */
+/* 方角；isolation 把 Ace 内部的 z-index（gutter 4 / scrollbar 6）关进独立
+   层叠上下文，否则滚动时行号会盖到同为 z-index:4 的吸顶顶栏上。 */
 .md-typeset .pyodide {
   border-radius: 0;
+  isolation: isolate;
 }
 
 .md-typeset .pyodide .ace_gutter-cell {
