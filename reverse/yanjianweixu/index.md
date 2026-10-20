@@ -58,7 +58,7 @@ OutputClear
 
 真假 Activity。。实际上，正确的代码在 Acvitity。
 
-由 `public native char[] getKeyFromJNI();` 可知，真正的 key 在原生库里。
+由 `public native char[] getKeyFromJNI();` 可知，key 来自原生库。
 
 > [!NOTE]
 >
@@ -90,4 +90,19 @@ OutputClear
 
 我想确认程序的入口到底是不是 acvitity，不过看不到函数是谁 call 的，目前还没有合适的动态调试方法（等我探索一下虚拟机/远程调试？）
 
-apk 压缩包里的 xml 文件中写出了 LAUNCHER。
+> [!NOTE]
+>
+> **upd：我搞了一个安卓虚拟机！不过我发现输入错误的 flag 会输出 success，正确的反而会 fail？**
+>
+> ~~apk 压缩包里的 xml 文件中写出了 LAUNCHER。~~
+>
+> 以下内容具有较高的 ai 浓度。
+>
+> ```xml
+> <activity android:name="leadroyal.aaa.com.apk04.MainActivity">   ← 带 MAIN + LAUNCHER
+> <activity android:name="leadroyal.aaa.com.apk04.MainAcvitity"/>  ← 自闭合，没有 intent-filter
+> ```
+>
+> 挂了桌面启动入口的是拼写正常的 `MainActivity`；另一个 `MainAcvitity` 拼错了，标签自闭合，没有任何入口声明，点图标进不去，只能用命令显式拉起。
+>
+> 实际跑的是前一条，输入后一条自然 fail，反倒是那句自称不是 flag 的串拿到 success。

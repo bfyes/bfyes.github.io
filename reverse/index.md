@@ -1,8 +1,8 @@
 # Reverse 入门
 
-自学记录+writeup。
+自学记录和 writeup
 
-- [校巴题目地址](<https://zjusec.com/category/REVERSE>)
+- [校巴](<https://zjusec.com/category/REVERSE>)
 
 **\- welcome -**
 
@@ -22,14 +22,14 @@
 
 - [easy reversing](<https://docs.bfyes.cn/reverse/easy/index.md>)
 - [眼见为虚](<https://docs.bfyes.cn/reverse/yanjianweixu/index.md>)
+- [Stack Mess](<https://docs.bfyes.cn/reverse/stack/index.md>)
 
 > [!NOTE]
 >
 > **TODO**
 >
-> 1. 保护模式
-> 2. IDA 的使用
-> 3. 安卓 APK
-> 4. shell
-> 5. 动态调试
-> 6. 题目
+> - [ ] 1. 保护模式
+> - [x] 2. IDA 的使用
+> - [x] 3. 安卓 APK
+> - [x] 4. 动态调试
+> - [ ] 5. 题目

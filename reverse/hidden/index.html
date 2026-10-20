@@ -3180,9 +3180,9 @@
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="11" data-maxlines="11">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-6--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-27--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-6--editor" class="pyodide-editor">table = bytes([
+<div><pre id="exec-27--editor" class="pyodide-editor">table = bytes([
     0x07, 0xA1, 0xCF, 0x9C, 0x02, 0xED, 0x6A, 0x78,
     0x27, 0x61, 0x28, 0x86, 0x76, 0xFF, 0x29, 0xEF,
     0x50, 0x4B, 0xE5, 0x0A, 0xC3, 0x08, 0xEE, 0x70,
@@ -3194,9 +3194,9 @@ b = [(table[i] - table[i + 1]) & 0xFF for i in range(n - 1)] + [table[n]]
 flag = [b[0]] + [(b[i] - b[i - 1]) & 0xFF for i in range(1, n)]
 print(bytes(flag).decode())</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-6--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-27--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-6--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-27--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p>暂时先不用 soft-ice 验证了，操作忘记了（</p>

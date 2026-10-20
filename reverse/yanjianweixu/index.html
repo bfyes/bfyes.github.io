@@ -3156,7 +3156,7 @@
 
 
 
-<h1 id="眼见为虚">眼见为虚<a class="headerlink" href="#眼见为虚" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-20T19:44:01.075648+08:00">2026/10/20</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 190 字</span></div>
+<h1 id="眼见为虚">眼见为虚<a class="headerlink" href="#眼见为虚" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-20T23:22:57.641025+08:00">2026/10/20</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 313 字</span></div>
 <p>更新了 IDA 9.5，很强，可以直接反汇编安卓的 dalvik 代码为 java，对安卓逆向十分友好。9.5 Beta 应该是 Oct 1, 2026 发布的，截止目前（2026.10.20），正式版本还没发。</p>
 <div class="language-java highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
@@ -3233,22 +3233,22 @@
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="5" data-maxlines="5">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-26--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-34--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-26--editor" class="pyodide-editor">a6 = [216, 102, 2, 205, 74, 60, 108, 221, 254, 84, 130, 4, 221, 144, 77, 214, 45, 70, 188, 115, 235, 168, 76, 192, 254, 26, 55]
+<div><pre id="exec-34--editor" class="pyodide-editor">a6 = [216, 102, 2, 205, 74, 60, 108, 221, 254, 84, 130, 4, 221, 144, 77, 214, 45, 70, 188, 115, 235, 168, 76, 192, 254, 26, 55]
 target = [185, 7, 99, 182, 62, 116, 93, 174, 161, 101, 241, 91, 179, 160, 57, 137, 107, 10, 253, 52, 180, 192, 45, 228, 161, 62, 74]
 
 plain = [chr(x ^ y) for x,y in zip(a6, target)]
 print(''.join(plain))</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-26--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-34--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-26--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-34--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p><a class="glightbox" data-type="image" href=".././yanjianweixu.assets/image-20261020174948029.png"><img width="3188" height="666" class="lqip" alt="image-20261020174948029" src=".././yanjianweixu.assets/image-20261020174948029.preview.jpg" data-fullsrc=".././yanjianweixu.assets/image-20261020174948029.png" /></a></p>
 <p>真假 Activity。。实际上，正确的代码在 Acvitity。</p>
-<p>由 <code class="language-java highlight"><span class="kd">public</span><span class="w"> </span><span class="kd">native</span><span class="w"> </span><span class="kt">char</span><span class="o">[]</span><span class="w"> </span><span class="nf">getKeyFromJNI</span><span class="p">();</span></code> 可知，真正的 key 在原生库里。</p>
+<p>由 <code class="language-java highlight"><span class="kd">public</span><span class="w"> </span><span class="kd">native</span><span class="w"> </span><span class="kt">char</span><span class="o">[]</span><span class="w"> </span><span class="nf">getKeyFromJNI</span><span class="p">();</span></code> 可知，key 来自原生库。</p>
 <details class="info" open="open">
 <summary>.so 文件</summary>
 <p>Java 中是函数声明，函数实现在 apk 里的 libcrack-lead.so。</p>
@@ -3260,9 +3260,9 @@ print(''.join(plain))</pre></div>
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="10" data-maxlines="10">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-27--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-35--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-27--editor" class="pyodide-editor">key = [
+<div><pre id="exec-35--editor" class="pyodide-editor">key = [
     0xF8, 0x46, 0x22, 0xCD, 0x47, 0x1B, 0x28, 0xFC,
     0xFE, 0x0B, 0x9E, 0x2C, 0xEC, 0x96, 0x0F, 0xBF,
     0x5D, 0x3C, 0xA2, 0x05, 0xD8, 0xAC, 0x1C, 0xBA,
@@ -3273,14 +3273,23 @@ target = [185, 7, 99, 182, 62, 116, 93, 174, 161, 101, 241, 91, 179, 160, 57, 13
 plain = [chr(t ^ k) for t,k in zip(target, key)]
 print(''.join(plain))</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-27--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-35--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-27--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-35--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p>我想确认程序的入口到底是不是 acvitity，不过看不到函数是谁 call 的，目前还没有合适的动态调试方法（等我探索一下虚拟机/远程调试？）</p>
-<p>apk 压缩包里的 xml 文件中写出了 LAUNCHER。</p>
+<details class="quote">
+<summary>upd：我搞了一个安卓虚拟机！不过我发现输入错误的 flag 会输出 success，正确的反而会 fail？</summary>
+<p><del>apk 压缩包里的 xml 文件中写出了 LAUNCHER。</del></p>
 <p><a class="glightbox" data-type="image" href=".././yanjianweixu.assets/image-20261020194302698.png"><img width="2120" height="848" class="lqip" alt="image-20261020194302698" src=".././yanjianweixu.assets/image-20261020194302698.preview.jpg" data-fullsrc=".././yanjianweixu.assets/image-20261020194302698.png" /></a></p>
+<p>以下内容具有较高的 ai 浓度。</p>
+<div class="language-xml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">&lt;activity</span><span class="w"> </span><span class="na">android:name=</span><span class="s">&quot;leadroyal.aaa.com.apk04.MainActivity&quot;</span><span class="nt">&gt;</span><span class="w">   </span>←<span class="w"> </span>带<span class="w"> </span>MAIN<span class="w"> </span>+<span class="w"> </span>LAUNCHER
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nt">&lt;activity</span><span class="w"> </span><span class="na">android:name=</span><span class="s">&quot;leadroyal.aaa.com.apk04.MainAcvitity&quot;</span><span class="nt">/&gt;</span><span class="w">  </span>←<span class="w"> </span>自闭合，没有<span class="w"> </span>intent-filter
+</span></code></pre></div>
+<p>挂了桌面启动入口的是拼写正常的 <code>MainActivity</code>；另一个 <code>MainAcvitity</code> 拼错了，标签自闭合，没有任何入口声明，点图标进不去，只能用命令显式拉起。</p>
+<p>实际跑的是前一条，输入后一条自然 fail，反倒是那句自称不是 flag 的串拿到 success。</p>
+</details>
 
 
 

@@ -3156,7 +3156,7 @@
 
 
 
-<h1 id="apk02-守望起来">apk02 守望起来<a class="headerlink" href="#apk02-守望起来" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-17T01:02:43+08:00">2026/10/17</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 376 字</span></div>
+<h1 id="apk02-守望起来">apk02 守望起来<a class="headerlink" href="#apk02-守望起来" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-17T01:02:43+08:00">2026/10/17</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 401 字</span></div>
 <p><a class="glightbox" data-type="image" href=".././apk02.assets/image-20261018140707452.png"><img width="3618" height="2232" class="lqip" alt="image-20261018140707452" src=".././apk02.assets/image-20261018140707452.preview.jpg" data-fullsrc=".././apk02.assets/image-20261018140707452.png" /></a></p>
 <p>关键代码如上图。smali 汇编代码需要一段时间来熟悉。</p>
 <p>整体的逻辑是，将取出的字符串拼接到 result 中，然后与汉字字符串比较。</p>
@@ -3181,9 +3181,9 @@
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="24" data-maxlines="24">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-2--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-23--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-2--editor" class="pyodide-editor">words = [
+<div><pre id="exec-23--editor" class="pyodide-editor">words = [
     0x56FD, 0x6C14, 0x4F20, 0x5FC5, 0x5F3A, 0x79CD,
     0x706B, 0x6837, 0x5F88, 0x6C34, 0x529E, 0x773C,
     0x938F, 0x4E86, 0x4E3A, 0x673A, 0x56F4, 0x591F,
@@ -3208,17 +3208,21 @@ table = ''.join(chr(w) for w in words)
 code = ''.join('%02d' % table.index(ch) for ch in '鎏金哇卡呀库列')
 print('AAA{%s}' % code)</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-2--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-23--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-2--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-23--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p><mark><strong>《本题flag不含群号》</strong></mark></p>
 <p><del>这东西好像是来捣乱的。。。走了不少弯路。。</del></p>
 <details class="example">
 <summary>关于 flag 格式</summary>
-<p><a class="glightbox" data-type="image" href=".././apk02.assets/image-20261018150802093.png"><img width="2168" height="1432" class="lqip" alt="image-20261018150802093" src=".././apk02.assets/image-20261018150802093.preview.jpg" data-fullsrc=".././apk02.assets/image-20261018150802093.png" /></a></p>
+<details class="note inline end">
+<summary>我搞了一个安卓虚拟机，这回可以更直观的看到了</summary>
+<p><a class="glightbox" data-type="image" href=".././apk02.assets/image-20261020231307908.png"><img width="994" height="1694" class="lqip" alt="image-20261020231307908" src=".././apk02.assets/image-20261020231307908.preview.jpg" data-fullsrc=".././apk02.assets/image-20261020231307908.png" /></a></p>
+</details>
 <p>可以根据 apk 包里的 <code>resources.arsc</code> 中的信息确定。当然我感觉出题者是希望把这个包安装在安卓环境的，这样可以直观看出来，不过这次是纯静态分析了。</p>
+<p><a class="glightbox" data-type="image" href=".././apk02.assets/image-20261018150802093.png"><img width="2168" height="1432" class="lqip" alt="image-20261018150802093" src=".././apk02.assets/image-20261018150802093.preview.jpg" data-fullsrc=".././apk02.assets/image-20261018150802093.png" /></a></p>
 </details>
 
 

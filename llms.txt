@@ -29,6 +29,7 @@
 - [Reverse1](<https://docs.bfyes.cn/reverse/reverse1/index.md>)
 - [Reverse2](<https://docs.bfyes.cn/reverse/reverse2/index.md>)
 - [Reverse3](<https://docs.bfyes.cn/reverse/reverse3/index.md>)
+- [Stack Mess](<https://docs.bfyes.cn/reverse/stack/index.md>)
 - [wasm rpg 1](<https://docs.bfyes.cn/reverse/wasm/index.md>)
 - [眼见为虚](<https://docs.bfyes.cn/reverse/yanjianweixu/index.md>)
 - [汇编语言设计与调试](<https://docs.bfyes.cn/study/asm/index.md>)
