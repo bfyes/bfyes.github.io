@@ -16,6 +16,7 @@
 | N | 重命名函数、变量、标签等 |
 | Enter | 跳转到函数 |
 | Esc | 返回上一层函数 |
+| Alt + T | Text Search |
 
 > 补充：Graph view 模式下，可以按住 ctrl + 滚轮缩放；以mac为例，ida的视图缩放快捷键：<kbd class="key-command">Cmd</kbd>\+<kbd class="key-shift">Shift</kbd>\+<kbd>+</kbd>，<kbd class="key-command">Cmd</kbd>\+<kbd>-</kbd>。
 

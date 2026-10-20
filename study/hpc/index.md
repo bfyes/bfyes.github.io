@@ -10,7 +10,7 @@
 >
 > **0**
 >
-> 仅个人感想：[对于 HPC101 和 AI 的思考](<https://docs.bfyes.cn/diaries/sp26_vacation/#hpc101-ai-thoughts>)
+> 仅个人感想：[对于 HPC101 和 AI 的思考](<https://docs.bfyes.cn/diaries/fa26_vacation/#hpc101-ai-thoughts>)
 
 HPC101 课程文档：[https://hpc101.zjusct.io](<https://hpc101.zjusct.io>)
 
