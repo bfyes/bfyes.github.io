@@ -3156,11 +3156,11 @@
 
 
 
-<h1 id="hidden-executable">Hidden Executable<a class="headerlink" href="#hidden-executable" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-18T16:58:25.044496+08:00">2026/10/18</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 138 字</span></div>
-<p>老叟戏顽童。</p>
+<h1 id="hidden-executable">Hidden Executable<a class="headerlink" href="#hidden-executable" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-22T21:29:37.381704+08:00">2026/10/22</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 149 字</span></div>
+<p>默认会选择 <code>Portable executable for 80386 (PE)[pe.dylib]</code></p>
 <p><a class="glightbox" data-type="image" href=".././hidden.assets/image-20261018164520860.png"><img width="2004" height="1530" class="lqip" alt="image-20261018164520860" src=".././hidden.assets/image-20261018164520860.preview.jpg" data-fullsrc=".././hidden.assets/image-20261018164520860.png" /></a></p>
 <p>这是一个 MS-DOS 文件，需要正确地选择类别。其中 seg001:0024 被默认解析成了代码，切换为数据即可。</p>
-<p><code class="language-nasm highlight"><span class="nf">repe</span><span class="w"> </span><span class="nv">cmpsw</span></code>, compare string word, repeat if equal. DS:[SI], ES:[DI].</p>
+<p><code class="language-nasm highlight"><span class="nf">repe</span><span class="w"> </span><span class="nv">cmpsw</span></code>, compare string word, repeat if equal. <code>DS:[SI], ES:[DI]</code>.</p>
 <p>段寄存器定义为：</p>
 <div class="language-nasm highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nl">dseg:</span><span class="err">0000</span><span class="w"> </span><span class="nf">dseg</span><span class="w">            </span><span class="ow">seg</span><span class="nv">ment</span><span class="w"> </span><span class="nv">para</span><span class="w"> </span><span class="nv">stack</span><span class="w"> </span><span class="s">&#39;DATA&#39;</span><span class="w"> </span><span class="nv">use16</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nl">dseg:</span><span class="err">0000</span><span class="w">                 </span><span class="nf">assume</span><span class="w"> </span><span class="nb">cs</span><span class="p">:</span><span class="nv">dseg</span>
@@ -3180,9 +3180,9 @@
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="11" data-maxlines="11">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-27--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-9--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-27--editor" class="pyodide-editor">table = bytes([
+<div><pre id="exec-9--editor" class="pyodide-editor">table = bytes([
     0x07, 0xA1, 0xCF, 0x9C, 0x02, 0xED, 0x6A, 0x78,
     0x27, 0x61, 0x28, 0x86, 0x76, 0xFF, 0x29, 0xEF,
     0x50, 0x4B, 0xE5, 0x0A, 0xC3, 0x08, 0xEE, 0x70,
@@ -3194,13 +3194,13 @@ b = [(table[i] - table[i + 1]) & 0xFF for i in range(n - 1)] + [table[n]]
 flag = [b[0]] + [(b[i] - b[i - 1]) & 0xFF for i in range(1, n)]
 print(bytes(flag).decode())</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-27--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-9--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-27--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-9--output" class="pyodide-output"></code></pre>
 </div>
 </p>
-<p>暂时先不用 soft-ice 验证了，操作忘记了（</p>
-<p>所以，如何做到的混淆（正如题干里的"hidden"）呢？纯 dos 实现类似功能的可执行文件不会这么大……</p>
+<p>暂时先不用 soft-ice 验证了（</p>
+<p>所以，如何做到的混淆（正如题干里的"hidden"）呢？看起来像是将 dos 的产物塞到了一个 32 位的程序里？纯 dos 实现类似功能的可执行文件不会这么大……</p>
 
 
 

@@ -3156,7 +3156,7 @@
 
 
 
-<h1 id="find-me-out">find me out<a class="headerlink" href="#find-me-out" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-19T00:27:49.723169+08:00">2026/10/19</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 739 字</span></div>
+<h1 id="find-me-out">find me out<a class="headerlink" href="#find-me-out" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-22T21:00:59.093577+08:00">2026/10/22</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 796 字</span></div>
 <p>这是一个加 upx 壳的 elf 文件，并且伪装成了 .o 文件。</p>
 <p><a class="glightbox" data-type="image" href=".././find.assets/image-20261018181945540.png"><img width="1696" height="1054" class="lqip" alt="image-20261018181945540" src=".././find.assets/image-20261018181945540.preview.jpg" data-fullsrc=".././find.assets/image-20261018181945540.png" /></a></p>
 <details class="question" open="open">
@@ -3260,14 +3260,14 @@
 </tbody>
 </table>
 </details>
-<p>脱静态壳之后进行分析。</p>
+<p>脱壳之后进行分析。</p>
 <p><a class="glightbox" data-type="image" href=".././find.assets/image-20261018214452190.png"><img width="2740" height="1364" class="lqip" alt="image-20261018214452190" src=".././find.assets/image-20261018214452190.preview.jpg" data-fullsrc=".././find.assets/image-20261018214452190.png" /></a></p>
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="15" data-maxlines="15">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-25--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-1--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-25--editor" class="pyodide-editor">M = 0xFFFFFFFF
+<div><pre id="exec-1--editor" class="pyodide-editor">M = 0xFFFFFFFF
 DELTA = 0x9E3779B9
 
 def mx(s, y, z, p, e, key):
@@ -3301,12 +3301,16 @@ key = [0xDEAD, 0xBEEF, 0xABCD, 1]
 
 print(b"".join(w.to_bytes(4, "little") for w in xxtea_decrypt(words, key)).decode())</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-25--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-1--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-25--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-1--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p>结果它是个假的。。。又一次被戏耍。</p>
+<p>实际上，int 3 在这个假的分支之前就进入了自己的处理函数，并且执行完正确分支的判断。</p>
+<p>可以通过动态调试捕获 int 3 处理函数的注册。</p>
+<p><a class="glightbox" data-type="image" href=".././find.assets/1Capture 2026-10-21 23.06.56.png"><img width="1814" height="932" class="lqip" alt="1Capture 2026-10-21 23.06.56" src=".././find.assets/1Capture 2026-10-21 23.06.56.preview.jpg" data-fullsrc=".././find.assets/1Capture 2026-10-21 23.06.56.png" /></a></p>
+<p>静态也可以找到同样的地址。</p>
 <p>找到它的交叉引用上一级，发现是程序入口，有两个其他函数，可能与“假函数”中的 int 3 中断有关。</p>
 <p><a class="glightbox" data-type="image" href=".././find.assets/image-20261018222654156.png"><img width="2070" height="492" class="lqip" alt="image-20261018222654156" src=".././find.assets/image-20261018222654156.preview.jpg" data-fullsrc=".././find.assets/image-20261018222654156.png" /></a></p>
 <p>在 init 函数中，可以看到 10 个函数指针。</p>
@@ -3335,7 +3339,7 @@ print(b"".join(w.to_bytes(4, "little") for w in xxtea_decrypt(words, key)).decod
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nf">mov</span><span class="w">     </span><span class="no">edi</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nf">call</span><span class="w">    </span><span class="no">signal</span>
 </span></code></pre></div>
-<p>内核发现 <code>SIGTRAP</code> 有处理函数，就在用户栈上构造信号帧，把当时的寄存器保存进去。其中 <code>RIP</code> 是 <code>0x404B14</code>，也就是 <code>int3</code> 的下一条：</p>
+<p>内核发现 <code>SIGTRAP</code> 有处理函数，就在用户栈上构造信号帧，保存寄存器状态。其中 <code>RIP</code> 是 <code>0x404B14</code>（<code>int3</code> 下一条）</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>404B13: CC                     int3
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>404B14: C7 45 F0 AD DE 00 00   mov dword ptr [rbp-0x10], 0xDEAD
 </span></code></pre></div>
@@ -3396,9 +3400,9 @@ print(b"".join(w.to_bytes(4, "little") for w in xxtea_decrypt(words, key)).decod
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="23" data-maxlines="23">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-26--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-2--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-26--editor" class="pyodide-editor">s = [int.from_bytes(b"ACTF", "little")]
+<div><pre id="exec-2--editor" class="pyodide-editor">s = [int.from_bytes(b"ACTF", "little")]
 for _ in range(30):
     s.append(s[-1] * 16807 % 2147483647)
 
@@ -3422,9 +3426,9 @@ for src, ch in zip(a, T):
     o[src] = ch
 print(o.decode())</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-26--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-2--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-26--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-2--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p><a class="glightbox" data-type="image" href=".././find.assets/image-20261018234540055.png"><img width="1290" height="284" class="lqip" alt="image-20261018234540055" src=".././find.assets/image-20261018234540055.preview.jpg" data-fullsrc=".././find.assets/image-20261018234540055.png" /></a></p>

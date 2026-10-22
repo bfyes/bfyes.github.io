@@ -1,10 +1,10 @@
 # Hidden Executable
 
-老叟戏顽童。
+默认会选择 `Portable executable for 80386 (PE)[pe.dylib]`
 
 这是一个 MS-DOS 文件，需要正确地选择类别。其中 seg001:0024 被默认解析成了代码，切换为数据即可。
 
-`repe cmpsw`, compare string word, repeat if equal. DS:\[SI\], ES:\[DI\].
+`repe cmpsw`, compare string word, repeat if equal. `DS:[SI], ES:[DI]`.
 
 段寄存器定义为：
 
@@ -47,6 +47,6 @@ OutputClear
 ```
 ```
 
-暂时先不用 soft-ice 验证了，操作忘记了（
+暂时先不用 soft-ice 验证了（
 
-所以，如何做到的混淆（正如题干里的"hidden"）呢？纯 dos 实现类似功能的可执行文件不会这么大……
+所以，如何做到的混淆（正如题干里的"hidden"）呢？看起来像是将 dos 的产物塞到了一个 32 位的程序里？纯 dos 实现类似功能的可执行文件不会这么大……
