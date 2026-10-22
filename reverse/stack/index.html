@@ -3156,11 +3156,14 @@
 
 
 
-<h1 id="stack-mess">Stack Mess<a class="headerlink" href="#stack-mess" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-21T01:01:47.343442+08:00">2026/10/21</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 182 字</span></div>
+<h1 id="stack-mess">Stack Mess<a class="headerlink" href="#stack-mess" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-22T23:35:17.257625+08:00">2026/10/22</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 239 字</span></div>
 <p><a class="glightbox" data-type="image" href=".././stack.assets/image-20261020232757381.png"><img width="3618" height="2234" class="lqip" alt="image-20261020232757381" src=".././stack.assets/image-20261020232757381.preview.jpg" data-fullsrc=".././stack.assets/image-20261020232757381.png" /></a></p>
 <p>AAA{n0.1_5Uru1u35} 根据逆向和实际运行测试，flag 的格式比较固定，只是"n0."后面的数字随着输入变化，数字过大会卡死，正如网站中的“炸栈”。</p>
 <p><a class="glightbox" data-type="image" href=".././stack.assets/image-20261020235422825.png"><img width="3422" height="2048" class="lqip" alt="image-20261020235422825" src=".././stack.assets/image-20261020235422825.preview.jpg" data-fullsrc=".././stack.assets/image-20261020235422825.png" /></a></p>
 <p>断点打在<code class="language-asm highlight"><span class="nl">CODE:</span><span class="err">000</span><span class="nf">EA57A</span><span class="w"> </span><span class="no">const-string</span><span class="w"> </span><span class="no">v3</span><span class="p">,</span><span class="w"> </span><span class="no">aTheFlagIsAaaN0</span><span class="w"> </span><span class="c1"># &quot;The flag is AAA{n0.&quot;</span></code>，输入999999，然后断住，查看 Call Stack。</p>
+<blockquote>
+<p>注意题面上的“有投机取巧的办法”，后面会考。</p>
+</blockquote>
 <p><a class="glightbox" data-type="image" href=".././stack.assets/image-20261020235727738.png"><img width="2616" height="2242" class="lqip" alt="image-20261020235727738" src=".././stack.assets/image-20261020235727738.preview.jpg" data-fullsrc=".././stack.assets/image-20261020235727738.png" /></a></p>
 <blockquote>
 <p>实际上，这个函数就在上面 500 行左右。。奈何没有超绝注意力。。</p>
@@ -3311,9 +3314,9 @@
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="7" data-maxlines="7">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-106--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-1--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-106--editor" class="pyodide-editor">def josephus(n, k=2):
+<div><pre id="exec-1--editor" class="pyodide-editor">def josephus(n, k=2):
     r = 0
     for i in range(2, n + 1):
         r = (r + k) % i
@@ -3321,11 +3324,14 @@
 n = 999999
 print(f"AAA{{n0.{josephus(n)}_5Uru1u35}}")</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-106--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-1--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-106--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-1--output" class="pyodide-output"></code></pre>
 </div>
 </p>
+<blockquote>
+<p>“有投机取巧的办法”，我把输入 1-6 和 100 的输出结果喂给 ai，ai 直接找出来规律了，所以之前在“走弯路”吗...</p>
+</blockquote>
 <p>后来不知道在哪里按了反汇编，结果直接把 IDA 卡死了，这也是炸栈的一环吗。。</p>
 <p><a class="glightbox" data-type="image" href=".././stack.assets/image-20261021001358677.png"><img width="2022" height="1554" class="lqip" alt="image-20261021001358677" src=".././stack.assets/image-20261021001358677.preview.jpg" data-fullsrc=".././stack.assets/image-20261021001358677.png" /></a></p>
 
