@@ -119,6 +119,8 @@ OutputClear
 ```
 ```
 
+~~实则可以用其他的`c`~~
+
 剩下 14 个字符由矩阵部分给出。
 
 `GetSquare()` 把《红楼梦》酒令用 `BinaryFormatter` 序列化。（BinaryFormatter 是 .NET Framework 的运行时功能，它按 `MS-NRBF` 格式把对象写成字节流，最后得到 195 字节的一维字节流）

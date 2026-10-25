@@ -23,6 +23,13 @@
 - [easy reversing](<https://docs.bfyes.cn/reverse/easy/index.md>)
 - [眼见为虚](<https://docs.bfyes.cn/reverse/yanjianweixu/index.md>)
 - [Stack Mess](<https://docs.bfyes.cn/reverse/stack/index.md>)
+- [邪门的逆向](<https://docs.bfyes.cn/reverse/xiemen/index.md>)
+
+**\- 201706 -**
+
+- [you need python3](<https://docs.bfyes.cn/reverse/python/index.md>)
+
+---
 
 > [!NOTE]
 >
@@ -34,3 +41,5 @@
 > - [x] 3. 安卓 APK（IDA 9.5 新增了功能）
 > - [x] 4. 动态调试
 > - [x] 5. 题目
+> - [ ] 6. 全部工具总结
+> - [ ] 7. 标注LLM 使用情况
