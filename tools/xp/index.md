@@ -339,6 +339,8 @@ macOS 对这套机制强制施加了极其严苛的 **W^X 内存安全保护（W
 
 ### 衍生成品 MacXP
 
+[https://bfyes.cn/share/MacXP](<https://bfyes.cn/share/MacXP>)
+
 UTM 有比较严格的签名检查，所以笔者写了一个名为 MacXP 的启动脚本，专门针对 macOS 和 Windows XP 进行了优化，能够在 M 系列芯片的 Mac 上直接运行修复后的 QEMU。同时解决了
 
 - 硬件断点问题
