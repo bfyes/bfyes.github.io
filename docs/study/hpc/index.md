@@ -4,7 +4,7 @@
     笔记/报告仅供记录学习历程、方便复习回顾之用，请勿抄袭。侵删。
 
 !!! danger "0"
-    仅个人感想：[对于 HPC101 和 AI 的思考](../../diaries/sp26_vacation.md#hpc101-ai-thoughts)
+    仅个人感想：[对于 HPC101 和 AI 的思考](../../diaries/fa26_vacation.md#hpc101-ai-thoughts){ data-preview }
 
 HPC101 课程文档：<https://hpc101.zjusct.io>
 

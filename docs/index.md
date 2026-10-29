@@ -21,20 +21,20 @@ Bill Feng | bfyes | https://github.com/bfyes | 嗨，我是BillFeng，来自浙�
 
 ## Links
 
-欢迎在评论区交换友情链接！
-
 ::friends::
 gE | gE0650 | https://0-rangE.cn | Orange
 dreamem0ra1n | dreamem0ra1n | https://dreamem0ra1n.github.io/ISYS/ | ISYS 信安文档站
 Rick Anderson | rickanderson219 | https://github.com/rickanderson219 | Yes!
 Evelina | evelina-is | https://evelina-is.github.io/Evelina_personal_web/
 Pastwithin | Pastwithin | https://pastwithin.github.io/Pastwithin-Zensical/ | 我的舍友，电科大佬
-chenyuheee | ChenyuHeee | https://hechenyu.xin
+Congcong | congcong217 | https://github.com/congcong217 | 优秀的Congcong!
 ::/friends::
 
 ## Changelog
 
 ::changelog::
+2026.10.30: 更新了Windows XP on Mac。
+2026.10.22: 尝试 Reverse 中...软保有点好玩...不会...
 2026.09.06: 新特性：reveal-md & 更新 hpc 答辩 PPT。
 2026.08.26: 新特性：toc 折叠
 2026.08.23: 增加导航切换时正文区宽度的平滑过渡，解决困扰我很久的宽度跳变问题。

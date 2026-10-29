@@ -97,9 +97,6 @@ nav = [
             ] },
         ] },
     ] },
-#    { "Reverse" = [
-#        "reverse/index.md",
-#    ] },
     { "工具" = [
         "tools/index.md",
         { "XP on Mac" = "tools/xp.md" },
@@ -115,7 +112,7 @@ nav = [
         { "2025 年度十图" = "diaries/fa25_review.md" },
         { "sp26 半期总结" = "diaries/sp26_midterm.md" },
         { "sp26 期末总结" = "diaries/sp26_final.md" },
-        { "sp26 暑假总结" = "diaries/sp26_vacation.md" },
+        { "fa26 暑假总结" = "diaries/fa26_vacation.md" },
     ] },
     #{ "电脑" = [
     #    { "MacBook Pro 16 (2019)" = "computers/mbp16_2019.md" },
@@ -131,6 +128,11 @@ nav = [
         { "图灵完备" = "games/Turing_Complete.md" },
         { "样式测试" = "games/test.md" },
     ] },
+#    { "Reverse" = [
+#        "reverse/index.md",
+#        { "reverse1" = "reverse/reverse1.md" },
+#        { "apk01 baby" = "reverse/apk01 baby.md" },
+#    ] },
 ]
 
 # --------------------------------------------------------------------------
@@ -288,7 +290,7 @@ enabled = true
 # 源文件已不存在时也会在原地址生成一个跳转页，避免旧链接 404。
 [project.plugins.redirects]
 [project.plugins.redirects.redirect_maps]
-"diaries/fa26_vacation.md" = "diaries/sp26_vacation.md"
+"diaries/sp26_vacation.md" = "diaries/fa26_vacation.md"
 
 # --------------------------------------------------------------------------
 # 07. Extra（MkDocs 的 extra 配置，zenpartials 用它控制 footer generator 等）
@@ -301,3 +303,8 @@ generator = false
 icon = "fontawesome/brands/github"
 link = "https://github.com/bfyes"
 name = "GitHub"
+
+[[project.extra.social]]
+icon = "simple/gmail"
+link = "mailto:billfeng26@gmail.com"
+name = "Email"

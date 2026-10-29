@@ -1,5 +1,7 @@
 # Reverse1
 
+<!-- AAA{fmyl_QQ_qun_386796080} -->
+
 ## IDA 的基本操作
 
 | 按键 | 功能 |
@@ -16,6 +18,7 @@
 | N | 重命名函数、变量、标签等 |
 | Enter | 跳转到函数 |
 | Esc | 返回上一层函数 |
+| Alt + T | Text Search |
 
 > 补充：Graph view 模式下，可以按住 ctrl + 滚轮缩放；以mac为例，ida的视图缩放快捷键：++command+shift+"\+"++，++command+"-"++。
 
@@ -33,14 +36,15 @@ IDA 有特征库，已经成功识别了 `#!c _printf()` 等库函数，大大�
 
 根据逆向结果，将每一位与0Ch做异或即可。
 
-```pyodide height="10"
+
+
+```pyodide height="9" session="reverse1"
 data = [
     0x4D, 0x4D, 0x4D, 0x77, 0x6A, 0x61, 0x75, 0x60, 
     0x53, 0x5D, 0x5D, 0x53, 0x7D, 0x79, 0x62, 0x53, 
     0x3F, 0x34, 0x3A, 0x3B, 0x35, 0x3A, 0x3C, 0x34, 
     0x3C, 0x71,
 ]
-
 flag = "".join(chr(b ^ 0x0C) for b in data)
 print(flag)
 ```

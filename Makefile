@@ -81,6 +81,9 @@ deploy: ## 本地构建并部署到 GitHub Pages（gh-pages 分支）
 	uv run python scripts/link_previews.py
 	uv run python scripts/metadata.py
 	$(MAKE) slides
+	@# 禁止 GitHub Pages 跑 Jekyll：站点已由 zensical 构建成纯静态文件。
+	@# 否则 Jekyll 会把输出里的 .md 当作 Liquid 模板渲染，代码里出现 {{ 就构建失败。
+	@touch site/.nojekyll
 	@# 安全闸：site/ 必须自带独立 git 仓库，否则 cd site 后会落到主仓库上，
 	@# 导致源码被提交并 force-push 覆盖 gh-pages（线上站点直接 404）。
 	@test -d site/.git || { echo "错误：site/ 不是独立 git 仓库（缺少 site/.git）。"; echo "请先执行 make clean 重新初始化，再执行 make deploy。"; exit 1; }
