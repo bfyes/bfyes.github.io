@@ -116,8 +116,11 @@
 
 祝学习顺利！
 
-```asm
-mov al, 0
-mov ah, 4Ch
-int 21h
+```nasm
+   lgdt fword ptr my_gdtr
+   ;
+   cli
+   mov eax, cr0
+   or eax, 1         ; enable protected mode flag
+   mov cr0, eax      ; switch to protected mode
 ```

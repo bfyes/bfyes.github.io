@@ -3293,7 +3293,7 @@
     
 
 
-<h1 id="xp-on-apple-silicon-mac">XP on Apple Silicon Mac<a class="headerlink" href="#xp-on-apple-silicon-mac" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-01T18:16:51+08:00">2026/08/01</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 810 字</span></div>
+<h1 id="xp-on-apple-silicon-mac">XP on Apple Silicon Mac<a class="headerlink" href="#xp-on-apple-silicon-mac" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-30T00:02:49+08:00">2026/10/30</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 810 字</span></div>
 <blockquote>
 <p>本文为部署方法，配置记录详见原文[<a href="../xp/">点击跳转</a>]。</p>
 </blockquote>
@@ -3403,9 +3403,12 @@
 <p>在 macOS 系统中，包（Package）是一种被系统特殊处理的文件夹，它会被伪装成单个文件呈现给用户，比如 .utm 虚拟机文件、.app 应用程序都属于这类包。双击它会直接启动关联程序（如 UTM 或对应 App），右键选择“显示包内容”才能查看内部的目录结构和文件；而在 Windows 系统中并没有原生的“包”概念，这类文件夹会直接以普通目录形式展示，没有封装成单文件的视觉效果，也不会自动关联到对应程序，需要手动进入目录或在应用中选择打开。</p>
 </details>
 <p>祝学习顺利！</p>
-<div class="language-asm highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nf">mov</span><span class="w"> </span><span class="no">al</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nf">mov</span><span class="w"> </span><span class="no">ah</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="no">Ch</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nf">int</span><span class="w"> </span><span class="mi">21</span><span class="no">h</span>
+<div class="language-nasm highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="w">   </span><span class="nf">lgdt</span><span class="w"> </span><span class="nv">fword</span><span class="w"> </span><span class="nv">ptr</span><span class="w"> </span><span class="nv">my_gdtr</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">   </span><span class="c1">;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">   </span><span class="nf">cli</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">   </span><span class="nf">mov</span><span class="w"> </span><span class="nb">eax</span><span class="p">,</span><span class="w"> </span><span class="nb">cr0</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">   </span><span class="nf">or</span><span class="w"> </span><span class="nb">eax</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w">         </span><span class="c1">; enable protected mode flag</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">   </span><span class="nf">mov</span><span class="w"> </span><span class="nb">cr0</span><span class="p">,</span><span class="w"> </span><span class="nb">eax</span><span class="w">      </span><span class="c1">; switch to protected mode</span>
 </span></code></pre></div>
 
 
