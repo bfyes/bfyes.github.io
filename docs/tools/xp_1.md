@@ -11,7 +11,7 @@ rainbow: true
 1. **软件**。关于 UTM 的下载，请访问 <https://mac.getutm.app>。
 
 !!! quote "2026.10.29 更新"
-    如果你在学习“软件保护”，你可以选择[MacXP](https://bfyes.cn/share/MacXP)，它是笔者在 QEMU 的基础上做了优化的脚本，能够在 M 系列芯片的 Mac 上直接运行修复后的 QEMU，同时解决了硬件断点问题、单向拖拽传输、图形体验优化、音频体验优化、操作体验优化等问题。
+    如果你在学习“软件保护”，你可以选择[MacXP](https://bfyes.cn/share/MacXP)，它是笔者在 QEMU 的基础上做了优化的脚本，能够在 M 系列芯片的 Mac 上直接运行修复后的 QEMU，同时解决了硬件断点问题、剪贴板同步、单向拖拽传输、图形体验优化、音频体验优化、操作体验优化等问题。
 
 2. **虚拟机文件**。请将下载好的压缩包(`xp_mac.zip`)解压，得到`.utm`文件包。在安装好 UTM 虚拟机的情况下，**直接双击该包**即可打开虚拟机。随后点击“启动”即可，理论上无需其他操作即可进入系统。
 
@@ -111,8 +111,11 @@ rainbow: true
 
 祝学习顺利！
 
-```asm
-mov al, 0
-mov ah, 4Ch
-int 21h
+```nasm
+   lgdt fword ptr my_gdtr
+   ;
+   cli
+   mov eax, cr0
+   or eax, 1         ; enable protected mode flag
+   mov cr0, eax      ; switch to protected mode
 ```
