@@ -3233,17 +3233,17 @@
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="5" data-maxlines="5">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-34--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-33--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-34--editor" class="pyodide-editor">a6 = [216, 102, 2, 205, 74, 60, 108, 221, 254, 84, 130, 4, 221, 144, 77, 214, 45, 70, 188, 115, 235, 168, 76, 192, 254, 26, 55]
+<div><pre id="exec-33--editor" class="pyodide-editor">a6 = [216, 102, 2, 205, 74, 60, 108, 221, 254, 84, 130, 4, 221, 144, 77, 214, 45, 70, 188, 115, 235, 168, 76, 192, 254, 26, 55]
 target = [185, 7, 99, 182, 62, 116, 93, 174, 161, 101, 241, 91, 179, 160, 57, 137, 107, 10, 253, 52, 180, 192, 45, 228, 161, 62, 74]
 
 plain = [chr(x ^ y) for x,y in zip(a6, target)]
 print(''.join(plain))</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-34--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-33--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-34--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-33--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p><a class="glightbox" data-type="image" href=".././yanjianweixu.assets/image-20261020174948029.png"><img width="3188" height="666" class="lqip" alt="image-20261020174948029" src=".././yanjianweixu.assets/image-20261020174948029.preview.jpg" data-fullsrc=".././yanjianweixu.assets/image-20261020174948029.png" /></a></p>
@@ -3260,9 +3260,9 @@ print(''.join(plain))</pre></div>
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="10" data-maxlines="10">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-35--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-34--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-35--editor" class="pyodide-editor">key = [
+<div><pre id="exec-34--editor" class="pyodide-editor">key = [
     0xF8, 0x46, 0x22, 0xCD, 0x47, 0x1B, 0x28, 0xFC,
     0xFE, 0x0B, 0x9E, 0x2C, 0xEC, 0x96, 0x0F, 0xBF,
     0x5D, 0x3C, 0xA2, 0x05, 0xD8, 0xAC, 0x1C, 0xBA,
@@ -3273,9 +3273,9 @@ target = [185, 7, 99, 182, 62, 116, 93, 174, 161, 101, 241, 91, 179, 160, 57, 13
 plain = [chr(t ^ k) for t,k in zip(target, key)]
 print(''.join(plain))</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-35--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-34--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-35--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-34--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p>我想确认程序的入口到底是不是 acvitity，不过看不到函数是谁 call 的，目前还没有合适的动态调试方法（等我探索一下虚拟机/远程调试？）</p>
@@ -3375,6 +3375,14 @@ print(''.join(plain))</pre></div>
     
     <a href="https://github.com/bfyes" target="_blank" rel="noopener" title="GitHub" class="md-social__link">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M216.5 362.5c-66-8-112.5-55.5-112.5-117 0-25 9-52 24-70-6.5-16.5-5.5-51.5 2-66 20-2.5 47 8 63 22.5 19-6 39-9 63.5-9s44.5 3 62.5 8.5c15.5-14 43-24.5 63-22 7 13.5 8 48.5 1.5 65.5 16 19 24.5 44.5 24.5 70.5 0 61.5-46.5 108-113.5 116.5 17 11 28.5 35 28.5 62.5v52c0 15 12.5 23.5 27.5 17.5C441 459.5 512 369 512 257 512 115.5 397 0 255.5 0S0 115.5 0 257c0 111 70.5 203 165.5 237.5 13.5 5 26.5-4 26.5-17.5v-40c-7 3-16 5-24 5-33 0-52.5-18-66.5-51.5-5.5-13.5-11.5-21.5-23-23-6-.5-8-3-8-6 0-6 10-10.5 20-10.5 14.5 0 27 9 40 27.5 10 14.5 20.5 21 33 21s20.5-4.5 32-16c8.5-8.5 15-16 21-21"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="mailto:billfeng26@gmail.com" target="_blank" rel="noopener" title="Email" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>Gmail</title><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457"/></svg>
     </a>
   
 </div>
