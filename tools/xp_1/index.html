@@ -3293,18 +3293,20 @@
     
 
 
-<h1 id="xp-on-apple-silicon-mac">XP on Apple Silicon Mac<a class="headerlink" href="#xp-on-apple-silicon-mac" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-01T18:16:51+08:00">2026/08/01</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 700 字</span></div>
+<h1 id="xp-on-apple-silicon-mac">XP on Apple Silicon Mac<a class="headerlink" href="#xp-on-apple-silicon-mac" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-08-01T18:16:51+08:00">2026/08/01</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 810 字</span></div>
 <blockquote>
 <p>本文为部署方法，配置记录详见原文[<a href="../xp/">点击跳转</a>]。</p>
 </blockquote>
 <h2 id="直接从utm文件夹部署">直接从<code>.utm</code>文件夹部署<a class="headerlink" href="#直接从utm文件夹部署" title="Permanent link"></a></h2>
 <ol>
-<li>
-<p><strong>软件</strong>。关于 UTM 的下载，请访问 <a href="https://mac.getutm.app">https://mac.getutm.app</a>。  </p>
-</li>
-<li>
-<p><strong>虚拟机文件</strong>。请将下载好的压缩包(<code>xp_mac.zip</code>)解压，得到<code>.utm</code>文件包。在安装好 UTM 虚拟机的情况下，<strong>直接双击该包</strong>即可打开虚拟机。随后点击“启动”即可，理论上无需其他操作即可进入系统。</p>
-</li>
+<li><strong>软件</strong>。关于 UTM 的下载，请访问 <a href="https://mac.getutm.app">https://mac.getutm.app</a>。</li>
+</ol>
+<div class="admonition quote">
+<p class="admonition-title">2026.10.29 更新</p>
+<p>如果你在学习“软件保护”，你可以选择MacXP，它是笔者在 QEMU 的基础上做了优化的脚本，能够在 M 系列芯片的 Mac 上直接运行修复后的 QEMU，同时解决了硬件断点问题、单向拖拽传输、图形体验优化、音频体验优化、操作体验优化等问题。</p>
+</div>
+<ol start="2">
+<li><strong>虚拟机文件</strong>。请将下载好的压缩包(<code>xp_mac.zip</code>)解压，得到<code>.utm</code>文件包。在安装好 UTM 虚拟机的情况下，<strong>直接双击该包</strong>即可打开虚拟机。随后点击“启动”即可，理论上无需其他操作即可进入系统。</li>
 </ol>
 <details class="tip">
 <summary>如果无法解压，请尝试以下步骤</summary>
@@ -3338,6 +3340,9 @@
 <p>如果你的压缩软件（如BandiZip）支持 <code>XZ</code> 算法，也可以选用该算法进行压缩，效果与 7-Zip 一致。</p>
 </details>
 <h2 id="文件互传">文件互传<a class="headerlink" href="#文件互传" title="Permanent link"></a></h2>
+<blockquote>
+<p>MacXP 支持本地到虚拟机的单向拖拽传输。</p>
+</blockquote>
 <h3 id="macos-端配置">macOS 端配置<a class="headerlink" href="#macos-端配置" title="Permanent link"></a></h3>
 <ol>
 <li>

@@ -11,7 +11,6 @@
 - [2025 年度十图](<https://docs.bfyes.cn/diaries/fa25_review/index.md>)
 - [fa26 暑假总结](<https://docs.bfyes.cn/diaries/fa26_vacation/index.md>)
 - [随笔](<https://docs.bfyes.cn/diaries/index.md>)
-- [20261027分享](<https://docs.bfyes.cn/diaries/share/index.md>)
 - [sp26 期末总结](<https://docs.bfyes.cn/diaries/sp26_final/index.md>)
 - [sp26 半期总结](<https://docs.bfyes.cn/diaries/sp26_midterm/index.md>)
 - [四维直觉](<https://docs.bfyes.cn/games/4D_Intuition/index.md>)

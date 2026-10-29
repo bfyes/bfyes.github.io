@@ -6,6 +6,8 @@
 >
 > **更新日志**
 >
+> 重大更新：修复了 qemu 的底层 bug，并且写出了名为 MacXP 的启动脚本，针对 macOS 和 WinXP 进行了优化。
+>
 > 迁移并拆分文章；优化可读性
 >
 > 排版优化；修改若干错别字
@@ -277,12 +279,84 @@ UTM 不支持直接导入 VMware 格式，必须转换为 qcow2
 >
 > 在 macOS 系统中，包（Package）是一种被系统特殊处理的文件夹，它会被伪装成单个文件呈现给用户，比如 .utm 虚拟机文件、.app 应用程序都属于这类包。双击它会直接启动关联程序（如 UTM 或对应 App），右键选择“显示包内容”才能查看内部的目录结构和文件；而在 Windows 系统中并没有原生的“包”概念，这类文件夹会直接以普通目录形式展示，没有封装成单文件的视觉效果，也不会自动关联到对应程序，需要手动进入目录或在应用中选择打开。
 
+## 2026.10.29 更新
+
+> [!WARNING]
+>
+> **以下文字有较高的 AI 含量。**
+
+在本学期的课程学习与逆向分析实验中，笔者发现 UTM / QEMU 模拟的 Windows XP 存在一个致命的底层缺陷：**在 OllyDbg 或 Cheat Engine 中一旦下“硬件写入断点”或“硬件访问断点”，整个虚拟机就会立刻彻底卡死冻结**。
+
+由于普通软件断点（`int 3`，即 `F2`）需要修改内存中的目标代码，极易被加壳程序和反调试机制检测，且内存断点在重新运行时会丢失；而**硬件断点（DR0\~DR3 Watchpoint）**直接由 CPU 调试寄存器监控，是逆向分析、内存数据追踪和脱壳的核心利器。这个 Bug 导致相关实验在 M 系列芯片的 Mac 上完全无法开展。
+
+经过排查与底层源码调试，笔者定位到了根本原因并完成了源码级修复，特此记录排查与修复流程。
+
+### Bug 现象与排查
+
+- **测试环境**：Apple Silicon M4 + macOS 27.2 + UTM / QEMU (x86\_64-softmmu)
+- **故障现象**：在 Windows XP 中运行 OllyDbg 调试程序，在数据段右键设置“硬件访问 / 写入断点（1/2/4字节）”；程序一旦读写该目标内存，Windows XP 瞬间整机死锁，鼠标转圈，无蓝屏提示，宿主机 QEMU 进程挂起。
+- **调试排查**：使用 LLDB 挂载宿主机上的 QEMU 进程追踪调用栈，发现触发硬件断点的一瞬间，QEMU 主翻译线程抛出了内核异常：
+
+  ```text
+  Thread 1: EXC_BAD_ACCESS (code=2, KERN_PROTECTION_FAILURE, address=0x133...)
+  ```
+
+  异常直接指向内存保护违规。
+
+### 根因分析
+
+M 芯片的 Mac 运行 x86 Windows XP，本质上依靠 QEMU 的 **TCG（Tiny Code Generator）即时编译引擎**：将 x86 汇编指令动态翻译成 ARM64 指令，再放入一段专门分配的内存区执行。
+
+macOS 对这套机制强制施加了极其严苛的 **W^X 内存安全保护（Write XOR Execute，写与执行互斥）**： 1. 一段 JIT 编译内存，处于“可执行（Execute）”状态时绝对禁止写入； 2. 如果需要修改代码结构或清理缓存，线程必须先向内核声明切换为可写模式（`qemu_thread_jit_write()`），写完后再立刻切回可执行模式（`qemu_thread_jit_execute()`）。
+
+**Bug 根因**： 当你在 Windows XP 里下硬件断点时，QEMU 需要将命中地址所在的代码翻译块（TranslationBlock）标记废弃并从链表中摘除（调用 `tb_phys_invalidate()`）。
+
+然而，**QEMU 原版源码在 `tb_phys_invalidate()` 函数中直接对 JIT 内存中的代码块链表结构进行了写入操作，却漏掉了权限切换声明！** 在执行状态下强行写入受保护的 JIT 内存，直接被 macOS 内核以 `EXC_BAD_ACCESS` 拦截处决，主线程瞬间死锁，反映到虚拟机里就是不可逆的整机冻结。
+
+### 修复步骤
+
+定位到源码文件 `accel/tcg/tb-maint.c`，在 `tb_phys_invalidate()` 的入口和出口分别补充 JIT 写权限与执行权限切换：
+
+```diff
+--- a/accel/tcg/tb-maint.c
++++ b/accel/tcg/tb-maint.c
+@@ -959,7 +959,9 @@ static void tb_phys_invalidate__locked(TranslationBlock *tb)
+  */
+ void tb_phys_invalidate(TranslationBlock *tb, tb_page_addr_t page_addr)
+ {
++    qemu_thread_jit_write();
+     if (page_addr == -1 && tb_page_addr0(tb) != -1) {
+         tb_lock_pages(tb);
+         do_tb_phys_invalidate(tb, true);
+     } else {
+         do_tb_phys_invalidate(tb, false);
+     }
++    qemu_thread_jit_execute();
+ }
+```
+
+重新编译 QEMU，在 OllyDbg 中无论是下内存写入断点还是读取断点，均可精准捕获命中并停在目标指令，虚拟机死锁问题彻底根除。
+
+### 衍生成品 MacXP
+
+UTM 有比较严格的签名检查，所以笔者写了一个名为 MacXP 的启动脚本，专门针对 macOS 和 Windows XP 进行了优化，能够在 M 系列芯片的 Mac 上直接运行修复后的 QEMU。同时解决了
+
+- 硬件断点问题
+- 单向拖拽传输
+- 图形体验优化
+- 音频体验优化
+- 操作体验优化
+- 挂起速度优化
+
 ## 结语
 
 祝学习顺利！
 
-```asm
-mov al, 0
-mov ah, 4Ch
-int 21h
+```nasm
+   lgdt fword ptr my_gdtr
+   ;
+   cli
+   mov eax, cr0
+   or eax, 1         ; enable protected mode flag
+   mov cr0, eax      ; switch to protected mode
 ```
