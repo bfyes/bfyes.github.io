@@ -3144,34 +3144,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="通过 7-Zip 解压">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#安装-7-zip-工具" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        安装 7-Zip 工具
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#指令示例" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        指令示例
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
           <li class="md-nav__item">
@@ -3229,17 +3201,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#说明" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        说明
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -3293,7 +3254,7 @@
     
 
 
-<h1 id="xp-on-apple-silicon-mac">XP on Apple Silicon Mac<a class="headerlink" href="#xp-on-apple-silicon-mac" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-30T00:02:49+08:00">2026/10/30</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 815 字</span></div>
+<h1 id="xp-on-apple-silicon-mac">XP on Apple Silicon Mac<a class="headerlink" href="#xp-on-apple-silicon-mac" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-30T00:38:52+08:00">2026/10/30</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 748 字</span></div>
 <blockquote>
 <p>本文为部署方法，配置记录详见原文[<a href="../xp/">点击跳转</a>]。</p>
 </blockquote>
@@ -3312,11 +3273,11 @@
 <summary>如果无法解压，请尝试以下步骤</summary>
 <p>可通过 7za 命令或部分解压软件 (BandiZip等) 解压</p>
 <h3 id="通过-7-zip-解压">通过 7-Zip 解压<a class="headerlink" href="#通过-7-zip-解压" title="Permanent link"></a></h3>
-<h4 id="安装-7-zip-工具">安装 7-Zip 工具<a class="headerlink" href="#安装-7-zip-工具" title="Permanent link"></a></h4>
+<p><strong>安装 7-Zip 工具</strong></p>
 <p>在终端(terminal)中输入:</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>brew<span class="w"> </span>install<span class="w"> </span>p7zip
 </span></code></pre></div>
-<h4 id="指令示例">指令示例<a class="headerlink" href="#指令示例" title="Permanent link"></a></h4>
+<p><strong>指令示例</strong></p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>7za<span class="w"> </span>x<span class="w"> </span>test.7z<span class="w"> </span><span class="c1"># 解压</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># 详见“指令参考”</span>
 </span></code></pre></div>
@@ -3381,7 +3342,7 @@
 <p><a class="glightbox" href="../xp.assets/1Capture%202026-03-26%2011.06.44.png" data-type="image"><img width="1080" height="620" class="lqip" src="../xp.assets/1Capture%202026-03-26%2011.06.44.preview.jpg" data-fullsrc="../xp.assets/1Capture%202026-03-26%2011.06.44.png" alt="1Capture 2026-03-26 11.06.44" style="display: block; margin: 0 auto; zoom:50%;"></a></p>
 </li>
 <li>
-<p>连接成功后，左右分栏直接拖拽实现双向文件传输。至此，虚拟机成功安装并完成配置！</p>
+<p>连接成功后，左右分栏直接拖拽实现双向文件传输。至此，虚拟机成功安装并完成配置。</p>
 </li>
 </ol>
 <details class="note" open="open">
@@ -3392,12 +3353,6 @@
 <summary>如果 Mac 的共享文件夹乱码</summary>
 <p>若 Mac 的共享文件夹乱码，请点击Xftp5左上角<code>File</code> - <code>Properties</code> - <code>Options</code> - 勾选<code>Use UTF-8 encoding</code>。</p>
 </details>
-<h2 id="说明">说明<a class="headerlink" href="#说明" title="Permanent link"></a></h2>
-<ul>
-<li>断网不影响使用 (仅在虚拟机与宿主网络互通时有效) ，仅依赖虚拟机内部局域网</li>
-<li>IP 地址固定，无需频繁修改配置</li>
-<li>使用时发现<strong><em>传输速度有提升空间</em></strong>，持续探索中...</li>
-</ul>
 <details class="note">
 <summary>关于“包”</summary>
 <p>在 macOS 系统中，包（Package）是一种被系统特殊处理的文件夹，它会被伪装成单个文件呈现给用户，比如 .utm 虚拟机文件、.app 应用程序都属于这类包。双击它会直接启动关联程序（如 UTM 或对应 App），右键选择“显示包内容”才能查看内部的目录结构和文件；而在 Windows 系统中并没有原生的“包”概念，这类文件夹会直接以普通目录形式展示，没有封装成单文件的视觉效果，也不会自动关联到对应程序，需要手动进入目录或在应用中选择打开。</p>
