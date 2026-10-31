@@ -1,0 +1,347 @@
+# 07-07 下午：HPC 中的计算机系统 I
+
+程序在计算节点上运行时，CPU、缓存、内存、线程和操作系统同时参与执行。数据送达核心的速度，以及多个执行流之间的等待，都会进入最终运行时间。
+
+缓存保存最近或相邻使用的数据，用来减少较慢内存访问。OpenMP（Open Multi-Processing，共享内存线程并行接口）、MPI（Message Passing Interface，消息传递接口）、向量化和 profiler 都建立在这些机制上。后面会依次看指令依赖、缓存命中、共享写入、NUMA（Non-Uniform Memory Access，非一致内存访问）数据位置和进程等待。[^/study/hpc/notes/0707p/#intel-opt]
+
+> [!TIP]
+>
+> **测量时记录的项目**
+>
+> 一次测量至少保存以下内容。
+>
+> - 输入规模、编译选项和线程数；
+> - CPU 绑定与 NUMA 内存位置；
+> - 端到端时间、热点函数和正确性结果。
+>
+> 随后再检查热点循环的依赖、访问方向、共享写入和页面放置。这样得到的结论可以由 profiler 和对照实验复查。
+
+## 一个数组在节点内经历什么
+
+先跟着一个数组元素走一遍。它先由某个核心执行的指令读取，再经过缓存和主内存，最后还可能受到其他线程和 NUMA 数据位置影响。
+
+编译器把循环转换为加载、算术、分支和存储指令。处理器会尽量让彼此独立的指令重叠执行。真实数据依赖出现时，后一条指令必须等待前一条结果。这里可用的机器指令由 ISA（Instruction Set Architecture，指令集架构）规定。
+
+CPU 先从寄存器和缓存寻找数据，未命中后才访问 DRAM（dynamic random-access memory，动态随机存取内存，即通常所说的主内存）。连续访问和重复使用的数据更容易留在缓存中。随机访问或工作集过大时，核心更容易等待内存。
+
+同一进程内的线程共享数组。输出按块划分时，各线程通常写不同区域。多个线程频繁写同一缓存行时，即使写的是不同变量，也会产生一致性流量和 false sharing（伪共享，即逻辑上独立的数据落在同一缓存行）。
+
+多插槽机器的页面可能位于不同内存节点。线程首次写入页面的位置、CPU 绑定和后续访问模式共同决定本地或远端内存访问。
+
+| 现象 | 常见原因 | 第一项检查 |
+| --- | --- | --- |
+| IPC（每周期完成的指令数）很低 | 长依赖、缓存未命中、分支失预测 | `perf stat` 与热点循环 |
+| 多线程加速停滞 | DRAM 带宽饱和、锁或 false sharing（不同线程写同一缓存行） | 线程数扫描、绑定和共享写入 |
+| 双插槽结果波动 | 远端 NUMA 访问、线程迁移 | `numactl --hardware` 与 first-touch（首次写页影响页的物理位置） |
+| 时间偶发变长 | I/O、调度、频率或其他作业 | 原始样本、系统日志和资源分配 |
+
+## CPU 执行与流水线
+
+> [!NOTE]
+>
+> **Intel 优化手册关于处理器性能的说明（译）**
+>
+> 程序性能取决于指令、数据和处理器资源之间的配合。处理器可以重叠执行独立工作，但数据依赖、分支和内存访问会限制可达到的吞吐。[^/study/hpc/notes/0707p/#intel-opt]
+
+现代 CPU 会把取指、译码、执行、访存和提交等阶段重叠起来。源代码仍按程序顺序定义结果，硬件只会在不改变可见语义的前提下提前执行已经准备好的独立指令。
+
+因此，一条源语句没有固定的周期数。循环的吞吐取决于依赖链、执行端口、缓存命中、分支和指令类型。[^/study/hpc/notes/0707p/#intel-opt]
+
+先比较两种都在计算点积的写法。第一段只有一个累加器。第 `i+1` 次加法要等第 `i` 次更新 `sum` 后才能继续，因此形成一条很长的读后写依赖链。
+
+```c
+double sum = 0.0;
+for (int i = 0; i < n; ++i)
+  sum += a[i] * b[i];
+```
+
+第二段把工作拆到两个独立累加器。处理器在等待 `s0` 的乘加结果时，可以推进 `s1` 的乘加；循环末尾再把两个部分和合并。
+
+```c
+double s0 = 0.0, s1 = 0.0;
+int i = 0;
+for (; i + 1 < n; i += 2) {
+  s0 += a[i]     * b[i];
+  s1 += a[i + 1] * b[i + 1];
+}
+for (; i < n; ++i) s0 += a[i] * b[i];  // 处理奇数长度的尾部
+sum = s0 + s1;
+```
+
+这不是凭空增加算力，而是把原来串成一条的依赖拆成两条可交错推进的链。若循环主要受内存带宽限制，算术独立性带来的收益会较小，因为数据到达速度没有变化。汇编、向量化报告和 profiler 可以帮助判断依赖链是否占据热点。
+
+### 分支预测
+
+条件跳转决定下一条取指地址。CPU 根据历史和上下文预测分支方向；预测成功时流水线继续推进，预测错误时需要丢弃错误路径上的推测工作并从正确位置恢复。数据随机、分支频繁的热循环可能花很多周期在恢复而非计算。[^/study/hpc/notes/0707p/#intel-opt]
+
+```c
+if (x[i] > threshold)
+  sum += x[i];
+```
+
+当 `x[i] > threshold` 的取值缺少规律时，CPU 的预测器和向量化路径都可能损失吞吐。此时可以考虑按类别分桶，或把罕见路径移出热点循环。
+
+掩码计算和查表也是可能的选择。它们会分别增加算术或随机访存，因此需要在代表性输入上比较。
+
+### 流水线停顿与依赖
+
+读后写依赖表示后一条指令必须等待前一条结果。除法、cache miss、函数调用、地址依赖加载和长链归约都会拉长等待。编译器和乱序硬件能重排独立指令，却无法消除真实数据依赖。循环展开、多个累加器、软件流水和分块的作用之一就是暴露更多独立工作。
+
+### 乱序、推测与提交
+
+乱序执行保持语言和 ISA 要求的可见结果。处理器可暂存推测结果，待分支与异常确定后再按程序顺序提交。多线程共享状态应使用语言规定的原子操作、锁和同步原语；依赖某台机器偶然出现的执行顺序会引入数据竞争和不可重复结果。[^/study/hpc/notes/0707p/#cpp-memory]
+
+## 存储层级与访存代价
+
+一个元素被 CPU 使用前，可能来自寄存器、缓存或 DRAM。程序通常不能指定每次读取来自哪一级，但访问顺序和工作集大小会改变数据留下的位置。
+
+寄存器、L1/L2/末级缓存、DRAM、存储和网络的容量、延迟和带宽各不相同。缓存按缓存行搬运数据，而不是按单个变量搬运。连续数组访问可以使用同一缓存行中的多个元素；随机指针追逐则常让核心等待更远的数据。[^/study/hpc/notes/0707p/#intel-opt]
+
+*图中较近的存储层容量通常较小、访问较快。数据复用和连续访问提高了命中较近层级的机会。*
+
+### 时间局部性、空间局部性与工作集
+
+时间局部性指刚访问的数据很快再次使用。空间局部性指相邻地址很可能接着被访问。矩阵分块让一个 A/B tile 被多次使用，利用的是时间局部性；按连续维度遍历数组，利用的是空间局部性。
+
+工作集是某一时间窗口中频繁访问的数据集合。它大于对应缓存层的容量时，数据可能在下次复用前就被逐出缓存。
+
+```c
+/* C 行主序，j 连续。 */
+for (int i = 0; i < m; ++i)
+  for (int j = 0; j < n; ++j)
+    sum += a[i*n + j];
+```
+
+单独将一个循环改成连续访问后，多个数组访问、线程共享末级缓存、关联度冲突和预取器行为仍会改变实际结果。因此局部性原则需要与硬件计数器和时间一起检查。
+
+### 缓存行、关联度与预取
+
+缓存以固定大小的行装入；行大小常为几十字节，具体数值由平台决定。关联度限制同一集合中可同时保存的候选行数，某些规则步长会反复映射到少量集合并产生冲突。硬件预取器擅长顺序和简单固定步长访问；链表、哈希表和数据相关地址提供的规律较少。[^/study/hpc/notes/0707p/#intel-opt]
+
+优化通常从连续布局、适当分块和减少无用数据触碰开始。只有当 profile 显示硬件预取覆盖不足、且计算能与数据到达重叠时，才值得评估手动预取；过多预取会增加带宽压力并挤占缓存。
+
+### 缓存一致性与 false sharing
+
+多核处理器需要让对同一内存位置的写入对其他核心可见。硬件通常按缓存行为粒度维护这种一致性。一个核心要写某行时，其他核心中该行的可写副本会失效。
+
+这会带来一个容易忽略的情况。不同线程即使写的是不同数组元素，只要这些元素落在同一缓存行，缓存行仍会在核心之间来回转移。这就是 false sharing。[^/study/hpc/notes/0707p/#openmp-examples]
+
+```c
+/* partial[0]、partial[1] 可能位于同一缓存行。 */
+#pragma omp parallel
+{
+  int tid = omp_get_thread_num();
+  partial[tid] += local_work();
+}
+```
+
+这段代码的数学结果可以正确，但每个线程都会反复写自己的 `partial[tid]`。若相邻槽位恰好位于同一缓存行，两个核心会为同一行反复取得写权限，循环时间会花在一致性流量上。
+
+求和这类场景先使用 OpenMP 的 `reduction`。运行时会为每个线程建立私有部分和，循环结束后再合并，因此热循环里没有共享的 `sum` 写入。
+
+```c
+double sum = 0.0;
+#pragma omp parallel for reduction(+:sum)
+for (long i = 0; i < n; ++i)
+  sum += x[i];
+```
+
+若算法确实需要保留每个线程的长期状态，可把槽位按一个缓存行的量级隔开。下面的 64 字节只是一种常见 CPU 的诊断性设置；实际平台的缓存行大小和是否发生伪共享仍要用测量确认。
+
+```c
+/* C11：让每个槽位从独立的 64 B 对齐位置开始。 */
+typedef struct {
+  _Alignas(64) double value;
+} PaddedDouble;
+
+PaddedDouble partial[MAX_THREADS];
+#pragma omp parallel
+{
+  int tid = omp_get_thread_num();
+  partial[tid].value += local_work();
+}
+```
+
+padding 会增加内存占用，适合 profile 已确认的高频写入位置。线程私有累加、连续分块和合适绑定仍是更早应检查的方案。
+
+*图中缓存行是共享粒度。两个线程更新不同变量时，仍可能产生共享开销。[^/study/hpc/notes/0707p/#openmp-examples]*
+
+## 进程与地址空间
+
+进程是操作系统分配资源和隔离虚拟地址空间的执行单位。它拥有自己的地址空间、文件描述符、环境变量、信号处理状态和权限。
+
+两个进程可以使用相同数值的虚拟地址，却访问不同物理页。只有显式共享内存、文件映射或内核对象才会让它们访问同一实际数据。MPI 正是建立在这种隔离模型上：每个 rank 有独立变量，数据交换必须显式通信。[^/study/hpc/notes/0707p/#linux-mm]
+
+*图中地址空间用于理解不同存储对象的生命周期和保护方式。程序不应依赖图中的固定地址。[^/study/hpc/notes/0707p/#linux-mm]*
+
+### 进程状态与抢占
+
+调度器在可运行任务间分配 CPU 时间。进程可能正在运行，也可能等待 I/O、等待锁，或已经退出但尚未被父进程回收。
+
+频繁上下文切换不仅要保存寄存器，还会扰动缓存、TLB 和分支预测状态。线程数超过分配的核心数时，多个执行流会争用同一核心，性能常明显下降。
+
+```bash
+ps -o pid,ppid,stat,psr,etime,cmd -p "$PID"
+top -H -p "$PID"               # 若系统提供，查看线程
+```
+
+看到低 CPU 使用率时，要进一步区分是在等待 I/O、锁、MPI、调度资源，还是程序确实没有工作可做。单个百分比不能说明原因。
+
+### 系统调用、页与缺页
+
+用户代码通过系统调用请求内核完成文件、网络、进程和内存管理。`read`、`write`、`mmap`、`fork` 等调用会切换到内核执行相应服务。虚拟内存按页映射；首次写入新分配大数组常触发正常的按需分配缺页，计时实验应说明初始化是否包含在测量区间。[^/study/hpc/notes/0707p/#linux-mm]
+
+```bash
+/usr/bin/time -v ./solver input.dat
+# 关注 Maximum resident set size、major/minor page faults 等字段
+```
+
+major fault 可能需要从持久存储读取页面，代价很高；minor fault 常只涉及已在内存中的页表/页面准备，仍可能在大规模首次初始化时占用时间。访问无权限地址则是错误，不应和正常按需分配混为一谈。
+
+### `fork`、`exec` 与文件描述符
+
+`fork()` 创建子进程，现代系统常用写时复制推迟实际页面复制；`execve()` 用新程序映像替换当前进程。Shell 启动命令时会组合进程创建、文件描述符重定向和环境继承。打开的文件描述符可能随 `fork` 继承，管道两端若没有及时关闭，读端也可能一直等不到 EOF。[^/study/hpc/notes/0707p/#fork-exec]
+
+```text
+shell
+  ├─ fork ──> child: 调整 stdin/stdout/stderr
+  │             └─ execve("./solver", ...)
+  └─ waitpid: 收集子进程状态
+```
+
+这套机制解释了脚本中的 `> log 2>&1`、管道以及作业系统启动任务时的环境继承。性能程序中不应在热路径频繁 `fork/exec`；将许多短任务改为批处理或线程池通常更稳定。
+
+## 线程与共享内存
+
+线程是进程内可独立调度的执行流。同一进程的线程共享地址空间、文件描述符和大部分资源，各自拥有寄存器、栈和调度状态。
+
+共享数组让节点内传递数据很方便，也让越界写、生命周期错误与数据竞争更难定位。先确定谁写哪一段数据，再讨论锁和原子操作的粒度。
+
+### 原子性、可见性与等待
+
+原子操作使某些读改写不可分割。锁保护一个更大的临界区。条件变量或屏障表达等待关系。它们解决的问题不同。
+
+一个原子递增不能自动保护“读、判断、写”的整套逻辑。一个 barrier 只保证参与者到达同一点，也不能代替正确的数据划分。[^/study/hpc/notes/0707p/#cpp-memory]
+
+```c
+#pragma omp parallel for reduction(+:sum)
+for (long i = 0; i < n; ++i)
+  sum += x[i];
+```
+
+归约让每个线程持有私有部分和，最后按规定合并，通常比每轮对共享 `sum` 执行 atomic 更合适。浮点合并顺序会改变最后几位，应按误差容限比较。
+
+## 上下文切换与调度
+
+上下文切换要保存当前执行流的寄存器和调度状态，再恢复另一个执行流。切换之后，原来热的缓存和 TLB 也可能失去作用。
+
+短任务、细粒度锁、线程过多和多层运行时嵌套都会放大这一成本。节点内并行程序一般应建立与分配核心数相称的固定线程团队，避免每个小任务创建一个新线程。
+
+### 核、硬件线程与调度任务
+
+物理核心拥有执行资源。SMT（simultaneous multithreading，同时多线程）让一个核心维护多个硬件线程。其中一个线程因依赖或 cache miss 暂时不能发射时，核心可以转去运行另一个。
+
+SMT 增加的是覆盖等待的机会，不等价于增加同样数量的独立核心。性能实验应分别记录物理核数、SMT 状态、OpenMP 线程数和绑定策略。[^/study/hpc/notes/0707p/#openmp-affinity]
+
+```bash
+lscpu
+OMP_DISPLAY_ENV=VERBOSE \
+OMP_PLACES=cores OMP_PROC_BIND=close \
+./solver
+```
+
+## NUMA 架构
+
+单插槽程序中，CPU 核与内存的距离常被忽略。多插槽服务器中，内存被分到不同节点，数据放在哪里会直接影响后续线程读取的路径。
+
+核心访问本地节点内存时路径较短。访问远端节点时需要经过插槽间互连，延迟和可用带宽都会变化。NUMA（non-uniform memory access）描述的正是这种不均匀性。数据初始化和线程布局需要把它考虑进去。[^/study/hpc/notes/0707p/#linux-numa]
+
+*NUMA 图应结合 `numactl --hardware`、CPU 绑定和应用数据位置阅读。不同服务器的节点数与距离不同。[^/study/hpc/notes/0707p/#linux-numa]*
+
+### NUMA 分配与并行划分
+
+Linux 常采用 first-touch 放置。页面第一次被写入时，内核倾向于从执行该线程所在节点分配物理页。
+
+若主线程串行初始化整个大数组，页面可能集中在一个节点。随后其他插槽的线程访问这些页面时，会产生远端流量。更好的起点是让每个线程初始化自己后续负责的数据块。
+
+```c
+#pragma omp parallel for schedule(static)
+for (long i = 0; i < n; ++i)
+  a[i] = 0.0;          // first-touch 与后续划分一致
+
+#pragma omp parallel for schedule(static)
+for (long i = 0; i < n; ++i)
+  a[i] = f(a[i]);
+```
+
+```bash
+numactl --hardware
+numactl --cpunodebind=0 --membind=0 ./solver
+```
+
+绑核和绑内存可用于诊断和稳定实验，但不能替代正确分解。把所有线程和内存强行放到一个节点，可能因容量、带宽或线程数不足而更慢。
+
+## 虚拟内存与页表
+
+虚拟地址通过页表映射到物理页。TLB（Translation Lookaside Buffer，地址转换后备缓冲）缓存最近使用的地址翻译，避免每次内存访问都遍历多级页表。大工作集、随机跨页访问和小页的大量映射都会增加 TLB 压力；这与缓存 miss 相关但不是同一个问题。[^/study/hpc/notes/0707p/#linux-mm]
+
+*图中说明页与页框的划分。映射、权限和缺页处理建立在这一划分之上。page fault 的具体含义取决于原因。[^/study/hpc/notes/0707p/#linux-mm]*
+
+### 地址空间布局
+
+代码段通常存放指令。全局和静态数据有不同的初始化方式。堆由分配器管理，每个线程有自己的栈。共享库、文件和匿名内存常通过映射区出现。
+
+过大的局部数组容易耗尽栈。大量零散小分配会增加分配器开销、碎片和随机访问。HPC 程序常把大数组作为连续堆对象或专门分配器对象管理，以便控制页面、布局和并行初始化。
+
+## 性能优化基础
+
+向量化提高单核对连续数据的吞吐，OpenMP 分配节点内线程，MPI 分配进程和节点。性能工具把时间和资源事件关联到热点。
+
+一个可复查的优化步骤应写清输入和正确性判据，给出热点证据，提出关于计算、访存、同步或 NUMA 的假设，再只做一个受控改动。最后用同一口径重新测量。[^/study/hpc/notes/0707p/#nersc-roofline]
+
+### 阿姆达尔定律
+
+若程序中比例 \\(p\\) 的部分能加速 \\(s\\) 倍，总加速比为
+
+\\\[ S=\\frac{1}{(1-p)+p/s} \\\]
+
+若将可并行部分在 \\(N\\) 个处理器上理想加速，可取 \\(s=N\\)。即使 \\(N\\) 很大，串行初始化、通信、锁、I/O 和最终汇总仍保留在分母中。该公式说明为何应先优化占时大的部分，也提醒报告同时包含并行 kernel 时间与端到端时间。[^/study/hpc/notes/0707p/#amdahl]
+
+*图中 Amdahl 定律给出固定问题规模下的上界模型。实际加速还会受通信、内存带宽、负载不均和调度开销限制。[^/study/hpc/notes/0707p/#amdahl]*
+
+> [!NOTE]
+>
+> **节点内并行自测**
+>
+> 一个双插槽节点上，主线程先串行初始化 64 GiB 数组，之后 64 个线程跨两个插槽计算。性能明显低于预期时，应先检查什么？
+>
+> > **详细答案**
+> >
+> > 先检查 NUMA 页放置与线程绑定。主线程串行初始化时，页面可能集中到一个 NUMA 节点；另一插槽上的线程随后访问这些页面，会产生远端内存流量。
+> >
+> > 可以按以下顺序验证。
+> >
+> > 1. 运行 `numactl --hardware` 查看节点数和距离。
+> > 2. 记录线程数、`OMP_PLACES`、`OMP_PROC_BIND` 与实际 CPU 绑定。
+> > 3. 让各线程按后续工作块并行初始化数组，再运行相同计算。
+> > 4. 在相同输入下比较带宽、端到端时间和重复测量的波动。
+> >
+> > 若并行初始化后带宽和时间改善，数据位置是重要因素。若变化不大，再检查算法算术强度、同步和访存模式。
+
+[^/study/hpc/notes/0707p/#intel-opt]: Intel, *Intel® 64 and IA-32 Architectures Optimization Reference Manual*, [https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html](<https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html>).
+
+[^/study/hpc/notes/0707p/#cpp-memory]: ISO C++ Foundation, *C++ reference: Multi-threaded executions and data races*, [https://en.cppreference.com/w/cpp/language/multithread](<https://en.cppreference.com/w/cpp/language/multithread>).
+
+[^/study/hpc/notes/0707p/#openmp-examples]: OpenMP Architecture Review Board, *OpenMP Examples*, [https://www.openmp.org/resources/openmp-examples/](<https://www.openmp.org/resources/openmp-examples/>).
+
+[^/study/hpc/notes/0707p/#linux-mm]: Linux Kernel Documentation, *Memory Management*, [https://docs.kernel.org/mm/index.html](<https://docs.kernel.org/mm/index.html>).
+
+[^/study/hpc/notes/0707p/#fork-exec]: Linux man-pages, *fork(2)* and *execve(2)*, [https://man7.org/linux/man-pages/man2/fork.2.html](<https://man7.org/linux/man-pages/man2/fork.2.html>).
+
+[^/study/hpc/notes/0707p/#openmp-affinity]: OpenMP Architecture Review Board, *OpenMP 5.2, §18.3 Affinity*, [https://www.openmp.org/spec-html/5.2/openmpse103.html](<https://www.openmp.org/spec-html/5.2/openmpse103.html>).
+
+[^/study/hpc/notes/0707p/#linux-numa]: Linux Kernel Documentation, *NUMA Memory Policy*, [https://docs.kernel.org/admin-guide/mm/numa\_memory\_policy.html](<https://docs.kernel.org/admin-guide/mm/numa_memory_policy.html>).
+
+[^/study/hpc/notes/0707p/#nersc-roofline]: NERSC, *Roofline Performance Model*, [https://docs.nersc.gov/tools/performance/roofline/](<https://docs.nersc.gov/tools/performance/roofline/>).
+
+[^/study/hpc/notes/0707p/#amdahl]: G. M. Amdahl, *Validity of the Single Processor Approach to Achieving Large Scale Computing Capabilities*, 1967, [https://ieeexplore.ieee.org/document/4785615](<https://ieeexplore.ieee.org/document/4785615>).
