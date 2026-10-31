@@ -1,5 +1,9 @@
 # Reverse 入门
 
+> [!CAUTION]
+>
+> **临时文章，不要公开**
+
 ## 自学记录和 writeup
 
 > [!NOTE]
