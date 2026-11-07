@@ -3100,11 +3100,6 @@
                       
                     
                     
-                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-                      <div class="md-sidebar-button__wrapper">
-                        <label class="md-sidebar-button" for="__toc"></label>
-                      </div>
-                    
                   
                   <div class="md-sidebar__inner">
                     
@@ -3116,69 +3111,6 @@
   
     
   
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      On this page
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#lec-1" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        lec 1
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#lec-2" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        lec 2
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#lec-3" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        lec 3
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#lec-4" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        lec 4
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#lec-5" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        lec 5
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
   
 </nav>
                   </div>
@@ -3210,7 +3142,7 @@
 
 
   
-    <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/study/crypto.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+    <a href="https://github.com/bfyes/bfyes.github.io/edit/main/docs/study/crypto/index.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-pen" viewBox="0 0 24 24"><path d="M12.659 22H18a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v9.34"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10.378 12.622a1 1 0 0 1 3 3.003L8.36 20.637a2 2 0 0 1-.854.506l-2.867.837a.5.5 0 0 1-.62-.62l.836-2.869a2 2 0 0 1 .506-.853z"/></svg>
     </a>
@@ -3219,7 +3151,7 @@
     
       
     
-    <a href="https://github.com/bfyes/bfyes.github.io/raw/main/docs/study/crypto.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/bfyes/bfyes.github.io/raw/main/docs/study/crypto/index.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-file-code-2" viewBox="0 0 24 24"><path d="M4 12.15V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2h-3.35"/><path d="M14 2v5a1 1 0 0 0 1 1h5M5 16l-3 3 3 3M9 22l3-3-3-3"/></svg>
     </a>
@@ -3232,173 +3164,9 @@
 
 
 
-<h1 id="数据安全与密码学基础">数据安全与密码学基础<a class="headerlink" href="#数据安全与密码学基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-10-30T00:02:49+08:00">2026/10/30</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 1620 字</span></div>
-<div class="admonition warning">
-<p class="admonition-title">自用，非原创，不完整</p>
-</div>
-<h2 id="lec-1">lec 1<a class="headerlink" href="#lec-1" title="Permanent link"></a></h2>
-<details class="tip">
-<summary>符号和语法</summary>
-<ul>
-<li>Gen, 密钥生成算法，R</li>
-<li>Enc, 加密算法，R/D</li>
-<li>Dec, 解密算法，D</li>
-<li>M 明文空间</li>
-<li>K 密钥空间</li>
-</ul>
-<blockquote>
-<p>R: Randomized Algorithm 随机算法</p>
-<p>D: Deterministic Algorithm 确定算法</p>
-</blockquote>
-</details>
-<details class="tip">
-<summary>攻击场景</summary>
-<ul>
-<li>Ciphertext-only attack：唯密文攻击。只知道密文。</li>
-<li>Known-plaintext attack：已知明文攻击。知道一些明文和对应的密文。</li>
-<li>Chosen-plaintext attack：选择明文攻击。有权限选择明文加密成密文。</li>
-<li>Chosen-ciphertext attack：选择密文攻击。有权限选择密文解密成明文。对手的目的依旧是确定其他密文的明文（其明文不能直接得到）。</li>
-</ul>
-<p>防范密码学攻击方式的难易程度：选择密文攻击 &gt; 选择明文攻击 &gt; 已知明文攻击 &gt; 唯密文攻击</p>
-<p>四种密码攻击方式中破解难易度：唯密文攻击 &gt; 已知明文攻击 &gt; 选择明文攻击 &gt; 选择密文攻击</p>
-</details>
-<details class="tip">
-<summary>正确性的定义</summary>
-<p>算法的正确性: <span class="arithmatex">\(\forall m \in M,\Pr\limits_{sk\leftarrow Gen}[Dec(Enc(sk, m))=m]=1\)</span></p>
-</details>
-<details class="tip">
-<summary>Kerckhoffs原则</summary>
-<p>柯克霍夫原则(Kerckhoffs's principle): 一个密码系统的安全性，必须完全依赖于密钥（Key）的保密性，而不能依赖于算法或系统本身的保密性。</p>
-</details>
-<details class="tip">
-<summary>古典加密</summary>
-<ul>
-<li>Caesar加密，凯撒。</li>
-<li>Substitution加密，单字母替换。</li>
-</ul>
-<p>唯密文攻击。</p>
-</details>
-<details class="tip">
-<summary>现代密码学的基本原则</summary>
-<ul>
-<li>Assumption（精确假设）： 方案安全所依赖的底层数学难题必须被精确陈述，且假设要尽可能少、尽可能弱。</li>
-<li>Definition（形式化定义）： 严格量化安全目标，即界定“具有何种能力的敌手，无法实现何种程度的破解”。</li>
-<li>Reduction（归约证明）： 用反证法证明“若有人能攻破该方案，就能解决底层数学假设”，从而确立安全性。</li>
-</ul>
-</details>
-<h2 id="lec-2">lec 2<a class="headerlink" href="#lec-2" title="Permanent link"></a></h2>
-<details class="tip">
-<summary>Shannon Privacy 和 Perfect Privacy</summary>
-<ul>
-<li>
-<p>香农保密性（Shannon Privacy / Attempt3）</p>
-<blockquote>
-<p>视角：信息论视角。密文不泄露关于明文的任何额外信息，即后验概率等于先验概率：<span class="arithmatex">\(\Pr[M = m \mid C = c] = \Pr[M = m]\)</span>。</p>
-</blockquote>
-</li>
-<li>
-<p>完善保密性（Perfect Privacy / Attempt4）</p>
-<blockquote>
-<p>视角：概率分布视角。密文的概率分布与具体的明文无关，任意两条明文生成同一密文的概率恒等：<span class="arithmatex">\(\Pr[\operatorname{Enc}(sk, m_0) = c] = \Pr[\operatorname{Enc}(sk, m_1) = c]\)</span>。</p>
-</blockquote>
-</li>
-<li>
-<p>完美不可区分性（Perfect Indistinguishability / Further Discussion）</p>
-<blockquote>
-<p>视角：博弈实验（Game-based）视角。面对具有<strong>无限计算能力</strong>的敌手 <span class="arithmatex">\(\mathcal{A}\)</span>，敌手在窃听不可区分实验（<span class="arithmatex">\(\text{PrivK}^{\text{eav}}\)</span>）中成功猜测明文的概率严格等于盲猜概率，即 <span class="arithmatex">\(\Pr[\text{PrivK}^{\text{eav}}_{\mathcal{A},\Pi} = 1] = \frac{1}{2}\)</span>。</p>
-</blockquote>
-</li>
-</ul>
-<p>三者等价。</p>
-</details>
-<details class="tip">
-<summary>一次一密</summary>
-<p>一次一密（One-Time Pad，OTP）满足Perfect Privacy</p>
-<p>缺陷是它要求密钥和明文有相同长度</p>
-<p>只使用一次时是安全的</p>
-</details>
-<details class="tip">
-<summary>香农定理</summary>
-<p>香农定理给出了在极限效率下实现完善保密加密（Perfect Privacy）的充要条件。由于完善保密要求密钥空间不能小于明文空间（<span class="arithmatex">\(\vert{}K\vert{} \ge \vert{}M\vert{}\)</span>），且为了正确解密密文空间也不能小于明文空间（<span class="arithmatex">\(\vert{}C\vert{} \ge \vert{}M\vert{}\)</span>），因此三者空间大小严格相等（<span class="arithmatex">\(\vert{}K\vert{} = \vert{}M\vert{} = \vert{}C\vert{}\)</span>）代表了理论上的<strong>最优效率</strong>（如一次一密 OTP，密钥长度最短且无冗余）。</p>
-<p>在该最优前提下，一个方案达到完善保密<strong>当且仅当</strong>满足两个条件：一是<strong>密钥完全均匀随机</strong>，即生成算法选出任意密钥的概率均为 <span class="arithmatex">\(1/\vert{}K\vert{}\)</span>；二是<strong>映射具有唯一双射性</strong>，即对于任意给定的明文和密文，存在且仅存在唯一的密钥能将该明文加密为该密文。这意味着敌手截获密文后，每个候选明文都以完全相等的概率被唯一密钥对应，密文无法提供关于明文的任何额外信息。</p>
-</details>
-<h2 id="lec-3">lec 3<a class="headerlink" href="#lec-3" title="Permanent link"></a></h2>
-<details class="tip">
-<summary>计算安全</summary>
-<p>放宽条件。</p>
-<ul>
-<li>1) Relaxition1：Attacker’s computational power is bounded. </li>
-<li>2) Relaxition2: Advantage is small.</li>
-</ul>
-<hr />
-<p>面对任意 PPT（多项式时间）敌手，攻破该方案的成功概率都是 <span class="arithmatex">\(\operatorname{negl}(n)\)</span>（可忽略的），则称该方案在渐进意义下是计算安全的。</p>
-<p>如果每个概率多项式时间的敌手 <span class="arithmatex">\(\mathcal{A}\)</span> 执行某个特定类型的攻击，对于每个多项式 <span class="arithmatex">\(p(\cdot)\)</span>，存在一个整数 <span class="arithmatex">\(N\)</span>，对 <span class="arithmatex">\(n &gt; N\)</span>，<span class="arithmatex">\(\mathcal{A}\)</span> 在这次攻击中成功的概率小于 <span class="arithmatex">\(\frac{1}{p(n)}\)</span>，则这个方案是安全的。</p>
-<hr />
-<p>多项式的性质</p>
-<ul>
-<li>1) Language Independent, </li>
-<li>2) composition(Poly * poly = poly), </li>
-<li>3) Natural(经典算法都是poly), </li>
-<li>4) Slow-growing</li>
-</ul>
-<p>可忽略函数的性质</p>
-<ul>
-<li>1) negl1(n) + negl2(n) = negl(n),</li>
-<li>2) negl(n) * poly(n) = negl(n),</li>
-<li>*3) 如果 f(n) 是可忽略函数，g(n) 是多项式函数，则 f(g(n)) 也是可忽略函数。</li>
-</ul>
-</details>
-<details class="tip">
-<summary>One way function</summary>
-<blockquote>
-<p>Onewayness: x-&gt;f(x) is easy, f(x)-&gt;x is hard. Easy to compute, hard to invert.</p>
-</blockquote>
-<ul>
-<li>Worst-case One way function 不能攻破所有的x，即使有一部分x被攻破，也会被认为是安全的。</li>
-<li>Strong One way function 默认是强定义</li>
-<li>Weak One way function 将可忽略放宽为 1 - 1 / poly(n)</li>
-</ul>
-</details>
-<h2 id="lec-4">lec 4<a class="headerlink" href="#lec-4" title="Permanent link"></a></h2>
-<details class="tip">
-<summary>EAV-Secure</summary>
-<p>Eavesdropping, 被动窃听，敌手只能窃听<mark class="critic"><strong>单条</strong></mark>消息，PPT。</p>
-<div class="arithmatex">\[\Pr\left[\text{PrivK}_{\mathcal{A},\Pi}^{\text{eav}}(n) = 1\right] \le \frac{1}{2} + \operatorname{negl}(n)\]</div>
-<div class="arithmatex">\[\left\vert{}\Pr\left[\text{out}_{\mathcal{A}}\left(\text{PrivK}_{\mathcal{A},\Pi}^{\text{eav}}(n, 0)\right) = 1\right] - \Pr\left[\text{out}_{\mathcal{A}}\left(\text{PrivK}_{\mathcal{A},\Pi}^{\text{eav}}(n, 1)\right) = 1\right]\right\vert{} \le \operatorname{negl}(n)\]</div>
-</details>
-<details class="tip">
-<summary>PRG</summary>
-<p>Pseudo-Random Generator，伪随机数生成器。</p>
-<p>sk is Truly random; str is Random looking.</p>
-<ol>
-<li>扩展性: l(n) &gt; n</li>
-<li>伪随机性: 对于任何PPT敌手，无法区分生成的序列和真正的随机序列。</li>
-</ol>
-<details class="tip">
-<summary>计算安全下的归约方法</summary>
-<p>核心是反证法，“外包”的过程。</p>
-<ol>
-<li>假定存在能破解密码方案的有效算法 A。</li>
-<li>设计一个算法 A'，它收到未知的底层数学难题后，包装成密码密文并转交给 A 破解。</li>
-<li>A 破解成功后，A' 顺势解出了底层难题。</li>
-<li>这意味着找到了在多项式时间内解开世界难题的方法，与前提假设矛盾。</li>
-<li>故反证假设不成立，原密码方案是安全的。</li>
-</ol>
-</details>
-<p>PRG 加密方案的安全性证明。</p>
-<p><a href="https://zephyriiiii.github.io/blog/%E8%AF%BE%E7%A8%8B%E7%AC%94%E8%AE%B0/%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E4%B8%8E%E5%AF%86%E7%A0%81%E5%AD%A6%E5%9F%BA%E7%A1%80/Lec4/#_6">不想写了</a></p>
-<p>PRG 可扩展定理。</p>
-<p>negl * poly = negl，混合论证（Hybrid Argument）</p>
-</details>
-<h2 id="lec-5">lec 5<a class="headerlink" href="#lec-5" title="Permanent link"></a></h2>
-<details class="tip">
-<summary>Multi-Message Security</summary>
-<p>也是窃听者模型，</p>
-</details>
-<details class="tip">
-<summary>PRFs</summary>
-<p>Pseudo-Random Functions，伪随机函数（族）。</p>
-</details>
+<h1 id="数据安全与密码学基础">数据安全与密码学基础<a class="headerlink" href="#数据安全与密码学基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-11-08T00:16:19.547657+08:00">2026/11/08</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 27 字</span></div>
+<p><a href="crypto_midterm/">杂乱的习题，非原创，来源不一</a></p>
+<p><a href="crypto/">自用的草稿</a></p>
 
 
 

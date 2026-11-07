@@ -3281,9 +3281,9 @@
 <p>
 <div class="pyodide" data-install="" data-session="reverse3" data-minlines="12" data-maxlines="12">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-199--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-10--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-199--editor" class="pyodide-editor">import base64
+<div><pre id="exec-10--editor" class="pyodide-editor">import base64
 
 data = base64.b64decode('d3l5d3ldRncbEB4fER4YEBg=')
 
@@ -3295,9 +3295,9 @@ for key in range(128):
     if chk == key:
         print(hex(key), cand)</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-199--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-10--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-199--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-10--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p>？！诶诶！？</p>
@@ -3316,9 +3316,9 @@ for key in range(128):
 <p>
 <div class="pyodide" data-install="" data-session="reverse3" data-minlines="8" data-maxlines="8">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-200--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-11--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-200--editor" class="pyodide-editor"># data 是上一个块里的 base64 字节
+<div><pre id="exec-11--editor" class="pyodide-editor"># data 是上一个块里的 base64 字节
 # 假设可读定义为数字字母下划线
 for key in range(128):
     cand = bytes(v ^ key for v in data).decode()
@@ -3326,9 +3326,9 @@ for key in range(128):
         print(hex(key), cand)
         tail = cand</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-200--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-11--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-200--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-11--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p><a class="glightbox" data-type="image" href=".././reverse3.assets/image-20261025180029943.png"><img width="960" height="116" class="lqip" alt="image-20261025180029943" src=".././reverse3.assets/image-20261025180029943.preview.jpg" data-fullsrc=".././reverse3.assets/image-20261025180029943.png" /></a></p>
@@ -3344,9 +3344,9 @@ for key in range(128):
 <p>
 <div class="pyodide" data-install="" data-session="reverse3" data-minlines="14" data-maxlines="14">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-201--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-12--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-201--editor" class="pyodide-editor">def nrbf_string(s):
+<div><pre id="exec-12--editor" class="pyodide-editor">def nrbf_string(s):
     """BinaryFormatter 序列化结果当作线性字节池"""
     def i32(n):
         return n.to_bytes(4, 'little', signed=True)
@@ -3361,18 +3361,18 @@ print('序列化流长度', len(blob))
 MOD, N = 127, 14
 A = [[blob[(7 * (i + 14 * j)) % 195] % MOD for j in range(N)] for i in range(N)]</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-201--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-12--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-201--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-12--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p><code>A</code> 建好后，把常量向量拼进增广矩阵，在 <code>Z_127</code> 里做高斯消元。</p>
 <p>
 <div class="pyodide" data-install="" data-session="reverse3" data-minlines="17" data-maxlines="17">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-202--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: reverse3)</span><span id="exec-13--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-202--editor" class="pyodide-editor">target = [45, 77, 7, 109, 112, 98, 11, 14, 70, 77, 16, 26, 1, 106]
+<div><pre id="exec-13--editor" class="pyodide-editor">target = [45, 77, 7, 109, 112, 98, 11, 14, 70, 77, 16, 26, 1, 106]
 
 # 模 127 高斯消元
 aug = [A[i] + [target[i]] for i in range(N)]
@@ -3390,9 +3390,9 @@ mid = ''.join(chr(aug[i][N]) for i in range(N))
 print(mid)
 print(f'AAA{{{mid}{tail}}}')</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-202--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-13--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-202--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-13--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 

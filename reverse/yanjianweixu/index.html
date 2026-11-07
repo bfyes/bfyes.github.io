@@ -3241,17 +3241,17 @@
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="5" data-maxlines="5">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-206--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-17--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-206--editor" class="pyodide-editor">a6 = [216, 102, 2, 205, 74, 60, 108, 221, 254, 84, 130, 4, 221, 144, 77, 214, 45, 70, 188, 115, 235, 168, 76, 192, 254, 26, 55]
+<div><pre id="exec-17--editor" class="pyodide-editor">a6 = [216, 102, 2, 205, 74, 60, 108, 221, 254, 84, 130, 4, 221, 144, 77, 214, 45, 70, 188, 115, 235, 168, 76, 192, 254, 26, 55]
 target = [185, 7, 99, 182, 62, 116, 93, 174, 161, 101, 241, 91, 179, 160, 57, 137, 107, 10, 253, 52, 180, 192, 45, 228, 161, 62, 74]
 
 plain = [chr(x ^ y) for x,y in zip(a6, target)]
 print(''.join(plain))</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-206--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-17--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-206--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-17--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p><a class="glightbox" data-type="image" href=".././yanjianweixu.assets/image-20261020174948029.png"><img width="3188" height="666" class="lqip" alt="image-20261020174948029" src=".././yanjianweixu.assets/image-20261020174948029.preview.jpg" data-fullsrc=".././yanjianweixu.assets/image-20261020174948029.png" /></a></p>
@@ -3268,9 +3268,9 @@ print(''.join(plain))</pre></div>
 <p>
 <div class="pyodide" data-install="" data-session="default" data-minlines="10" data-maxlines="10">
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-207--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
+<span class="pyodide-bar-item">Editor (session: default)</span><span id="exec-18--run" title="Run: press Ctrl-Enter" class="pyodide-bar-item pyodide-clickable">Run</span>
 </div>
-<div><pre id="exec-207--editor" class="pyodide-editor">key = [
+<div><pre id="exec-18--editor" class="pyodide-editor">key = [
     0xF8, 0x46, 0x22, 0xCD, 0x47, 0x1B, 0x28, 0xFC,
     0xFE, 0x0B, 0x9E, 0x2C, 0xEC, 0x96, 0x0F, 0xBF,
     0x5D, 0x3C, 0xA2, 0x05, 0xD8, 0xAC, 0x1C, 0xBA,
@@ -3281,9 +3281,9 @@ target = [185, 7, 99, 182, 62, 116, 93, 174, 161, 101, 241, 91, 179, 160, 57, 13
 plain = [chr(t ^ k) for t,k in zip(target, key)]
 print(''.join(plain))</pre></div>
 <div class="pyodide-editor-bar">
-<span class="pyodide-bar-item">Output</span><span id="exec-207--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
+<span class="pyodide-bar-item">Output</span><span id="exec-18--clear" class="pyodide-bar-item pyodide-clickable">Clear</span>
 </div>
-<pre><code id="exec-207--output" class="pyodide-output"></code></pre>
+<pre><code id="exec-18--output" class="pyodide-output"></code></pre>
 </div>
 </p>
 <p>我想确认程序的入口到底是不是 acvitity，不过看不到函数是谁 call 的，目前还没有合适的动态调试方法（等我探索一下虚拟机/远程调试？）</p>
