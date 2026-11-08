@@ -3258,17 +3258,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#主观题_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        主观题
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -3466,7 +3455,7 @@
 
 
 
-<h1 id="数据安全与密码学基础">数据安全与密码学基础<a class="headerlink" href="#数据安全与密码学基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-11-08T15:02:27.389193+08:00">2026/11/08</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 44039 字</span></div>
+<h1 id="数据安全与密码学基础">数据安全与密码学基础<a class="headerlink" href="#数据安全与密码学基础" title="Permanent link"></a></h1><div class="page-updated-top"><span class="page-updated-top__label">最后更新于</span><time class="page-updated-top__time" datetime="2026-11-08T16:22:58.097024+08:00">2026/11/08</time><span class="page-updated-top__sep">·</span><span class="page-updated-top__words">约 45361 字</span></div>
 <h2 id="数据安全与密码学基础部分">数据安全与密码学基础部分<a class="headerlink" href="#数据安全与密码学基础部分" title="Permanent link"></a></h2>
 <h3 id="试卷1-历年卷24-25秋冬">试卷1, 历年卷(24-25秋冬)<a class="headerlink" href="#试卷1-历年卷24-25秋冬" title="Permanent link"></a></h3>
 <h4 id="选择题">选择题<a class="headerlink" href="#选择题" title="Permanent link"></a></h4>
@@ -4020,83 +4009,104 @@ G(k) = F_k(0^n) \parallel F_k(1^n)
 </details>
 </div>
 <div class="admonition question">
-<p class="admonition-title">6. [模拟]（20 分）</p>
+<p class="admonition-title">6. [安全归约证明 · 核心大题]（20 分）</p>
 <ol>
 <li>
-<p>写出<strong>消息认证码（MAC）</strong>的语法定义 <span class="arithmatex">\((\operatorname{Gen}, \operatorname{MAC}, \operatorname{Verify})\)</span>，并形式化描述 MAC 的安全性定义（画出安全博弈图并说明敌手伪造成功的判定条件）。（10 分）</p>
+<p>形式化描述基于伪随机数生成器 <span class="arithmatex">\(G: \{0,1\}^n \to \{0,1\}^{\ell(n)}\)</span>（其中扩张因子 <span class="arithmatex">\(\ell(n) &gt; n\)</span>）构造的定长对称加密方案 <span class="arithmatex">\(\Pi = (\operatorname{Gen}, \operatorname{Enc}, \operatorname{Dec})\)</span> 的语法定义，并给出单条消息窃听不可区分实验 <span class="arithmatex">\(\operatorname{PrivK}_{\mathcal{A}, \Pi}^{\text{eav}}(n)\)</span> 的安全博弈图。（6 分）</p>
 </li>
 <li>
-<p>设 <span class="arithmatex">\(F: \{0,1\}^n \times \{0,1\}^n \to \{0,1\}^n\)</span> 是安全的伪随机函数。定义定长 MAC 方案：</p>
+<p>证明定理：<strong>若 <span class="arithmatex">\(G\)</span> 是安全的伪随机数生成器，则加密方案 <span class="arithmatex">\(\Pi\)</span> 满足窃听不可区分安全（EAV-Secure）</strong>。（14 分）</p>
 </li>
 </ol>
-<div class="arithmatex">\[
-\operatorname{MAC}(k, m) = F_k(m), \qquad \operatorname{Verify}(k, m, \tau) = \begin{cases} 1, &amp; \text{if } F_k(m) = \tau \\[4pt] 0, &amp; \text{otherwise} \end{cases}
-\]</div>
-<p>请用归约的方法证明该定长 MAC 方案是安全的（画出归约图并给出简要分析）。（10 分）</p>
+<p>要求按照密码学安全归约标准步骤进行严格证明：</p>
+<ul>
+<li>(a) 给出反证假设（Hypothesis）；</li>
+<li>(b) 设计针对底层生成器 <span class="arithmatex">\(G\)</span> 的多项式时间（PPT）区分器 <span class="arithmatex">\(D\)</span>（画出归约架构图并给出 <span class="arithmatex">\(D(w)\)</span> 的详细执行步骤）；</li>
+<li>(c) 详细推导外部输入为真随机串 <span class="arithmatex">\(r \leftarrow \{0,1\}^{\ell(n)}\)</span> 与伪随机串 <span class="arithmatex">\(w = G(s)\)</span> 时的条件概率，证明区分器 <span class="arithmatex">\(D\)</span> 攻破 <span class="arithmatex">\(G\)</span> 的区分优势严格等于敌手 <span class="arithmatex">\(\mathcal{A}\)</span> 攻破方案 <span class="arithmatex">\(\Pi\)</span> 的 EAV 优势；</li>
+<li>(d) 导出与假设矛盾的结论。</li>
+</ul>
 <details class="info">
 <summary>点击查看答案</summary>
-<p><strong>1. MAC 的语法与安全性定义（10 分）：</strong></p>
+<p><strong>1. 基于 PRG 的加密方案语法与 EAV 安全博弈图（6 分）：</strong></p>
 <p><strong>语法定义</strong>：</p>
 <ul>
-<li><span class="arithmatex">\(\operatorname{Gen}(1^n) \to sk\)</span>：输入安全参数，生成私钥 <span class="arithmatex">\(sk\)</span>；</li>
-<li><span class="arithmatex">\(\operatorname{MAC}(sk, m) \to \tau\)</span>：输入私钥 <span class="arithmatex">\(sk\)</span> 和消息 <span class="arithmatex">\(m\)</span>，输出认证标签 <span class="arithmatex">\(\tau\)</span>；</li>
-<li><span class="arithmatex">\(\operatorname{Verify}(sk, m, \tau) \to \{0,1\}\)</span>：确定性验证算法，合法输出 <span class="arithmatex">\(1\)</span>，非法输出 <span class="arithmatex">\(0\)</span>（满足正确性 <span class="arithmatex">\(\operatorname{Verify}(sk, m, \operatorname{MAC}(sk, m)) = 1\)</span>）。</li>
+<li><span class="arithmatex">\(\operatorname{Gen}(1^n) \to k\)</span>：均匀随机抽取短种子作为秘密密钥 <span class="arithmatex">\(k \leftarrow \{0,1\}^n\)</span>；</li>
+<li><span class="arithmatex">\(\operatorname{Enc}_k(m) \to c\)</span>：输入密钥 <span class="arithmatex">\(k\)</span> 与明文 <span class="arithmatex">\(m \in \{0,1\}^{\ell(n)}\)</span>，运行伪随机生成器扩展密钥流，输出密文 <span class="arithmatex">\(c := G(k) \oplus m\)</span>；</li>
+<li><span class="arithmatex">\(\operatorname{Dec}_k(c) \to m\)</span>：输入密钥 <span class="arithmatex">\(k\)</span> 与密文 <span class="arithmatex">\(c \in \{0,1\}^{\ell(n)}\)</span>，重复生成完全相同的掩码流并异或解密，输出明文 <span class="arithmatex">\(m := G(k) \oplus c\)</span>。</li>
 </ul>
-<p><strong>安全博弈图（UF-CMA，选择消息攻击下的不可伪造性）</strong>：</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ch                                      A
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  --------- (Gen, MAC, Verify) -------&gt;
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>sk &lt;- Gen(1^n)
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>初始化查询集合 Q = {}
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  &lt;-------------- m1 ------------------   |
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>  -------- tau1 = MAC(sk, m1) --------&gt;   | poly 次自适应查询
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>                 ...                      | (记录 Q = Q U {mi})
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>  &lt;----------- (m*, tau*) -------------
+<p><strong>安全博弈图（<span class="arithmatex">\(\operatorname{PrivK}_{\mathcal{A}, \Pi}^{\text{eav}}(n)\)</span> 窃听不可区分实验）</strong>：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Challenger (挑战者)                                 Adversary A (敌手)
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  k &lt;- Gen(1^n)
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>                       &lt;------ (m0, m1) ----------
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>                          (|m0| = |m1| = l(n))
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  b &lt;- {0, 1}
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>  c* = G(k) ^ mb
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>                       ------ c* = G(k) ^ mb ----&gt;
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>                                                    输出猜测比特 b&#39; in {0, 1}
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>  若 b&#39; = b 输出 1 (敌手获胜)
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>  若 b&#39; != b 输出 0 (敌手失败)
 </span></code></pre></div>
-<p><strong>安全性定义</strong>：敌手 <span class="arithmatex">\(\mathcal{A}\)</span> 获胜当且仅当 <strong><span class="arithmatex">\(\underline{m^* \notin Q}\)</span>（未曾查询过的新消息）且 <span class="arithmatex">\(\underline{\operatorname{Verify}(sk, m^*, \tau^*) = 1}\)</span></strong>。若对任意 PPT 敌手 <span class="arithmatex">\(\mathcal{A}\)</span>，存在可忽略函数 <span class="arithmatex">\(\operatorname{negl}(n)\)</span>，使得：</p>
-<div class="arithmatex">\[
-\Pr[\mathcal{A}\text{ 伪造成功}] \le \operatorname{negl}(n)
-\]</div>
-<p>则称该 MAC 方案是安全的。</p>
 <hr />
-<p><strong>2. PRF 构造定长 MAC 的归约证明（10 分）：</strong></p>
-<p>假设存在敌手 <span class="arithmatex">\(\mathcal{A}\)</span> 以不可忽略概率 <span class="arithmatex">\(\epsilon(n)\)</span> 伪造成功，构造归约器 <span class="arithmatex">\(R\)</span> 攻破伪随机函数 <span class="arithmatex">\(F\)</span>：</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ch                        +---------------------------------------+
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>                          | R                                     |
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  --------- {F} --------&gt; |                                       |
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>sk &lt;- {0,1}^n             |                               +-----+ |
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>b &lt;- {0,1}                | ---- (Gen, MAC, Verify) ----&gt; |  A  | |
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>                          | &lt;----------- mi ------------- |     | |
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>  &lt;--------- mi --------- |                               |     | |
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>  --------- taui -------&gt; | ----------- taui -----------&gt; |     | |
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>                          |              ...              |     | |
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>                          | &lt;------- (m*, tau*) --------- |     | |
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>  &lt;--------- m* --------- | (检查 m* not in Q)             +-----+ |
-</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>  --------- y* ---------&gt; |                                       |
-</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>b&#39;=0 if y* == tau*        |                                       |
-</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>b&#39;=1 if y* != tau*        |                                       |
-</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>  &lt;--------- b&#39; --------- |                                       |
-</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>                          +---------------------------------------+
+<p><strong>2. 安全性归约证明（14 分）：</strong></p>
+<p><strong>(a) 反证假设（Hypothesis）</strong>：</p>
+<p>假设方案 <span class="arithmatex">\(\Pi\)</span> 不是 EAV 安全的。则存在一个概率多项式时间（PPT）敌手 <span class="arithmatex">\(\mathcal{A}\)</span> 和一个不可忽略的优势函数 <span class="arithmatex">\(\varepsilon(n)\)</span>，使得：</p>
+<div class="arithmatex">\[
+\Pr\left[\operatorname{PrivK}_{\mathcal{A}, \Pi}^{\text{eav}}(n) = 1\right] \ge \frac{1}{2} + \varepsilon(n)
+\]</div>
+<p><strong>(b) 构造针对底层 PRG <span class="arithmatex">\(G\)</span> 的 PPT 区分器 <span class="arithmatex">\(D\)</span></strong>：</p>
+<p>我们将内部敌手 <span class="arithmatex">\(\mathcal{A}\)</span> 作为子程序嵌入到外部区分器 <span class="arithmatex">\(D\)</span> 中。区分器 <span class="arithmatex">\(D\)</span> 接收一个待判定输入串 <span class="arithmatex">\(w \in \{0,1\}^{\ell(n)}\)</span>（可能来自真随机分布 <span class="arithmatex">\(U_{\ell(n)}\)</span>，也可能来自伪随机分布 <span class="arithmatex">\(G(U_n)\)</span>），其目标是判定 <span class="arithmatex">\(w\)</span> 的来源。</p>
+<p><strong>归约架构交互图</strong>：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>PRG 挑战环境                     区分器 D(w)                        敌手 A
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>(提供待测串 w)
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>       ----------- w ------------&gt; |
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>                                   | &lt;--- (m0, m1) -------------- (A 提交挑战明文)
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>                                   | 均匀抽取比特 b &lt;- {0, 1}
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>                                   | 计算伪造挑战密文 c* := w ^ mb
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>                                   | ------------ c* -----------&gt; (A 接收密文分析)
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>                                   | &lt;----------- b&#39; ------------ (A 输出猜测)
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>                                   | 若 b&#39; == b 输出 1 (判定为 PRG 串)
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>       &lt;----- 输出 0 或 1 -------- | 若 b&#39; != b 输出 0 (判定为真随机)
 </span></code></pre></div>
-<p><strong>概率分析</strong>：</p>
-<p><strong>当 <span class="arithmatex">\(b=0\)</span> 时（黑盒为伪随机函数 <span class="arithmatex">\(F_{sk}\)</span>）</strong>：
-<span class="arithmatex">\(R\)</span> 完美模拟了标准 MAC 实验，敌手伪造成功即判定为 <span class="arithmatex">\(b'=0\)</span>：</p>
+<p><strong>区分器 <span class="arithmatex">\(D(w)\)</span> 的详细执行步骤</strong>：</p>
+<ol>
+<li>启动敌手子程序 <span class="arithmatex">\(\mathcal{A}(1^n)\)</span>，等待 <span class="arithmatex">\(\mathcal{A}\)</span> 输出一对等长挑战明文 <span class="arithmatex">\((m_0, m_1)\)</span>，其中 <span class="arithmatex">\(|m_0| = |m_1| = \ell(n)\)</span>；</li>
+<li>区分器 <span class="arithmatex">\(D\)</span> 在本地抛硬币均匀独立选取随机比特 <span class="arithmatex">\(b \leftarrow \{0, 1\}\)</span>；</li>
+<li>利用外部输入串 <span class="arithmatex">\(w\)</span> 作为一次性密钥流掩码，计算模拟的挑战密文并将 <span class="arithmatex">\(c^*\)</span> 发送给敌手 <span class="arithmatex">\(\mathcal{A}\)</span>：</li>
+</ol>
 <div class="arithmatex">\[
-\Pr[b'=0 \mid b=0] = \Pr[\mathcal{A}\text{ 伪造成功}] = \epsilon(n)
+c^* := w \oplus m_b
 \]</div>
-<p><strong>当 <span class="arithmatex">\(b=1\)</span> 时（黑盒为真随机函数 <span class="arithmatex">\(f\)</span>）</strong>：
-因为合法伪造要求 <span class="arithmatex">\(m^* \notin Q\)</span>（未曾查询过），故 <span class="arithmatex">\(y^* = f(m^*)\)</span> 是在 <span class="arithmatex">\(\{0,1\}^n\)</span> 上完全独立均匀分布的真随机串，与敌手获得的所有历史标签完全独立。敌手猜中该独立随机串的概率为：</p>
+<ol start="4">
+<li>敌手 <span class="arithmatex">\(\mathcal{A}\)</span> 输出对隐藏比特的猜测 <span class="arithmatex">\(b' \in \{0, 1\}\)</span>；</li>
+<li>区分器根据敌手猜测结果进行判断：若 <span class="arithmatex">\(b' = b\)</span>，则 <span class="arithmatex">\(D\)</span> 输出 <span class="arithmatex">\(1\)</span>（判定 <span class="arithmatex">\(w\)</span> 为伪随机生成串）；若 <span class="arithmatex">\(b' \ne b\)</span>，则 <span class="arithmatex">\(D\)</span> 输出 <span class="arithmatex">\(0\)</span>（判定 <span class="arithmatex">\(w\)</span> 为均匀真随机串）。</li>
+</ol>
+<p><strong>(c) 优势推导分析</strong>：</p>
+<p>我们分别分析区分器 <span class="arithmatex">\(D\)</span> 在两种输入分布下的行为：</p>
+<p><strong>情形 1：外部输入为伪随机串，即 <span class="arithmatex">\(w = G(s)\)</span>（其中 <span class="arithmatex">\(s \leftarrow \{0,1\}^n\)</span>）</strong>：</p>
+<p>此时给敌手返回的挑战密文为：</p>
 <div class="arithmatex">\[
-\Pr[b'=0 \mid b=1] = \Pr[y^* = \tau^*] = \frac{1}{2^n}
+c^* = G(s) \oplus m_b
 \]</div>
-<p><strong>归约器 <span class="arithmatex">\(R\)</span> 的区分优势</strong>：</p>
+<p>由于种子 <span class="arithmatex">\(s\)</span> 均匀随机抽取，密文 <span class="arithmatex">\(c^*\)</span> 的概率分布与真实加密实验 <span class="arithmatex">\(\operatorname{PrivK}_{\mathcal{A}, \Pi}^{\text{eav}}(n)\)</span> 中的挑战密文分布<strong>完全一致</strong>！因此敌手猜对的概率恰为其实际攻破方案的概率：</p>
 <div class="arithmatex">\[
-\operatorname{Adv}_F(R) = \left|\Pr[b'=0 \mid b=0] - \Pr[b'=0 \mid b=1]\right| = \left|\epsilon(n) - \frac{1}{2^n}\right|
+\Pr\left[D(G(s)) = 1\right] = \Pr\left[b' = b \mid w = G(s)\right] = \Pr\left[\operatorname{PrivK}_{\mathcal{A}, \Pi}^{\text{eav}}(n) = 1\right] \ge \frac{1}{2} + \varepsilon(n)
 \]</div>
-<p>由于 <span class="arithmatex">\(F\)</span> 是安全 PRF，<span class="arithmatex">\(\operatorname{Adv}_F(R) \le \operatorname{negl}(n)\)</span>。由此可得：</p>
+<p><strong>情形 2：外部输入为均匀真随机串，即 <span class="arithmatex">\(w = r \leftarrow \{0,1\}^{\ell(n)}\)</span></strong>：</p>
+<p>此时挑战密文为：</p>
 <div class="arithmatex">\[
-\epsilon(n) \le \frac{1}{2^n} + \operatorname{negl}(n) = \operatorname{negl}'(n)
+c^* = r \oplus m_b
 \]</div>
-<p>敌手伪造成功的概率至多可忽略，故该定长 MAC 方案安全。<span class="arithmatex">\(\square\)</span></p>
+<p>此时加密过程严格退化为<strong>一次一密（One-Time Pad，OTP）</strong>！由香农完善保密性定理，真随机串 <span class="arithmatex">\(r\)</span> 与任意明文异或后，密文 <span class="arithmatex">\(c^*\)</span> 在 <span class="arithmatex">\(\{0,1\}^{\ell(n)}\)</span> 上服从完全独立的均匀分布，绝对不包含关于明文比特 <span class="arithmatex">\(b\)</span> 的任何信息。因此敌手 <span class="arithmatex">\(\mathcal{A}\)</span> 猜测正确的概率严格等于盲猜概率 <span class="arithmatex">\(1/2\)</span>：</p>
+<div class="arithmatex">\[
+\Pr\left[D(r) = 1\right] = \Pr\left[b' = b \mid w = r\right] = \frac{1}{2}
+\]</div>
+<p><strong>综合计算区分器 <span class="arithmatex">\(D\)</span> 攻破 PRG 的区分优势</strong>：</p>
+<div class="arithmatex">\[
+\operatorname{Adv}_G(D) = \left| \Pr\left[D(G(s)) = 1\right] - \Pr\left[D(r) = 1\right] \right| \ge \left| \left(\frac{1}{2} + \varepsilon(n)\right) - \frac{1}{2} \right| = \varepsilon(n)
+\]</div>
+<p><strong>(d) 矛盾推导与结论</strong>：</p>
+<p>由于假设 <span class="arithmatex">\(\varepsilon(n)\)</span> 是不可忽略函数，因此区分器 <span class="arithmatex">\(D\)</span> 能够在多项式时间内以<strong>不可忽略的优势</strong>区分伪随机串 <span class="arithmatex">\(G(s)\)</span> 与真随机串 <span class="arithmatex">\(r\)</span>。这直接违背了「<span class="arithmatex">\(G\)</span> 是安全的伪随机数生成器」的前提假设！</p>
+<p>因此反证假设不成立，原方案 <span class="arithmatex">\(\Pi\)</span> 必定满足 EAV 安全性。<span class="arithmatex">\(\square\)</span></p>
 </details>
 </div>
 <hr />
@@ -4164,52 +4174,91 @@ f_3(n) = n^{-100} + 2^{-n} &gt; n^{-100} &gt; \frac{1}{n^{101}} = \frac{1}{p(n)}
 </details>
 </div>
 <div class="admonition question">
-<p class="admonition-title">2. [密码分组模式与错误传播计算]（15 分）</p>
-<p>设待加密消息被划分为若干长度为 <span class="arithmatex">\(n\)</span> 比特的分组 <span class="arithmatex">\(m_1, m_2, \dots, m_t\)</span>，使用分组长度为 <span class="arithmatex">\(n\)</span> 比特的分组密码算法 <span class="arithmatex">\(E_k / D_k\)</span> 分别在 <strong>CBC（密码分组链接）模式</strong>与 <strong>CTR（计数器）模式</strong>下进行加密。</p>
-<p>(1) 分别写出 CBC 模式与 CTR 模式的加密与解密迭代计算公式。（6 分）</p>
-<p>(2) 假设密文在不可靠信道中传输时，<strong>密文分组 <span class="arithmatex">\(c_2\)</span> 发生了 1 比特的传输错误（比特翻转）</strong>，而初始向量 <span class="arithmatex">\(\text{IV}\)</span> 以及其余密文分组均完好无损。请分别计算并分析在接收端解密后：（9 分）</p>
-<ul>
-<li>
-<p>在 CBC 模式下，哪些解密出的明文分组会受到影响？具体受到怎样的影响？</p>
-</li>
-<li>
-<p>在 CTR 模式下，哪些解密出的明文分组会受到影响？具体受到怎样的影响？</p>
-</li>
-</ul>
+<p class="admonition-title">2. [完美保密性与后验概率计算]（15 分）</p>
+<p>设明文空间 <span class="arithmatex">\(\mathcal{M} = \{m_1, m_2, m_3\}\)</span>，其先验概率分布为：</p>
+<div class="arithmatex">\[
+\Pr[M = m_1] = \frac{1}{2}, \qquad \Pr[M = m_2] = \frac{1}{4}, \qquad \Pr[M = m_3] = \frac{1}{4}
+\]</div>
+<p>密钥空间 <span class="arithmatex">\(\mathcal{K} = \{k_1, k_2, k_3\}\)</span>，密钥由算法 <span class="arithmatex">\(\operatorname{Gen}\)</span> 独立均匀随机抽取，即：</p>
+<div class="arithmatex">\[
+\Pr[K = k_1] = \Pr[K = k_2] = \Pr[K = k_3] = \frac{1}{3}
+\]</div>
+<p>密文空间 <span class="arithmatex">\(\mathcal{C} = \{c_1, c_2, c_3\}\)</span>。加密算法 <span class="arithmatex">\(\operatorname{Enc}(k, m)\)</span> 是一个确定性映射，加密矩阵如下（行表示明文，列表示密钥，矩阵元表示对应密文）：</p>
+<div class="arithmatex">\[
+\begin{array}{c|ccc}
+\operatorname{Enc}(k, m) &amp; k_1 &amp; k_2 &amp; k_3 \\
+\hline
+m_1 &amp; c_1 &amp; c_2 &amp; c_3 \\
+m_2 &amp; c_2 &amp; c_3 &amp; c_1 \\
+m_3 &amp; c_3 &amp; c_1 &amp; c_2 \\
+\end{array}
+\]</div>
+<p>(1) 计算窃听者截获密文 <span class="arithmatex">\(C = c_1\)</span> 出现的无条件边缘概率 <span class="arithmatex">\(\Pr[C = c_1]\)</span>。（5 分）</p>
+<p>(2) 分别计算当观测到密文 <span class="arithmatex">\(C = c_1\)</span> 时，各明文的后验条件概率 <span class="arithmatex">\(\Pr[M = m_1 \mid C = c_1]\)</span>、<span class="arithmatex">\(\Pr[M = m_2 \mid C = c_1]\)</span> 以及 <span class="arithmatex">\(\Pr[M = m_3 \mid C = c_1]\)</span>。（6 分）</p>
+<p>(3) 该密码体制是否满足完善保密性（Perfect Secrecy）？为什么？如果要使其满足完善保密性，在保持明文先验分布不变的前提下，密钥生成算法 <span class="arithmatex">\(\operatorname{Gen}\)</span> 的概率分布应当如何调整？（4 分）</p>
 <details class="info">
 <summary>点击查看答案</summary>
-<p><strong>(1) CBC 模式与 CTR 模式加解密公式（6 分）：</strong></p>
-<p><strong>CBC 模式</strong>（初始向量 <span class="arithmatex">\(c_0 = \text{IV} \leftarrow \{0,1\}^n\)</span>）：</p>
+<p><strong>(1) 密文边缘概率 <span class="arithmatex">\(\Pr[C = c_1]\)</span> 的计算（5 分）：</strong></p>
+<p>由全概率公式，密文 <span class="arithmatex">\(C = c_1\)</span> 出现的边缘概率为：</p>
+<div class="arithmatex">\[
+\Pr[C = c_1] = \sum_{i=1}^3 \Pr[M = m_i] \cdot \Pr[C = c_1 \mid M = m_i]
+\]</div>
+<p>查阅加密矩阵，分析产生密文 <span class="arithmatex">\(c_1\)</span> 所需的唯一密钥：</p>
 <ul>
-<li>加密：<span class="arithmatex">\(c_i = E_k(m_i \oplus c_{i-1}) \quad (i = 1, 2, \dots, t)\)</span></li>
-<li>解密：<span class="arithmatex">\(m_i = D_k(c_i) \oplus c_{i-1} \quad (i = 1, 2, \dots, t)\)</span></li>
+<li>当明文为 <span class="arithmatex">\(m_1\)</span> 时，密文为 <span class="arithmatex">\(c_1 \iff K = k_1\)</span>，故 <span class="arithmatex">\(\Pr[C = c_1 \mid M = m_1] = \Pr[K = k_1] = \frac{1}{3}\)</span>；</li>
+<li>当明文为 <span class="arithmatex">\(m_2\)</span> 时，密文为 <span class="arithmatex">\(c_1 \iff K = k_3\)</span>，故 <span class="arithmatex">\(\Pr[C = c_1 \mid M = m_2] = \Pr[K = k_3] = \frac{1}{3}\)</span>；</li>
+<li>当明文为 <span class="arithmatex">\(m_3\)</span> 时，密文为 <span class="arithmatex">\(c_1 \iff K = k_2\)</span>，故 <span class="arithmatex">\(\Pr[C = c_1 \mid M = m_3] = \Pr[K = k_2] = \frac{1}{3}\)</span>。</li>
 </ul>
-<p><strong>CTR 模式</strong>（初始计数器 <span class="arithmatex">\(\text{ctr}_1 = \text{IV}\)</span>，后续分组计数器依次自增 <span class="arithmatex">\(\text{ctr}_i = \text{IV} + i - 1\)</span>）：</p>
-<ul>
-<li>加密：<span class="arithmatex">\(c_i = m_i \oplus E_k(\text{ctr}_i) \quad (i = 1, 2, \dots, t)\)</span></li>
-<li>解密：<span class="arithmatex">\(m_i = c_i \oplus E_k(\text{ctr}_i) \quad (i = 1, 2, \dots, t)\)</span></li>
-</ul>
+<p>代入数值计算：</p>
+<div class="arithmatex">\[
+\Pr[C = c_1] = \frac{1}{2} \cdot \frac{1}{3} + \frac{1}{4} \cdot \frac{1}{3} + \frac{1}{4} \cdot \frac{1}{3} = \frac{1}{6} + \frac{1}{12} + \frac{1}{12} = \frac{1}{3}
+\]</div>
 <hr />
-<p><strong>(2) 传输错误（<span class="arithmatex">\(c_2\)</span> 发生 1 比特翻转）的影响分析（9 分）：</strong></p>
-<p>记受损密文为 <span class="arithmatex">\(\tilde{c}_2 = c_2 \oplus e\)</span>（其中错误向量 <span class="arithmatex">\(e\)</span> 仅含一个 <span class="arithmatex">\(1\)</span> 比特）。</p>
-<p><strong>CBC 模式下的解密结果分析</strong>：</p>
+<p><strong>(2) 后验条件概率的计算（6 分）：</strong></p>
+<p>应用贝叶斯公式 <span class="arithmatex">\(\Pr[M = m_i \mid C = c_1] = \dfrac{\Pr[M = m_i] \cdot \Pr[C = c_1 \mid M = m_i]}{\Pr[C = c_1]}\)</span>：</p>
 <ol>
-<li><strong>第 1 个明文分组</strong> <span class="arithmatex">\(m_1 = D_k(c_1) \oplus c_0\)</span>：涉及 <span class="arithmatex">\(c_1\)</span> 与 <span class="arithmatex">\(c_0\)</span>，未受影响，<strong>正确恢复</strong>。</li>
-<li><strong>第 2 个明文分组</strong> <span class="arithmatex">\(\tilde{m}_2 = D_k(\tilde{c}_2) \oplus c_1\)</span>：由于分组密码 <span class="arithmatex">\(D_k\)</span> 具有强雪崩效应（Avalanche Effect），输入发生 1 比特改变会导致输出 <span class="arithmatex">\(D_k(\tilde{c}_2)\)</span> 的近一半比特伪随机翻转。因此该分组明文<strong>完全损坏，变成不可读的随机乱码</strong>。</li>
-<li><strong>第 3 个明文分组</strong> <span class="arithmatex">\(\tilde{m}_3 = D_k(c_3) \oplus \tilde{c}_2 = D_k(c_3) \oplus c_2 \oplus e = m_3 \oplus e\)</span>：<span class="arithmatex">\(c_3\)</span> 完好，<span class="arithmatex">\(D_k(c_3)\)</span> 正确，仅在最后一步异或了受损的 <span class="arithmatex">\(\tilde{c}_2\)</span>。因此 <span class="arithmatex">\(m_3\)</span> 中<strong>恰好在对应错误比特位置发生 1 比特翻转</strong>，其余比特完好。</li>
-<li><strong>第 <span class="arithmatex">\(i \ge 4\)</span> 个明文分组</strong> <span class="arithmatex">\(m_i = D_k(c_i) \oplus c_{i-1}\)</span>：仅依赖 <span class="arithmatex">\(c_i\)</span> 与 <span class="arithmatex">\(c_{i-1}\)</span>，均完好无损，<strong>完全正确恢复</strong>。</li>
+<li><strong>明文 <span class="arithmatex">\(m_1\)</span> 的后验概率</strong>：</li>
 </ol>
-<p><strong>总结</strong>：受影响的分组为 <span class="arithmatex">\(m_2\)</span>（完全混乱毁坏）和 <span class="arithmatex">\(m_3\)</span>（出现 1 比特翻转错误）；错误不会继续向后扩散（有限错误传播 / 自同步性）。</p>
-<p><strong>CTR 模式下的解密结果分析</strong>：</p>
-<ol>
-<li>解密公式为 <span class="arithmatex">\(m_i = c_i \oplus E_k(\text{ctr}_i)\)</span>。密钥流块 <span class="arithmatex">\(E_k(\text{ctr}_i)\)</span> 仅由密钥和计数器决定，与密文完全独立；</li>
-<li>对于第 2 个分组：<span class="arithmatex">\(\tilde{m}_2 = \tilde{c}_2 \oplus E_k(\text{ctr}_2) = c_2 \oplus e \oplus E_k(\text{ctr}_2) = m_2 \oplus e\)</span>。解密出的明文<strong>仅在对应错误位置发生 1 比特翻转</strong>；</li>
-<li>对于所有其余分组 <span class="arithmatex">\(m_i (i \ne 2)\)</span>：由于密文 <span class="arithmatex">\(c_i\)</span> 完好，解密结果完全不受影响，<strong>100% 正确恢复</strong>。</li>
+<div class="arithmatex">\[
+\Pr[M = m_1 \mid C = c_1] = \frac{\frac{1}{2} \cdot \frac{1}{3}}{\frac{1}{3}} = \frac{1}{2}
+\]</div>
+<ol start="2">
+<li><strong>明文 <span class="arithmatex">\(m_2\)</span> 的后验概率</strong>：</li>
 </ol>
-<p><strong>总结</strong>：CTR 模式无任何分组雪崩扩散，错误严格局限在当前受损比特，具有理想的局域错误特性。</p>
+<div class="arithmatex">\[
+\Pr[M = m_2 \mid C = c_1] = \frac{\frac{1}{4} \cdot \frac{1}{3}}{\frac{1}{3}} = \frac{1}{4}
+\]</div>
+<ol start="3">
+<li><strong>明文 <span class="arithmatex">\(m_3\)</span> 的后验概率</strong>：</li>
+</ol>
+<div class="arithmatex">\[
+\Pr[M = m_3 \mid C = c_1] = \frac{\frac{1}{4} \cdot \frac{1}{3}}{\frac{1}{3}} = \frac{1}{4}
+\]</div>
+<hr />
+<p><strong>(3) 完善保密性判定与密钥分布分析（4 分）：</strong></p>
+<p><strong>结论</strong>：<strong>该密码体制严格满足完善保密性（Perfect Secrecy）</strong>。</p>
+<ul>
+<li><strong>判定理由</strong>：对比先验概率与后验概率：</li>
+</ul>
+<div class="arithmatex">\[
+\Pr[M = m_1 \mid C = c_1] = \Pr[M = m_1] = \frac{1}{2}
+\]</div>
+<div class="arithmatex">\[
+\Pr[M = m_2 \mid C = c_1] = \Pr[M = m_2] = \frac{1}{4}
+\]</div>
+<div class="arithmatex">\[
+\Pr[M = m_3 \mid C = c_1] = \Pr[M = m_3] = \frac{1}{4}
+\]</div>
+<p>由对称性可知，对任意密文 <span class="arithmatex">\(c_j \in \{c_1, c_2, c_3\}\)</span> 和任意明文 <span class="arithmatex">\(m_i \in \{m_1, m_2, m_3\}\)</span>，均恒有 <span class="arithmatex">\(\Pr[M = m_i \mid C = c_j] = \Pr[M = m_i]\)</span>。观测到密文前后明文的统计分布完全没有改变，窃听者无法从密文中获取任何关于明文的额外信息。</p>
+<ul>
+<li><strong>密钥分布调整说明</strong>：
+  根据香农定理（Shannon's Theorem），在空间规模满足极限效率 <span class="arithmatex">\(|\mathcal{K}| = |\mathcal{M}| = |\mathcal{C}| = 3\)</span> 的前提下，方案达到完善保密当且仅当：
+  1. 密钥分布在 <span class="arithmatex">\(\mathcal{K}\)</span> 上服从<strong>严格均匀分布</strong>（即 <span class="arithmatex">\(\Pr[K = k_i] = 1/3\)</span>）；
+  2. 对任意给定明文 <span class="arithmatex">\(m\)</span> 和密文 <span class="arithmatex">\(c\)</span>，存在且仅存在唯一密钥 <span class="arithmatex">\(k\)</span> 使得 <span class="arithmatex">\(\operatorname{Enc}(k, m) = c\)</span>。
+  由于当前的密钥生成算法已经服从均匀分布 <span class="arithmatex">\(\Pr[K = k_i] = 1/3\)</span>，该分布已是理论上的唯一完美解，<strong>完全无需作任何调整</strong>。</li>
+</ul>
 </details>
 </div>
-<h4 id="主观题_2">主观题<a class="headerlink" href="#主观题_2" title="Permanent link"></a></h4>
 <div class="admonition question">
 <p class="admonition-title">3. [模拟]（15 分）</p>
 <p>已知整数 <span class="arithmatex">\(N \ge 2\)</span>，明文空间 <span class="arithmatex">\(\mathcal{M} =\)</span> 密文空间 <span class="arithmatex">\(\mathcal{C} =\)</span> 密钥空间 <span class="arithmatex">\(\mathcal{K} = \{0, 1, \dots, N-1\}\)</span>。定义加密方案 <span class="arithmatex">\((\operatorname{KG}, \operatorname{Enc}, \operatorname{Dec})\)</span> 如下：</p>
@@ -4341,20 +4390,25 @@ f_3(n) = n^{-100} + 2^{-n} &gt; n^{-100} &gt; \frac{1}{n^{101}} = \frac{1}{p(n)}
 </details>
 </div>
 <div class="admonition question">
-<p class="admonition-title">6. [模拟]（20 分）</p>
+<p class="admonition-title">6. [PRF / PRG 理论深度与 CPA 安全边界]（20 分）</p>
 <ol>
 <li>
 <p>已知扩展因子为 <span class="arithmatex">\(2n\)</span> 的安全伪随机数生成器 <span class="arithmatex">\(G: \{0,1\}^n \to \{0,1\}^{2n}\)</span>，记 <span class="arithmatex">\(G(s) = G_0(s) \parallel G_1(s)\)</span>（其中 <span class="arithmatex">\(|G_0(s)| = |G_1(s)| = n\)</span>）。请描述如何用 <strong>GGM 二叉树</strong>由 <span class="arithmatex">\(G\)</span> 构造伪随机函数 <span class="arithmatex">\(F: \{0,1\}^n \times \{0,1\}^n \to \{0,1\}^n\)</span>，画出当 <span class="arithmatex">\(n=3\)</span>、输入 <span class="arithmatex">\(x = 101\)</span> 时的树状计算路径，并对比直接线性展开法与 GGM 二叉树法的时间复杂度。（8 分）</p>
 </li>
 <li>
-<p>简述<strong>伪随机置换（PRP）</strong>与<strong>伪随机函数（PRF）</strong>的区别。（4 分）</p>
-</li>
-<li>
-<p>在分组密码的工作模式中：（8 分）</p>
+<p>深入探讨基础密码学原语的核心理论关系：（6 分）</p>
 </li>
 </ol>
-<p>(1) 请设计具体敌手攻击步骤，证明<strong>电子密码本（ECB）模式</strong>不满足 IND-CPA 安全。</p>
-<p>(2) 若 <strong>CBC 模式</strong>在每次加密时都将初始向量 <span class="arithmatex">\(\text{IV}\)</span> 固定为全零常数 <span class="arithmatex">\(0^n\)</span>，是否仍然满足 IND-CPA 安全？为什么？</p>
+<p>(1) 为什么不能直接将任意单向函数（OWF）作为伪随机生成器（PRG）使用？请指明两者的本质定义差异（原像不可逆性 vs 输出不可区分性）。</p>
+<p>(2) 简述单向函数（OWF）、伪随机生成器（PRG）与伪随机函数（PRF）三者之间的理论等价蕴含关系（OWF <span class="arithmatex">\(\iff\)</span> PRG <span class="arithmatex">\(\iff\)</span> PRF），并指明证明各转化方向的经典里程碑定理/构造。</p>
+<ol start="3">
+<li>形式化证明：<strong>为什么任何无状态确定性对称加密方案都绝不可能满足 CPA 安全？</strong>（6 分）</li>
+</ol>
+<ul>
+<li>请给出针对任意无状态确定性加密方案通用的 PPT 敌手 <span class="arithmatex">\(\mathcal{A}\)</span> 的攻击算法步骤；</li>
+<li>画出 CPA 安全博弈交互图；</li>
+<li>严格证明敌手在该攻击下的获胜概率 <span class="arithmatex">\(\Pr[\operatorname{PrivK}_{\mathcal{A},\Pi}^{\text{cpa}}(n) = 1] = 1\)</span>，彻底攻破其 CPA 安全性。</li>
+</ul>
 <details class="info">
 <summary>点击查看答案</summary>
 <p><strong>1. GGM 二叉树构造 PRF 与复杂度对比（8 分）：</strong></p>
@@ -4377,34 +4431,69 @@ F_k(x_1 x_2 \cdots x_n) = G_{x_n}\left(\cdots G_{x_2}\left(G_{x_1}(k)\right)\cdo
 <li><strong>Attempt 2（GGM 二叉树）</strong>：只需沿树高走一条长度为 <span class="arithmatex">\(n\)</span> 的路径，调用 <span class="arithmatex">\(n\)</span> 次倍长 PRG，计算复杂度降为 <strong><span class="arithmatex">\(O(n)\)</span>（多项式时间，高效可行）</strong>。</li>
 </ul>
 <hr />
-<p><strong>2. PRP 与 PRF 的区别（4 分）：</strong></p>
-<ol>
-<li><strong>数学性质不同</strong>：PRF 是从 <span class="arithmatex">\(\{0,1\}^n \to \{0,1\}^n\)</span> 的伪随机<strong>函数</strong>，不要求一一映射，可能发生输出碰撞，全集大小为 <span class="arithmatex">\(2^{n \cdot 2^n}\)</span>；而 PRP 是从 <span class="arithmatex">\(\{0,1\}^n \to \{0,1\}^n\)</span> 的伪随机<strong>双射 / 置换</strong>，是严格的一一映射，不存在碰撞，全集大小为 <span class="arithmatex">\((2^n)!\)</span>。</li>
-<li><strong>可逆性不同</strong>：PRP 必须存在高效的多项式时间求逆算法 <span class="arithmatex">\(P_k^{-1}\)</span>（用于分组密码解密），而 PRF 本质不可逆。</li>
-</ol>
-<hr />
-<p><strong>3. 分组密码工作模式的 CPA 安全性分析（8 分）：</strong></p>
-<p><strong>(1) ECB 模式不满足 IND-CPA 安全的攻击构造</strong>：</p>
+<p><strong>2. OWF、PRG 与 PRF 的本质差异与等价关系（6 分）：</strong></p>
+<p><strong>(1) 不能直接将 OWF 当作 PRG 的原因</strong>：</p>
 <ul>
-<li><strong>攻击方案</strong>：ECB 模式对每个分组独立使用确定性算法加密 <span class="arithmatex">\(c_i = E_k(m_i)\)</span>。</li>
+<li><strong>安全保障维度的本质区别</strong>：</li>
+<li><strong>单向函数（OWF）仅保证「原像整体在平均意义下难以被完整求逆」</strong>。它绝对不保证输出具有伪随机分布，甚至允许输出直接明文泄露原像的绝大部分比特（例如已知 <span class="arithmatex">\(f\)</span> 是 OWF，构造 <span class="arithmatex">\(g(x_1 \parallel x_2) = x_1 \parallel f(x_2)\)</span> 依然是安全的 OWF，但其前半部分完全是明文原像，显然绝非随机串）；</li>
+<li><strong>伪随机生成器（PRG）要求「输出序列在整体分布上与均匀真随机串计算不可区分」</strong>，必须具备严格的熵扩张性与各位置的强伪随机性。</li>
+<li>因此，任意单向函数不能直接充当 PRG，必须通过硬核谓词（Goldreich-Levin 定理）提取不可预测比特。</li>
 </ul>
-<ol>
-<li>挑战阶段：敌手提交两组双分组明文：</li>
-</ol>
+<p><strong>(2) OWF <span class="arithmatex">\(\iff\)</span> PRG <span class="arithmatex">\(\iff\)</span> PRF 等价蕴含链条与里程碑定理</strong>：</p>
 <div class="arithmatex">\[
-M_0 = (0^n, 0^n), \qquad M_1 = (0^n, 1^n)
+\text{OWF 存在} \iff \text{PRG 存在} \iff \text{PRF 存在}
 \]</div>
-<ol start="2">
-<li>挑战者返回挑战密文 <span class="arithmatex">\(C^* = (c_1^*, c_2^*)\)</span>；</li>
-<li>敌手比较密文的两分组：若 <span class="arithmatex">\(c_1^* = c_2^*\)</span> 则输出 <span class="arithmatex">\(b'=0\)</span>；若 <span class="arithmatex">\(c_1^* \ne c_2^*\)</span> 则输出 <span class="arithmatex">\(b'=1\)</span>。</li>
-<li>胜率分析：若 <span class="arithmatex">\(b=0\)</span>，加密相同分组必产生相同密文 <span class="arithmatex">\(c_1^* = E_k(0^n) = c_2^*\)</span>；若 <span class="arithmatex">\(b=1\)</span>，由置换的单射性 <span class="arithmatex">\(c_1^* \ne c_2^*\)</span>。敌手获胜概率为 <span class="arithmatex">\(1\)</span>。</li>
-</ol>
-<p><strong>(2) 固定 <span class="arithmatex">\(\text{IV} = 0^n\)</span> 的 CBC 模式安全性分析</strong>：</p>
-<p><strong>结论</strong>：<strong>不满足 IND-CPA 安全</strong>。</p>
 <ul>
-<li><strong>原因</strong>：当 <span class="arithmatex">\(\text{IV}\)</span> 固定为常数 <span class="arithmatex">\(0^n\)</span> 时，第一个密文分组为 <span class="arithmatex">\(c_1 = E_k(m_1 \oplus 0^n) = E_k(m_1)\)</span>，整个加密方案退化为<strong>确定性加密算法</strong>。</li>
-<li>敌手在 Phase 1 查询任意明文 <span class="arithmatex">\(m\)</span>，记录密文第一分组 <span class="arithmatex">\(c_1\)</span>；在 Challenge Phase 提交 <span class="arithmatex">\(m_0^* = m, m_1^* \ne m\)</span>；只需观察挑战密文首分组是否等于 <span class="arithmatex">\(c_1\)</span> 即可 <span class="arithmatex">\(100\%\)</span> 攻破，故不满足 IND-CPA 安全。</li>
+<li><strong>OWF <span class="arithmatex">\(\implies\)</span> PRG</strong>：由 <strong>HILL 定理（Håstad-Impagliazzo-Levin-Luby 定理）</strong>证明。利用单向函数原像的熵聚集结合 Goldreich-Levin 硬核谓词构造 PRG；</li>
+<li><strong>PRG <span class="arithmatex">\(\implies\)</span> PRF</strong>：由 <strong>GGM 构造（Goldreich-Goldwasser-Micali 树状构造）</strong>证明。利用倍长 PRG 迭代构造二叉树实现指数级定义域的高效求值；</li>
+<li><strong>PRF <span class="arithmatex">\(\implies\)</span> PRG</strong>：通过<strong>计数器模式</strong>直接构造：令 <span class="arithmatex">\(G(s) = F_s(1) \parallel F_s(2) \parallel \dots \parallel F_s(\ell)\)</span> 即可将短种子扩展为任意多项式长度伪随机流；</li>
+<li><strong>PRG <span class="arithmatex">\(\implies\)</span> OWF</strong>：任何扩张因子满足 <span class="arithmatex">\(\ell(n) \ge 2n\)</span> 的安全 PRG 本身就是一个强单向函数（若能高效求逆种子，则可直接作为区分器攻破其伪随机性）。</li>
 </ul>
+<hr />
+<p><strong>3. 无状态确定性加密不满足 CPA 安全的形式化证明（6 分）：</strong></p>
+<p><strong>核心结论</strong>：<strong>任何无状态确定性对称加密方案均不满足 IND-CPA 安全</strong>。</p>
+<p><strong>针对通用确定性方案 <span class="arithmatex">\(\Pi\)</span> 的 PPT 敌手 <span class="arithmatex">\(\mathcal{A}\)</span> 攻击算法</strong>：</p>
+<ol>
+<li><strong>Phase 1（预言机查询）</strong>：敌手 <span class="arithmatex">\(\mathcal{A}\)</span> 选取任意明文 <span class="arithmatex">\(m \in \mathcal{M}\)</span>，向加密预言机 <span class="arithmatex">\(\operatorname{Enc}_k(\cdot)\)</span> 发起一次询问，获得密文 <span class="arithmatex">\(c := \operatorname{Enc}_k(m)\)</span>；</li>
+<li><strong>Challenge Phase（挑战阶段）</strong>：敌手提交挑战明文对 <span class="arithmatex">\((m_0, m_1)\)</span>，其中令 <span class="arithmatex">\(m_0 = m\)</span>（与 Phase 1 询问明文相同），令 <span class="arithmatex">\(m_1 \ne m\)</span>（任意不同的明文）；</li>
+<li><strong>挑战者应答</strong>：挑战者抽取随机比特 <span class="arithmatex">\(b \leftarrow \{0, 1\}\)</span>，返回挑战密文 <span class="arithmatex">\(c^* \leftarrow \operatorname{Enc}_k(m_b)\)</span>；</li>
+<li><strong>判定阶段</strong>：敌手对比挑战密文 <span class="arithmatex">\(c^*\)</span> 与 Phase 1 记录的密文 <span class="arithmatex">\(c\)</span>：
+   - 若 <span class="arithmatex">\(c^* = c\)</span>，敌手输出猜测 <span class="arithmatex">\(b' = 0\)</span>；
+   - 若 <span class="arithmatex">\(c^* \ne c\)</span>，敌手输出猜测 <span class="arithmatex">\(b' = 1\)</span>。</li>
+</ol>
+<p><strong>CPA 攻击博弈图</strong>：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Challenger (挑战者)                                 Adversary A (敌手)
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  k &lt;- Gen(1^n)
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>                       &lt;---------- 查询 m ------------
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  c = Enc_k(m)
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>                       ----------- 密文 c -----------&gt; (记录 c)
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>                       &lt;------ (m0 = m, m1 != m) -----
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>  b &lt;- {0, 1}
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>  c* = Enc_k(m_b)
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>                       ----------- 密文 c* ----------&gt;
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>                                                    若 c* == c 输出 b&#39; = 0
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>                                                    若 c* != c 输出 b&#39; = 1
+</span></code></pre></div>
+<p><strong>敌手获胜概率与优势计算</strong>：</p>
+<ul>
+<li><strong>若 <span class="arithmatex">\(b = 0\)</span></strong>：挑战密文为 <span class="arithmatex">\(c^* = \operatorname{Enc}_k(m_0) = \operatorname{Enc}_k(m)\)</span>。由于加密算法是<strong>确定性</strong>的，且方案是<strong>无状态</strong>的（密钥 <span class="arithmatex">\(k\)</span> 相同，无随机数或计数器状态变化），相同的明文 <span class="arithmatex">\(m\)</span> 必定产生完全相同的密文输出，故恒有 <span class="arithmatex">\(c^* = c\)</span>，敌手 <span class="arithmatex">\(100\%\)</span> 命中输出 <span class="arithmatex">\(b'=0\)</span>：</li>
+</ul>
+<div class="arithmatex">\[
+\Pr[b' = 0 \mid b = 0] = 1
+\]</div>
+<ul>
+<li><strong>若 <span class="arithmatex">\(b = 1\)</span></strong>：挑战密文为 <span class="arithmatex">\(c^* = \operatorname{Enc}_k(m_1)\)</span>。由解密算法的正确性保证，加密映射必定是单射（否则若 <span class="arithmatex">\(\operatorname{Enc}_k(m_1) = \operatorname{Enc}_k(m) = c\)</span>，则解密算法 <span class="arithmatex">\(\operatorname{Dec}_k(c)\)</span> 无法同时无歧义还原 <span class="arithmatex">\(m\)</span> 和 <span class="arithmatex">\(m_1\)</span>）。因此 <span class="arithmatex">\(m_1 \ne m \implies c^* \ne c\)</span>，敌手必定输出 <span class="arithmatex">\(b'=1\)</span>：</li>
+</ul>
+<div class="arithmatex">\[
+\Pr[b' = 1 \mid b = 1] = 1
+\]</div>
+<ul>
+<li><strong>敌手在 <span class="arithmatex">\(\operatorname{PrivK}_{\mathcal{A},\Pi}^{\text{cpa}}(n)\)</span> 博弈中的总获胜概率</strong>：</li>
+</ul>
+<div class="arithmatex">\[
+\Pr\left[\operatorname{PrivK}_{\mathcal{A},\Pi}^{\text{cpa}}(n) = 1\right] = \frac{1}{2} \Pr[b'=0 \mid b=0] + \frac{1}{2} \Pr[b'=1 \mid b=1] = \frac{1}{2}(1) + \frac{1}{2}(1) = 1
+\]</div>
+<p>敌手的攻击优势为 <span class="arithmatex">\(\left| 1 - \frac{1}{2} \right| = \frac{1}{2}\)</span>（绝非可忽略函数），方案被彻底攻破。因此满足 CPA 安全的对称加密方案必须是随机化（或有状态）的。<span class="arithmatex">\(\square\)</span></p>
 </details>
 </div>
 <hr />
@@ -5447,10 +5536,10 @@ F_k(x_1 x_2 \dots x_n) \stackrel{\text{def}}{=} G_{x_n}\left(\dots G_{x_2}\left(
 <div class="admonition question">
 <p class="admonition-title">1.1 [书后习题]</p>
 <p>解密单表替换密码章节末尾提供的密文：</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>JGRMQOYGHMVBJWRWQFPWHGFFDQGFPFZRKBEEBJIZQQOCIBZKLFAFGQVFZFWWE
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>OGWOPFGFHWOLPLHRLROLFDFMGFQWBLWBWQOLKFWBYLBLYLFSFLJGRMQBOLWJVFP
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>FWQVHQWFFPQOQVF PQOCFPOGFWFJIGFQVHLHLROQVF GWJVFPFO LF HGQVQVFIL E
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>OGQILHQFQGIQVVOSFAFGBWQVHQWIJVWJVFPFWHGFIWIHZZRQGBABHZQOCGFHX
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>JGRMQOYGHMVBJWRWQFPWHGFFDQGFPFZRKBEEBJIZQQOCIBZKLFAFGQVFZFWWE
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>OGWOPFGFHWOLPLHRLROLFDFMGFQWBLWBWQOLKFWBYLBLYLFSFLJGRMQBOLWJVFP
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>FWQVHQWFFPQOQVF PQOCFPOGFWFJIGFQVHLHLROQVF GWJVFPFO LF HGQVQVFIL E
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>OGQILHQFQGIQVVOSFAFGBWQVHQWIJVWJVFPFWHGFIWIHZZRQGBABHZQOCGFHX
 </span></code></pre></div>
 <details class="info">
 <summary>点击查看答案</summary>
@@ -5604,44 +5693,44 @@ I_C \approx \frac{1}{t} \times 0.065 + \frac{t - 1}{t} \times 0.038
 <li><strong>确定周期 <span class="arithmatex">\(t\)</span></strong>：尝试周期 <span class="arithmatex">\(\tau = 1, 2, \dots\)</span>。将密文按步长 <span class="arithmatex">\(\tau\)</span> 拆分为 <span class="arithmatex">\(\tau\)</span> 条子流 <span class="arithmatex">\(C_1, \dots, C_\tau\)</span>。计算各子流的平均重合指数 <span class="arithmatex">\(S_\tau = \frac{1}{\tau} \sum_{j=1}^\tau I_C(C_j)\)</span>。使 <span class="arithmatex">\(S_\tau \approx 0.065\)</span> 的最小正整数 <span class="arithmatex">\(\tau\)</span> 即为真实周期 <span class="arithmatex">\(t\)</span>。</li>
 <li><strong>恢复各密钥分量</strong>：对拆分出的每条子流 <span class="arithmatex">\(C_j\)</span>（对应独立的移位密码），利用移位密码的内积最大化算法恢复该位置的密钥字符 <span class="arithmatex">\(k_j\)</span>。</li>
 </ol>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Python 核心破解算法参考实现</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">ENG_FREQ</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="mf">0.082</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">,</span> <span class="mf">0.028</span><span class="p">,</span> <span class="mf">0.043</span><span class="p">,</span> <span class="mf">0.127</span><span class="p">,</span> <span class="mf">0.022</span><span class="p">,</span> <span class="mf">0.020</span><span class="p">,</span> <span class="mf">0.061</span><span class="p">,</span> <span class="mf">0.070</span><span class="p">,</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="mf">0.002</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">,</span> <span class="mf">0.040</span><span class="p">,</span> <span class="mf">0.024</span><span class="p">,</span> <span class="mf">0.067</span><span class="p">,</span> <span class="mf">0.075</span><span class="p">,</span> <span class="mf">0.019</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.060</span><span class="p">,</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="mf">0.063</span><span class="p">,</span> <span class="mf">0.091</span><span class="p">,</span> <span class="mf">0.028</span><span class="p">,</span> <span class="mf">0.010</span><span class="p">,</span> <span class="mf">0.023</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.020</span><span class="p">,</span> <span class="mf">0.001</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="p">]</span>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="k">def</span><span class="w"> </span><span class="nf">crack_shift_cipher</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;破解移位密码，返回密钥 k&quot;&quot;&quot;</span>
-</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>
-</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>    <span class="n">counts</span> <span class="o">=</span> <span class="p">[</span><span class="n">ciphertext</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">26</span><span class="p">)]</span>
-</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>    <span class="n">best_k</span><span class="p">,</span> <span class="n">best_val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span>
-</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">26</span><span class="p">):</span>
-</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>        <span class="n">val</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">ENG_FREQ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">counts</span><span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span> <span class="o">%</span> <span class="mi">26</span><span class="p">]</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">26</span><span class="p">))</span>
-</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>        <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">best_val</span><span class="p">:</span>
-</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>            <span class="n">best_val</span><span class="p">,</span> <span class="n">best_k</span> <span class="o">=</span> <span class="n">val</span><span class="p">,</span> <span class="n">k</span>
-</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>    <span class="k">return</span> <span class="n">best_k</span>
-</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>
-</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="k">def</span><span class="w"> </span><span class="nf">index_of_coincidence</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>    <span class="k">if</span> <span class="n">N</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span> <span class="k">return</span> <span class="mf">0.0</span>
-</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>    <span class="n">counts</span> <span class="o">=</span> <span class="p">[</span><span class="n">text</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">26</span><span class="p">)]</span>
-</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">counts</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
-</span><span id="__span-10-24"><a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a>
-</span><span id="__span-10-25"><a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="k">def</span><span class="w"> </span><span class="nf">crack_vigenere_cipher</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-</span><span id="__span-10-26"><a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;破解维吉尼亚密码，返回 (周期 t, 密钥字符串)&quot;&quot;&quot;</span>
-</span><span id="__span-10-27"><a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a>    <span class="n">best_t</span><span class="p">,</span> <span class="n">min_diff</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.0</span>
-</span><span id="__span-10-28"><a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a>    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-</span><span id="__span-10-29"><a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a>        <span class="n">slices</span> <span class="o">=</span> <span class="p">[</span><span class="n">ciphertext</span><span class="p">[</span><span class="n">j</span><span class="p">::</span><span class="n">t</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span>
-</span><span id="__span-10-30"><a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a>        <span class="n">avg_ic</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">index_of_coincidence</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">)</span> <span class="o">/</span> <span class="n">t</span>
-</span><span id="__span-10-31"><a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a>        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">avg_ic</span> <span class="o">-</span> <span class="mf">0.065</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_diff</span><span class="p">:</span>
-</span><span id="__span-10-32"><a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a>            <span class="n">min_diff</span><span class="p">,</span> <span class="n">best_t</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">avg_ic</span> <span class="o">-</span> <span class="mf">0.065</span><span class="p">),</span> <span class="n">t</span>
-</span><span id="__span-10-33"><a id="__codelineno-10-33" name="__codelineno-10-33" href="#__codelineno-10-33"></a>    <span class="n">key_chars</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="__span-10-34"><a id="__codelineno-10-34" name="__codelineno-10-34" href="#__codelineno-10-34"></a>    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">best_t</span><span class="p">):</span>
-</span><span id="__span-10-35"><a id="__codelineno-10-35" name="__codelineno-10-35" href="#__codelineno-10-35"></a>        <span class="n">sub_stream</span> <span class="o">=</span> <span class="n">ciphertext</span><span class="p">[</span><span class="n">j</span><span class="p">::</span><span class="n">best_t</span><span class="p">]</span>
-</span><span id="__span-10-36"><a id="__codelineno-10-36" name="__codelineno-10-36" href="#__codelineno-10-36"></a>        <span class="n">k_val</span> <span class="o">=</span> <span class="n">crack_shift_cipher</span><span class="p">(</span><span class="n">sub_stream</span><span class="p">)</span>
-</span><span id="__span-10-37"><a id="__codelineno-10-37" name="__codelineno-10-37" href="#__codelineno-10-37"></a>        <span class="n">key_chars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">k_val</span><span class="p">))</span>
-</span><span id="__span-10-38"><a id="__codelineno-10-38" name="__codelineno-10-38" href="#__codelineno-10-38"></a>    <span class="k">return</span> <span class="n">best_t</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key_chars</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Python 核心破解算法参考实现</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">ENG_FREQ</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="mf">0.082</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">,</span> <span class="mf">0.028</span><span class="p">,</span> <span class="mf">0.043</span><span class="p">,</span> <span class="mf">0.127</span><span class="p">,</span> <span class="mf">0.022</span><span class="p">,</span> <span class="mf">0.020</span><span class="p">,</span> <span class="mf">0.061</span><span class="p">,</span> <span class="mf">0.070</span><span class="p">,</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="mf">0.002</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">,</span> <span class="mf">0.040</span><span class="p">,</span> <span class="mf">0.024</span><span class="p">,</span> <span class="mf">0.067</span><span class="p">,</span> <span class="mf">0.075</span><span class="p">,</span> <span class="mf">0.019</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.060</span><span class="p">,</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>    <span class="mf">0.063</span><span class="p">,</span> <span class="mf">0.091</span><span class="p">,</span> <span class="mf">0.028</span><span class="p">,</span> <span class="mf">0.010</span><span class="p">,</span> <span class="mf">0.023</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.020</span><span class="p">,</span> <span class="mf">0.001</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="p">]</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="k">def</span><span class="w"> </span><span class="nf">crack_shift_cipher</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;破解移位密码，返回密钥 k&quot;&quot;&quot;</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>    <span class="n">counts</span> <span class="o">=</span> <span class="p">[</span><span class="n">ciphertext</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">26</span><span class="p">)]</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>    <span class="n">best_k</span><span class="p">,</span> <span class="n">best_val</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">26</span><span class="p">):</span>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>        <span class="n">val</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">ENG_FREQ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">counts</span><span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">)</span> <span class="o">%</span> <span class="mi">26</span><span class="p">]</span> <span class="o">/</span> <span class="n">N</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">26</span><span class="p">))</span>
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>        <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">best_val</span><span class="p">:</span>
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>            <span class="n">best_val</span><span class="p">,</span> <span class="n">best_k</span> <span class="o">=</span> <span class="n">val</span><span class="p">,</span> <span class="n">k</span>
+</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>    <span class="k">return</span> <span class="n">best_k</span>
+</span><span id="__span-11-18"><a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>
+</span><span id="__span-11-19"><a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="k">def</span><span class="w"> </span><span class="nf">index_of_coincidence</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="__span-11-20"><a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</span><span id="__span-11-21"><a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>    <span class="k">if</span> <span class="n">N</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span> <span class="k">return</span> <span class="mf">0.0</span>
+</span><span id="__span-11-22"><a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a>    <span class="n">counts</span> <span class="o">=</span> <span class="p">[</span><span class="n">text</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">26</span><span class="p">)]</span>
+</span><span id="__span-11-23"><a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a>    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="p">(</span><span class="n">c</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">counts</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">*</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+</span><span id="__span-11-24"><a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a>
+</span><span id="__span-11-25"><a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a><span class="k">def</span><span class="w"> </span><span class="nf">crack_vigenere_cipher</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">15</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+</span><span id="__span-11-26"><a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;破解维吉尼亚密码，返回 (周期 t, 密钥字符串)&quot;&quot;&quot;</span>
+</span><span id="__span-11-27"><a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a>    <span class="n">best_t</span><span class="p">,</span> <span class="n">min_diff</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.0</span>
+</span><span id="__span-11-28"><a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a>    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+</span><span id="__span-11-29"><a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a>        <span class="n">slices</span> <span class="o">=</span> <span class="p">[</span><span class="n">ciphertext</span><span class="p">[</span><span class="n">j</span><span class="p">::</span><span class="n">t</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span>
+</span><span id="__span-11-30"><a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a>        <span class="n">avg_ic</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">index_of_coincidence</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">)</span> <span class="o">/</span> <span class="n">t</span>
+</span><span id="__span-11-31"><a id="__codelineno-11-31" name="__codelineno-11-31" href="#__codelineno-11-31"></a>        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">avg_ic</span> <span class="o">-</span> <span class="mf">0.065</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_diff</span><span class="p">:</span>
+</span><span id="__span-11-32"><a id="__codelineno-11-32" name="__codelineno-11-32" href="#__codelineno-11-32"></a>            <span class="n">min_diff</span><span class="p">,</span> <span class="n">best_t</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">avg_ic</span> <span class="o">-</span> <span class="mf">0.065</span><span class="p">),</span> <span class="n">t</span>
+</span><span id="__span-11-33"><a id="__codelineno-11-33" name="__codelineno-11-33" href="#__codelineno-11-33"></a>    <span class="n">key_chars</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="__span-11-34"><a id="__codelineno-11-34" name="__codelineno-11-34" href="#__codelineno-11-34"></a>    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">best_t</span><span class="p">):</span>
+</span><span id="__span-11-35"><a id="__codelineno-11-35" name="__codelineno-11-35" href="#__codelineno-11-35"></a>        <span class="n">sub_stream</span> <span class="o">=</span> <span class="n">ciphertext</span><span class="p">[</span><span class="n">j</span><span class="p">::</span><span class="n">best_t</span><span class="p">]</span>
+</span><span id="__span-11-36"><a id="__codelineno-11-36" name="__codelineno-11-36" href="#__codelineno-11-36"></a>        <span class="n">k_val</span> <span class="o">=</span> <span class="n">crack_shift_cipher</span><span class="p">(</span><span class="n">sub_stream</span><span class="p">)</span>
+</span><span id="__span-11-37"><a id="__codelineno-11-37" name="__codelineno-11-37" href="#__codelineno-11-37"></a>        <span class="n">key_chars</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">k_val</span><span class="p">))</span>
+</span><span id="__span-11-38"><a id="__codelineno-11-38" name="__codelineno-11-38" href="#__codelineno-11-38"></a>    <span class="k">return</span> <span class="n">best_t</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">key_chars</span><span class="p">)</span>
 </span></code></pre></div>
 </details>
 </div>
