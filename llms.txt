@@ -37,7 +37,7 @@
 - [汇编语言设计与调试](<https://docs.bfyes.cn/study/asm/index.md>)
 - [数据安全与密码学基础](<https://docs.bfyes.cn/study/crypto/crypto/index.md>)
 - [数据安全与密码学基础](<https://docs.bfyes.cn/study/crypto/crypto_midterm/index.md>)
-- [数据安全与密码学基础](<https://docs.bfyes.cn/study/crypto/index.md>)
+- [数据安全与密码学基础make](<https://docs.bfyes.cn/study/crypto/index.md>)
 - [CTF 夺旗赛](<https://docs.bfyes.cn/study/ctf/index.md>)
 - [lab0](<https://docs.bfyes.cn/study/ctf/lab0/index.md>)
 - [Crypto](<https://docs.bfyes.cn/study/ctf/lab1/crypto/index.md>)
